@@ -7,11 +7,10 @@ package bo.com.tesla.administracion.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,6 +18,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -29,51 +30,53 @@ import javax.persistence.TemporalType;
  * @author aCallejas
  */
 @Entity
-@Table(name = "pagos_cliente", catalog = "exacta", schema = "tesla")
-
-public class PagoClienteEntity implements Serializable {
+@Table(name = "cobros_clientes", catalog = "exacta", schema = "tesla2")
+@NamedQueries({
+    @NamedQuery(name = "CobroClienteEntity.findAll", query = "SELECT c FROM CobroClienteEntity c")})
+public class CobroClienteEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "pago_cliente_id", nullable = false)
-    private Long pagoClienteId;
-    @Column(name = "metodo_pago_id")
-    private BigInteger metodoPagoId;
+    @Column(name = "cobro_cliente_id", nullable = false)
+    private Long cobroClienteId;
+    @Basic(optional = false)
+    @Column(name = "nro_registro", nullable = false)
+    private int nroRegistro;
+    @Basic(optional = false)
+    @Column(name = "codigo_cliente", nullable = false, length = 15)
+    private String codigoCliente;
     @Column(name = "nombre_cliente", length = 200)
     private String nombreCliente;
     @Column(name = "nro_documento", length = 15)
     private String nroDocumento;
     @Basic(optional = false)
-    @Column(name = "codigo_cliente", nullable = false, length = 15)
-    private String codigoCliente;
-    @Basic(optional = false)
     @Column(name = "tipo_servicio", nullable = false, length = 300)
     private String tipoServicio;
-    @Column(length = 300)
-    private String servicio;
     @Basic(optional = false)
-    @Column(nullable = false)
-    private Character tipo;
+    @Column(nullable = false, length = 300)
+    private String servicio;
     @Basic(optional = false)
     @Column(nullable = false, length = 250)
     private String periodo;
     @Basic(optional = false)
-    @Column(nullable = false, length = 250)
-    private String concepto;
+    @Column(nullable = false)
+    private Character tipo;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Basic(optional = false)
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal cantidad;
+    @Basic(optional = false)
+    @Column(nullable = false, length = 250)
+    private String concepto;
     @Column(name = "monto_unitario", precision = 17, scale = 2)
     private BigDecimal montoUnitario;
-    @Column(name = "dato_extras", length = 250)
-    private String datoExtras;
-    @Column(name = "tipo_plantilla")
-    private Boolean tipoPlantilla;
-    @Column(name = "nro_registro")
-    private Integer nroRegistro;
+    @Column(name = "dato_extra", length = 250)
+    private String datoExtra;
+    @Basic(optional = false)
+    @Column(name = "tipo_plantilla", nullable = false)
+    private boolean tipoPlantilla;
     @Column(name = "periodo_cabecera", length = 250)
     private String periodoCabecera;
     @Basic(optional = false)
@@ -83,47 +86,63 @@ public class PagoClienteEntity implements Serializable {
     @Column(name = "fecha_creacion", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
-    @Column(length = 15)
+    @Basic(optional = false)
+    @Column(nullable = false, length = 15)
     private String estado;
-    @OneToMany(mappedBy = "pagoClienteId")
-    private List<DetalleComprobantePagoEntity> detalleComprobantePagoEntityList;
-    @JoinColumn(name = "archivo_id", referencedColumnName = "archivo_id")
-    @ManyToOne
+    @JoinColumn(name = "archivo_id", referencedColumnName = "archivo_id", nullable = false)
+    @ManyToOne(optional = false)
     private ArchivoEntity archivoId;
+    @JoinColumn(name = "metodo_cobro_id", referencedColumnName = "dominio_id", nullable = false)
+    @ManyToOne(optional = false)
+    private DominioEntity metodoCobroId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cobroClienteId")
+    private List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList;
 
-    public PagoClienteEntity() {
+    public CobroClienteEntity() {
     }
 
-    public PagoClienteEntity(Long pagoClienteId) {
-        this.pagoClienteId = pagoClienteId;
+    public CobroClienteEntity(Long cobroClienteId) {
+        this.cobroClienteId = cobroClienteId;
     }
 
-    public PagoClienteEntity(Long pagoClienteId, String codigoCliente, String tipoServicio, Character tipo, String periodo, String concepto, BigDecimal cantidad, long usuarioCreacion, Date fechaCreacion) {
-        this.pagoClienteId = pagoClienteId;
+    public CobroClienteEntity(Long cobroClienteId, int nroRegistro, String codigoCliente, String tipoServicio, String servicio, String periodo, Character tipo, BigDecimal cantidad, String concepto, boolean tipoPlantilla, long usuarioCreacion, Date fechaCreacion, String estado) {
+        this.cobroClienteId = cobroClienteId;
+        this.nroRegistro = nroRegistro;
         this.codigoCliente = codigoCliente;
         this.tipoServicio = tipoServicio;
-        this.tipo = tipo;
+        this.servicio = servicio;
         this.periodo = periodo;
-        this.concepto = concepto;
+        this.tipo = tipo;
         this.cantidad = cantidad;
+        this.concepto = concepto;
+        this.tipoPlantilla = tipoPlantilla;
         this.usuarioCreacion = usuarioCreacion;
         this.fechaCreacion = fechaCreacion;
+        this.estado = estado;
     }
 
-    public Long getPagoClienteId() {
-        return pagoClienteId;
+    public Long getCobroClienteId() {
+        return cobroClienteId;
     }
 
-    public void setPagoClienteId(Long pagoClienteId) {
-        this.pagoClienteId = pagoClienteId;
+    public void setCobroClienteId(Long cobroClienteId) {
+        this.cobroClienteId = cobroClienteId;
     }
 
-    public BigInteger getMetodoPagoId() {
-        return metodoPagoId;
+    public int getNroRegistro() {
+        return nroRegistro;
     }
 
-    public void setMetodoPagoId(BigInteger metodoPagoId) {
-        this.metodoPagoId = metodoPagoId;
+    public void setNroRegistro(int nroRegistro) {
+        this.nroRegistro = nroRegistro;
+    }
+
+    public String getCodigoCliente() {
+        return codigoCliente;
+    }
+
+    public void setCodigoCliente(String codigoCliente) {
+        this.codigoCliente = codigoCliente;
     }
 
     public String getNombreCliente() {
@@ -142,14 +161,6 @@ public class PagoClienteEntity implements Serializable {
         this.nroDocumento = nroDocumento;
     }
 
-    public String getCodigoCliente() {
-        return codigoCliente;
-    }
-
-    public void setCodigoCliente(String codigoCliente) {
-        this.codigoCliente = codigoCliente;
-    }
-
     public String getTipoServicio() {
         return tipoServicio;
     }
@@ -166,14 +177,6 @@ public class PagoClienteEntity implements Serializable {
         this.servicio = servicio;
     }
 
-    public Character getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(Character tipo) {
-        this.tipo = tipo;
-    }
-
     public String getPeriodo() {
         return periodo;
     }
@@ -182,12 +185,12 @@ public class PagoClienteEntity implements Serializable {
         this.periodo = periodo;
     }
 
-    public String getConcepto() {
-        return concepto;
+    public Character getTipo() {
+        return tipo;
     }
 
-    public void setConcepto(String concepto) {
-        this.concepto = concepto;
+    public void setTipo(Character tipo) {
+        this.tipo = tipo;
     }
 
     public BigDecimal getCantidad() {
@@ -198,6 +201,14 @@ public class PagoClienteEntity implements Serializable {
         this.cantidad = cantidad;
     }
 
+    public String getConcepto() {
+        return concepto;
+    }
+
+    public void setConcepto(String concepto) {
+        this.concepto = concepto;
+    }
+
     public BigDecimal getMontoUnitario() {
         return montoUnitario;
     }
@@ -206,28 +217,20 @@ public class PagoClienteEntity implements Serializable {
         this.montoUnitario = montoUnitario;
     }
 
-    public String getDatoExtras() {
-        return datoExtras;
+    public String getDatoExtra() {
+        return datoExtra;
     }
 
-    public void setDatoExtras(String datoExtras) {
-        this.datoExtras = datoExtras;
+    public void setDatoExtra(String datoExtra) {
+        this.datoExtra = datoExtra;
     }
 
-    public Boolean getTipoPlantilla() {
+    public boolean getTipoPlantilla() {
         return tipoPlantilla;
     }
 
-    public void setTipoPlantilla(Boolean tipoPlantilla) {
+    public void setTipoPlantilla(boolean tipoPlantilla) {
         this.tipoPlantilla = tipoPlantilla;
-    }
-
-    public Integer getNroRegistro() {
-        return nroRegistro;
-    }
-
-    public void setNroRegistro(Integer nroRegistro) {
-        this.nroRegistro = nroRegistro;
     }
 
     public String getPeriodoCabecera() {
@@ -262,14 +265,6 @@ public class PagoClienteEntity implements Serializable {
         this.estado = estado;
     }
 
-    public List<DetalleComprobantePagoEntity> getDetalleComprobantePagoEntityList() {
-        return detalleComprobantePagoEntityList;
-    }
-
-    public void setDetalleComprobantePagoEntityList(List<DetalleComprobantePagoEntity> detalleComprobantePagoEntityList) {
-        this.detalleComprobantePagoEntityList = detalleComprobantePagoEntityList;
-    }
-
     public ArchivoEntity getArchivoId() {
         return archivoId;
     }
@@ -278,21 +273,37 @@ public class PagoClienteEntity implements Serializable {
         this.archivoId = archivoId;
     }
 
+    public DominioEntity getMetodoCobroId() {
+        return metodoCobroId;
+    }
+
+    public void setMetodoCobroId(DominioEntity metodoCobroId) {
+        this.metodoCobroId = metodoCobroId;
+    }
+
+    public List<DetalleComprobanteCobroEntity> getDetalleComprobanteCobroEntityList() {
+        return detalleComprobanteCobroEntityList;
+    }
+
+    public void setDetalleComprobanteCobroEntityList(List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList) {
+        this.detalleComprobanteCobroEntityList = detalleComprobanteCobroEntityList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (pagoClienteId != null ? pagoClienteId.hashCode() : 0);
+        hash += (cobroClienteId != null ? cobroClienteId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof PagoClienteEntity)) {
+        if (!(object instanceof CobroClienteEntity)) {
             return false;
         }
-        PagoClienteEntity other = (PagoClienteEntity) object;
-        if ((this.pagoClienteId == null && other.pagoClienteId != null) || (this.pagoClienteId != null && !this.pagoClienteId.equals(other.pagoClienteId))) {
+        CobroClienteEntity other = (CobroClienteEntity) object;
+        if ((this.cobroClienteId == null && other.cobroClienteId != null) || (this.cobroClienteId != null && !this.cobroClienteId.equals(other.cobroClienteId))) {
             return false;
         }
         return true;
@@ -300,7 +311,7 @@ public class PagoClienteEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.com.tesla.administracion.entity.PagoClienteEntity[ pagoClienteId=" + pagoClienteId + " ]";
+        return "bo.com.tesla.administracion.entity.CobroClienteEntity[ cobroClienteId=" + cobroClienteId + " ]";
     }
     
 }

@@ -10,13 +10,17 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -27,24 +31,17 @@ import javax.persistence.TemporalType;
  * @author aCallejas
  */
 @Entity
-@Table(name = "comprobantes_pagos", catalog = "exacta", schema = "tesla")
-
-public class ComprobantePagoEntity implements Serializable {
+@Table(name = "comprobantes_cobros", catalog = "exacta", schema = "tesla2")
+@NamedQueries({
+    @NamedQuery(name = "ComprobanteCobroEntity.findAll", query = "SELECT c FROM ComprobanteCobroEntity c")})
+public class ComprobanteCobroEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "comprobante_pago_id", nullable = false)
-    private Long comprobantePagoId;
-    @Basic(optional = false)
-    @Column(name = "entidad_id", nullable = false)
-    private int entidadId;
-    @Basic(optional = false)
-    @Column(name = "sucursal_id", nullable = false)
-    private long sucursalId;
-    @Column(name = "dosificacion_id")
-    private BigInteger dosificacionId;
+    @Column(name = "comprobante_cobro_id", nullable = false)
+    private Long comprobanteCobroId;
     @Basic(optional = false)
     @Column(name = "nro_factura", nullable = false)
     private long nroFactura;
@@ -54,8 +51,7 @@ public class ComprobantePagoEntity implements Serializable {
     private Date fechaFactura;
     @Column(name = "nit_cliente", length = 255)
     private String nitCliente;
-    @Basic(optional = false)
-    @Column(name = "nombre_cliente", nullable = false, length = 255)
+    @Column(name = "nombre_cliente", length = 255)
     private String nombreCliente;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Basic(optional = false)
@@ -75,66 +71,46 @@ public class ComprobantePagoEntity implements Serializable {
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
-    @Column(length = 15)
+    @Basic(optional = false)
+    @Column(nullable = false, length = 15)
     private String estado;
-    @OneToMany(mappedBy = "comprobantePagoId")
-    private List<DetalleComprobantePagoEntity> detalleComprobantePagoEntityList;
-    @OneToMany(mappedBy = "comprobantePagoId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "comprobanteCobroId")
     private List<CancelacionEntity> cancelacionEntityList;
-    @OneToMany(mappedBy = "comprobantePagoId")
-    private List<DosificacionEntity> dosificacionEntityList;
-    @OneToMany(mappedBy = "comprobantePagoId")
-    private List<PlantillaEntity> plantillaEntityList;
+    @JoinColumn(name = "dosificacion_id", referencedColumnName = "dosificacion_id", nullable = false)
+    @ManyToOne(optional = false)
+    private DosificacionEntity dosificacionId;
+    @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id", nullable = false)
+    @ManyToOne(optional = false)
+    private EntidadEntity entidadId;
+    @JoinColumn(name = "sucursal_id", referencedColumnName = "sucursal_id", nullable = false)
+    @ManyToOne(optional = false)
+    private SucursalEntity sucursalId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "comprobanteCobroId")
+    private List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList;
 
-    public ComprobantePagoEntity() {
+    public ComprobanteCobroEntity() {
     }
 
-    public ComprobantePagoEntity(Long comprobantePagoId) {
-        this.comprobantePagoId = comprobantePagoId;
+    public ComprobanteCobroEntity(Long comprobanteCobroId) {
+        this.comprobanteCobroId = comprobanteCobroId;
     }
 
-    public ComprobantePagoEntity(Long comprobantePagoId, int entidadId, long sucursalId, long nroFactura, Date fechaFactura, String nombreCliente, BigDecimal montoTotal, long usuarioCreacion, Date fechaCreacion) {
-        this.comprobantePagoId = comprobantePagoId;
-        this.entidadId = entidadId;
-        this.sucursalId = sucursalId;
+    public ComprobanteCobroEntity(Long comprobanteCobroId, long nroFactura, Date fechaFactura, BigDecimal montoTotal, long usuarioCreacion, Date fechaCreacion, String estado) {
+        this.comprobanteCobroId = comprobanteCobroId;
         this.nroFactura = nroFactura;
         this.fechaFactura = fechaFactura;
-        this.nombreCliente = nombreCliente;
         this.montoTotal = montoTotal;
         this.usuarioCreacion = usuarioCreacion;
         this.fechaCreacion = fechaCreacion;
+        this.estado = estado;
     }
 
-    public Long getComprobantePagoId() {
-        return comprobantePagoId;
+    public Long getComprobanteCobroId() {
+        return comprobanteCobroId;
     }
 
-    public void setComprobantePagoId(Long comprobantePagoId) {
-        this.comprobantePagoId = comprobantePagoId;
-    }
-
-    public int getEntidadId() {
-        return entidadId;
-    }
-
-    public void setEntidadId(int entidadId) {
-        this.entidadId = entidadId;
-    }
-
-    public long getSucursalId() {
-        return sucursalId;
-    }
-
-    public void setSucursalId(long sucursalId) {
-        this.sucursalId = sucursalId;
-    }
-
-    public BigInteger getDosificacionId() {
-        return dosificacionId;
-    }
-
-    public void setDosificacionId(BigInteger dosificacionId) {
-        this.dosificacionId = dosificacionId;
+    public void setComprobanteCobroId(Long comprobanteCobroId) {
+        this.comprobanteCobroId = comprobanteCobroId;
     }
 
     public long getNroFactura() {
@@ -225,14 +201,6 @@ public class ComprobantePagoEntity implements Serializable {
         this.estado = estado;
     }
 
-    public List<DetalleComprobantePagoEntity> getDetalleComprobantePagoEntityList() {
-        return detalleComprobantePagoEntityList;
-    }
-
-    public void setDetalleComprobantePagoEntityList(List<DetalleComprobantePagoEntity> detalleComprobantePagoEntityList) {
-        this.detalleComprobantePagoEntityList = detalleComprobantePagoEntityList;
-    }
-
     public List<CancelacionEntity> getCancelacionEntityList() {
         return cancelacionEntityList;
     }
@@ -241,37 +209,53 @@ public class ComprobantePagoEntity implements Serializable {
         this.cancelacionEntityList = cancelacionEntityList;
     }
 
-    public List<DosificacionEntity> getDosificacionEntityList() {
-        return dosificacionEntityList;
+    public DosificacionEntity getDosificacionId() {
+        return dosificacionId;
     }
 
-    public void setDosificacionEntityList(List<DosificacionEntity> dosificacionEntityList) {
-        this.dosificacionEntityList = dosificacionEntityList;
+    public void setDosificacionId(DosificacionEntity dosificacionId) {
+        this.dosificacionId = dosificacionId;
     }
 
-    public List<PlantillaEntity> getPlantillaEntityList() {
-        return plantillaEntityList;
+    public EntidadEntity getEntidadId() {
+        return entidadId;
     }
 
-    public void setPlantillaEntityList(List<PlantillaEntity> plantillaEntityList) {
-        this.plantillaEntityList = plantillaEntityList;
+    public void setEntidadId(EntidadEntity entidadId) {
+        this.entidadId = entidadId;
+    }
+
+    public SucursalEntity getSucursalId() {
+        return sucursalId;
+    }
+
+    public void setSucursalId(SucursalEntity sucursalId) {
+        this.sucursalId = sucursalId;
+    }
+
+    public List<DetalleComprobanteCobroEntity> getDetalleComprobanteCobroEntityList() {
+        return detalleComprobanteCobroEntityList;
+    }
+
+    public void setDetalleComprobanteCobroEntityList(List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList) {
+        this.detalleComprobanteCobroEntityList = detalleComprobanteCobroEntityList;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (comprobantePagoId != null ? comprobantePagoId.hashCode() : 0);
+        hash += (comprobanteCobroId != null ? comprobanteCobroId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ComprobantePagoEntity)) {
+        if (!(object instanceof ComprobanteCobroEntity)) {
             return false;
         }
-        ComprobantePagoEntity other = (ComprobantePagoEntity) object;
-        if ((this.comprobantePagoId == null && other.comprobantePagoId != null) || (this.comprobantePagoId != null && !this.comprobantePagoId.equals(other.comprobantePagoId))) {
+        ComprobanteCobroEntity other = (ComprobanteCobroEntity) object;
+        if ((this.comprobanteCobroId == null && other.comprobanteCobroId != null) || (this.comprobanteCobroId != null && !this.comprobanteCobroId.equals(other.comprobanteCobroId))) {
             return false;
         }
         return true;
@@ -279,7 +263,7 @@ public class ComprobantePagoEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.com.tesla.administracion.entity.ComprobantePagoEntity[ comprobantePagoId=" + comprobantePagoId + " ]";
+        return "bo.com.tesla.administracion.entity.ComprobanteCobroEntity[ comprobanteCobroId=" + comprobanteCobroId + " ]";
     }
     
 }

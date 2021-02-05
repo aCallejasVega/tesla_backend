@@ -9,8 +9,8 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +18,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -28,8 +30,9 @@ import javax.persistence.TemporalType;
  * @author aCallejas
  */
 @Entity
-@Table(name = "sucursales", catalog = "exacta", schema = "tesla")
-
+@Table(name = "sucursales", catalog = "exacta", schema = "tesla2")
+@NamedQueries({
+    @NamedQuery(name = "SucursalEntity.findAll", query = "SELECT s FROM SucursalEntity s")})
 public class SucursalEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -53,6 +56,8 @@ public class SucursalEntity implements Serializable {
     private Date fechaModificacion;
     @Column(length = 15)
     private String estado;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sucursalId")
+    private List<ComprobanteCobroEntity> comprobanteCobroEntityList;
     @OneToMany(mappedBy = "sucursalId")
     private List<EmpleadoEntity> empleadoEntityList;
     @JoinColumn(name = "departamento_id", referencedColumnName = "dominio_id")
@@ -134,6 +139,14 @@ public class SucursalEntity implements Serializable {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public List<ComprobanteCobroEntity> getComprobanteCobroEntityList() {
+        return comprobanteCobroEntityList;
+    }
+
+    public void setComprobanteCobroEntityList(List<ComprobanteCobroEntity> comprobanteCobroEntityList) {
+        this.comprobanteCobroEntityList = comprobanteCobroEntityList;
     }
 
     public List<EmpleadoEntity> getEmpleadoEntityList() {

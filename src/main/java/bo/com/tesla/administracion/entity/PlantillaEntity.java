@@ -8,7 +8,6 @@ package bo.com.tesla.administracion.entity;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
-
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +16,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,8 +27,9 @@ import javax.persistence.TemporalType;
  * @author aCallejas
  */
 @Entity
-@Table(name = "plantillas", catalog = "exacta", schema = "tesla")
-
+@Table(name = "plantillas", catalog = "exacta", schema = "tesla2")
+@NamedQueries({
+    @NamedQuery(name = "PlantillaEntity.findAll", query = "SELECT p FROM PlantillaEntity p")})
 public class PlantillaEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -36,13 +38,20 @@ public class PlantillaEntity implements Serializable {
     @Basic(optional = false)
     @Column(name = "plantilla_id", nullable = false)
     private Long plantillaId;
-    @Column(name = "nombre_plantilla", length = 150)
+    @Basic(optional = false)
+    @Column(name = "transaccion_id", nullable = false)
+    private long transaccionId;
+    @Basic(optional = false)
+    @Column(name = "nombre_plantilla", nullable = false, length = 150)
     private String nombrePlantilla;
-    @Column(name = "ubicacion_plantilla", length = 200)
+    @Basic(optional = false)
+    @Column(name = "ubicacion_plantilla", nullable = false, length = 200)
     private String ubicacionPlantilla;
-    @Column(name = "usuario_creacion")
-    private BigInteger usuarioCreacion;
-    @Column(name = "fecha_creacion")
+    @Basic(optional = false)
+    @Column(name = "usuario_creacion", nullable = false)
+    private long usuarioCreacion;
+    @Basic(optional = false)
+    @Column(name = "fecha_creacion", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
     @Column(name = "usuario_modificacion")
@@ -50,13 +59,11 @@ public class PlantillaEntity implements Serializable {
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
-    @Column(length = 15)
+    @Basic(optional = false)
+    @Column(nullable = false, length = 15)
     private String estado;
-    @JoinColumn(name = "comprobante_pago_id", referencedColumnName = "comprobante_pago_id")
-    @ManyToOne
-    private ComprobantePagoEntity comprobantePagoId;
-    @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id")
-    @ManyToOne
+    @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id", nullable = false)
+    @ManyToOne(optional = false)
     private EntidadEntity entidadId;
 
     public PlantillaEntity() {
@@ -66,12 +73,30 @@ public class PlantillaEntity implements Serializable {
         this.plantillaId = plantillaId;
     }
 
+    public PlantillaEntity(Long plantillaId, long transaccionId, String nombrePlantilla, String ubicacionPlantilla, long usuarioCreacion, Date fechaCreacion, String estado) {
+        this.plantillaId = plantillaId;
+        this.transaccionId = transaccionId;
+        this.nombrePlantilla = nombrePlantilla;
+        this.ubicacionPlantilla = ubicacionPlantilla;
+        this.usuarioCreacion = usuarioCreacion;
+        this.fechaCreacion = fechaCreacion;
+        this.estado = estado;
+    }
+
     public Long getPlantillaId() {
         return plantillaId;
     }
 
     public void setPlantillaId(Long plantillaId) {
         this.plantillaId = plantillaId;
+    }
+
+    public long getTransaccionId() {
+        return transaccionId;
+    }
+
+    public void setTransaccionId(long transaccionId) {
+        this.transaccionId = transaccionId;
     }
 
     public String getNombrePlantilla() {
@@ -90,11 +115,11 @@ public class PlantillaEntity implements Serializable {
         this.ubicacionPlantilla = ubicacionPlantilla;
     }
 
-    public BigInteger getUsuarioCreacion() {
+    public long getUsuarioCreacion() {
         return usuarioCreacion;
     }
 
-    public void setUsuarioCreacion(BigInteger usuarioCreacion) {
+    public void setUsuarioCreacion(long usuarioCreacion) {
         this.usuarioCreacion = usuarioCreacion;
     }
 
@@ -128,14 +153,6 @@ public class PlantillaEntity implements Serializable {
 
     public void setEstado(String estado) {
         this.estado = estado;
-    }
-
-    public ComprobantePagoEntity getComprobantePagoId() {
-        return comprobantePagoId;
-    }
-
-    public void setComprobantePagoId(ComprobantePagoEntity comprobantePagoId) {
-        this.comprobantePagoId = comprobantePagoId;
     }
 
     public EntidadEntity getEntidadId() {

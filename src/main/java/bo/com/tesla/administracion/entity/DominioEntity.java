@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,6 +16,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -27,8 +28,9 @@ import javax.persistence.TemporalType;
  * @author aCallejas
  */
 @Entity
-@Table(name = "dominios", catalog = "exacta", schema = "tesla")
-
+@Table(name = "dominios", catalog = "exacta", schema = "tesla2")
+@NamedQueries({
+    @NamedQuery(name = "DominioEntity.findAll", query = "SELECT d FROM DominioEntity d")})
 public class DominioEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -55,11 +57,13 @@ public class DominioEntity implements Serializable {
     private Date fechaModificacion;
     @Column(length = 10)
     private String estado;
-    @OneToMany(mappedBy = "motivoCancelacionId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "metodoCobroId")
+    private List<CobroClienteEntity> cobroClienteEntityList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "motivoCancelacionId")
     private List<CancelacionEntity> cancelacionEntityList;
     @OneToMany(mappedBy = "tipoCancelacionId")
     private List<CancelacionEntity> cancelacionEntityList1;
-    @OneToMany(mappedBy = "tipoDocumentoPagoId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoDocumentoCobroId")
     private List<DosificacionEntity> dosificacionEntityList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciudadId")
     private List<PersonaEntity> personaEntityList;
@@ -149,6 +153,14 @@ public class DominioEntity implements Serializable {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public List<CobroClienteEntity> getCobroClienteEntityList() {
+        return cobroClienteEntityList;
+    }
+
+    public void setCobroClienteEntityList(List<CobroClienteEntity> cobroClienteEntityList) {
+        this.cobroClienteEntityList = cobroClienteEntityList;
     }
 
     public List<CancelacionEntity> getCancelacionEntityList() {

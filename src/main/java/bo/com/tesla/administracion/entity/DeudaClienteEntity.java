@@ -1,13 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package bo.com.tesla.administracion.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -18,266 +13,360 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
  *
  * @author aCallejas
  */
 @Entity
-@Table(name = "deudas_clientes", catalog = "exacta", schema = "tesla")
-
+@Table(name = "deudas_clientes", catalog = "exacta", schema = "tesla2")
 public class DeudaClienteEntity implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "deuda_cliente_id", nullable = false)
-    private Long deudaClienteId;
-    @Column(name = "nombre_cliente", length = 200)
-    private String nombreCliente;
-    @Column(name = "nro_documento", length = 15)
-    private String nroDocumento;
-    @Basic(optional = false)
-    @Column(name = "codigo_cliente", nullable = false, length = 15)
-    private String codigoCliente;
-    @Basic(optional = false)
-    @Column(name = "tipo_servicio", nullable = false, length = 300)
-    private String tipoServicio;
-    @Column(length = 300)
-    private String servicio;
-    @Basic(optional = false)
-    @Column(nullable = false)
-    private Character tipo;
-    @Basic(optional = false)
-    @Column(nullable = false, length = 250)
-    private String periodo;
-    @Basic(optional = false)
-    @Column(nullable = false, length = 250)
-    private String concepto;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Basic(optional = false)
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal cantidad;
-    @Column(name = "monto_unitario", precision = 17, scale = 2)
-    private BigDecimal montoUnitario;
-    @Column(name = "dato_extras", length = 250)
-    private String datoExtras;
-    @Basic(optional = false)
-    @Column(name = "usuario_creacion", nullable = false)
-    private long usuarioCreacion;
-    @Basic(optional = false)
-    @Column(name = "fecha_creacion", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaCreacion;
-    @Column(name = "tipo_plantilla")
-    private Boolean tipoPlantilla;
-    @Column(length = 15)
-    private String estado;
-    @Column(name = "nro_registro")
-    private Integer nroRegistro;
-    @Column(name = "periodo_cabecera", length = 250)
-    private String periodoCabecera;
-    @JoinColumn(name = "archivo_id", referencedColumnName = "archivo_id")
-    @ManyToOne
+	private static final long serialVersionUID = 1L;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Basic(optional = false)
+	@Column(name = "deuda_cliente_id", nullable = false)
+	private Long deudaClienteId;
+	
+
+	
+	@Basic(optional = false)
+	@Column(name = "nro_registro", nullable = false)
+	private Integer nroRegistro;
+
+	
+	
+	@Basic(optional = false)
+	@Column(name = "codigo_cliente", nullable = false, length = 15)
+	private String codigoCliente;
+
+	
+	@Column(name = "nombre_cliente", length = 200)
+	private String nombreCliente;
+
+	
+	@Column(name = "nro_documento", length = 10)
+	private String nroDocumento;
+
+	
+	@Column(length = 150)
+	private String direccion;
+
+	
+	@Column(length = 10)
+	private String telefono;
+
+	
+	@Column(length = 10)
+	private String nit;
+
+	
+	@Basic(optional = false)
+	@Column(length = 300, nullable = false)
+	private String servicio;
+
+	
+	@Basic(optional = false)
+	@Column(name = "tipo_servicio", nullable = false, length = 300)
+	private String tipoServicio;
+
+	@Basic(optional = false)
+	@Column(nullable = false, length = 250)
+	private String periodo;
+
+	@Basic(optional = false)
+	@Column(nullable = false, name = "tipo")
+	private Character tipo;
+
+	@Basic(optional = false)
+	@Column(nullable = false, length = 250)
+	private String concepto;
+
+	@Basic(optional = false)
+	@Column(name = "monto_unitario", nullable = false, precision = 17, scale = 2)
+	private BigDecimal montoUnitario;
+
+	@Basic(optional = false)
+	@Column(nullable = false, precision = 10, scale = 2)
+	private BigDecimal cantidad;
+
+	@Basic(optional = false)
+	@Column(name = "sub_total", precision = 17, scale = 2)
+	private BigDecimal subTotal;
+
+	@Column(name = "dato_extras", length = 250)
+	private String datoExtras;
+
+	@Basic(optional = false)
+	@Column(name = "tipo_comprobante")
+	private Boolean tipoComprobante;
+
+	@Column(name = "periodo_cabecera", length = 250)
+	private String periodoCabecera;
+
+	@JoinColumn(name = "archivo_id", referencedColumnName = "archivo_id", nullable = false)
+    @ManyToOne( optional = false)
     private ArchivoEntity archivoId;
 
-    public DeudaClienteEntity() {
-    }
+	
 
-    public DeudaClienteEntity(Long deudaClienteId) {
-        this.deudaClienteId = deudaClienteId;
-    }
+	public DeudaClienteEntity() {
+	}
 
-    public DeudaClienteEntity(Long deudaClienteId, String codigoCliente, String tipoServicio, Character tipo, String periodo, String concepto, BigDecimal cantidad, long usuarioCreacion, Date fechaCreacion) {
-        this.deudaClienteId = deudaClienteId;
-        this.codigoCliente = codigoCliente;
-        this.tipoServicio = tipoServicio;
-        this.tipo = tipo;
-        this.periodo = periodo;
-        this.concepto = concepto;
-        this.cantidad = cantidad;
-        this.usuarioCreacion = usuarioCreacion;
-        this.fechaCreacion = fechaCreacion;
-    }
+	public DeudaClienteEntity(Long deudaClienteId) {
+		this.deudaClienteId = deudaClienteId;
+	}
 
-    public Long getDeudaClienteId() {
-        return deudaClienteId;
-    }
+	public DeudaClienteEntity(Long deudaClienteId, int nroRegistro, String codigoCliente, String tipoServicio,
+			String periodo, Character tipo, String concepto, BigDecimal cantidad) {
+		this.deudaClienteId = deudaClienteId;
+		this.nroRegistro = nroRegistro;
+		this.codigoCliente = codigoCliente;
+		this.tipoServicio = tipoServicio;
+		this.periodo = periodo;
+		this.tipo = tipo;
+		this.concepto = concepto;
+		this.cantidad = cantidad;
+	
+	}
 
-    public void setDeudaClienteId(Long deudaClienteId) {
-        this.deudaClienteId = deudaClienteId;
-    }
+	public Long getDeudaClienteId() {
+		return deudaClienteId;
+	}
 
-    public String getNombreCliente() {
-        return nombreCliente;
-    }
+	public void setDeudaClienteId(Long deudaClienteId) {
+		this.deudaClienteId = deudaClienteId;
+	}
 
-    public void setNombreCliente(String nombreCliente) {
-        this.nombreCliente = nombreCliente;
-    }
+	
 
-    public String getNroDocumento() {
-        return nroDocumento;
-    }
+	public ArchivoEntity getArchivoId() {
+		return archivoId;
+	}
 
-    public void setNroDocumento(String nroDocumento) {
-        this.nroDocumento = nroDocumento;
-    }
+	public void setArchivoId(ArchivoEntity archivoId) {
+		this.archivoId = archivoId;
+	}
 
-    public String getCodigoCliente() {
-        return codigoCliente;
-    }
+	public Integer getNroRegistro() {
+		return nroRegistro;
+	}
 
-    public void setCodigoCliente(String codigoCliente) {
-        this.codigoCliente = codigoCliente;
-    }
+	public void setNroRegistro(Integer nroRegistro) throws Exception {
+		if (nroRegistro.toString().isBlank() || nroRegistro.toString().isEmpty()) {
+			this.nroRegistro = null;
+			throw new Exception("El campo Nro Registro no puede ser nulo");
+		} else {
+			this.nroRegistro = nroRegistro;
+		}
 
-    public String getTipoServicio() {
-        return tipoServicio;
-    }
+	}
 
-    public void setTipoServicio(String tipoServicio) {
-        this.tipoServicio = tipoServicio;
-    }
+	public String getCodigoCliente() {
+		return codigoCliente;
+	}
 
-    public String getServicio() {
-        return servicio;
-    }
+	public void setCodigoCliente(String codigoCliente) throws Exception {
+		if (codigoCliente.isBlank() || codigoCliente.isEmpty()) {
+			this.codigoCliente = null;
+			throw new Exception("El campo Nro Registro no puede ser nulo");
+		} else {
+			this.codigoCliente = codigoCliente;
+		}
 
-    public void setServicio(String servicio) {
-        this.servicio = servicio;
-    }
+	}
 
-    public Character getTipo() {
-        return tipo;
-    }
+	public String getNombreCliente() {
+		return nombreCliente;
+	}
 
-    public void setTipo(Character tipo) {
-        this.tipo = tipo;
-    }
+	public void setNombreCliente(String nombreCliente) {
+		this.nombreCliente = nombreCliente;
+	}
 
-    public String getPeriodo() {
-        return periodo;
-    }
+	public String getNroDocumento() {
+		return nroDocumento;
+	}
 
-    public void setPeriodo(String periodo) {
-        this.periodo = periodo;
-    }
+	public void setNroDocumento(String nroDocumento) {
+		this.nroDocumento = nroDocumento;
+	}
 
-    public String getConcepto() {
-        return concepto;
-    }
+	public String getDireccion() {
+		return direccion;
+	}
 
-    public void setConcepto(String concepto) {
-        this.concepto = concepto;
-    }
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
 
-    public BigDecimal getCantidad() {
-        return cantidad;
-    }
+	public String getNit() {
+		return nit;
+	}
 
-    public void setCantidad(BigDecimal cantidad) {
-        this.cantidad = cantidad;
-    }
+	public void setNit(String nit) {
+		this.nit = nit;
+	}
 
-    public BigDecimal getMontoUnitario() {
-        return montoUnitario;
-    }
+	public String getTelefono() {
+		return telefono;
+	}
 
-    public void setMontoUnitario(BigDecimal montoUnitario) {
-        this.montoUnitario = montoUnitario;
-    }
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
+	}
 
-    public String getDatoExtras() {
-        return datoExtras;
-    }
+	public String getServicio() {
+		return servicio;
+	}
 
-    public void setDatoExtras(String datoExtras) {
-        this.datoExtras = datoExtras;
-    }
+	public void setServicio(String servicio) throws Exception {
+		if (servicio.isBlank() || servicio.isEmpty()) {
+			this.servicio = null;
+			throw new Exception("El campo Servicio no puede ser nulo");
+		} else {
+			this.servicio = servicio;
+		}
 
-    public long getUsuarioCreacion() {
-        return usuarioCreacion;
-    }
+	}
 
-    public void setUsuarioCreacion(long usuarioCreacion) {
-        this.usuarioCreacion = usuarioCreacion;
-    }
+	public String getTipoServicio() {
+		return tipoServicio;
+	}
 
-    public Date getFechaCreacion() {
-        return fechaCreacion;
-    }
+	public void setTipoServicio(String tipoServicio) throws Exception {
+		if (tipoServicio.isBlank() || tipoServicio.isEmpty()) {
+			this.tipoServicio = null;
+			throw new Exception("El campo Tipo Servicio no puede ser nulo");
+		} else {
+			this.tipoServicio = tipoServicio;
+		}
 
-    public void setFechaCreacion(Date fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
+	}
 
-    public Boolean getTipoPlantilla() {
-        return tipoPlantilla;
-    }
+	public String getPeriodo() {
+		return periodo;
+	}
 
-    public void setTipoPlantilla(Boolean tipoPlantilla) {
-        this.tipoPlantilla = tipoPlantilla;
-    }
+	public void setPeriodo(String periodo) throws Exception {
+		if (periodo.isBlank() || periodo.isEmpty()) {
+			this.periodo = null;
+			throw new Exception("El campo Periodo no puede ser nulo");
+		} else {
+			this.periodo = periodo;
+		}
 
-    public String getEstado() {
-        return estado;
-    }
+	}
 
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
+	public Character getTipo() {
+		return tipo;
+	}
 
-    public Integer getNroRegistro() {
-        return nroRegistro;
-    }
+	public void setTipo(Character tipo) throws Exception {
+		if (tipo.toString().isBlank() || tipo.toString().isEmpty()) {
+			this.tipo = null;
+			throw new Exception("El campo Tipo Secciòn no puede ser nulo");
+		} else {
+			this.tipo = tipo;
+		}
 
-    public void setNroRegistro(Integer nroRegistro) {
-        this.nroRegistro = nroRegistro;
-    }
+	}
 
-    public String getPeriodoCabecera() {
-        return periodoCabecera;
-    }
+	public String getConcepto() {
+		return concepto;
+	}
 
-    public void setPeriodoCabecera(String periodoCabecera) {
-        this.periodoCabecera = periodoCabecera;
-    }
+	public void setConcepto(String concepto) throws Exception {
+		if (concepto.isBlank() || concepto.isEmpty()) {
+			this.concepto = null;
+			throw new Exception("El campo conceto no puede ser nulo");
 
-    public ArchivoEntity getArchivoId() {
-        return archivoId;
-    }
+		} else {
+			this.concepto = concepto;
+		}
 
-    public void setArchivoId(ArchivoEntity archivoId) {
-        this.archivoId = archivoId;
-    }
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (deudaClienteId != null ? deudaClienteId.hashCode() : 0);
-        return hash;
-    }
+	public BigDecimal getCantidad() {
+		return cantidad;
+	}
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof DeudaClienteEntity)) {
-            return false;
-        }
-        DeudaClienteEntity other = (DeudaClienteEntity) object;
-        if ((this.deudaClienteId == null && other.deudaClienteId != null) || (this.deudaClienteId != null && !this.deudaClienteId.equals(other.deudaClienteId))) {
-            return false;
-        }
-        return true;
-    }
+	public void setCantidad(BigDecimal cantidad) throws Exception {
+		if (cantidad.toString().isBlank() || cantidad.toString().isEmpty()) {
+			this.cantidad = null;
+			throw new Exception("El campo cantidad no puede ser nulo");
+		} else {
+			this.cantidad = cantidad;
+		}
 
-    @Override
-    public String toString() {
-        return "bo.com.tesla.administracion.entity.DeudaClienteEntity[ deudaClienteId=" + deudaClienteId + " ]";
-    }
-    
+	}
+
+	public BigDecimal getMontoUnitario() {
+		return montoUnitario;
+	}
+
+	public void setMontoUnitario(BigDecimal montoUnitario) throws Exception {
+		if (montoUnitario.toString().isBlank() || montoUnitario.toString().isEmpty()) {
+			this.montoUnitario = null;
+			throw new Exception("El campo monto unitario no puede ser nulo");
+		} else {
+			this.montoUnitario = montoUnitario;
+		}
+
+	}
+
+	public BigDecimal getSubTotal() {
+		return subTotal;
+	}
+
+	public void setSubTotal(BigDecimal subTotal) throws Exception {
+		if (subTotal.toString().isBlank() || subTotal.toString().isEmpty()) {
+			this.subTotal = null;
+			throw new Exception("El campo sub-total no puede ser nulo");
+		} else {
+			this.subTotal = subTotal;
+		}
+
+	}
+
+	public String getDatoExtras() {
+		return datoExtras;
+	}
+
+	public void setDatoExtras(String datoExtras) {
+		this.datoExtras = datoExtras;
+	}
+
+	public Boolean getTipoComprobante() {
+		return tipoComprobante;
+	}
+
+	public void setTipoComprobante(Boolean tipoComprobante) throws Exception {
+		if (tipoComprobante.toString().isBlank() || subTotal.toString().isEmpty()) {
+			this.tipoComprobante = null;
+			throw new Exception("El campo Tipo Comprobante no puede ser nulo");
+		} else {
+			this.tipoComprobante = tipoComprobante;
+		}
+
+	}
+
+	
+
+	public String getPeriodoCabecera() {
+		return periodoCabecera;
+	}
+
+	public void setPeriodoCabecera(String periodoCabecera) {
+		this.periodoCabecera = periodoCabecera;
+	}
+
+	
+
+	@Override
+	public String toString() {
+		return "bo.com.tesla.administracion.entity.DeudaClienteEntity[ deudaClienteId=" + deudaClienteId + " ]";
+	}
+
 }

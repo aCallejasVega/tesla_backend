@@ -27,23 +27,17 @@ import javax.persistence.TemporalType;
  * @author aCallejas
  */
 @Entity
-@Table(name = "cancelaciones", catalog = "exacta", schema = "tesla2")
+@Table(name = "detalles_comprobantes_cobros", catalog = "exacta", schema = "tesla2")
 @NamedQueries({
-    @NamedQuery(name = "CancelacionEntity.findAll", query = "SELECT c FROM CancelacionEntity c")})
-public class CancelacionEntity implements Serializable {
+    @NamedQuery(name = "DetalleComprobanteCobroEntity.findAll", query = "SELECT d FROM DetalleComprobanteCobroEntity d")})
+public class DetalleComprobanteCobroEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "cancelacion_id", nullable = false)
-    private Long cancelacionId;
-    @Basic(optional = false)
-    @Column(nullable = false, length = 255)
-    private String descripcion;
-    @Basic(optional = false)
-    @Column(name = "fecha_cancelacion", nullable = false, length = 255)
-    private String fechaCancelacion;
+    @Column(name = "detalle_comprobante_cobro_id", nullable = false)
+    private Long detalleComprobanteCobroId;
     @Basic(optional = false)
     @Column(name = "usuario_creacion", nullable = false)
     private long usuarioCreacion;
@@ -57,56 +51,38 @@ public class CancelacionEntity implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
     @Basic(optional = false)
-    @Column(nullable = false, length = 15)
+    @Column(nullable = false, length = 255)
     private String estado;
+    @JoinColumn(name = "cobro_cliente_id", referencedColumnName = "cobro_cliente_id", nullable = false)
+    @ManyToOne(optional = false)
+    private CobroClienteEntity cobroClienteId;
     @JoinColumn(name = "comprobante_cobro_id", referencedColumnName = "comprobante_cobro_id", nullable = false)
     @ManyToOne(optional = false)
     private ComprobanteCobroEntity comprobanteCobroId;
-    @JoinColumn(name = "motivo_cancelacion_id", referencedColumnName = "dominio_id", nullable = false)
+    @JoinColumn(name = "transaccion_cobro_id", referencedColumnName = "transaccion_cobro_id", nullable = false)
     @ManyToOne(optional = false)
-    private DominioEntity motivoCancelacionId;
-    @JoinColumn(name = "tipo_cancelacion_id", referencedColumnName = "dominio_id")
-    @ManyToOne
-    private DominioEntity tipoCancelacionId;
+    private TransaccionCobroEntity transaccionCobroId;
 
-    public CancelacionEntity() {
+    public DetalleComprobanteCobroEntity() {
     }
 
-    public CancelacionEntity(Long cancelacionId) {
-        this.cancelacionId = cancelacionId;
+    public DetalleComprobanteCobroEntity(Long detalleComprobanteCobroId) {
+        this.detalleComprobanteCobroId = detalleComprobanteCobroId;
     }
 
-    public CancelacionEntity(Long cancelacionId, String descripcion, String fechaCancelacion, long usuarioCreacion, Date fechaCreacion, String estado) {
-        this.cancelacionId = cancelacionId;
-        this.descripcion = descripcion;
-        this.fechaCancelacion = fechaCancelacion;
+    public DetalleComprobanteCobroEntity(Long detalleComprobanteCobroId, long usuarioCreacion, Date fechaCreacion, String estado) {
+        this.detalleComprobanteCobroId = detalleComprobanteCobroId;
         this.usuarioCreacion = usuarioCreacion;
         this.fechaCreacion = fechaCreacion;
         this.estado = estado;
     }
 
-    public Long getCancelacionId() {
-        return cancelacionId;
+    public Long getDetalleComprobanteCobroId() {
+        return detalleComprobanteCobroId;
     }
 
-    public void setCancelacionId(Long cancelacionId) {
-        this.cancelacionId = cancelacionId;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public String getFechaCancelacion() {
-        return fechaCancelacion;
-    }
-
-    public void setFechaCancelacion(String fechaCancelacion) {
-        this.fechaCancelacion = fechaCancelacion;
+    public void setDetalleComprobanteCobroId(Long detalleComprobanteCobroId) {
+        this.detalleComprobanteCobroId = detalleComprobanteCobroId;
     }
 
     public long getUsuarioCreacion() {
@@ -149,6 +125,14 @@ public class CancelacionEntity implements Serializable {
         this.estado = estado;
     }
 
+    public CobroClienteEntity getCobroClienteId() {
+        return cobroClienteId;
+    }
+
+    public void setCobroClienteId(CobroClienteEntity cobroClienteId) {
+        this.cobroClienteId = cobroClienteId;
+    }
+
     public ComprobanteCobroEntity getComprobanteCobroId() {
         return comprobanteCobroId;
     }
@@ -157,37 +141,29 @@ public class CancelacionEntity implements Serializable {
         this.comprobanteCobroId = comprobanteCobroId;
     }
 
-    public DominioEntity getMotivoCancelacionId() {
-        return motivoCancelacionId;
+    public TransaccionCobroEntity getTransaccionCobroId() {
+        return transaccionCobroId;
     }
 
-    public void setMotivoCancelacionId(DominioEntity motivoCancelacionId) {
-        this.motivoCancelacionId = motivoCancelacionId;
-    }
-
-    public DominioEntity getTipoCancelacionId() {
-        return tipoCancelacionId;
-    }
-
-    public void setTipoCancelacionId(DominioEntity tipoCancelacionId) {
-        this.tipoCancelacionId = tipoCancelacionId;
+    public void setTransaccionCobroId(TransaccionCobroEntity transaccionCobroId) {
+        this.transaccionCobroId = transaccionCobroId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (cancelacionId != null ? cancelacionId.hashCode() : 0);
+        hash += (detalleComprobanteCobroId != null ? detalleComprobanteCobroId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof CancelacionEntity)) {
+        if (!(object instanceof DetalleComprobanteCobroEntity)) {
             return false;
         }
-        CancelacionEntity other = (CancelacionEntity) object;
-        if ((this.cancelacionId == null && other.cancelacionId != null) || (this.cancelacionId != null && !this.cancelacionId.equals(other.cancelacionId))) {
+        DetalleComprobanteCobroEntity other = (DetalleComprobanteCobroEntity) object;
+        if ((this.detalleComprobanteCobroId == null && other.detalleComprobanteCobroId != null) || (this.detalleComprobanteCobroId != null && !this.detalleComprobanteCobroId.equals(other.detalleComprobanteCobroId))) {
             return false;
         }
         return true;
@@ -195,7 +171,7 @@ public class CancelacionEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.com.tesla.administracion.entity.CancelacionEntity[ cancelacionId=" + cancelacionId + " ]";
+        return "bo.com.tesla.administracion.entity.DetalleComprobanteCobroEntity[ detalleComprobanteCobroId=" + detalleComprobanteCobroId + " ]";
     }
     
 }

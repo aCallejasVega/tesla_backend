@@ -9,9 +9,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,6 +17,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -29,8 +29,9 @@ import javax.persistence.TemporalType;
  * @author aCallejas
  */
 @Entity
-@Table(name = "personas", catalog = "exacta", schema = "tesla")
-
+@Table(name = "personas", catalog = "exacta", schema = "tesla2")
+@NamedQueries({
+    @NamedQuery(name = "PersonaEntity.findAll", query = "SELECT p FROM PersonaEntity p")})
 public class PersonaEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -68,6 +69,8 @@ public class PersonaEntity implements Serializable {
     private Date fechaModificacion;
     @Column(length = 15)
     private String estado;
+    @Column(length = 15)
+    private String transaccion;
     @OneToMany(mappedBy = "personaId")
     private List<EmpleadoEntity> empleadoEntityList;
     @JoinColumn(name = "ciudad_id", referencedColumnName = "dominio_id", nullable = false)
@@ -76,7 +79,7 @@ public class PersonaEntity implements Serializable {
     @JoinColumn(name = "tipo_documento_id", referencedColumnName = "dominio_id", nullable = false)
     @ManyToOne(optional = false)
     private DominioEntity tipoDocumentoId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personaId")
+    @OneToMany(mappedBy = "personaId")
     private List<SegUsuarioEntity> segUsuarioEntityList;
 
     public PersonaEntity() {
@@ -195,6 +198,14 @@ public class PersonaEntity implements Serializable {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public String getTransaccion() {
+        return transaccion;
+    }
+
+    public void setTransaccion(String transaccion) {
+        this.transaccion = transaccion;
     }
 
     public List<EmpleadoEntity> getEmpleadoEntityList() {

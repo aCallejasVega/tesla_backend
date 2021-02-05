@@ -6,7 +6,6 @@
 package bo.com.tesla.administracion.entity;
 
 import java.io.Serializable;
-
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,15 +14,20 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
  * @author aCallejas
  */
 @Entity
-@Table(name = "acciones", catalog = "exacta", schema = "tesla")
-
+@Table(name = "acciones", catalog = "exacta", schema = "tesla2")
+@NamedQueries({
+    @NamedQuery(name = "AccionEntity.findAll", query = "SELECT a FROM AccionEntity a")})
 public class AccionEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -32,12 +36,18 @@ public class AccionEntity implements Serializable {
     @Basic(optional = false)
     @Column(name = "acciones_id", nullable = false)
     private Long accionesId;
-    @Column(length = 255)
+    @Basic(optional = false)
+    @Column(nullable = false, length = 255)
     private String estado;
-    @Column(name = "fecha_estado", length = 255)
+    @Basic(optional = false)
+    @Column(name = "fecha_estado", nullable = false, length = 255)
     private String fechaEstado;
-    @JoinColumn(name = "historico_deuda_id", referencedColumnName = "historico_deuda_id")
-    @ManyToOne
+    @Basic(optional = false)
+    @Column(nullable = false, length = 15)
+    private String usuario;
+    @JsonIgnore
+    @JoinColumn(name = "historico_deuda_id", referencedColumnName = "historico_deuda_id", nullable = false)
+    @ManyToOne(optional = false)
     private HistoricoDeudaEntity historicoDeudaId;
 
     public AccionEntity() {
@@ -45,6 +55,13 @@ public class AccionEntity implements Serializable {
 
     public AccionEntity(Long accionesId) {
         this.accionesId = accionesId;
+    }
+
+    public AccionEntity(Long accionesId, String estado, String fechaEstado, String usuario) {
+        this.accionesId = accionesId;
+        this.estado = estado;
+        this.fechaEstado = fechaEstado;
+        this.usuario = usuario;
     }
 
     public Long getAccionesId() {
@@ -69,6 +86,14 @@ public class AccionEntity implements Serializable {
 
     public void setFechaEstado(String fechaEstado) {
         this.fechaEstado = fechaEstado;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
     public HistoricoDeudaEntity getHistoricoDeudaId() {

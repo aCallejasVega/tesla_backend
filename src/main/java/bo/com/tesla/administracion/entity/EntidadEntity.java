@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -19,6 +18,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -29,8 +30,9 @@ import javax.persistence.TemporalType;
  * @author aCallejas
  */
 @Entity
-@Table(name = "entidades", catalog = "exacta", schema = "tesla")
-
+@Table(name = "entidades", catalog = "exacta", schema = "tesla2")
+@NamedQueries({
+    @NamedQuery(name = "EntidadEntity.findAll", query = "SELECT e FROM EntidadEntity e")})
 public class EntidadEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -56,6 +58,8 @@ public class EntidadEntity implements Serializable {
     private String nit;
     @Column(name = "llave_dosificacion", length = 255)
     private String llaveDosificacion;
+    @Column(name = "path_logo", length = 255)
+    private String pathLogo;
     @Basic(optional = false)
     @Column(name = "fecha_creacion", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -72,13 +76,15 @@ public class EntidadEntity implements Serializable {
     @Column(nullable = false, length = 10)
     private String estado;
     @OneToMany(mappedBy = "entidadId")
-    private List<TransaccionPagoEntity> transaccionPagoEntityList;
-    @OneToMany(mappedBy = "entidadId")
-    private List<TiposTransaccionEntity> tiposTransaccionEntityList;
+    private List<TipoTransaccionEntity> tipoTransaccionEntityList;
     @OneToMany(mappedBy = "entidadId")
     private List<ArchivoEntity> archivoEntityList;
     @OneToMany(mappedBy = "entidadId")
-    private List<EntidadRecaudadorEntity> entidadRecaudadorEntityList;
+    private List<TransaccionCobroEntity> transaccionCobroEntityList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
+    private List<ComprobanteCobroEntity> comprobanteCobroEntityList;
+    @OneToMany(mappedBy = "entidadId")
+    private List<EntidadeRecaudadorEntity> entidadeRecaudadorEntityList;
     @OneToMany(mappedBy = "entidadId")
     private List<EmpleadoEntity> empleadoEntityList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
@@ -86,7 +92,7 @@ public class EntidadEntity implements Serializable {
     @JoinColumn(name = "tipo_entidad_id", referencedColumnName = "dominio_id", nullable = false)
     @ManyToOne(optional = false)
     private DominioEntity tipoEntidadId;
-    @OneToMany(mappedBy = "entidadId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
     private List<PlantillaEntity> plantillaEntityList;
 
     public EntidadEntity() {
@@ -164,6 +170,14 @@ public class EntidadEntity implements Serializable {
         this.llaveDosificacion = llaveDosificacion;
     }
 
+    public String getPathLogo() {
+        return pathLogo;
+    }
+
+    public void setPathLogo(String pathLogo) {
+        this.pathLogo = pathLogo;
+    }
+
     public Date getFechaCreacion() {
         return fechaCreacion;
     }
@@ -204,20 +218,12 @@ public class EntidadEntity implements Serializable {
         this.estado = estado;
     }
 
-    public List<TransaccionPagoEntity> getTransaccionPagoEntityList() {
-        return transaccionPagoEntityList;
+    public List<TipoTransaccionEntity> getTipoTransaccionEntityList() {
+        return tipoTransaccionEntityList;
     }
 
-    public void setTransaccionPagoEntityList(List<TransaccionPagoEntity> transaccionPagoEntityList) {
-        this.transaccionPagoEntityList = transaccionPagoEntityList;
-    }
-
-    public List<TiposTransaccionEntity> getTiposTransaccionEntityList() {
-        return tiposTransaccionEntityList;
-    }
-
-    public void setTiposTransaccionEntityList(List<TiposTransaccionEntity> tiposTransaccionEntityList) {
-        this.tiposTransaccionEntityList = tiposTransaccionEntityList;
+    public void setTipoTransaccionEntityList(List<TipoTransaccionEntity> tipoTransaccionEntityList) {
+        this.tipoTransaccionEntityList = tipoTransaccionEntityList;
     }
 
     public List<ArchivoEntity> getArchivoEntityList() {
@@ -228,12 +234,28 @@ public class EntidadEntity implements Serializable {
         this.archivoEntityList = archivoEntityList;
     }
 
-    public List<EntidadRecaudadorEntity> getEntidadRecaudadorEntityList() {
-        return entidadRecaudadorEntityList;
+    public List<TransaccionCobroEntity> getTransaccionCobroEntityList() {
+        return transaccionCobroEntityList;
     }
 
-    public void setEntidadRecaudadorEntityList(List<EntidadRecaudadorEntity> entidadRecaudadorEntityList) {
-        this.entidadRecaudadorEntityList = entidadRecaudadorEntityList;
+    public void setTransaccionCobroEntityList(List<TransaccionCobroEntity> transaccionCobroEntityList) {
+        this.transaccionCobroEntityList = transaccionCobroEntityList;
+    }
+
+    public List<ComprobanteCobroEntity> getComprobanteCobroEntityList() {
+        return comprobanteCobroEntityList;
+    }
+
+    public void setComprobanteCobroEntityList(List<ComprobanteCobroEntity> comprobanteCobroEntityList) {
+        this.comprobanteCobroEntityList = comprobanteCobroEntityList;
+    }
+
+    public List<EntidadeRecaudadorEntity> getEntidadeRecaudadorEntityList() {
+        return entidadeRecaudadorEntityList;
+    }
+
+    public void setEntidadeRecaudadorEntityList(List<EntidadeRecaudadorEntity> entidadeRecaudadorEntityList) {
+        this.entidadeRecaudadorEntityList = entidadeRecaudadorEntityList;
     }
 
     public List<EmpleadoEntity> getEmpleadoEntityList() {

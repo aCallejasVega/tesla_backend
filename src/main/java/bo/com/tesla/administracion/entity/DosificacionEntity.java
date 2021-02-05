@@ -7,8 +7,9 @@ package bo.com.tesla.administracion.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,6 +17,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -25,8 +29,9 @@ import javax.persistence.TemporalType;
  * @author aCallejas
  */
 @Entity
-@Table(name = "dosificaciones", catalog = "exacta", schema = "tesla")
-
+@Table(name = "dosificaciones", catalog = "exacta", schema = "tesla2")
+@NamedQueries({
+    @NamedQuery(name = "DosificacionEntity.findAll", query = "SELECT d FROM DosificacionEntity d")})
 public class DosificacionEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -66,12 +71,11 @@ public class DosificacionEntity implements Serializable {
     @Basic(optional = false)
     @Column(nullable = false, length = 255)
     private String estado;
-    @JoinColumn(name = "comprobante_pago_id", referencedColumnName = "comprobante_pago_id")
-    @ManyToOne
-    private ComprobantePagoEntity comprobantePagoId;
-    @JoinColumn(name = "tipo_documento_pago_id", referencedColumnName = "dominio_id")
-    @ManyToOne
-    private DominioEntity tipoDocumentoPagoId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dosificacionId")
+    private List<ComprobanteCobroEntity> comprobanteCobroEntityList;
+    @JoinColumn(name = "tipo_documento_cobro_id", referencedColumnName = "dominio_id", nullable = false)
+    @ManyToOne(optional = false)
+    private DominioEntity tipoDocumentoCobroId;
     @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id", nullable = false)
     @ManyToOne(optional = false)
     private EntidadEntity entidadId;
@@ -183,20 +187,20 @@ public class DosificacionEntity implements Serializable {
         this.estado = estado;
     }
 
-    public ComprobantePagoEntity getComprobantePagoId() {
-        return comprobantePagoId;
+    public List<ComprobanteCobroEntity> getComprobanteCobroEntityList() {
+        return comprobanteCobroEntityList;
     }
 
-    public void setComprobantePagoId(ComprobantePagoEntity comprobantePagoId) {
-        this.comprobantePagoId = comprobantePagoId;
+    public void setComprobanteCobroEntityList(List<ComprobanteCobroEntity> comprobanteCobroEntityList) {
+        this.comprobanteCobroEntityList = comprobanteCobroEntityList;
     }
 
-    public DominioEntity getTipoDocumentoPagoId() {
-        return tipoDocumentoPagoId;
+    public DominioEntity getTipoDocumentoCobroId() {
+        return tipoDocumentoCobroId;
     }
 
-    public void setTipoDocumentoPagoId(DominioEntity tipoDocumentoPagoId) {
-        this.tipoDocumentoPagoId = tipoDocumentoPagoId;
+    public void setTipoDocumentoCobroId(DominioEntity tipoDocumentoCobroId) {
+        this.tipoDocumentoCobroId = tipoDocumentoCobroId;
     }
 
     public EntidadEntity getEntidadId() {

@@ -6,7 +6,6 @@
 package bo.com.tesla.administracion.entity;
 
 import java.io.Serializable;
-
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +14,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
@@ -22,9 +23,10 @@ import javax.persistence.Table;
  * @author aCallejas
  */
 @Entity
-@Table(name = "entidades_recaudadores", catalog = "exacta", schema = "tesla")
-
-public class EntidadRecaudadorEntity implements Serializable {
+@Table(name = "entidades_recaudadores", catalog = "exacta", schema = "tesla2")
+@NamedQueries({
+    @NamedQuery(name = "EntidadeRecaudadorEntity.findAll", query = "SELECT e FROM EntidadeRecaudadorEntity e")})
+public class EntidadeRecaudadorEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -39,10 +41,10 @@ public class EntidadRecaudadorEntity implements Serializable {
     @ManyToOne
     private RecaudadorEntity recaudadorId;
 
-    public EntidadRecaudadorEntity() {
+    public EntidadeRecaudadorEntity() {
     }
 
-    public EntidadRecaudadorEntity(Long entidadRecaudadorId) {
+    public EntidadeRecaudadorEntity(Long entidadRecaudadorId) {
         this.entidadRecaudadorId = entidadRecaudadorId;
     }
 
@@ -80,10 +82,10 @@ public class EntidadRecaudadorEntity implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof EntidadRecaudadorEntity)) {
+        if (!(object instanceof EntidadeRecaudadorEntity)) {
             return false;
         }
-        EntidadRecaudadorEntity other = (EntidadRecaudadorEntity) object;
+        EntidadeRecaudadorEntity other = (EntidadeRecaudadorEntity) object;
         if ((this.entidadRecaudadorId == null && other.entidadRecaudadorId != null) || (this.entidadRecaudadorId != null && !this.entidadRecaudadorId.equals(other.entidadRecaudadorId))) {
             return false;
         }
@@ -92,7 +94,7 @@ public class EntidadRecaudadorEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.com.tesla.administracion.entity.EntidadRecaudadorEntity[ entidadRecaudadorId=" + entidadRecaudadorId + " ]";
+        return "bo.com.tesla.administracion.entity.EntidadeRecaudadorEntity[ entidadRecaudadorId=" + entidadRecaudadorId + " ]";
     }
     
 }

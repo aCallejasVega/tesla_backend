@@ -9,8 +9,8 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +18,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -28,16 +30,17 @@ import javax.persistence.TemporalType;
  * @author aCallejas
  */
 @Entity
-@Table(name = "transacciones_pagos", catalog = "exacta", schema = "tesla")
-
-public class TransaccionPagoEntity implements Serializable {
+@Table(name = "transacciones_cobros", catalog = "exacta", schema = "tesla2")
+@NamedQueries({
+    @NamedQuery(name = "TransaccionCobroEntity.findAll", query = "SELECT t FROM TransaccionCobroEntity t")})
+public class TransaccionCobroEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "transaccion_pago_id", nullable = false)
-    private Long transaccionPagoId;
+    @Column(name = "transaccion_cobro_id", nullable = false)
+    private Long transaccionCobroId;
     @Column(name = "tipo_servicio", length = 300)
     private String tipoServicio;
     @Column(length = 300)
@@ -59,22 +62,22 @@ public class TransaccionPagoEntity implements Serializable {
     @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id")
     @ManyToOne
     private EntidadEntity entidadId;
-    @OneToMany(mappedBy = "transaccionPagoId")
-    private List<DetalleComprobantePagoEntity> detalleComprobantePagoEntityList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "transaccionCobroId")
+    private List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList;
 
-    public TransaccionPagoEntity() {
+    public TransaccionCobroEntity() {
     }
 
-    public TransaccionPagoEntity(Long transaccionPagoId) {
-        this.transaccionPagoId = transaccionPagoId;
+    public TransaccionCobroEntity(Long transaccionCobroId) {
+        this.transaccionCobroId = transaccionCobroId;
     }
 
-    public Long getTransaccionPagoId() {
-        return transaccionPagoId;
+    public Long getTransaccionCobroId() {
+        return transaccionCobroId;
     }
 
-    public void setTransaccionPagoId(Long transaccionPagoId) {
-        this.transaccionPagoId = transaccionPagoId;
+    public void setTransaccionCobroId(Long transaccionCobroId) {
+        this.transaccionCobroId = transaccionCobroId;
     }
 
     public String getTipoServicio() {
@@ -149,29 +152,29 @@ public class TransaccionPagoEntity implements Serializable {
         this.entidadId = entidadId;
     }
 
-    public List<DetalleComprobantePagoEntity> getDetalleComprobantePagoEntityList() {
-        return detalleComprobantePagoEntityList;
+    public List<DetalleComprobanteCobroEntity> getDetalleComprobanteCobroEntityList() {
+        return detalleComprobanteCobroEntityList;
     }
 
-    public void setDetalleComprobantePagoEntityList(List<DetalleComprobantePagoEntity> detalleComprobantePagoEntityList) {
-        this.detalleComprobantePagoEntityList = detalleComprobantePagoEntityList;
+    public void setDetalleComprobanteCobroEntityList(List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList) {
+        this.detalleComprobanteCobroEntityList = detalleComprobanteCobroEntityList;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (transaccionPagoId != null ? transaccionPagoId.hashCode() : 0);
+        hash += (transaccionCobroId != null ? transaccionCobroId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof TransaccionPagoEntity)) {
+        if (!(object instanceof TransaccionCobroEntity)) {
             return false;
         }
-        TransaccionPagoEntity other = (TransaccionPagoEntity) object;
-        if ((this.transaccionPagoId == null && other.transaccionPagoId != null) || (this.transaccionPagoId != null && !this.transaccionPagoId.equals(other.transaccionPagoId))) {
+        TransaccionCobroEntity other = (TransaccionCobroEntity) object;
+        if ((this.transaccionCobroId == null && other.transaccionCobroId != null) || (this.transaccionCobroId != null && !this.transaccionCobroId.equals(other.transaccionCobroId))) {
             return false;
         }
         return true;
@@ -179,7 +182,7 @@ public class TransaccionPagoEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.com.tesla.administracion.entity.TransaccionPagoEntity[ transaccionPagoId=" + transaccionPagoId + " ]";
+        return "bo.com.tesla.administracion.entity.TransaccionCobroEntity[ transaccionCobroId=" + transaccionCobroId + " ]";
     }
     
 }

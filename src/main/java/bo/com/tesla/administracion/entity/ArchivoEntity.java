@@ -6,11 +6,11 @@
 package bo.com.tesla.administracion.entity;
 
 import java.io.Serializable;
-import java.math.BigInteger;
+
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,18 +18,23 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
  * @author aCallejas
  */
 @Entity
-@Table(name = "archivos", catalog = "exacta", schema = "tesla")
-
+@Table(name = "archivos", catalog = "exacta", schema = "tesla2")
+@NamedQueries({
+    @NamedQuery(name = "ArchivoEntity.findAll", query = "SELECT a FROM ArchivoEntity a")})
 public class ArchivoEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -49,24 +54,30 @@ public class ArchivoEntity implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date finCargado;
     @Column(name = "usuario_creacion")
-    private BigInteger usuarioCreacion;
+    private Long usuarioCreacion;
     @Column(name = "fecha_creacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
     @Column(name = "usuario_modificacion")
-    private BigInteger usuarioModificacion;
+    private Long usuarioModificacion;
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
     @Column(length = 15)
     private String estado;
-    @OneToMany(mappedBy = "archivoId")
+    @Column(length = 15)
+    private String transaccion;
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "archivoId")
+    private List<CobroClienteEntity> cobroClienteEntityList;
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "archivoId")
     private List<HistoricoDeudaEntity> historicoDeudaEntityList;
+    @JsonIgnore
     @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id")
     @ManyToOne
     private EntidadEntity entidadId;
-    @OneToMany(mappedBy = "archivoId")
-    private List<PagoClienteEntity> pagoClienteEntityList;
+    @JsonIgnore
     @OneToMany(mappedBy = "archivoId")
     private List<DeudaClienteEntity> deudaClienteEntityList;
 
@@ -117,11 +128,11 @@ public class ArchivoEntity implements Serializable {
         this.finCargado = finCargado;
     }
 
-    public BigInteger getUsuarioCreacion() {
+    public Long getUsuarioCreacion() {
         return usuarioCreacion;
     }
 
-    public void setUsuarioCreacion(BigInteger usuarioCreacion) {
+    public void setUsuarioCreacion(Long usuarioCreacion) {
         this.usuarioCreacion = usuarioCreacion;
     }
 
@@ -133,11 +144,11 @@ public class ArchivoEntity implements Serializable {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public BigInteger getUsuarioModificacion() {
+    public Long getUsuarioModificacion() {
         return usuarioModificacion;
     }
 
-    public void setUsuarioModificacion(BigInteger usuarioModificacion) {
+    public void setUsuarioModificacion(Long usuarioModificacion) {
         this.usuarioModificacion = usuarioModificacion;
     }
 
@@ -157,6 +168,14 @@ public class ArchivoEntity implements Serializable {
         this.estado = estado;
     }
 
+    public List<CobroClienteEntity> getCobroClienteEntityList() {
+        return cobroClienteEntityList;
+    }
+
+    public void setCobroClienteEntityList(List<CobroClienteEntity> cobroClienteEntityList) {
+        this.cobroClienteEntityList = cobroClienteEntityList;
+    }
+
     public List<HistoricoDeudaEntity> getHistoricoDeudaEntityList() {
         return historicoDeudaEntityList;
     }
@@ -173,14 +192,6 @@ public class ArchivoEntity implements Serializable {
         this.entidadId = entidadId;
     }
 
-    public List<PagoClienteEntity> getPagoClienteEntityList() {
-        return pagoClienteEntityList;
-    }
-
-    public void setPagoClienteEntityList(List<PagoClienteEntity> pagoClienteEntityList) {
-        this.pagoClienteEntityList = pagoClienteEntityList;
-    }
-
     public List<DeudaClienteEntity> getDeudaClienteEntityList() {
         return deudaClienteEntityList;
     }
@@ -189,7 +200,19 @@ public class ArchivoEntity implements Serializable {
         this.deudaClienteEntityList = deudaClienteEntityList;
     }
 
-    @Override
+    
+    
+    
+    
+    public String getTransaccion() {
+		return transaccion;
+	}
+
+	public void setTransaccion(String transaccion) {
+		this.transaccion = transaccion;
+	}
+
+	@Override
     public int hashCode() {
         int hash = 0;
         hash += (archivoId != null ? archivoId.hashCode() : 0);

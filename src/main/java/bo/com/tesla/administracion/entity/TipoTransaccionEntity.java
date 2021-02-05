@@ -8,7 +8,6 @@ package bo.com.tesla.administracion.entity;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
-
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +16,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,9 +27,10 @@ import javax.persistence.TemporalType;
  * @author aCallejas
  */
 @Entity
-@Table(name = "tipos_transacciones", catalog = "exacta", schema = "tesla")
-
-public class TiposTransaccionEntity implements Serializable {
+@Table(name = "tipos_transacciones", catalog = "exacta", schema = "tesla2")
+@NamedQueries({
+    @NamedQuery(name = "TipoTransaccionEntity.findAll", query = "SELECT t FROM TipoTransaccionEntity t")})
+public class TipoTransaccionEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -54,10 +56,10 @@ public class TiposTransaccionEntity implements Serializable {
     @ManyToOne
     private EntidadEntity entidadId;
 
-    public TiposTransaccionEntity() {
+    public TipoTransaccionEntity() {
     }
 
-    public TiposTransaccionEntity(Long tipoTransaccionId) {
+    public TipoTransaccionEntity(Long tipoTransaccionId) {
         this.tipoTransaccionId = tipoTransaccionId;
     }
 
@@ -135,10 +137,10 @@ public class TiposTransaccionEntity implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof TiposTransaccionEntity)) {
+        if (!(object instanceof TipoTransaccionEntity)) {
             return false;
         }
-        TiposTransaccionEntity other = (TiposTransaccionEntity) object;
+        TipoTransaccionEntity other = (TipoTransaccionEntity) object;
         if ((this.tipoTransaccionId == null && other.tipoTransaccionId != null) || (this.tipoTransaccionId != null && !this.tipoTransaccionId.equals(other.tipoTransaccionId))) {
             return false;
         }
@@ -147,7 +149,7 @@ public class TiposTransaccionEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.com.tesla.administracion.entity.TiposTransaccionEntity[ tipoTransaccionId=" + tipoTransaccionId + " ]";
+        return "bo.com.tesla.administracion.entity.TipoTransaccionEntity[ tipoTransaccionId=" + tipoTransaccionId + " ]";
     }
     
 }

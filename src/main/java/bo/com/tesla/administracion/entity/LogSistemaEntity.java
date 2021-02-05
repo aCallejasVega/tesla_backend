@@ -6,22 +6,28 @@
 package bo.com.tesla.administracion.entity;
 
 import java.io.Serializable;
-
+import java.math.BigInteger;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
  * @author aCallejas
  */
 @Entity
-@Table(name = "log_sistemas", catalog = "exacta", schema = "tesla")
-
+@Table(name = "log_sistemas", catalog = "exacta", schema = "tesla2")
+@NamedQueries({
+    @NamedQuery(name = "LogSistemaEntity.findAll", query = "SELECT l FROM LogSistemaEntity l")})
 public class LogSistemaEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -30,16 +36,17 @@ public class LogSistemaEntity implements Serializable {
     @Basic(optional = false)
     @Column(name = "log_sistema_id", nullable = false)
     private Long logSistemaId;
-    @Column(length = 255)
+    @Column(length = 100)
     private String tabla;
-    @Column(name = "registro_anterior", length = 255)
+    @Column(name = "registro_anterior", length = 500)
     private String registroAnterior;
-    @Column(name = "registro_actual", length = 255)
+    @Column(name = "registro_actual", length = 500)
     private String registroActual;
-    @Column(name = "usuario_creacion", length = 255)
-    private String usuarioCreacion;
-    @Column(name = "fecha_creacion", length = 255)
-    private String fechaCreacion;
+    @Column(name = "usuario_creacion")
+    private BigInteger usuarioCreacion;
+    @Column(name = "fecha_creacion")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaCreacion;
 
     public LogSistemaEntity() {
     }
@@ -80,19 +87,19 @@ public class LogSistemaEntity implements Serializable {
         this.registroActual = registroActual;
     }
 
-    public String getUsuarioCreacion() {
+    public BigInteger getUsuarioCreacion() {
         return usuarioCreacion;
     }
 
-    public void setUsuarioCreacion(String usuarioCreacion) {
+    public void setUsuarioCreacion(BigInteger usuarioCreacion) {
         this.usuarioCreacion = usuarioCreacion;
     }
 
-    public String getFechaCreacion() {
+    public Date getFechaCreacion() {
         return fechaCreacion;
     }
 
-    public void setFechaCreacion(String fechaCreacion) {
+    public void setFechaCreacion(Date fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
 

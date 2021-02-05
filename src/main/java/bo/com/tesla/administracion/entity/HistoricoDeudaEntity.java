@@ -7,11 +7,10 @@ package bo.com.tesla.administracion.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,6 +18,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -29,8 +30,9 @@ import javax.persistence.TemporalType;
  * @author aCallejas
  */
 @Entity
-@Table(name = "historicos_deudas", catalog = "exacta", schema = "tesla")
-
+@Table(name = "historicos_deudas", catalog = "exacta", schema = "tesla2")
+@NamedQueries({
+    @NamedQuery(name = "HistoricoDeudaEntity.findAll", query = "SELECT h FROM HistoricoDeudaEntity h")})
 public class HistoricoDeudaEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,15 +44,16 @@ public class HistoricoDeudaEntity implements Serializable {
     @Basic(optional = false)
     @Column(name = "deuda_cliente_id", nullable = false)
     private long deudaClienteId;
-    @Column(name = "metodo_pago_id")
-    private BigInteger metodoPagoId;
+    @Basic(optional = false)
+    @Column(name = "nro_registro", nullable = false)
+    private int nroRegistro;
+    @Basic(optional = false)
+    @Column(name = "codigo_cliente", nullable = false, length = 15)
+    private String codigoCliente;
     @Column(name = "nombre_cliente", length = 200)
     private String nombreCliente;
     @Column(name = "nro_documento", length = 15)
     private String nroDocumento;
-    @Basic(optional = false)
-    @Column(name = "codigo_cliente", nullable = false, length = 15)
-    private String codigoCliente;
     @Basic(optional = false)
     @Column(name = "tipo_servicio", nullable = false, length = 300)
     private String tipoServicio;
@@ -58,23 +61,22 @@ public class HistoricoDeudaEntity implements Serializable {
     @Column(nullable = false, length = 250)
     private String periodo;
     @Basic(optional = false)
-    @Column(nullable = false, length = 250)
-    private String concepto;
+    @Column(nullable = false)
+    private Character tipo;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Basic(optional = false)
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal cantidad;
+    @Basic(optional = false)
+    @Column(nullable = false, length = 250)
+    private String concepto;
     @Column(name = "monto_unitario", precision = 17, scale = 2)
     private BigDecimal montoUnitario;
+    @Column(name = "dato_extra", length = 250)
+    private String datoExtra;
     @Basic(optional = false)
-    @Column(nullable = false)
-    private Character tipo;
-    @Column(length = 250)
-    private String dato;
-    @Column(name = "tipo_plantilla")
-    private Boolean tipoPlantilla;
-    @Column(name = "nro_registro")
-    private Integer nroRegistro;
+    @Column(name = "tipo_plantilla", nullable = false)
+    private boolean tipoPlantilla;
     @Column(name = "periodo_cabecera", length = 250)
     private String periodoCabecera;
     @Basic(optional = false)
@@ -84,10 +86,10 @@ public class HistoricoDeudaEntity implements Serializable {
     @Column(name = "fecha_creacion", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
-    @JoinColumn(name = "archivo_id", referencedColumnName = "archivo_id")
-    @ManyToOne
+    @JoinColumn(name = "archivo_id", referencedColumnName = "archivo_id", nullable = false)
+    @ManyToOne(optional = false)
     private ArchivoEntity archivoId;
-    @OneToMany(mappedBy = "historicoDeudaId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "historicoDeudaId")
     private List<AccionEntity> accionEntityList;
 
     public HistoricoDeudaEntity() {
@@ -97,15 +99,17 @@ public class HistoricoDeudaEntity implements Serializable {
         this.historicoDeudaId = historicoDeudaId;
     }
 
-    public HistoricoDeudaEntity(Long historicoDeudaId, long deudaClienteId, String codigoCliente, String tipoServicio, String periodo, String concepto, BigDecimal cantidad, Character tipo, long usuarioCreacion, Date fechaCreacion) {
+    public HistoricoDeudaEntity(Long historicoDeudaId, long deudaClienteId, int nroRegistro, String codigoCliente, String tipoServicio, String periodo, Character tipo, BigDecimal cantidad, String concepto, boolean tipoPlantilla, long usuarioCreacion, Date fechaCreacion) {
         this.historicoDeudaId = historicoDeudaId;
         this.deudaClienteId = deudaClienteId;
+        this.nroRegistro = nroRegistro;
         this.codigoCliente = codigoCliente;
         this.tipoServicio = tipoServicio;
         this.periodo = periodo;
-        this.concepto = concepto;
-        this.cantidad = cantidad;
         this.tipo = tipo;
+        this.cantidad = cantidad;
+        this.concepto = concepto;
+        this.tipoPlantilla = tipoPlantilla;
         this.usuarioCreacion = usuarioCreacion;
         this.fechaCreacion = fechaCreacion;
     }
@@ -126,12 +130,20 @@ public class HistoricoDeudaEntity implements Serializable {
         this.deudaClienteId = deudaClienteId;
     }
 
-    public BigInteger getMetodoPagoId() {
-        return metodoPagoId;
+    public int getNroRegistro() {
+        return nroRegistro;
     }
 
-    public void setMetodoPagoId(BigInteger metodoPagoId) {
-        this.metodoPagoId = metodoPagoId;
+    public void setNroRegistro(int nroRegistro) {
+        this.nroRegistro = nroRegistro;
+    }
+
+    public String getCodigoCliente() {
+        return codigoCliente;
+    }
+
+    public void setCodigoCliente(String codigoCliente) {
+        this.codigoCliente = codigoCliente;
     }
 
     public String getNombreCliente() {
@@ -150,14 +162,6 @@ public class HistoricoDeudaEntity implements Serializable {
         this.nroDocumento = nroDocumento;
     }
 
-    public String getCodigoCliente() {
-        return codigoCliente;
-    }
-
-    public void setCodigoCliente(String codigoCliente) {
-        this.codigoCliente = codigoCliente;
-    }
-
     public String getTipoServicio() {
         return tipoServicio;
     }
@@ -174,12 +178,12 @@ public class HistoricoDeudaEntity implements Serializable {
         this.periodo = periodo;
     }
 
-    public String getConcepto() {
-        return concepto;
+    public Character getTipo() {
+        return tipo;
     }
 
-    public void setConcepto(String concepto) {
-        this.concepto = concepto;
+    public void setTipo(Character tipo) {
+        this.tipo = tipo;
     }
 
     public BigDecimal getCantidad() {
@@ -190,6 +194,14 @@ public class HistoricoDeudaEntity implements Serializable {
         this.cantidad = cantidad;
     }
 
+    public String getConcepto() {
+        return concepto;
+    }
+
+    public void setConcepto(String concepto) {
+        this.concepto = concepto;
+    }
+
     public BigDecimal getMontoUnitario() {
         return montoUnitario;
     }
@@ -198,36 +210,20 @@ public class HistoricoDeudaEntity implements Serializable {
         this.montoUnitario = montoUnitario;
     }
 
-    public Character getTipo() {
-        return tipo;
+    public String getDatoExtra() {
+        return datoExtra;
     }
 
-    public void setTipo(Character tipo) {
-        this.tipo = tipo;
+    public void setDatoExtra(String datoExtra) {
+        this.datoExtra = datoExtra;
     }
 
-    public String getDato() {
-        return dato;
-    }
-
-    public void setDato(String dato) {
-        this.dato = dato;
-    }
-
-    public Boolean getTipoPlantilla() {
+    public boolean getTipoPlantilla() {
         return tipoPlantilla;
     }
 
-    public void setTipoPlantilla(Boolean tipoPlantilla) {
+    public void setTipoPlantilla(boolean tipoPlantilla) {
         this.tipoPlantilla = tipoPlantilla;
-    }
-
-    public Integer getNroRegistro() {
-        return nroRegistro;
-    }
-
-    public void setNroRegistro(Integer nroRegistro) {
-        this.nroRegistro = nroRegistro;
     }
 
     public String getPeriodoCabecera() {
