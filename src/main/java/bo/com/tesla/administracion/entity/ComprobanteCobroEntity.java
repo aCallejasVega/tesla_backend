@@ -67,7 +67,7 @@ public class ComprobanteCobroEntity implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
     @Column(name = "usuario_modificacion")
-    private BigInteger usuarioModificacion;
+    private Long usuarioModificacion;
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
@@ -87,6 +87,9 @@ public class ComprobanteCobroEntity implements Serializable {
     private SucursalEntity sucursalId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "comprobanteCobroId")
     private List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList;
+
+    @Column(length = 15)
+    private String transaccion;
 
     public ComprobanteCobroEntity() {
     }
@@ -177,11 +180,11 @@ public class ComprobanteCobroEntity implements Serializable {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public BigInteger getUsuarioModificacion() {
+    public Long getUsuarioModificacion() {
         return usuarioModificacion;
     }
 
-    public void setUsuarioModificacion(BigInteger usuarioModificacion) {
+    public void setUsuarioModificacion(Long usuarioModificacion) {
         this.usuarioModificacion = usuarioModificacion;
     }
 
@@ -239,6 +242,14 @@ public class ComprobanteCobroEntity implements Serializable {
 
     public void setDetalleComprobanteCobroEntityList(List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList) {
         this.detalleComprobanteCobroEntityList = detalleComprobanteCobroEntityList;
+    }
+
+    public String getTransaccion() {
+        return transaccion;
+    }
+
+    public void setTransaccion(String transaccion) {
+        this.transaccion = transaccion;
     }
 
     @Override

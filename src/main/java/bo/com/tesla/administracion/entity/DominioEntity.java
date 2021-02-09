@@ -73,7 +73,7 @@ public class DominioEntity implements Serializable {
     private List<SucursalEntity> sucursalEntityList;
     @OneToMany(mappedBy = "localidadId")
     private List<SucursalEntity> sucursalEntityList1;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoEntidadId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoEntidad")
     private List<EntidadEntity> entidadEntityList;
 
     public DominioEntity() {

@@ -22,7 +22,7 @@ import javax.persistence.Table;
  * @author aCallejas
  */
 @Entity
-@Table(name = "seg_transiciones", catalog = "exacta", schema = "tesla")
+@Table(name = "seg_transiciones", catalog = "exacta", schema = "tesla2")
 
 public class SegTransicionEntity implements Serializable {
 

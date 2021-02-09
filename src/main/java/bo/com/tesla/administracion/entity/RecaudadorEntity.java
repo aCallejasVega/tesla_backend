@@ -38,8 +38,8 @@ public class RecaudadorEntity implements Serializable {
     @Basic(optional = false)
     @Column(name = "recaudador_id", nullable = false)
     private Long recaudadorId;
-    @Column(name = "empleado_id")
-    private BigInteger empleadoId;
+    /*@Column(name = "empleado_id")
+    private BigInteger empleadoId;*/
     @Column(name = "tipo_recaudador_id")
     private BigInteger tipoRecaudadorId;
     @Column(length = 250)
@@ -61,8 +61,8 @@ public class RecaudadorEntity implements Serializable {
     private Date fechaModificacion;
     @Column(length = 15)
     private String estado;
-    @OneToMany(mappedBy = "recaudadorId")
-    private List<EntidadeRecaudadorEntity> entidadeRecaudadorEntityList;
+    @OneToMany(mappedBy = "recaudador")
+    private List<EntidadRecaudadorEntity> entidadRecaudadorEntityList;
     @OneToMany(mappedBy = "recaudadorId")
     private List<SucursalEntity> sucursalEntityList;
 
@@ -85,7 +85,7 @@ public class RecaudadorEntity implements Serializable {
     public void setRecaudadorId(Long recaudadorId) {
         this.recaudadorId = recaudadorId;
     }
-
+/*
     public BigInteger getEmpleadoId() {
         return empleadoId;
     }
@@ -93,7 +93,7 @@ public class RecaudadorEntity implements Serializable {
     public void setEmpleadoId(BigInteger empleadoId) {
         this.empleadoId = empleadoId;
     }
-
+*/
     public BigInteger getTipoRecaudadorId() {
         return tipoRecaudadorId;
     }
@@ -166,12 +166,12 @@ public class RecaudadorEntity implements Serializable {
         this.estado = estado;
     }
 
-    public List<EntidadeRecaudadorEntity> getEntidadeRecaudadorEntityList() {
-        return entidadeRecaudadorEntityList;
+    public List<EntidadRecaudadorEntity> getEntidadRecaudadorEntityList() {
+        return entidadRecaudadorEntityList;
     }
 
-    public void setEntidadeRecaudadorEntityList(List<EntidadeRecaudadorEntity> entidadeRecaudadorEntityList) {
-        this.entidadeRecaudadorEntityList = entidadeRecaudadorEntityList;
+    public void setEntidadRecaudadorEntityList(List<EntidadRecaudadorEntity> entidadRecaudadorEntityList) {
+        this.entidadRecaudadorEntityList = entidadRecaudadorEntityList;
     }
 
     public List<SucursalEntity> getSucursalEntityList() {
