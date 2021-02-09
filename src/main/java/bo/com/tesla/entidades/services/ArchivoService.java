@@ -70,8 +70,15 @@ public class ArchivoService implements IArchivoService{
 		return this.archivoDao.findById(archivoId).get();
 	}
 	
-	
 	@Override
+	public ArchivoEntity findByEstado(String estado, Long archivoId) {
+		return this.archivoDao.findByEstado(estado, archivoId);
+		
+	}
+
+	
+	
+	/*@Override
 	public Map<String, Object>  upload(MultipartFile file, String login) {
 		Map<String, Object> response = new HashMap<>();
 		ArchivoEntity archivo = new ArchivoEntity();
@@ -102,12 +109,12 @@ public class ArchivoService implements IArchivoService{
 			return response;
 		}
 		
-	}
+	}*/
 	
 	
 
 	
-	@Override
+	/*@Override
 	public Map<String, Object>  process(Long archivoId,String login) {
 		Map<String, Object> response = new HashMap<>();
 		
@@ -173,8 +180,9 @@ public class ArchivoService implements IArchivoService{
 			return response;
 		}
 		
-	}
+	}*/
 
+	
 	
 
 }

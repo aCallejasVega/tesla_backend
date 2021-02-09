@@ -1,5 +1,6 @@
 package bo.com.tesla.entidades.dto;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class DeudasClienteDto {
@@ -15,6 +16,7 @@ public class DeudasClienteDto {
 	public String telefono;
 	public String nombreCliente;
 	public String key;
+	public BigDecimal total;
 	public List<ConceptoDto> conceptoLisit;
 	
 	
@@ -27,7 +29,7 @@ public class DeudasClienteDto {
 	 *  gropByDeudasClientes de la clase IDeudaCliente
 	 *  @author   aCallejas
 	 * */
-	public DeudasClienteDto(Long archivoId,String servicio, String tipoServicio, String periodo, String codigoCliente) {
+	public DeudasClienteDto(Long archivoId,String servicio, String tipoServicio, String periodo, String codigoCliente, BigDecimal total) {
 	
 		
 		this.archivoId=archivoId;
@@ -35,6 +37,7 @@ public class DeudasClienteDto {
 		this.tipoServicio = tipoServicio;
 		this.periodo = periodo;
 		this.codigoCliente = codigoCliente;
+		this.total=total;
 	}
 	
 	

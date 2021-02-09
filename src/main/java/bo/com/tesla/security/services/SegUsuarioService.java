@@ -34,6 +34,12 @@ public class SegUsuarioService implements ISegUsuarioService,UserDetailsService 
 	
 	
 	@Override
+	public SegUsuarioEntity save(SegUsuarioEntity entity) {		
+		return this.segUsuarioDao.save(entity);
+	}
+	
+	
+	@Override
 	public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		SegUsuarioEntity usuarios = segUsuarioDao.findByLogin(login);
@@ -58,5 +64,7 @@ public class SegUsuarioService implements ISegUsuarioService,UserDetailsService 
 	public SegUsuarioEntity findByLogin(String login) {		
 		return this.segUsuarioDao.findByLogin(login);
 	}
+
+	
 
 }
