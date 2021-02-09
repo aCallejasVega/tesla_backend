@@ -48,12 +48,12 @@ public class TransaccionCobroEntity implements Serializable {
     @Column(length = 250)
     private String periodo;
     @Column(name = "usuario_creacion")
-    private BigInteger usuarioCreacion;
+    private Long usuarioCreacion;
     @Column(name = "fecha_creacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
     @Column(name = "usuario_modificacion")
-    private BigInteger usuarioModificacion;
+    private Long usuarioModificacion;
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
@@ -64,6 +64,9 @@ public class TransaccionCobroEntity implements Serializable {
     private EntidadEntity entidadId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "transaccionCobroId")
     private List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList;
+
+    @Column(length = 15)
+    private String transaccion;
 
     public TransaccionCobroEntity() {
     }
@@ -104,11 +107,11 @@ public class TransaccionCobroEntity implements Serializable {
         this.periodo = periodo;
     }
 
-    public BigInteger getUsuarioCreacion() {
+    public Long getUsuarioCreacion() {
         return usuarioCreacion;
     }
 
-    public void setUsuarioCreacion(BigInteger usuarioCreacion) {
+    public void setUsuarioCreacion(Long usuarioCreacion) {
         this.usuarioCreacion = usuarioCreacion;
     }
 
@@ -120,11 +123,11 @@ public class TransaccionCobroEntity implements Serializable {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public BigInteger getUsuarioModificacion() {
+    public Long getUsuarioModificacion() {
         return usuarioModificacion;
     }
 
-    public void setUsuarioModificacion(BigInteger usuarioModificacion) {
+    public void setUsuarioModificacion(Long usuarioModificacion) {
         this.usuarioModificacion = usuarioModificacion;
     }
 
@@ -158,6 +161,14 @@ public class TransaccionCobroEntity implements Serializable {
 
     public void setDetalleComprobanteCobroEntityList(List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList) {
         this.detalleComprobanteCobroEntityList = detalleComprobanteCobroEntityList;
+    }
+
+    public String getTransaccion() {
+        return transaccion;
+    }
+
+    public void setTransaccion(String transaccion) {
+        this.transaccion = transaccion;
     }
 
     @Override

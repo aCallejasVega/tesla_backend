@@ -83,15 +83,15 @@ public class EntidadEntity implements Serializable {
     private List<TransaccionCobroEntity> transaccionCobroEntityList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
     private List<ComprobanteCobroEntity> comprobanteCobroEntityList;
-    @OneToMany(mappedBy = "entidadId")
-    private List<EntidadeRecaudadorEntity> entidadeRecaudadorEntityList;
+    @OneToMany(mappedBy = "entidad")
+    private List<EntidadRecaudadorEntity> entidadRecaudadorEntityList;
     @OneToMany(mappedBy = "entidadId")
     private List<EmpleadoEntity> empleadoEntityList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
     private List<DosificacionEntity> dosificacionEntityList;
     @JoinColumn(name = "tipo_entidad_id", referencedColumnName = "dominio_id", nullable = false)
     @ManyToOne(optional = false)
-    private DominioEntity tipoEntidadId;
+    private DominioEntity tipoEntidad;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
     private List<PlantillaEntity> plantillaEntityList;
 
@@ -250,12 +250,12 @@ public class EntidadEntity implements Serializable {
         this.comprobanteCobroEntityList = comprobanteCobroEntityList;
     }
 
-    public List<EntidadeRecaudadorEntity> getEntidadeRecaudadorEntityList() {
-        return entidadeRecaudadorEntityList;
+    public List<EntidadRecaudadorEntity> getEntidadRecaudadorEntityList() {
+        return entidadRecaudadorEntityList;
     }
 
-    public void setEntidadeRecaudadorEntityList(List<EntidadeRecaudadorEntity> entidadeRecaudadorEntityList) {
-        this.entidadeRecaudadorEntityList = entidadeRecaudadorEntityList;
+    public void setEntidadRecaudadorEntityList(List<EntidadRecaudadorEntity> entidadRecaudadorEntityList) {
+        this.entidadRecaudadorEntityList = entidadRecaudadorEntityList;
     }
 
     public List<EmpleadoEntity> getEmpleadoEntityList() {
@@ -274,12 +274,12 @@ public class EntidadEntity implements Serializable {
         this.dosificacionEntityList = dosificacionEntityList;
     }
 
-    public DominioEntity getTipoEntidadId() {
-        return tipoEntidadId;
+    public DominioEntity getTipoEntidad() {
+        return tipoEntidad;
     }
 
-    public void setTipoEntidadId(DominioEntity tipoEntidadId) {
-        this.tipoEntidadId = tipoEntidadId;
+    public void setTipoEntidad(DominioEntity tipoEntidadId) {
+        this.tipoEntidad = tipoEntidadId;
     }
 
     public List<PlantillaEntity> getPlantillaEntityList() {

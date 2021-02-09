@@ -75,8 +75,8 @@ public class CobroClienteEntity implements Serializable {
     @Column(name = "dato_extra", length = 250)
     private String datoExtra;
     @Basic(optional = false)
-    @Column(name = "tipo_plantilla", nullable = false)
-    private boolean tipoPlantilla;
+    @Column(name = "tipo_comprobante", nullable = false)
+    private boolean tipoComprobante;
     @Column(name = "periodo_cabecera", length = 250)
     private String periodoCabecera;
     @Basic(optional = false)
@@ -98,6 +98,9 @@ public class CobroClienteEntity implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cobroClienteId")
     private List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList;
 
+    @Column(length = 15)
+    private String transaccion;
+
     public CobroClienteEntity() {
     }
 
@@ -105,7 +108,7 @@ public class CobroClienteEntity implements Serializable {
         this.cobroClienteId = cobroClienteId;
     }
 
-    public CobroClienteEntity(Long cobroClienteId, int nroRegistro, String codigoCliente, String tipoServicio, String servicio, String periodo, Character tipo, BigDecimal cantidad, String concepto, boolean tipoPlantilla, long usuarioCreacion, Date fechaCreacion, String estado) {
+    public CobroClienteEntity(Long cobroClienteId, int nroRegistro, String codigoCliente, String tipoServicio, String servicio, String periodo, Character tipo, BigDecimal cantidad, String concepto, boolean tipoComprobante, long usuarioCreacion, Date fechaCreacion, String estado) {
         this.cobroClienteId = cobroClienteId;
         this.nroRegistro = nroRegistro;
         this.codigoCliente = codigoCliente;
@@ -115,7 +118,7 @@ public class CobroClienteEntity implements Serializable {
         this.tipo = tipo;
         this.cantidad = cantidad;
         this.concepto = concepto;
-        this.tipoPlantilla = tipoPlantilla;
+        this.tipoComprobante = tipoComprobante;
         this.usuarioCreacion = usuarioCreacion;
         this.fechaCreacion = fechaCreacion;
         this.estado = estado;
@@ -225,12 +228,12 @@ public class CobroClienteEntity implements Serializable {
         this.datoExtra = datoExtra;
     }
 
-    public boolean getTipoPlantilla() {
-        return tipoPlantilla;
+    public boolean getTipoComprobante() {
+        return tipoComprobante;
     }
 
-    public void setTipoPlantilla(boolean tipoPlantilla) {
-        this.tipoPlantilla = tipoPlantilla;
+    public void setTipoComprobante(boolean tipoPlantilla) {
+        this.tipoComprobante = tipoPlantilla;
     }
 
     public String getPeriodoCabecera() {
@@ -287,6 +290,14 @@ public class CobroClienteEntity implements Serializable {
 
     public void setDetalleComprobanteCobroEntityList(List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList) {
         this.detalleComprobanteCobroEntityList = detalleComprobanteCobroEntityList;
+    }
+
+    public String getTransaccion() {
+        return transaccion;
+    }
+
+    public void setTransaccion(String transaccion) {
+        this.transaccion = transaccion;
     }
 
     @Override

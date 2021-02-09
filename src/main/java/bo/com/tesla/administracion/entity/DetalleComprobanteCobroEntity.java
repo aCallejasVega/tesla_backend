@@ -63,6 +63,9 @@ public class DetalleComprobanteCobroEntity implements Serializable {
     @ManyToOne(optional = false)
     private TransaccionCobroEntity transaccionCobroId;
 
+    @Column(length = 15)
+    private String transaccion;
+
     public DetalleComprobanteCobroEntity() {
     }
 
@@ -147,6 +150,14 @@ public class DetalleComprobanteCobroEntity implements Serializable {
 
     public void setTransaccionCobroId(TransaccionCobroEntity transaccionCobroId) {
         this.transaccionCobroId = transaccionCobroId;
+    }
+
+    public String getTransaccion() {
+        return transaccion;
+    }
+
+    public void setTransaccion(String transaccion) {
+        this.transaccion = transaccion;
     }
 
     @Override

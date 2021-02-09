@@ -25,8 +25,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "entidades_recaudadores", catalog = "exacta", schema = "tesla2")
 @NamedQueries({
-    @NamedQuery(name = "EntidadeRecaudadorEntity.findAll", query = "SELECT e FROM EntidadeRecaudadorEntity e")})
-public class EntidadeRecaudadorEntity implements Serializable {
+    @NamedQuery(name = "EntidadeRecaudadorEntity.findAll", query = "SELECT e FROM EntidadRecaudadorEntity e")})
+public class EntidadRecaudadorEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -36,15 +36,15 @@ public class EntidadeRecaudadorEntity implements Serializable {
     private Long entidadRecaudadorId;
     @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id")
     @ManyToOne
-    private EntidadEntity entidadId;
+    private EntidadEntity entidad;
     @JoinColumn(name = "recaudador_id", referencedColumnName = "recaudador_id")
     @ManyToOne
-    private RecaudadorEntity recaudadorId;
+    private RecaudadorEntity recaudador;
 
-    public EntidadeRecaudadorEntity() {
+    public EntidadRecaudadorEntity() {
     }
 
-    public EntidadeRecaudadorEntity(Long entidadRecaudadorId) {
+    public EntidadRecaudadorEntity(Long entidadRecaudadorId) {
         this.entidadRecaudadorId = entidadRecaudadorId;
     }
 
@@ -56,20 +56,20 @@ public class EntidadeRecaudadorEntity implements Serializable {
         this.entidadRecaudadorId = entidadRecaudadorId;
     }
 
-    public EntidadEntity getEntidadId() {
-        return entidadId;
+    public EntidadEntity getEntidad() {
+        return entidad;
     }
 
-    public void setEntidadId(EntidadEntity entidadId) {
-        this.entidadId = entidadId;
+    public void setEntidad(EntidadEntity entidadId) {
+        this.entidad = entidadId;
     }
 
-    public RecaudadorEntity getRecaudadorId() {
-        return recaudadorId;
+    public RecaudadorEntity getRecaudador() {
+        return recaudador;
     }
 
-    public void setRecaudadorId(RecaudadorEntity recaudadorId) {
-        this.recaudadorId = recaudadorId;
+    public void setRecaudador(RecaudadorEntity recaudadorId) {
+        this.recaudador = recaudadorId;
     }
 
     @Override
@@ -82,10 +82,10 @@ public class EntidadeRecaudadorEntity implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof EntidadeRecaudadorEntity)) {
+        if (!(object instanceof EntidadRecaudadorEntity)) {
             return false;
         }
-        EntidadeRecaudadorEntity other = (EntidadeRecaudadorEntity) object;
+        EntidadRecaudadorEntity other = (EntidadRecaudadorEntity) object;
         if ((this.entidadRecaudadorId == null && other.entidadRecaudadorId != null) || (this.entidadRecaudadorId != null && !this.entidadRecaudadorId.equals(other.entidadRecaudadorId))) {
             return false;
         }

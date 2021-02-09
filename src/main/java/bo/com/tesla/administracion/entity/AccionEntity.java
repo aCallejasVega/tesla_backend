@@ -6,6 +6,7 @@
 package bo.com.tesla.administracion.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,10 +42,10 @@ public class AccionEntity implements Serializable {
     private String estado;
     @Basic(optional = false)
     @Column(name = "fecha_estado", nullable = false, length = 255)
-    private String fechaEstado;
+    private Date fechaEstado;
     @Basic(optional = false)
     @Column(nullable = false, length = 15)
-    private String usuario;
+    private Long usuario;
     @JsonIgnore
     @JoinColumn(name = "historico_deuda_id", referencedColumnName = "historico_deuda_id", nullable = false)
     @ManyToOne(optional = false)
@@ -57,7 +58,7 @@ public class AccionEntity implements Serializable {
         this.accionesId = accionesId;
     }
 
-    public AccionEntity(Long accionesId, String estado, String fechaEstado, String usuario) {
+    public AccionEntity(Long accionesId, String estado, Date fechaEstado, Long usuario) {
         this.accionesId = accionesId;
         this.estado = estado;
         this.fechaEstado = fechaEstado;
@@ -80,19 +81,19 @@ public class AccionEntity implements Serializable {
         this.estado = estado;
     }
 
-    public String getFechaEstado() {
+    public Date getFechaEstado() {
         return fechaEstado;
     }
 
-    public void setFechaEstado(String fechaEstado) {
+    public void setFechaEstado(Date fechaEstado) {
         this.fechaEstado = fechaEstado;
     }
 
-    public String getUsuario() {
+    public Long getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(String usuario) {
+    public void setUsuario(Long usuario) {
         this.usuario = usuario;
     }
 
