@@ -13,8 +13,9 @@ public interface IComprobanteCobroService {
     public ComprobanteCobroEntity saveComprobanteCobro(ComprobanteCobroEntity comprobanteCobroEntity);
     public List<ComprobanteCobroEntity> saveAllComprobanteCobro(List<ComprobanteCobroEntity> comprobanteCobroEntities);
     public ComprobanteCobroEntity loadComprobanteCobro(ServicioDeudaDto servicioDeudaDto,
-                                                       //List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntities,
                                                        Long usuarioId,
-                                                       BigDecimal montoTotal);
+                                                       BigDecimal montoTotal,
+                                                       String nombreCliente,
+                                                       String nroDocumento);
 
 }

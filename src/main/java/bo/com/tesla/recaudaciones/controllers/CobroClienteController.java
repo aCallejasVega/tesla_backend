@@ -1,5 +1,6 @@
 package bo.com.tesla.recaudaciones.controllers;
 
+import bo.com.tesla.recaudaciones.dto.ClienteDto;
 import bo.com.tesla.recaudaciones.dto.ServicioDeudaDto;
 import bo.com.tesla.recaudaciones.services.ICobroClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +21,12 @@ public class CobroClienteController {
 
     @Transactional
     @PostMapping("/{comprobanteEnUno}/{metodoPagoId}")
-    public ResponseEntity<?> postCobrarDeudas(@RequestBody List<ServicioDeudaDto> servicioDeudaDtos,//Debe pasar aqui el nuevo valor de Nombrecliente y NIT
+    public ResponseEntity<?> postCobrarDeudas(@RequestBody ClienteDto clienteDto,
                                               @PathVariable Boolean comprobanteEnUno, //sera de la clase de entidad
                                               @PathVariable Long metodoPagoId,
                                               Authentication authentication) throws Exception {
         Map<String, Object> response = new HashMap<>();
-        if(servicioDeudaDtos.size() <= 0 || metodoPagoId == null || metodoPagoId <= 0 ) {
+        if(clienteDto == null || metodoPagoId == null || metodoPagoId <= 0 ) {
             response.put("status", "false");
             response.put("messege", "Ocurrió un error en el servidor, por favor verifique los parametros de ingreso.");
             response.put("result", null);
@@ -33,7 +34,7 @@ public class CobroClienteController {
         }
 
         try {
-            iCobroClienteService.postCobrarDeudas(servicioDeudaDtos, comprobanteEnUno, authentication.getName(), metodoPagoId);
+            iCobroClienteService.postCobrarDeudas(clienteDto, comprobanteEnUno, authentication.getName(), metodoPagoId);
             response.put("status", "true");
             response.put("messege", "Se realizó el cobro correctamente");
             response.put("result", "true");

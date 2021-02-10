@@ -1,10 +1,15 @@
 package bo.com.tesla.recaudaciones.dto;
 
+import java.math.BigDecimal;
+import java.util.*;
+
 public class ClienteDto {
 
     private String codigoCliente;
     private String nombreCliente;
     private String nroDocumento;
+
+    private List<ServicioDeudaDto> servicioDeudaDtoList;
 
     public ClienteDto() {
     }
@@ -33,6 +38,14 @@ public class ClienteDto {
 
     public String getNroDocumento() {
         return nroDocumento;
+    }
+
+    public List<ServicioDeudaDto> getServicioDeudaDtoList() {
+        return servicioDeudaDtoList;
+    }
+
+    public void setServicioDeudaDtoList(List<ServicioDeudaDto> servicioDeudaDtoList) {
+        this.servicioDeudaDtoList = servicioDeudaDtoList;
     }
 
 }
