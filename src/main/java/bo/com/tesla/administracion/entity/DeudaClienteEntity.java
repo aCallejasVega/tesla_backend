@@ -13,6 +13,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+
+import org.springframework.format.annotation.NumberFormat;
+import org.springframework.validation.annotation.Validated;
 
 /**
  *
@@ -84,7 +88,7 @@ public class DeudaClienteEntity implements Serializable {
 	private String concepto;
 
 	@Basic(optional = false)
-	@Column(name = "monto_unitario", nullable = false, precision = 17, scale = 2)
+	@Column(name = "monto_unitario", nullable = false, precision = 17, scale = 2)	
 	private BigDecimal montoUnitario;
 
 	@Basic(optional = false)

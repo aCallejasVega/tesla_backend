@@ -7,6 +7,7 @@ import bo.com.tesla.recaudaciones.dto.DeudaClienteDto;
 import bo.com.tesla.recaudaciones.dto.ServicioDeudaDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +20,13 @@ public class DeudaClienteRService implements IDeudaClienteRService {
     @Autowired
     private IDeudaClienteRDao iDeudaClienteRDao;
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<List<ClienteDto>> getByEntidadAndClienteLike(Long entidadId, String datoCliente) {
         return iDeudaClienteRDao.findByEntidadAndClienteLike(entidadId, datoCliente);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<ServicioDeudaDto> getDeudasByCliente(Long entidadId, String codigoCliente) {
         Optional<List<ServicioDeudaDto>> optionalServicioDeudaDtos = iDeudaClienteRDao.groupByDeudasClientes(entidadId, codigoCliente);
@@ -44,11 +47,14 @@ public class DeudaClienteRService implements IDeudaClienteRService {
             }
             List<DeudaClienteDto> deudaClienteDtos =  optionalDeudaClienteDtos.get().stream()
                                                         .filter(d -> d.tipo == 'D').collect(Collectors.toList());
+            if(!deudaClienteDtos.isEmpty()) {
+            	 servicioDeuda.deudaClienteDtos = deudaClienteDtos;
+                 servicioDeuda.nombreCliente = deudaClienteDtos.get(0).nombreCliente;
+                 servicioDeuda.codigoCliente = deudaClienteDtos.get(0).codigoCliente;
+                // servicioDeuda.nombreCliente = deudaClienteDtos.get(0).nombreCliente;
+            }
 
-            servicioDeuda.deudaClienteDtos = deudaClienteDtos;
-            servicioDeuda.nombreCliente = deudaClienteDtos.get(0).nombreCliente;
-            servicioDeuda.codigoCliente = deudaClienteDtos.get(0).codigoCliente;
-            servicioDeuda.nombreCliente = deudaClienteDtos.get(0).nombreCliente;
+           
             key++;
         }
 

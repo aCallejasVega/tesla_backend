@@ -1,19 +1,19 @@
 package bo.com.tesla.recaudaciones.services;
 
-import bo.com.tesla.administracion.entity.EntidadEntity;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import bo.com.tesla.administracion.entity.RecaudadorEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
-import bo.com.tesla.entidades.dao.IEntidadDao;
 import bo.com.tesla.recaudaciones.dao.IEntidadRDao;
 import bo.com.tesla.recaudaciones.dao.IRecaudadorDao;
 import bo.com.tesla.recaudaciones.dto.DominioDto;
 import bo.com.tesla.recaudaciones.dto.EntidadDto;
 import bo.com.tesla.security.dao.ISegUsuarioDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EntidadRService implements IEntidadRService {
@@ -47,6 +47,7 @@ public class EntidadRService implements IEntidadRService {
     @Autowired
     private ISegUsuarioDao usuarioDao;
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<List<EntidadDto>> getByRecaudadoraIdAndTipoEntidadIdA(Long tipoEntidadId, String login) {
         SegUsuarioEntity usuario = this.usuarioDao.findByLogin(login);
@@ -54,6 +55,7 @@ public class EntidadRService implements IEntidadRService {
         return IEntidadRDao.findByRecaudadoraIdAndTipoEntidadId(recaudadorEntity.getRecaudadorId(), tipoEntidadId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<List<EntidadDto>> getAllByRecaudadoraIdA(String login) {
         SegUsuarioEntity usuario =this.usuarioDao.findByLogin(login);
@@ -61,6 +63,7 @@ public class EntidadRService implements IEntidadRService {
         return IEntidadRDao.findByRecaudadoraId(recaudadorEntity.getRecaudadorId());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<List<DominioDto>> getTipoEntidadByRecaudadorA(String login) {
         SegUsuarioEntity usuario = this.usuarioDao.findByLogin(login);

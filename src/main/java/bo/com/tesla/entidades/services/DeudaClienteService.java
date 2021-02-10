@@ -1,19 +1,20 @@
 package bo.com.tesla.entidades.services;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import bo.com.tesla.administracion.entity.DeudaClienteEntity;
 import bo.com.tesla.entidades.dao.IDeudaClienteDao;
 import bo.com.tesla.entidades.dto.ConceptoDto;
 import bo.com.tesla.entidades.dto.DeudasClienteDto;
 
 @Service
-@Transactional
+
 public class DeudaClienteService implements IDeudaClienteService {
 
 	@Autowired
@@ -25,12 +26,13 @@ public class DeudaClienteService implements IDeudaClienteService {
 
 	}
 
+	@Transactional(readOnly = true)
 	@Override
-	public List<DeudasClienteDto> findDeudasClientesByArchivoId(Long archivoId,String paramBusqueda) {
-		List<DeudasClienteDto> deudaClienteList = new ArrayList<>();
+	public Page<DeudasClienteDto> findDeudasClientesByArchivoId(Long archivoId,String paramBusqueda,int page,int size) {
+		Page<DeudasClienteDto> deudaClienteList ;
+		Pageable paging = PageRequest.of(page, size);
 		
-		
-		deudaClienteList = this.deudaClienteDao.groupByDeudasClientes(archivoId,paramBusqueda);
+		deudaClienteList = this.deudaClienteDao.groupByDeudasClientes(archivoId,paramBusqueda,paging);
 
 		for (DeudasClienteDto deudasClienteDto : deudaClienteList) {
 			

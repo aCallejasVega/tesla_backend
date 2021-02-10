@@ -7,7 +7,6 @@ import bo.com.tesla.recaudaciones.dao.IDominioDao;
 import bo.com.tesla.recaudaciones.dto.ClienteDto;
 import bo.com.tesla.recaudaciones.dto.ServicioDeudaDto;
 import bo.com.tesla.security.dao.ISegUsuarioDao;
-import org.omg.CORBA.FREE_MEM;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

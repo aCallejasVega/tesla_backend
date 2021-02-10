@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/entidades")
+@RequestMapping("api/entidades")
 public class EntidadController {
 
     @Autowired
@@ -109,7 +109,7 @@ public class EntidadController {
 
 
 
-    /////////////////////
+
 
     @GetMapping("/tipos")
     public ResponseEntity<?> getEntidadesByTipo(Authentication authentication) {

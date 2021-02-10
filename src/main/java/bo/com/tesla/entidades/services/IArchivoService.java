@@ -11,9 +11,11 @@ public interface IArchivoService {
 	public ArchivoEntity save(ArchivoEntity entity);
 
 	public ArchivoEntity findById(Long archivoId);
+	
+	public ArchivoEntity findByEstado(String estado,Long archivoId);
 
-	public Map<String, Object>  upload(MultipartFile file, String login);
+	/*public Map<String, Object>  upload(MultipartFile file, String login);
 
-	public Map<String, Object> process(Long archivoId, String login);
+	public Map<String, Object> process(Long archivoId, String login);*/
 
 }
