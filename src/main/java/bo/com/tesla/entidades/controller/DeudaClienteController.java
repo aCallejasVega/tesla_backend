@@ -75,7 +75,7 @@ public class DeudaClienteController {
 	@Qualifier("deudaClienteJob")
 	Job job;
 
-	@CrossOrigin(origins = "http://localhost:8080")
+	
 	@PostMapping(path = "/upload")
 	public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, Authentication authentication)
 			throws Exception {
@@ -107,7 +107,7 @@ public class DeudaClienteController {
 			e.printStackTrace();
 			this.logger.error("This is error", e.getMessage());
 			this.logger.error("This is cause", e.getCause());
-			response.put("mensaje", e.getMessage()+"");
+			response.put("mensaje", "Ocurrió un error en el servidor, por favor verifique los parametros de ingreso.");
 			response.put("status", false);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}

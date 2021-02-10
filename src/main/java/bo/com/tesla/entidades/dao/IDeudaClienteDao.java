@@ -33,9 +33,9 @@ public interface IDeudaClienteDao extends JpaRepository<DeudaClienteEntity, Long
 			+ " FROM DeudaClienteEntity d "
 			+ " WHERE d.archivoId.archivoId=:archivoId "
 			+ "  and  (d.codigoCliente LIKE %:paramBusqueda% "
-			+ "  or d.periodo LIKE %:paramBusqueda% "
-			+ "  or d.nombreCliente LIKE %:paramBusqueda% "
-			+ "  or d.nroDocumento LIKE %:paramBusqueda% )"
+			+ "  or upper(d.periodo) LIKE  upper(concat('%', :paramBusqueda,'%')) "
+			+ "  or upper(d.nombreCliente) LIKE upper(concat('%', :paramBusqueda,'%')) "
+			+ "  or upper(d.nroDocumento) LIKE upper(concat('%', :paramBusqueda,'%')))"
 			+ " GROUP BY d.archivoId, d.servicio, d.tipoServicio, d.periodo, d.codigoCliente "
 			+ " ORDER BY d.codigoCliente, d.servicio, d.tipoServicio, d.periodo  ASC")
 	public Page<DeudasClienteDto> groupByDeudasClientes(@Param("archivoId") Long archivoId ,@Param("paramBusqueda") String paramBusqueda,Pageable pageable );
