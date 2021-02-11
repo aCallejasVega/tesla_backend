@@ -48,7 +48,9 @@ public class ComprobanteCobroService implements IComprobanteCobroService {
     @Override
     public ComprobanteCobroEntity loadComprobanteCobro(ServicioDeudaDto servicioDeudaDto,
                                                        Long usuarioId,
-                                                       BigDecimal montoTotal) {
+                                                       BigDecimal montoTotal,
+                                                       String nombreCliente,
+                                                       String nroDocumento) {
 
         Optional<EntidadEntity> optionalEntidadEntity = iEntidadRDao.findByEntidadId(servicioDeudaDto.entidadId);//debe considerar estado??
         if(!optionalEntidadEntity.isPresent())
@@ -66,8 +68,8 @@ public class ComprobanteCobroService implements IComprobanteCobroService {
         comprobanteCobroEntity.setDosificacionId(dosificacionEntity);
         comprobanteCobroEntity.setNroFactura(1);//arrglar con facturacion
         comprobanteCobroEntity.setFechaFactura(new Date());//Facturacion
-        comprobanteCobroEntity.setNitCliente(servicioDeudaDto.nroDocumento);
-        comprobanteCobroEntity.setNombreCliente(servicioDeudaDto.nombreCliente);
+        comprobanteCobroEntity.setNitCliente(nroDocumento);
+        comprobanteCobroEntity.setNombreCliente(nombreCliente);
         comprobanteCobroEntity.setMontoTotal(montoTotal);
         comprobanteCobroEntity.setCodigoControl("AA-AA-AA-AA");//Facturacion
         comprobanteCobroEntity.setUsuarioCreacion(usuarioId);

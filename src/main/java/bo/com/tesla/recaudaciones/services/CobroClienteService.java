@@ -4,6 +4,7 @@ import bo.com.tesla.administracion.entity.*;
 import bo.com.tesla.recaudaciones.dao.IArchivoRDao;
 import bo.com.tesla.recaudaciones.dao.ICobroClienteDao;
 import bo.com.tesla.recaudaciones.dao.IDominioDao;
+import bo.com.tesla.recaudaciones.dto.ClienteDto;
 import bo.com.tesla.recaudaciones.dto.ServicioDeudaDto;
 import bo.com.tesla.security.dao.ISegUsuarioDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -90,25 +92,25 @@ public class CobroClienteService implements ICobroClienteService {
 
     //Método priniciapl para cobro de deudas
     @Transactional(rollbackFor = {Exception.class})
-    public void postCobrarDeudas(List<ServicioDeudaDto> servicioDeudaDtos,
-                                              Boolean comprobanteEnUno,
-                                              String login,
-                                              Long metodoPagoId) throws Exception {
+    public void postCobrarDeudas(ClienteDto clienteDto,
+                                 Boolean comprobanteEnUno,
+                                 String login,
+                                 Long metodoPagoId) throws Exception {
         if(comprobanteEnUno) {
-            postCobrarDeudasGlobal(servicioDeudaDtos, login, metodoPagoId);
+            postCobrarDeudasGlobal(clienteDto, login, metodoPagoId);
         } else {
-            postCobrarDeudasIndividual(servicioDeudaDtos, login, metodoPagoId);
+            postCobrarDeudasIndividual(clienteDto, login, metodoPagoId);
         }
     }
 
-    public void postCobrarDeudasIndividual(List<ServicioDeudaDto> servicioDeudaDtos,
+    public void postCobrarDeudasIndividual(ClienteDto clienteDto,
                                     String login,
                                     Long metodoPagoId) throws Exception {
         //Boolean response = false;
         SegUsuarioEntity usuario = this.usuarioDao.findByLogin(login);
 
         //1. Reemplazar por agrupacion todos registros de deudas y datos extras
-        List<ServicioDeudaDto> servicioDeudaDtoList = iDeudaClienteRService.getDeudasCompletas(servicioDeudaDtos);
+        List<ServicioDeudaDto> servicioDeudaDtoList = iDeudaClienteRService.getDeudasCompletas(clienteDto.getServicioDeudaDtoList());
         if(servicioDeudaDtoList == null) {
             throw new Exception();
         }
@@ -119,6 +121,7 @@ public class CobroClienteService implements ICobroClienteService {
             //2.1. Recorrer las deudas con todos registro completos
             List<CobroClienteEntity> cobroClienteEntityList = new ArrayList<>();
             List<AccionEntity> accionEntityList = new ArrayList<>();
+            List<DeudaClienteEntity> deudaClienteEntityList = new ArrayList<>();
 
             for(DeudaClienteEntity deudaClienteEntity : servicioDeudaDto.getDeudaClientes()) {
                 //2.1.1. Cargar Cobros Clientes
@@ -134,6 +137,10 @@ public class CobroClienteService implements ICobroClienteService {
                     throw new Exception();
                 }
                 accionEntityList.add(accionEntity);
+
+                //2.1.3. Cargar Deudas en la lista
+                deudaClienteEntityList.add(deudaClienteEntity);
+
             }
             //2.2. Guardar CobroClientes en Lista
             cobroClienteEntityList = saveAllCobrosClientes(cobroClienteEntityList);
@@ -147,66 +154,65 @@ public class CobroClienteService implements ICobroClienteService {
                 throw new Exception();
             }
 
-            //2.4. Cargar Transacciones Cobros y Guardar
+            //2.4. Eliminar DeuassClientes en Lista
+            Long recordDeletes = iDeudaClienteRService.deleteDeudasClientes(deudaClienteEntityList);
+            if(recordDeletes == 0) {
+                throw new Exception();
+            }
+
+            //2.5. Cargar Transacciones Cobros y Guardar
             TransaccionCobroEntity transaccionCobroEntity = iTransaccionCobroService.loadTransaccionCobro(servicioDeudaDto, usuario.getUsuarioId());
             transaccionCobroEntity = iTransaccionCobroService.saveTransaccionCobro(transaccionCobroEntity);
             if(transaccionCobroEntity == null) {
                 throw new Exception();
             }
 
-            //2.5. Encontrar los Lista de Cobros Clientes con tipo "D"
+            //2.6. Encontrar los Lista de Cobros Clientes con tipo "D"
             List<CobroClienteEntity> cobroClienteEntityListFilterD = cobroClienteEntityList.stream()
                                                                         .filter(c -> c.getTipo().equals('D')).collect(Collectors.toList());
             if(cobroClienteEntityListFilterD.size() == 0 ) {
                 throw new Exception();
             }
 
-            //2.6 Cargar Comprobante
+            //2.7 Cargar Comprobante
             Double montoTotalAgrupado = cobroClienteEntityListFilterD.stream()
                                                 .mapToDouble(s -> s.getMontoUnitario().doubleValue()).sum(); //Modificar a SubTotal OJO
-            ComprobanteCobroEntity comprobanteCobroEntity = iComprobanteCobroService.loadComprobanteCobro(servicioDeudaDto, usuario.getUsuarioId(), BigDecimal.valueOf(montoTotalAgrupado));
-            //2.7. Guardar comprobante
+
+            ComprobanteCobroEntity comprobanteCobroEntity = iComprobanteCobroService.loadComprobanteCobro(servicioDeudaDto, usuario.getUsuarioId(), BigDecimal.valueOf(montoTotalAgrupado), clienteDto.getNombreCliente(), clienteDto.getNroDocumento());
+            //2.8. Guardar comprobante
             comprobanteCobroEntity = iComprobanteCobroService.saveComprobanteCobro(comprobanteCobroEntity);
             if(comprobanteCobroEntity == null) {
                 throw new Exception();
             }
 
-            //2.8. Recorrer Lista de Cobros Clientes con tipo "D"
+            //2.9. Recorrer Lista de Cobros Clientes con tipo "D"
             List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList = new ArrayList<>();
 
             for(CobroClienteEntity cobroClienteEntity : cobroClienteEntityListFilterD) {
-                //2.8.1. Cargar Detalle Comprobante Cobro
+                //2.9.1. Cargar Detalle Comprobante Cobro
                 DetalleComprobanteCobroEntity detalleComprobanteCobroEntity = iDetalleComprobanteCobroService.loadDetalleComprobanteCobroEntity(transaccionCobroEntity, cobroClienteEntity, comprobanteCobroEntity, usuario.getUsuarioId());
                 detalleComprobanteCobroEntityList.add(detalleComprobanteCobroEntity);
             }
 
-            //2.9. Guardar Lista Detalle Comprobantes
+            //2.10. Guardar Lista Detalle Comprobantes
             List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntitiesResponse = iDetalleComprobanteCobroService.saveAllDetallesComprobantesCobos(detalleComprobanteCobroEntityList);
             if(detalleComprobanteCobroEntitiesResponse.size() == 0) {
                 throw new Exception();
             }
         }
 
-        //3. Encontrar todas las deudas mas datos extras
-        List<DeudaClienteEntity> deudaClienteEntitiesDelete = servicioDeudaDtoList.stream()
-                .map(ServicioDeudaDto::getDeudaClientes).findFirst().get();
 
-        //4. Eliminar DeuassClientes en Lista
-        Long recordDeletes = iDeudaClienteRService.deleteDeudasClientes(deudaClienteEntitiesDelete);
-        if(recordDeletes == 0) {
-            throw new Exception();
-        }
 
     }
 
-    public void postCobrarDeudasGlobal(List<ServicioDeudaDto> servicioDeudaDtos,
+    public void postCobrarDeudasGlobal(ClienteDto clienteDto,
                                     String login,
                                     Long metodoPagoId) throws Exception {
 
         SegUsuarioEntity usuario = this.usuarioDao.findByLogin(login);
 
         //1. Reemplazar por agrupacion todos registros de deudas y datos extras
-        List<ServicioDeudaDto> servicioDeudaDtoList = iDeudaClienteRService.getDeudasCompletas(servicioDeudaDtos);
+        List<ServicioDeudaDto> servicioDeudaDtoList = iDeudaClienteRService.getDeudasCompletas(clienteDto.getServicioDeudaDtoList());
         if(servicioDeudaDtoList == null) {
             throw new Exception();
         }
@@ -221,6 +227,7 @@ public class CobroClienteService implements ICobroClienteService {
             //2.1. Recorrer las deudas con todos registro completos
             List<CobroClienteEntity> cobroClienteEntityList = new ArrayList<>();
             List<AccionEntity> accionEntityList = new ArrayList<>();
+            List<DeudaClienteEntity> deudaClienteEntityList = new ArrayList<>();
 
             for(DeudaClienteEntity deudaClienteEntity : servicioDeudaDto.getDeudaClientes()) {
                 //2.1.1. Cargar Cobros Clientes
@@ -236,6 +243,9 @@ public class CobroClienteService implements ICobroClienteService {
                     throw new Exception();
                 }
                 accionEntityList.add(accionEntity);
+
+                //2.1.3. Cargar Deudas en la lista
+                deudaClienteEntityList.add(deudaClienteEntity);
             }
             //2.2. Guardar en lista
             cobroClienteEntityList = saveAllCobrosClientes(cobroClienteEntityList);
@@ -246,6 +256,12 @@ public class CobroClienteService implements ICobroClienteService {
             //2.3. Guardar Acciones en Lista
             accionEntityList = iAccionService.saveAllAcciones(accionEntityList);
             if(accionEntityList.size() == 0) {
+                throw new Exception();
+            }
+
+            //2.4. Eliminar Deudas Clientes en todo en uno
+            Long recordDeletes = iDeudaClienteRService.deleteDeudasClientes(deudaClienteEntityList);
+            if(recordDeletes == 0) {
                 throw new Exception();
             }
 
@@ -275,7 +291,7 @@ public class CobroClienteService implements ICobroClienteService {
         }
 
         //3. Cargar Comprobante
-        ComprobanteCobroEntity comprobanteCobroEntity = iComprobanteCobroService.loadComprobanteCobro(servicioDeudaDtoList.get(0), usuario.getUsuarioId(), sumaTotal);
+        ComprobanteCobroEntity comprobanteCobroEntity = iComprobanteCobroService.loadComprobanteCobro(servicioDeudaDtoList.get(0), usuario.getUsuarioId(), sumaTotal, clienteDto.getNombreCliente(), clienteDto.getNroDocumento());
 
         //4. Guardar Comprobante
         comprobanteCobroEntity = iComprobanteCobroService.saveComprobanteCobro(comprobanteCobroEntity);
