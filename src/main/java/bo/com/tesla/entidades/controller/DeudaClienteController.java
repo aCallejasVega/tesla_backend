@@ -47,7 +47,7 @@ import bo.com.tesla.security.services.ISegUsuarioService;
 import bo.com.tesla.useful.cross.HandlingFiles;
 import bo.com.tesla.useful.cross.Util;
 
-@CrossOrigin(origins = "http://localhost:8080")
+
 @RestController
 @RequestMapping("api/deudaCliente")
 public class DeudaClienteController {

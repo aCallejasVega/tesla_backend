@@ -23,6 +23,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
@@ -45,22 +47,30 @@ public class SegPrivilegioEntity implements Serializable {
     @Column(length = 50)
     private String icono;
     private Short orden;
+    @JsonIgnore
     @Column(name = "usuario_creacion")
     private BigInteger usuarioCreacion;
+    @JsonIgnore
     @Column(name = "fecha_creacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
+    @JsonIgnore
     @Column(name = "usuario_modificacion")
     private BigInteger usuarioModificacion;
+    @JsonIgnore
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
+    @JsonIgnore
     @Column(length = 15)
     private String estado;
+    @JsonIgnore
     @OneToMany(mappedBy = "privilegioId")
     private List<SegPrivilegioRolEntity> segPrivilegioRolEntityList;
+  
     @OneToMany(mappedBy = "privilegioPadreId")
     private List<SegPrivilegioEntity> segPrivilegioEntityList;
+    @JsonIgnore
     @JoinColumn(name = "privilegio_padre_id", referencedColumnName = "privilegios_id")
     @ManyToOne
     private SegPrivilegioEntity privilegioPadreId;
