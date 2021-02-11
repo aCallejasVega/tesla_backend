@@ -37,14 +37,14 @@ public class EntidadController {
 
         if(entidadId <= 0 || entidadId == null) {
             response.put("status", "false");
-            response.put("messege", "La entidad es obligatoria");
+            response.put("message", "La entidad es obligatoria");
             response.put("result", null);
             return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
         }
 
         if(datoCliente == null || datoCliente.length() == 0 ) {
             response.put("status", "false");
-            response.put("messege", "El dato del cliente es obligatorio");
+            response.put("message", "El dato del cliente es obligatorio");
             response.put("result", null);
             return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
         }
@@ -52,17 +52,29 @@ public class EntidadController {
         try{
             Optional<List<ClienteDto>> optionalClienteDtos = iDeudaClienteRService.getByEntidadAndClienteLike(entidadId, datoCliente);
             if(optionalClienteDtos.isPresent()) {
+                if(optionalClienteDtos.get().size() > 0) {
+                    response.put("status", "true");
+                    response.put("result", optionalClienteDtos.get());
+                    response.put("message", "Cliente(s) encontrado(s)");
+                    return new ResponseEntity<>(response, HttpStatus.OK);
+                }
+                else {
+                    response.put("status", "true");
+                    response.put("result", null);
+                    response.put("message", "No hay cliente(s) asociados a los parámetros de búsqueda");
+                    return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+                }
+            } else {
                 response.put("status", "true");
-                response.put("result", optionalClienteDtos.get());
-                response.put("messege", "Encontrado");
-                return new ResponseEntity<>(response, HttpStatus.OK);
+                response.put("result", null);
+                response.put("message", "No hay cliente(s) asociados a los parámetros de búsqueda");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
-            response.put("mensaje", "No hay clientes");
-            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+
         } catch(Exception e) {
             response.put("status", "false");
             response.put("result", null);
-            response.put("messege", e.getMessage());//modificar por mensaje
+            response.put("message", "Se ha producido un error");
             return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
@@ -75,14 +87,14 @@ public class EntidadController {
 
         if(entidadId <= 0 || entidadId == null) {
             response.put("status", "false");
-            response.put("messege", "La entidad es obligatoria");
+            response.put("message", "La entidad es obligatoria");
             response.put("result", null);
             return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
         }
 
         if(codigoCliente == null || codigoCliente.length() == 0 ) {
             response.put("status", "false");
-            response.put("messege", "El código del cliente es obligatorio");
+            response.put("message", "El código del cliente es obligatorio");
             response.put("result", null);
             return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
         }
@@ -92,24 +104,21 @@ public class EntidadController {
             if(!servicioDeudaDtos.isEmpty()) {
                 response.put("status", "true");
                 response.put("result", servicioDeudaDtos);
-                response.put("messege", "Encontrado");
+                response.put("message", "Deudas encontradas");
                 return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                response.put("status", "false");
+                response.put("result", null);
+                response.put("message", "No se encontraron deudas");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
-            response.put("status", "false");
-            response.put("result", null);
-            response.put("messege", "No encotrado");//modificar por mensaje
-            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             response.put("status", "false");
             response.put("result", null);
-            response.put("messege", e.getMessage());//modificar por mensaje
+            response.put("message", "Se ha producido un error");
             return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
-
-
-
-
 
     @GetMapping("/tipos")
     public ResponseEntity<?> getEntidadesByTipo(Authentication authentication) {
@@ -120,17 +129,18 @@ public class EntidadController {
             if(optionalDominioDtos.isPresent()) {
                 response.put("status", "true");
                 response.put("result", optionalDominioDtos.get());
-                response.put("messege", "Tipos Entidades encontrados");
+                response.put("message", "Tipos Entidades encontrados");
                 return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                response.put("status", "false");
+                response.put("result", null);
+                response.put("message", "No existe Tipos Entidades encontrados");
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            response.put("status", "false");
-            response.put("result", null);
-            response.put("messege", "No existe Tipos Entidades encontrados");
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch(Exception e) {
             response.put("status", "false");
             response.put("result", null);
-            response.put("messege", e.getMessage());//modificar por mensaje
+            response.put("message", "Se ha producido un error");
             return  new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -141,7 +151,7 @@ public class EntidadController {
 
         if(tipoEntidadId <= 0 || tipoEntidadId == null) {
             response.put("status", "false");
-            response.put("messege", "El tipo de entidad es obligatoria");
+            response.put("message", "El tipo de entidad es obligatoria");
             response.put("result", null);
             return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
         }
@@ -151,17 +161,18 @@ public class EntidadController {
             if(optionalEntidadDtos.isPresent()){
                 response.put("status", "true");
                 response.put("result", optionalEntidadDtos.get());
-                response.put("messege", "Entidades por Tipo Entidad encontrado");
+                response.put("message", "Se encontraron Entidades por Tipo");
                 return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                response.put("status", "false");
+                response.put("result", null);
+                response.put("message", "No se encontraron Entidades por Tipo");
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            response.put("status", "false");
-            response.put("result", null);
-            response.put("messege", "No existe");
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch(Exception e) {
             response.put("status", "false");
             response.put("result", null);
-            response.put("messege", e.getMessage());//modificar por mensaje
+            response.put("message", "Se ha producido un error");
             return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
@@ -174,16 +185,18 @@ public class EntidadController {
             if(optionalEntidadDtos.isPresent()){
                 response.put("status", "true");
                 response.put("result", optionalEntidadDtos.get());
+                response.put("message", "Se encontraron Entidades");
                 return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                response.put("status", "false");
+                response.put("result", null);
+                response.put("message", "Entidades no encontradas");
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            response.put("status", "false");
-            response.put("result", null);
-            response.put("messege", "No encontrado");//modificar por mensaje
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch(Exception e) {
             response.put("status", "false");
             response.put("result", null);
-            response.put("messege", e.getMessage());//modificar por mensaje
+            response.put("message", "Se ha producido un error");
             return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@RequestMapping("/cobros")
+@RequestMapping("api/cobros")
 public class CobroClienteController {
 
     @Autowired
@@ -26,9 +26,15 @@ public class CobroClienteController {
                                               @PathVariable Long metodoPagoId,
                                               Authentication authentication) throws Exception {
         Map<String, Object> response = new HashMap<>();
-        if(clienteDto == null || metodoPagoId == null || metodoPagoId <= 0 ) {
+        if(clienteDto == null || clienteDto.getNombreCliente() == null || clienteDto.getNroDocumento() == null || clienteDto.getCodigoCliente() == null) {
             response.put("status", "false");
-            response.put("messege", "Ocurrió un error en el servidor, por favor verifique los parametros de ingreso.");
+            response.put("message", "Ocurrió un error en el servidor, por favor verifique selecciona de deudas o datos de clientes");
+            response.put("result", null);
+            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+        }
+        if(metodoPagoId == null || metodoPagoId <= 0 || comprobanteEnUno == null) {
+            response.put("status", "false");
+            response.put("message", "Ocurrió un error en el servidor, por favor verifique parametros");
             response.put("result", null);
             return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
         }
@@ -36,16 +42,17 @@ public class CobroClienteController {
         try {
             iCobroClienteService.postCobrarDeudas(clienteDto, comprobanteEnUno, authentication.getName(), metodoPagoId);
             response.put("status", "true");
-            response.put("messege", "Se realizó el cobro correctamente");
+            response.put("message", "Se realizó el cobro de las deudas correctamente");
             response.put("result", "true");
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             response.put("status", "false");
             response.put("result", null);
-            response.put("messege", e.getMessage());//modificar por mensaje
+            response.put("message", "Ocurrió un error en el servidor");
             return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
 }
 
+ 
