@@ -52,7 +52,7 @@ public class CobroClienteService implements ICobroClienteService {
 
     @Override
     public List<CobroClienteEntity> saveAllCobrosClientes(List<CobroClienteEntity> cobroClienteEntities) {
-        return iCobroClienteDao.saveAll(cobroClienteEntities);
+        return this.iCobroClienteDao.saveAll(cobroClienteEntities);
     }
 
     @Override
@@ -60,9 +60,11 @@ public class CobroClienteService implements ICobroClienteService {
                                                      Long usuarioId,
                                                      Long metodoPagoId) {
 
-        Optional<DominioEntity> optionalDominioEntity = iDominioDao.findByDominioId(metodoPagoId);
-        if(!optionalDominioEntity.isPresent())
-            return null;
+        Optional<DominioEntity> optionalDominioEntity = this.iDominioDao.findByDominioId(metodoPagoId);
+        if(!optionalDominioEntity.isPresent()) {
+        	return null;
+        }
+            
 
         CobroClienteEntity cobroClienteEntity = new CobroClienteEntity();
         cobroClienteEntity.setArchivoId(deudaClienteEntity.getArchivoId());
@@ -91,7 +93,7 @@ public class CobroClienteService implements ICobroClienteService {
 
 
     //Método priniciapl para cobro de deudas
-    @Transactional(rollbackFor = {Exception.class})
+    //@Transactional(rollbackFor = {Exception.class})
     public void postCobrarDeudas(ClienteDto clienteDto,
                                  Boolean comprobanteEnUno,
                                  String login,
@@ -103,6 +105,7 @@ public class CobroClienteService implements ICobroClienteService {
         }
     }
 
+    @Transactional
     public void postCobrarDeudasIndividual(ClienteDto clienteDto,
                                     String login,
                                     Long metodoPagoId) throws Exception {
@@ -204,7 +207,9 @@ public class CobroClienteService implements ICobroClienteService {
 
 
     }
-
+    
+    
+    @Transactional
     public void postCobrarDeudasGlobal(ClienteDto clienteDto,
                                     String login,
                                     Long metodoPagoId) throws Exception {

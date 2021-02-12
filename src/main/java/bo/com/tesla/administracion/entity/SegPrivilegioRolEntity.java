@@ -20,6 +20,10 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 /**
  *
  * @author aCallejas
@@ -36,15 +40,19 @@ public class SegPrivilegioRolEntity implements Serializable {
     @Basic(optional = false)
     @Column(name = "privilegio_rol_id", nullable = false)
     private Long privilegioRolId;
+    
     @JoinColumn(name = "privilegio_id", referencedColumnName = "privilegios_id")
     @ManyToOne
     private SegPrivilegioEntity privilegioId;
+    @JsonIgnore
     @JoinColumn(name = "rol_id", referencedColumnName = "rol_id")
     @ManyToOne
     private SegRolEntity rolId;
+    @JsonIgnore
     @OneToMany(mappedBy = "privilegioRolId")
     private List<SegPrivilegioRoleTransicionEntity> segPrivilegioRoleTransicionEntityList;
-
+    @Column(length = 15)
+    private String estado;
     public SegPrivilegioRolEntity() {
     }
 
@@ -84,7 +92,19 @@ public class SegPrivilegioRolEntity implements Serializable {
         this.segPrivilegioRoleTransicionEntityList = segPrivilegioRoleTransicionEntityList;
     }
 
-    @Override
+    
+    
+    
+    
+    public String getEstado() {
+		return estado;
+	}
+
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
+
+	@Override
     public int hashCode() {
         int hash = 0;
         hash += (privilegioRolId != null ? privilegioRolId.hashCode() : 0);

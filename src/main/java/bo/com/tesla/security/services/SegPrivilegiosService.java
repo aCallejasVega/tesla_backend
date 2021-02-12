@@ -1,5 +1,6 @@
 package bo.com.tesla.security.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,19 +10,33 @@ import bo.com.tesla.administracion.entity.SegPrivilegioEntity;
 import bo.com.tesla.security.dao.ISegPrivilegiosDao;
 
 @Service
-public class SegPrivilegiosService  implements ISegPrivilegiosService{
-	
+public class SegPrivilegiosService implements ISegPrivilegiosService {
+
 	@Autowired
-	private ISegPrivilegiosDao SegPrivilegiosDao;
+	private ISegPrivilegiosDao segPrivilegiosDao;
 
 	@Override
 	public List<SegPrivilegioEntity> getMenuByUserId(Long usuarioId) {
-		
-		
-		return this.SegPrivilegiosDao.getMenuByUserId(usuarioId);
-		
+
+		List<SegPrivilegioEntity> sePrivilegioList = this.segPrivilegiosDao.getMenuByUserId(usuarioId);
+
+		for (SegPrivilegioEntity segPrivilegio : sePrivilegioList) {
+
+			List<SegPrivilegioEntity> segPrivilegioSubMenuNew = new ArrayList<>();
+
+			for (SegPrivilegioEntity segPrivilegioSubMenu : segPrivilegio.getSegPrivilegioEntityList()) {
+				String estado = segPrivilegiosDao.getEstadoPrivilegios(usuarioId,
+						segPrivilegioSubMenu.getPrivilegiosId());
+				if (estado.equals("ACTIVO")) {
+					segPrivilegioSubMenuNew.add(segPrivilegioSubMenu);
+				}
+			}
+			segPrivilegio.setSegPrivilegioEntityList(segPrivilegioSubMenuNew);
+
+		}
+
+		return sePrivilegioList;
+
 	}
-	
-	
 
 }

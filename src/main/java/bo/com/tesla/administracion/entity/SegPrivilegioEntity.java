@@ -23,7 +23,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 /**
  *
@@ -61,13 +63,13 @@ public class SegPrivilegioEntity implements Serializable {
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
-    @JsonIgnore
+  
     @Column(length = 15)
     private String estado;
     @JsonIgnore
     @OneToMany(mappedBy = "privilegioId")
     private List<SegPrivilegioRolEntity> segPrivilegioRolEntityList;
-  
+    
     @OneToMany(mappedBy = "privilegioPadreId")
     private List<SegPrivilegioEntity> segPrivilegioEntityList;
     @JsonIgnore

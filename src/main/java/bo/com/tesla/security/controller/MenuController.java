@@ -46,12 +46,13 @@ public class MenuController {
 				response.put("status", false);
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
 			}
-			response.put("mensaje", "No se encontraron ningún privilegio para el usuario: "+ usuario.getLogin() + ".");				
+							
 			response.put("data", privilegioList);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 			
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 			this.logger.error("This is error", e.getMessage());
 			this.logger.error("This is cause", e.getCause());
 			
