@@ -75,6 +75,7 @@ public class DeudaClienteRService implements IDeudaClienteRService {
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public List<ServicioDeudaDto> getDeudasCompletas(List<ServicioDeudaDto> servicioDeudaDtos) {
         for(ServicioDeudaDto servicioDeudaDto : servicioDeudaDtos) {

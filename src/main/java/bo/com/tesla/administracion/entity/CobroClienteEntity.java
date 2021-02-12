@@ -98,6 +98,22 @@ public class CobroClienteEntity implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cobroClienteId")
     private List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList;
 
+    @Basic(optional = false)
+    @Column(length = 150)
+    private String direccion;
+
+    @Basic(optional = false)
+    @Column(length = 10)
+    private String telefono;
+
+    @Basic(optional = false)
+    @Column(length = 15)
+    private String nit;
+
+    @Basic(optional = false)
+    @Column(name = "sub_total", precision = 17, scale = 2)
+    private BigDecimal subTotal;
+
     @Column(length = 15)
     private String transaccion;
 
@@ -232,8 +248,8 @@ public class CobroClienteEntity implements Serializable {
         return tipoComprobante;
     }
 
-    public void setTipoComprobante(boolean tipoPlantilla) {
-        this.tipoComprobante = tipoPlantilla;
+    public void setTipoComprobante(boolean tipoComprobante) {
+        this.tipoComprobante = tipoComprobante;
     }
 
     public String getPeriodoCabecera() {
@@ -290,6 +306,38 @@ public class CobroClienteEntity implements Serializable {
 
     public void setDetalleComprobanteCobroEntityList(List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList) {
         this.detalleComprobanteCobroEntityList = detalleComprobanteCobroEntityList;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getNit() {
+        return nit;
+    }
+
+    public void setNit(String nit) {
+        this.nit = nit;
+    }
+
+    public BigDecimal getSubTotal() {
+        return subTotal;
+    }
+
+    public void setSubTotal(BigDecimal subTotal) {
+        this.subTotal = subTotal;
     }
 
     public String getTransaccion() {

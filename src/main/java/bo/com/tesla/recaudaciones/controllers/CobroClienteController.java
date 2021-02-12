@@ -1,21 +1,16 @@
 package bo.com.tesla.recaudaciones.controllers;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import bo.com.tesla.recaudaciones.dto.ClienteDto;
+import bo.com.tesla.recaudaciones.dto.ServicioDeudaDto;
+import bo.com.tesla.recaudaciones.services.ICobroClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import bo.com.tesla.recaudaciones.dto.ClienteDto;
-import bo.com.tesla.recaudaciones.services.ICobroClienteService;
+import java.util.*;
 
 @RestController
 @RequestMapping("api/cobros")
@@ -24,7 +19,7 @@ public class CobroClienteController {
     @Autowired
     private ICobroClienteService iCobroClienteService;
 
-    //@Transactional
+    @Transactional
     @PostMapping("/{comprobanteEnUno}/{metodoPagoId}")
     public ResponseEntity<?> postCobrarDeudas(@RequestBody ClienteDto clienteDto,
                                               @PathVariable Boolean comprobanteEnUno, //sera de la clase de entidad
@@ -38,6 +33,13 @@ public class CobroClienteController {
             return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
         }
         if(metodoPagoId == null || metodoPagoId <= 0 || comprobanteEnUno == null) {
+            response.put("status", "false");
+            response.put("message", "Ocurrió un error en el servidor, por favor verifique parametros");
+            response.put("result", null);
+            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+        }
+
+        if(comprobanteEnUno == null) {
             response.put("status", "false");
             response.put("message", "Ocurrió un error en el servidor, por favor verifique parametros");
             response.put("result", null);

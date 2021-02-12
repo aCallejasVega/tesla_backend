@@ -65,6 +65,6 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
             @Param("codigoCliente") String codigoCliente);
 
 
-    @Transactional
+    //@Transactional
     Long deleteByDeudaClienteIdIn(List<Long> deudaClienteIdLst);
 }

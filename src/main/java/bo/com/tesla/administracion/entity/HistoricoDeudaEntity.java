@@ -75,8 +75,8 @@ public class HistoricoDeudaEntity implements Serializable {
     @Column(name = "dato_extra", length = 250)
     private String datoExtra;
     @Basic(optional = false)
-    @Column(name = "tipo_plantilla", nullable = false)
-    private boolean tipoPlantilla;
+    @Column(name = "tipo_comprobante", nullable = false)
+    private boolean tipoComprobante;
     @Column(name = "periodo_cabecera", length = 250)
     private String periodoCabecera;
     @Basic(optional = false)
@@ -92,6 +92,22 @@ public class HistoricoDeudaEntity implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "historicoDeudaId")
     private List<AccionEntity> accionEntityList;
 
+    @Basic(optional = false)
+    @Column(length = 150)
+    private String direccion;
+
+    @Basic(optional = false)
+    @Column(length = 10)
+    private String telefono;
+
+    @Basic(optional = false)
+    @Column(length = 15)
+    private String nit;
+
+    @Basic(optional = false)
+    @Column(name = "sub_total", precision = 17, scale = 2)
+    private BigDecimal subTotal;
+
     public HistoricoDeudaEntity() {
     }
 
@@ -99,7 +115,7 @@ public class HistoricoDeudaEntity implements Serializable {
         this.historicoDeudaId = historicoDeudaId;
     }
 
-    public HistoricoDeudaEntity(Long historicoDeudaId, long deudaClienteId, int nroRegistro, String codigoCliente, String tipoServicio, String periodo, Character tipo, BigDecimal cantidad, String concepto, boolean tipoPlantilla, long usuarioCreacion, Date fechaCreacion) {
+    public HistoricoDeudaEntity(Long historicoDeudaId, long deudaClienteId, int nroRegistro, String codigoCliente, String tipoServicio, String periodo, Character tipo, BigDecimal cantidad, String concepto, boolean tipoComprobante, long usuarioCreacion, Date fechaCreacion) {
         this.historicoDeudaId = historicoDeudaId;
         this.deudaClienteId = deudaClienteId;
         this.nroRegistro = nroRegistro;
@@ -109,7 +125,7 @@ public class HistoricoDeudaEntity implements Serializable {
         this.tipo = tipo;
         this.cantidad = cantidad;
         this.concepto = concepto;
-        this.tipoPlantilla = tipoPlantilla;
+        this.tipoComprobante = tipoComprobante;
         this.usuarioCreacion = usuarioCreacion;
         this.fechaCreacion = fechaCreacion;
     }
@@ -218,12 +234,12 @@ public class HistoricoDeudaEntity implements Serializable {
         this.datoExtra = datoExtra;
     }
 
-    public boolean getTipoPlantilla() {
-        return tipoPlantilla;
+    public boolean getTipoComprobante() {
+        return tipoComprobante;
     }
 
-    public void setTipoPlantilla(boolean tipoPlantilla) {
-        this.tipoPlantilla = tipoPlantilla;
+    public void setTipoComprobante(boolean tipoComprobante) {
+        this.tipoComprobante = tipoComprobante;
     }
 
     public String getPeriodoCabecera() {
@@ -264,6 +280,39 @@ public class HistoricoDeudaEntity implements Serializable {
 
     public void setAccionEntityList(List<AccionEntity> accionEntityList) {
         this.accionEntityList = accionEntityList;
+    }
+
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getNit() {
+        return nit;
+    }
+
+    public void setNit(String nit) {
+        this.nit = nit;
+    }
+
+    public BigDecimal getSubTotal() {
+        return subTotal;
+    }
+
+    public void setSubTotal(BigDecimal subTotal) {
+        this.subTotal = subTotal;
     }
 
     @Override
