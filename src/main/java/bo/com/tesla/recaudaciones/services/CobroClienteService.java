@@ -60,11 +60,11 @@ public class CobroClienteService implements ICobroClienteService {
                                                      Long usuarioId,
                                                      Long metodoPagoId) {
 
-        Optional<DominioEntity> optionalDominioEntity = this.iDominioDao.findByDominioId(metodoPagoId);
-        if(!optionalDominioEntity.isPresent()) {
-        	return null;
-        }
-            
+
+        Optional<DominioEntity> optionalDominioEntity = iDominioDao.findByDominioIdAndDominio(metodoPagoId, "metodo_pago_id");
+        if(!optionalDominioEntity.isPresent())
+            return null;
+
 
         CobroClienteEntity cobroClienteEntity = new CobroClienteEntity();
         cobroClienteEntity.setArchivoId(deudaClienteEntity.getArchivoId());
@@ -203,9 +203,6 @@ public class CobroClienteService implements ICobroClienteService {
                 throw new Exception();
             }
         }
-
-
-
     }
     
     
@@ -306,19 +303,9 @@ public class CobroClienteService implements ICobroClienteService {
         //5. Asignar el comporbante a todos los detalles de comporbamtes
         ComprobanteCobroEntity finalComprobanteCobroEntity = comprobanteCobroEntity;
         detalleComprobanteCobroEntityList.forEach(z -> z.setComprobanteCobroId(finalComprobanteCobroEntity));
-        //detalleComprobanteCobroEntityList.forEach();
-        //5. Guardar Detalle comporbate
+
+        //6. Guardar Detalle comporbate
         List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntitiesResponse = iDetalleComprobanteCobroService.saveAllDetallesComprobantesCobos(detalleComprobanteCobroEntityList);
-
-        //5. Encontrar todas las deudas mas datos extras
-        List<DeudaClienteEntity> deudaClienteEntitiesDelete = servicioDeudaDtoList.stream()
-                                                                .map(ServicioDeudaDto::getDeudaClientes).findFirst().get();
-
-        //6. Eliminar DeuassClientes en Lista
-        Long recordDeletes = iDeudaClienteRService.deleteDeudasClientes(deudaClienteEntitiesDelete);
-        if(recordDeletes == 0) {
-            throw new Exception();
-        }
 
     }
 

@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface IDominioDao extends JpaRepository<DominioEntity, Long> {
 
     Optional<DominioEntity> findByDominioId(Long dominioId);
+    Optional<DominioEntity> findByDominioIdAndDominio(Long dominioId, String dominio);
 }
