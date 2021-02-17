@@ -74,8 +74,8 @@ public class ComprobanteCobroService implements IComprobanteCobroService {
         comprobanteCobroEntity.setCodigoControl("AA-AA-AA-AA");//Facturacion
         comprobanteCobroEntity.setUsuarioCreacion(usuarioId);
         comprobanteCobroEntity.setFechaCreacion(new Date());
-        comprobanteCobroEntity.setEstado("COBRADO");
-        //comprobanteCobroEntity.setTransaccion("COBRAR");
+        //comprobanteCobroEntity.setEstado("COBRADO");
+        comprobanteCobroEntity.setTransaccion("COBRAR");
 
         return comprobanteCobroEntity;
     }
