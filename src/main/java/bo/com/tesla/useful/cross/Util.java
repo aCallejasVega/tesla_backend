@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.util.List;
 
 import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvException;
+
+import bo.com.tesla.useful.config.BusinesException;
+import bo.com.tesla.useful.config.Technicalexception;
 
 public class Util {
 	public static String mensajeRow(String mensaje) {
@@ -24,52 +26,85 @@ public class Util {
 			if (newMenasje.contains("input=[]")) {
 				newMenasje = newMenasje + ". El archivo contiene registros en blanco, estos no son permitidos. ";
 			}
-			return newMenasje;
+			return newMenasje.replace("Parsing error at line","Se encontró un error en el archivo la línea es " ).replace("in input=", ". el registro es el siguiente:\n ");
 		}
 		return newMenasje;
 	}
 
 	public static String causeRow(String mensaje) {
-		int input = mensaje.indexOf("default message [");
-		if (input > 0) {
-			return mensaje.substring(input, mensaje.length());
+		
+		if(mensaje.contains("nroRegistro")) {
+			return "Verifique el campo “Nro de Registro” no se encuentra en el formato adecuado o no contiene ningún valor.";
 		}
-		return mensaje;
+		if(mensaje.contains("codigoCliente")) {
+			return "Verifique el campo “Nro de Registro” no se encuentra en el formato adecuado o no contiene ningún valor.";			
+		}
+		if(mensaje.contains("servicio")) {
+			return "Verifique el campo “Servicio” no se encuentra en el formato adecuado o no contiene ningún valor.";			
+		}
+		if(mensaje.contains("tipoServicio")) {
+			return "Verifique el campo “Tipo de Servicio” no se encuentra en el formato adecuado o no contiene ningún valor.";			
+		}
+		if(mensaje.contains("periodo")) {
+			return "Verifique el campo “Periodo” no se encuentra en el formato adecuado o no contiene ningún valor.";			
+		}
+		if(mensaje.contains("tipo")) {
+			return "Verifique el campo “Tipo de Sección” no se encuentra en el formato adecuado o no contiene ningún valor.";			
+		}
+		if(mensaje.contains("concepto")) {
+			return "Verifique el campo “Concepto” no se encuentra en el formato adecuado o no contiene ningún valor.";			
+		}
+		if(mensaje.contains("cantidad")) {
+			return "Verifique el campo “Cantidad” no se encuentra en el formato adecuado o no contiene ningún valor.";			
+		}
+		if(mensaje.contains("montoUnitario")) {
+			return "Verifique el campo “Monto Unitario” no se encuentra en el formato adecuado o no contiene ningún valor.";			
+		}
+		if(mensaje.contains("subTotal")) {
+			return "Verifique el campo “Sub-Total” no se encuentra en el formato adecuado o no contiene ningún valor.";			
+		}
+		if(mensaje.contains("tipoComprobante")) {
+			return "Verifique el campo “Tipo Comprobante” no se encuentra en el formato adecuado o no contiene ningún valor.";			
+		}
+		
+		
+		return "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.";
 	}
 
-	public static Long fileDataValidate(String path) throws Exception {
-		Long rowInt=0L; 
+	public static Long fileDataValidate(String path) throws BusinesException {
+		Long rowInt = 0L;
 		try {
-			if(!path.contains(".csv")) {
-				System.out.println(path);
-				throw new Exception("El archivo debe tener la extensión ‘csv’, por favor verifique la extensión del archivo y vuelva a cargarlo.");
+			if (!path.contains(".csv")) {
+				throw new BusinesException(
+						"El archivo debe tener la extensión ‘csv’, por favor verifique la extensión del archivo y vuelva a cargarlo.");
 			}
-			CSVReader reader = new CSVReader(new FileReader(path),'|');
+			CSVReader reader = new CSVReader(new FileReader(path), '|');
 			List<String[]> allRows = reader.readAll();
-			
+
 			for (String[] rowString : allRows) {
 				rowInt++;
-				
-				if(rowString.length<=1) {
-					throw new Exception("Se encontró un registro en blanco en la línea "+rowInt+", por favor verifique el archivo y vulva a cargarlo.");
+
+				if (rowString.length <= 1) {
+					throw new BusinesException("Se encontró un registro en blanco en la línea " + rowInt
+							+ ", por favor verifique el archivo y vulva a cargarlo.");
+
 				}
-				if(rowString.length!=18) {
-					throw new Exception("Falta columna(s) en la línea "+rowInt +" verifique el archivo y vulva a cargarlo.");
-				}				
+				if (rowString.length != 18) {
+					throw new BusinesException(
+							"Falta columna(s) en la línea " + rowInt + " verifique el archivo y vuelva a cargarlo.");
+				}
 			}
-			if(rowInt==0) {
-				throw new Exception("No se encontraron registros en el archivo, por favor verifique el contenido del archivo y vulva a cargarlo.");
+			if (rowInt == 0) {
+				throw new BusinesException(
+						"No se encontraron registros en el archivo, por favor verifique el contenido del archivo y vuelva a cargarlo.");
 			}
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CsvException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new Technicalexception(e.getMessage(), e.getCause());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new Technicalexception(e.getMessage(), e.getCause());
+		} catch (Exception e) {
+			throw new Technicalexception(e.getMessage(), e.getCause());
 		}
 		return rowInt;
 

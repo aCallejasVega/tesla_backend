@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +29,7 @@ public class CobroClienteController {
                                               @PathVariable Boolean comprobanteEnUno, //sera de la clase de entidad
                                               @PathVariable Long metodoPagoId,
                                               Authentication authentication) throws Exception {
+    	System.out.println("****************postCobrarDeudas*******************");
         Map<String, Object> response = new HashMap<>();
         if(clienteDto == null || clienteDto.getNombreCliente() == null || clienteDto.getNroDocumento() == null || clienteDto.getCodigoCliente() == null) {
             response.put("status", "false");
@@ -51,6 +51,7 @@ public class CobroClienteController {
             response.put("result", "true");
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
+        	e.printStackTrace();
             response.put("status", "false");
             response.put("result", null);
             response.put("message", "Ocurrió un error en el servidor");

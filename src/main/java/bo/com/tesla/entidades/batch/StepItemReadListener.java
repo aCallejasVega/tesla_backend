@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import bo.com.tesla.administracion.entity.DeudaClienteEntity;
 import bo.com.tesla.entidades.services.IDeudaClienteService;
+import bo.com.tesla.useful.config.BusinesException;
+
 
 public class StepItemReadListener implements  ItemReadListener<DeudaClienteEntity>{
 	
@@ -27,14 +29,22 @@ public class StepItemReadListener implements  ItemReadListener<DeudaClienteEntit
 	}
 
 	@Override
-	public void onReadError(Exception ex) {
+	public void onReadError(Exception ex)  {
+		
+		System.out.println("-------------------onReadError----------------------");
+		
+		System.out.println("-----------------------------------------"+ex.getMessage());
+		System.out.println("-----------------------------------------");
+		
+		System.out.println("-----------------------------------------"+ex.getCause());
+		
 		//Todo delet en caso de encontrar un error.
-		System.out.println("*****************onReadError********************");
+		/*System.out.println("*****************onReadError********************");
 		System.out.println(ex.getMessage());
 		
 		System.out.println("eliminando registros con id ="+this.archivoId);
 		this.deudaClienteService.deletByArchivoId(this.archivoId);
-		System.out.println("Termion de eliminar");
+		System.out.println("Termion de eliminar");*/
 		
 	}
 
