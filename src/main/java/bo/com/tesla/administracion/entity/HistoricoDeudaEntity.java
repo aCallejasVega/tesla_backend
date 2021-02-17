@@ -108,6 +108,9 @@ public class HistoricoDeudaEntity implements Serializable {
     @Column(name = "sub_total", precision = 17, scale = 2)
     private BigDecimal subTotal;
 
+    @Column(nullable = false, length = 15)
+    private String estado;
+
     public HistoricoDeudaEntity() {
     }
 
@@ -282,6 +285,13 @@ public class HistoricoDeudaEntity implements Serializable {
         this.accionEntityList = accionEntityList;
     }
 
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
 
     public String getDireccion() {
         return direccion;

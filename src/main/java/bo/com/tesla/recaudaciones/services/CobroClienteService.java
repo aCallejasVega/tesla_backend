@@ -10,6 +10,7 @@ import bo.com.tesla.security.dao.ISegUsuarioDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.UnexpectedRollbackException;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -44,8 +45,11 @@ public class CobroClienteService implements ICobroClienteService {
     @Autowired
     private IDominioDao iDominioDao;
 
+    /*@Autowired
+    private IAccionService iAccionService;*/
+
     @Autowired
-    private IAccionService iAccionService;
+    private IHistoricoDeudaService iHistoricoDeudaService;
 
     @Autowired
     private IDetalleComprobanteCobroService iDetalleComprobanteCobroService;
@@ -91,8 +95,8 @@ public class CobroClienteService implements ICobroClienteService {
         cobroClienteEntity.setSubTotal(deudaClienteEntity.getSubTotal());
         cobroClienteEntity.setUsuarioCreacion(usuarioId);
         cobroClienteEntity.setFechaCreacion(new Date());
-        cobroClienteEntity.setEstado("COBRADO");
-        //cobroClienteEntity.setTransaccion("COBRAR");
+        ///cobroClienteEntity.setEstado("COBRADO");
+        cobroClienteEntity.setTransaccion("COBRAR");
 
         return  cobroClienteEntity;
     }
@@ -111,11 +115,11 @@ public class CobroClienteService implements ICobroClienteService {
         }
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void postCobrarDeudasIndividual(ClienteDto clienteDto,
                                     String login,
                                     Long metodoPagoId) throws Exception {
-        //try {
+        try {
             //Boolean response = false;
             SegUsuarioEntity usuario = this.usuarioDao.findByLogin(login);
 
@@ -141,12 +145,20 @@ public class CobroClienteService implements ICobroClienteService {
                     }
                     cobroClienteEntityList.add(cobroClienteEntity);
 
+                    /*
                     //2.1.2. Cargar Acciones
                     AccionEntity accionEntity = iAccionService.loadAccion(deudaClienteEntity, "COBRADO", usuario.getUsuarioId());
                     if (accionEntity == null) {
                         throw new Exception();
                     }
                     accionEntityList.add(accionEntity);
+                     */
+
+                    //2.1.2. Actualizar Historico Deudas
+                    HistoricoDeudaEntity historicoDeudaEntity = iHistoricoDeudaService.updateEstado(deudaClienteEntity.getDeudaClienteId(), "COBRADO");
+                    if(historicoDeudaEntity == null) {
+                        throw new Exception();
+                    }
 
                     //2.1.3. Cargar Deudas en la lista
                     deudaClienteEntityList.add(deudaClienteEntity);
@@ -158,11 +170,13 @@ public class CobroClienteService implements ICobroClienteService {
                     throw new Exception();
                 }
 
+                /*
                 //2.3. Guardar Acciones en Lista
                 accionEntityList = iAccionService.saveAllAcciones(accionEntityList);
                 if (accionEntityList.size() == 0) {
                     throw new Exception();
                 }
+                 */
 
                 //2.4. Eliminar DeuassClientes en Lista
                 Long recordDeletes = iDeudaClienteRService.deleteDeudasClientes(deudaClienteEntityList);
@@ -210,18 +224,20 @@ public class CobroClienteService implements ICobroClienteService {
                     throw new Exception();
                 }
             }
-        /*} catch (Exception e) {
+        } catch (Exception e) {
+           throw e;
+        }
 
-        }*/
+
     }
     
     
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void postCobrarDeudasGlobal(ClienteDto clienteDto,
                                     String login,
                                     Long metodoPagoId) throws Exception {
 
-        //try {
+        try {
             SegUsuarioEntity usuario = this.usuarioDao.findByLogin(login);
 
             //1. Seleccionar todos registros de deudas y datos extras
@@ -249,13 +265,20 @@ public class CobroClienteService implements ICobroClienteService {
                         throw new Exception();
                     }
                     cobroClienteEntityList.add(cobroClienteEntity);
-
+                    /*
                     //2.1.2. Cargar Acciones
                     AccionEntity accionEntity = iAccionService.loadAccion(deudaClienteEntity, "COBRADO", usuario.getUsuarioId());
                     if (accionEntity == null) {
                         throw new Exception();
                     }
                     accionEntityList.add(accionEntity);
+
+                     */
+                    //2.1.2. Actualizar Historico Deudas
+                    HistoricoDeudaEntity historicoDeudaEntity = iHistoricoDeudaService.updateEstado(deudaClienteEntity.getDeudaClienteId(), "COBRADO");
+                    if(historicoDeudaEntity == null) {
+                        throw new Exception();
+                    }
 
                     //2.1.3. Cargar Deudas en la lista
                     deudaClienteEntityList.add(deudaClienteEntity);
@@ -265,12 +288,14 @@ public class CobroClienteService implements ICobroClienteService {
                 if (cobroClienteEntityList.size() == 0) {
                     throw new Exception();
                 }
-
+                /*
                 //2.3. Guardar Acciones en Lista
                 accionEntityList = iAccionService.saveAllAcciones(accionEntityList);
                 if (accionEntityList.size() == 0) {
                     throw new Exception();
                 }
+
+                 */
 
                 //2.4. Eliminar Deudas Clientes en todo en uno
                 Long recordDeletes = iDeudaClienteRService.deleteDeudasClientes(deudaClienteEntityList);
@@ -321,9 +346,9 @@ public class CobroClienteService implements ICobroClienteService {
             throw new UnexpectedRollbackException("No se puede eliminar", e);
 
         }*/
-        /*} catch (Exception e) {
-
-        }*/
+        } catch (Exception e) {
+            throw e;
+        }
 
     }
 

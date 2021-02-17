@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class CobroClienteController {
     @Autowired
     private ICobroClienteService iCobroClienteService;
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @PostMapping("/{comprobanteEnUno}/{metodoPagoId}")
     public ResponseEntity<?> postCobrarDeudas(@RequestBody ClienteDto clienteDto,
                                               @PathVariable Boolean comprobanteEnUno, //sera de la clase de entidad

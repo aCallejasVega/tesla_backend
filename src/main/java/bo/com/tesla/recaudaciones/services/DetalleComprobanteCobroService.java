@@ -34,8 +34,8 @@ public class DetalleComprobanteCobroService implements IDetalleComprobanteCobroS
         detalleComprobanteCobroEntity.setCobroClienteId(cobroClienteEntity);
         detalleComprobanteCobroEntity.setUsuarioCreacion(usuarioId);
         detalleComprobanteCobroEntity.setFechaCreacion(new Date());
-        detalleComprobanteCobroEntity.setEstado("COBRADO");//cambiar
-        //detalleComprobanteCobroEntity.setTransaccion("COBRAR");
+        //detalleComprobanteCobroEntity.setEstado("COBRADO");//cambiar
+        detalleComprobanteCobroEntity.setTransaccion("COBRAR");
 
         return detalleComprobanteCobroEntity;
     }
