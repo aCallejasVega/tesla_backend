@@ -23,7 +23,7 @@ import javax.persistence.Table;
  * @author aCallejas
  */
 @Entity
-@Table(name = "seg_privilegios_roles_transiciones", catalog = "exacta", schema = "tesla2")
+@Table(name = "seg_privilegios_roles_transiciones", catalog = "exacta", schema = "tesla")
 
 public class SegPrivilegioRoleTransicionEntity implements Serializable {
 

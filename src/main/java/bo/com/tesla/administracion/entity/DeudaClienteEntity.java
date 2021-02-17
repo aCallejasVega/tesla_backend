@@ -25,7 +25,7 @@ import bo.com.tesla.useful.config.BusinesException;
  * @author aCallejas
  */
 @Entity
-@Table(name = "deudas_clientes", catalog = "exacta", schema = "tesla2")
+@Table(name = "deudas_clientes", catalog = "exacta", schema = "tesla")
 public class DeudaClienteEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;

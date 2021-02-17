@@ -22,7 +22,7 @@ import javax.persistence.Table;
  * @author aCallejas
  */
 @Entity
-@Table(name = "seg_usuarios_roles", catalog = "exacta", schema = "tesla2")
+@Table(name = "seg_usuarios_roles", catalog = "exacta", schema = "tesla")
 public class SegUsuarioRolEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

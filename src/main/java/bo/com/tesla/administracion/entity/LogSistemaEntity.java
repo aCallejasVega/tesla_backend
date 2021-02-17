@@ -24,7 +24,7 @@ import javax.persistence.TemporalType;
  * @author aCallejas
  */
 @Entity
-@Table(name = "log_sistemas", catalog = "exacta", schema = "tesla2")
+@Table(name = "log_sistemas", catalog = "exacta", schema = "tesla")
 
 public class LogSistemaEntity implements Serializable {
 

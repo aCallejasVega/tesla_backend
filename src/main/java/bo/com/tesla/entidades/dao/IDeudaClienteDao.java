@@ -22,7 +22,7 @@ public interface IDeudaClienteDao extends JpaRepository<DeudaClienteEntity, Long
 	@Transactional
 	@Modifying
 	@Query(value =" delete from "
-			+ " tesla2.deudas_clientes d "
+			+ " tesla.deudas_clientes d "
 			+ " where d.archivo_id= :archivoId ",nativeQuery = true)
 	public void deletByArchivoId(@Param("archivoId") Long archivoId);
 	

@@ -118,7 +118,7 @@ public class DeudaClienteController {
 		catch (BusinesException e) {
 			LogSistemaEntity log=new LogSistemaEntity();
 			log.setModulo("ENTIDADES");
-			log.setController("api/deudaCliente/upload");			
+			log.setController("api/deudaCliente/upload/");			
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());			

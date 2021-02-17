@@ -90,11 +90,13 @@ public class Util {
 
 				}
 				if (rowString.length != 18) {
+					
 					throw new BusinesException(
 							"Falta columna(s) en la línea " + rowInt + " verifique el archivo y vuelva a cargarlo.");
 				}
 			}
 			if (rowInt == 0) {
+				
 				throw new BusinesException(
 						"No se encontraron registros en el archivo, por favor verifique el contenido del archivo y vuelva a cargarlo.");
 			}

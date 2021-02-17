@@ -32,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
  * @author aCallejas
  */
 @Entity
-@Table(name = "seg_privilegios", catalog = "exacta", schema = "tesla2")
+@Table(name = "seg_privilegios", catalog = "exacta", schema = "tesla")
 
 public class SegPrivilegioEntity implements Serializable {
 
