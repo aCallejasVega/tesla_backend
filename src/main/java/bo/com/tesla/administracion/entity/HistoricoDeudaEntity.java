@@ -31,8 +31,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "historicos_deudas", catalog = "exacta", schema = "tesla2")
-@NamedQueries({
-    @NamedQuery(name = "HistoricoDeudaEntity.findAll", query = "SELECT h FROM HistoricoDeudaEntity h")})
+
 public class HistoricoDeudaEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -81,8 +80,11 @@ public class HistoricoDeudaEntity implements Serializable {
     private String periodoCabecera;
     @Basic(optional = false)
     @Column(name = "usuario_creacion", nullable = false)
-    private long usuarioCreacion;
-    @Basic(optional = false)
+    private Long usuarioCreacion;
+    //@Column(name = "transaccion", length = 15)
+    //private String transaccion;       
+
+	@Basic(optional = false)
     @Column(name = "fecha_creacion", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
@@ -91,6 +93,15 @@ public class HistoricoDeudaEntity implements Serializable {
     private ArchivoEntity archivoId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "historicoDeudaId")
     private List<AccionEntity> accionEntityList;
+    
+    
+   /* public String getTransaccion() {
+		return transaccion;
+	}
+
+	public void setTransaccion(String transaccion) {
+		this.transaccion = transaccion;
+	}*/
 
     @Basic(optional = false)
     @Column(length = 150)
@@ -118,7 +129,9 @@ public class HistoricoDeudaEntity implements Serializable {
         this.historicoDeudaId = historicoDeudaId;
     }
 
-    public HistoricoDeudaEntity(Long historicoDeudaId, long deudaClienteId, int nroRegistro, String codigoCliente, String tipoServicio, String periodo, Character tipo, BigDecimal cantidad, String concepto, boolean tipoComprobante, long usuarioCreacion, Date fechaCreacion) {
+
+    public HistoricoDeudaEntity(Long historicoDeudaId, long deudaClienteId, int nroRegistro, String codigoCliente, String tipoServicio, String periodo, Character tipo, BigDecimal cantidad, String concepto, boolean tipoComprobante, Long usuarioCreacion, Date fechaCreacion) {
+
         this.historicoDeudaId = historicoDeudaId;
         this.deudaClienteId = deudaClienteId;
         this.nroRegistro = nroRegistro;
@@ -237,15 +250,21 @@ public class HistoricoDeudaEntity implements Serializable {
         this.datoExtra = datoExtra;
     }
 
-    public boolean getTipoComprobante() {
-        return tipoComprobante;
-    }
 
-    public void setTipoComprobante(boolean tipoComprobante) {
-        this.tipoComprobante = tipoComprobante;
-    }
+   
+    
+    
 
-    public String getPeriodoCabecera() {
+    public boolean isTipoComprobante() {
+		return tipoComprobante;
+	}
+
+	public void setTipoComprobante(boolean tipoComprobante) {
+		this.tipoComprobante = tipoComprobante;
+	}
+
+
+	public String getPeriodoCabecera() {
         return periodoCabecera;
     }
 
@@ -257,7 +276,7 @@ public class HistoricoDeudaEntity implements Serializable {
         return usuarioCreacion;
     }
 
-    public void setUsuarioCreacion(long usuarioCreacion) {
+    public void setUsuarioCreacion(Long usuarioCreacion) {
         this.usuarioCreacion = usuarioCreacion;
     }
 

@@ -38,12 +38,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import bo.com.tesla.administracion.entity.ArchivoEntity;
 import bo.com.tesla.administracion.entity.EntidadEntity;
+import bo.com.tesla.administracion.entity.LogSistemaEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.entidades.dto.DeudasClienteDto;
 import bo.com.tesla.entidades.services.IArchivoService;
 import bo.com.tesla.entidades.services.IDeudaClienteService;
 import bo.com.tesla.entidades.services.IEntidadService;
+import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegUsuarioService;
+import bo.com.tesla.security.services.LogSistemaService;
+import bo.com.tesla.useful.config.BusinesException;
+import bo.com.tesla.useful.config.Technicalexception;
 import bo.com.tesla.useful.cross.HandlingFiles;
 import bo.com.tesla.useful.cross.Util;
 
@@ -64,6 +69,10 @@ public class DeudaClienteController {
 
 	@Autowired
 	private IEntidadService entidadService;
+	
+	@Autowired
+	private ILogSistemaService logSistemaService;
+	
 
 	@Value("${tesla.path.files-debts}")
 	private String filesBets;
@@ -77,18 +86,20 @@ public class DeudaClienteController {
 
 	
 	@PostMapping(path = "/upload")
-	public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, Authentication authentication)
-			throws Exception {
+	public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, Authentication authentication) throws Exception
+			 {
 
 		Map<String, Object> response = new HashMap<>();
 		ArchivoEntity archivo = new ArchivoEntity();
 		String path = null;
+		SegUsuarioEntity usuario =new SegUsuarioEntity();
 		try {
-			SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
+			usuario = this.segUsuarioService.findByLogin(authentication.getName());
 			EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
 			path = HandlingFiles.saveFileToDisc(file, entidad.getNombre(), filesBets);
 
 			Long cantidadRegistros = Util.fileDataValidate(path);
+			
 
 			archivo.setEntidadId(entidad);
 			archivo.setNombre(file.getOriginalFilename());
@@ -102,26 +113,53 @@ public class DeudaClienteController {
 			response.put("archivo", archivo);
 			response.put("status", true);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			this.logger.error("This is error", e.getMessage());
-			this.logger.error("This is cause", e.getCause());
-			response.put("mensaje", "Ocurrió un error en el servidor, por favor verifique los parametros de ingreso.");
+			
+		} 
+		catch (BusinesException e) {
+			LogSistemaEntity log=new LogSistemaEntity();
+			log.setModulo("ENTIDADES");
+			log.setController("api/deudaCliente/upload");			
+			log.setMensaje(e.getMessage());
+			log.setUsuarioCreacion(usuario.getUsuarioId());
+			log.setFechaCreacion(new Date());			
+			logSistemaService.save(log);			
+			this.logger.error("This is cause", e.getMessage());
+			response.put("mensaje", e.getMessage());
+			response.put("codigo", log.getLogSistemaId()+"");
 			response.put("status", false);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+			
+		}
+		catch (Technicalexception e) {
+			
+			LogSistemaEntity log=new LogSistemaEntity();
+			log.setModulo("ENTIDADES");
+			log.setController("api/deudaCliente/upload");
+			log.setCausa(e.getCause()+"");
+			log.setMensaje(e.getMessage()+"");
+			log.setUsuarioCreacion(usuario.getUsuarioId());
+			log.setFechaCreacion(new Date());			
+			logSistemaService.save(log);
+			this.logger.error("This is error", e.getMessage());
+			this.logger.error("This is cause", e.getCause());
+			response.put("mensaje", "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			response.put("codigo", log.getLogSistemaId()+"");
+			response.put("status", false);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@PostMapping(path = "/processFile/{archivoId}")
-	public ResponseEntity<?> processFile(@PathVariable("archivoId") Long archivoId, Authentication authentication) {
+	public ResponseEntity<?> processFile(@PathVariable("archivoId") Long archivoId, Authentication authentication) throws BusinesException {
 		Map<String, Object> response = new HashMap<>();
+		SegUsuarioEntity usuario =new SegUsuarioEntity();
 
 		if (archivoId <= 0 || archivoId.toString().isBlank() || archivoId.toString().isEmpty()) {
 			response.put("mensaje", "Ocurrió un error en el servidor, por favor verifique los parametros de ingreso.");
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
 		try {
+			usuario = this.segUsuarioService.findByLogin(authentication.getName());
 			ArchivoEntity archivo = this.archivoService.findById(archivoId);
 			ArchivoEntity archivoPrevious = this.archivoService.findByEstado("ACTIVO",
 					archivo.getEntidadId().getEntidadId());
@@ -134,16 +172,28 @@ public class DeudaClienteController {
 				this.deudaClienteService.deletByArchivoId(archivo.getArchivoId());
 				List<Throwable> throwList = execution.getAllFailureExceptions();
 				for (Throwable throwable : throwList) {
-					throwable.printStackTrace();
+					LogSistemaEntity log=new LogSistemaEntity();
+					log.setModulo("ENTIDADES");
+					log.setController("api/deudaCliente/processFile/{archivoId}");
+					log.setCausa(Util.causeRow(throwable.getCause() + "") +"");
+					log.setMensaje(Util.mensajeRow(throwable.getMessage() + "")+"");
+					log.setUsuarioCreacion(usuario.getUsuarioId());
+					log.setFechaCreacion(new Date());			
+					logSistemaService.save(log);
+					
+					this.logger.error("This is error", throwable.getMessage());
+					this.logger.error("This is cause", throwable.getCause());
+					
 					response.put("mensaje", Util.mensajeRow(throwable.getMessage() + "") + "");
 					response.put("detalle", Util.causeRow(throwable.getCause() + "") + "");
-					response.put("causa", "A");
+					response.put("codigo", log.getLogSistemaId());
+					
 					return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 
 				}
 			}
 
-			SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
+			//SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
 			archivo.setFechaModificacion(new Date());
 			archivo.setUsuarioModificacion(usuario.getUsuarioId());
 			archivo.setTransaccion("PROCESAR");
@@ -164,11 +214,22 @@ public class DeudaClienteController {
 			response.put("estado", true);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 
-		} catch (DataAccessException e) {
+		}catch (Technicalexception e) {
+			
+			LogSistemaEntity log=new LogSistemaEntity();
+			log.setModulo("ENTIDADES");
+			log.setController("api/deudaCliente/processFile/{archivoId}");
+			log.setCausa(e.getCause().getMessage() +"");
+			log.setMensaje(e.getMessage());
+			log.setUsuarioCreacion(usuario.getUsuarioId());
+			log.setFechaCreacion(new Date());			
+			logSistemaService.save(log);
+			
 			this.deudaClienteService.deletByArchivoId(archivoId);
+			
 			this.logger.error("This is error", e.getMessage());
 			this.logger.error("This is cause", e.getCause());
-			this.logger.error("This is mesage", e.getMostSpecificCause().getMessage());
+			
 			response.put("mensaje",
 					"Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
 			response.put("estado", false);
@@ -177,6 +238,16 @@ public class DeudaClienteController {
 
 		} catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException
 				| JobParametersInvalidException e) {
+			
+			LogSistemaEntity log=new LogSistemaEntity();
+			log.setModulo("ENTIDADES");
+			log.setController("api/deudaCliente/processFile/{archivoId}");
+			log.setCausa(e.getCause().getMessage() +"");
+			log.setMensaje(e.getMessage());
+			log.setUsuarioCreacion(usuario.getUsuarioId());
+			log.setFechaCreacion(new Date());			
+			logSistemaService.save(log);
+			
 			this.deudaClienteService.deletByArchivoId(archivoId);
 			this.logger.error("This is error", e.getMessage());
 			this.logger.error("This is cause", e.getCause());
@@ -199,6 +270,7 @@ public class DeudaClienteController {
 		Map<String, Object> response = new HashMap<>();
 		Page<DeudasClienteDto> deudasClienteList;// = new ArrayList<>();
 		String newParamBusqueda = "";
+		SegUsuarioEntity usuario=new SegUsuarioEntity();
 
 		if (archivoId <= 0 || archivoId.toString().isBlank() || archivoId.toString().isEmpty()) {
 			response.put("mensaje", "Ocurrió un error en el servidor, por favor verifique los parametros de ingreso.");
@@ -212,16 +284,32 @@ public class DeudaClienteController {
 		}
 
 		try {
+			
+			usuario = this.segUsuarioService.findByLogin(authentication.getName());
 			deudasClienteList = this.deudaClienteService.findDeudasClientesByArchivoId(archivoId, newParamBusqueda,
 					paginacion - 1, 5);
+			
+			if(deudasClienteList.isEmpty()) {
+				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
+			}
 			response.put("status", "true");
 			response.put("data", deudasClienteList);
 
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-		} catch (DataAccessException e) {
+		} catch (Technicalexception e) {
+			
+			LogSistemaEntity log=new LogSistemaEntity();
+			log.setModulo("ENTIDADES");
+			log.setController("api/deudaCliente/processFile/{archivoId}");
+			log.setCausa(e.getCause().getMessage() +"");
+			log.setMensaje(e.getMessage());
+			log.setUsuarioCreacion(usuario.getUsuarioId());
+			log.setFechaCreacion(new Date());			
+			logSistemaService.save(log);
+			
 			this.logger.error("This is error", e.getMessage());
 			this.logger.error("This is cause", e.getCause());
-			this.logger.error("This is mesage", e.getMostSpecificCause().getMessage());
+			
 			response.put("mensaje",
 					"Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);

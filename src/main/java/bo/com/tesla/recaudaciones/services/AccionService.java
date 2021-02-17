@@ -11,33 +11,36 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class AccionService implements IAccionService{
+public class AccionService implements IAccionService {
 
-    @Autowired
-    private IAccionDao iAccionDao;
+	@Autowired
+	private IAccionDao iAccionDao;
 
-    @Autowired
-    private IHistoricoDeudaDao iHistoricoDeudaDao;
+	@Autowired
+	private IHistoricoDeudaDao iHistoricoDeudaDao;
 
-    @Override
-    public List<AccionEntity> saveAllAcciones(List<AccionEntity> accionEntities) {
-        return iAccionDao.saveAll(accionEntities);
-    }
+	@Override
+	public List<AccionEntity> saveAllAcciones(List<AccionEntity> accionEntities) {
+		return iAccionDao.saveAll(accionEntities);
+	}
 
-    @Override
-    public AccionEntity loadAccion(DeudaClienteEntity deudaClienteEntity, String estado, Long usuarioId) {
+	@Override
+	public AccionEntity loadAccion(DeudaClienteEntity deudaClienteEntity, String estado, Long usuarioId) {
 
-        Optional<HistoricoDeudaEntity> optionalHistoricoDeudaEntity = iHistoricoDeudaDao.findByDeudaClienteId(deudaClienteEntity.getDeudaClienteId());
+		System.out.println("-----------------" + deudaClienteEntity.getDeudaClienteId());
+		
+		Optional<HistoricoDeudaEntity> optionalHistoricoDeudaEntity = this.iHistoricoDeudaDao.findByDeudaClienteId(deudaClienteEntity.getDeudaClienteId());
 
-        if(!optionalHistoricoDeudaEntity.isPresent()) {
-            return null;
-        }
-        AccionEntity accionEntity = new AccionEntity();
-        accionEntity.setHistoricoDeudaId(optionalHistoricoDeudaEntity.get());
-        accionEntity.setEstado(estado);
-        accionEntity.setFechaEstado(new Date());
-        accionEntity.setUsuario(usuarioId);
-        return accionEntity;
+		System.out.println("-------------- paso");
+		if (!optionalHistoricoDeudaEntity.isPresent()) {
+			return null;
+		}
+		AccionEntity accionEntity = new AccionEntity();
+		accionEntity.setHistoricoDeudaId(optionalHistoricoDeudaEntity.get());
+		accionEntity.setEstado(estado);
+		accionEntity.setFechaEstado(new Date());
+		accionEntity.setUsuario(usuarioId);
+		return accionEntity;
 
-    }
+	}
 }

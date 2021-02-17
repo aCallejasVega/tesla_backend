@@ -22,7 +22,7 @@ public class StepItemWriteListener implements ItemWriteListener<DeudaClienteEnti
 
 	@Override
 	public void beforeWrite(List<? extends DeudaClienteEntity> items) {
-		// TODO Auto-generated method stub
+
 		
 	}
 
@@ -36,6 +36,12 @@ public class StepItemWriteListener implements ItemWriteListener<DeudaClienteEnti
 	public void onWriteError(Exception exception, List<? extends DeudaClienteEntity> items) {
 		System.out.println("---------------onWriteError----------------------");
 		this.deudaClienteService.deletByArchivoId(this.archivoId);
+System.out.println("-------------------beforeWrite----------------------");
+		
+		System.out.println("-----------------------------------------"+exception.getMessage());
+		System.out.println("-----------------------------------------");
+		
+		System.out.println("-----------------------------------------"+exception.getCause());
 		
 	}
 

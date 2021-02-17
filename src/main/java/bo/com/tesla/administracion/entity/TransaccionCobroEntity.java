@@ -31,8 +31,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "transacciones_cobros", catalog = "exacta", schema = "tesla2")
-@NamedQueries({
-    @NamedQuery(name = "TransaccionCobroEntity.findAll", query = "SELECT t FROM TransaccionCobroEntity t")})
+
 public class TransaccionCobroEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -59,14 +58,15 @@ public class TransaccionCobroEntity implements Serializable {
     private Date fechaModificacion;
     @Column(length = 15)
     private String estado;
+    @Column(length = 15)
+    private String transaccion;
     @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id")
     @ManyToOne
     private EntidadEntity entidadId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "transaccionCobroId")
     private List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList;
 
-    @Column(length = 15)
-    private String transaccion;
+    
 
     public TransaccionCobroEntity() {
     }
@@ -146,8 +146,10 @@ public class TransaccionCobroEntity implements Serializable {
     public void setEstado(String estado) {
         this.estado = estado;
     }
+    
+    
 
-    public EntidadEntity getEntidadId() {
+	public EntidadEntity getEntidadId() {
         return entidadId;
     }
 

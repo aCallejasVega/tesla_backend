@@ -8,14 +8,13 @@ package bo.com.tesla.administracion.entity;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,8 +25,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "log_sistemas", catalog = "exacta", schema = "tesla2")
-@NamedQueries({
-    @NamedQuery(name = "LogSistemaEntity.findAll", query = "SELECT l FROM LogSistemaEntity l")})
+
 public class LogSistemaEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -37,13 +35,15 @@ public class LogSistemaEntity implements Serializable {
     @Column(name = "log_sistema_id", nullable = false)
     private Long logSistemaId;
     @Column(length = 100)
-    private String tabla;
-    @Column(name = "registro_anterior", length = 500)
-    private String registroAnterior;
-    @Column(name = "registro_actual", length = 500)
-    private String registroActual;
+    private String modulo;
+    @Column(length = 500)
+    private String controller;
+    @Column(length = 2147483647)
+    private String mensaje;
+    @Column(length = 2147483647)
+    private String causa;
     @Column(name = "usuario_creacion")
-    private BigInteger usuarioCreacion;
+    private Long usuarioCreacion;
     @Column(name = "fecha_creacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
@@ -63,35 +63,43 @@ public class LogSistemaEntity implements Serializable {
         this.logSistemaId = logSistemaId;
     }
 
-    public String getTabla() {
-        return tabla;
+    public String getModulo() {
+        return modulo;
     }
 
-    public void setTabla(String tabla) {
-        this.tabla = tabla;
+    public void setModulo(String modulo) {
+        this.modulo = modulo;
     }
 
-    public String getRegistroAnterior() {
-        return registroAnterior;
+    public String getController() {
+        return controller;
     }
 
-    public void setRegistroAnterior(String registroAnterior) {
-        this.registroAnterior = registroAnterior;
+    public void setController(String controller) {
+        this.controller = controller;
     }
 
-    public String getRegistroActual() {
-        return registroActual;
+    public String getMensaje() {
+        return mensaje;
     }
 
-    public void setRegistroActual(String registroActual) {
-        this.registroActual = registroActual;
+    public void setMensaje(String mensaje) {
+        this.mensaje = mensaje;
     }
 
-    public BigInteger getUsuarioCreacion() {
+    public String getCausa() {
+        return causa;
+    }
+
+    public void setCausa(String causa) {
+        this.causa = causa;
+    }
+
+    public Long getUsuarioCreacion() {
         return usuarioCreacion;
     }
 
-    public void setUsuarioCreacion(BigInteger usuarioCreacion) {
+    public void setUsuarioCreacion(Long usuarioCreacion) {
         this.usuarioCreacion = usuarioCreacion;
     }
 
