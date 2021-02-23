@@ -37,22 +37,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		return super.authenticationManager();
 	}
 	
-	/*@Override
-	public void configure(HttpSecurity http) throws Exception {
-		
-
-		http.authorizeRequests()		
-		.antMatchers("/", "/resources/**","/resources/public/**","/resources/templates/**","/resources/templates/css/**","/static/js/**","/static/css/**")
-        .permitAll()
-        .antMatchers("/js/**").permitAll()
-        .antMatchers("/css/**").permitAll()
-        .antMatchers("/img/**").permitAll()
-        .antMatchers(HttpMethod.POST,"/home").permitAll()
-        .antMatchers("/api/deudaCliente/upload").permitAll()
-		.anyRequest().authenticated()
-		.and()
-		.csrf().disable().headers().disable();
-	}*/
+	
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()

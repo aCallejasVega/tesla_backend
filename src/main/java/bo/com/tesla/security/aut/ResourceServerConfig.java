@@ -40,20 +40,12 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration config = new CorsConfiguration();
-		//config.setAllowedOrigins(Arrays.asList("http://localhost:8080"));
-		config.addAllowedOrigin("http://localhost:8080");
-		//config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-		config.setAllowCredentials(true);		
-		/*config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization",
-												"Cache-Control","Access-Control-Allow-Origin",
-												"Origin","Accept",
-												"X-Requested-With","Access-Control-Request-Method",
-												"Access-Control-Request-Headers","Access-Control-Allow-Headers",
-												"multipart/form-data"));*/
+		CorsConfiguration config = new CorsConfiguration();	
+		config.addAllowedOrigin(url);		
+		config.setAllowCredentials(true);			
 		config.addAllowedHeader("*");
 		config.addAllowedMethod("*");
-		//config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
+	
 			
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", config);

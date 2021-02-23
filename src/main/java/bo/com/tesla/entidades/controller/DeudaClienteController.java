@@ -124,6 +124,7 @@ public class DeudaClienteController {
 			log.setFechaCreacion(new Date());			
 			logSistemaService.save(log);			
 			this.logger.error("This is cause", e.getMessage());
+			
 			response.put("mensaje", e.getMessage());
 			response.put("codigo", log.getLogSistemaId()+"");
 			response.put("status", false);
@@ -140,6 +141,7 @@ public class DeudaClienteController {
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());			
 			logSistemaService.save(log);
+			
 			this.logger.error("This is error", e.getMessage());
 			this.logger.error("This is cause", e.getCause());
 			response.put("mensaje", "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");

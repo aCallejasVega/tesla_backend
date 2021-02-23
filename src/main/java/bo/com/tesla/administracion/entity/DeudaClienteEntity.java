@@ -115,7 +115,9 @@ public class DeudaClienteEntity implements Serializable {
     @ManyToOne( optional = false)
     private ArchivoEntity archivoId;
 
-	
+	@Basic(optional = false)
+	@Column(name = "es_postpago")
+	private Boolean esPostpago;
 
 	public DeudaClienteEntity() {
 	}
@@ -135,6 +137,27 @@ public class DeudaClienteEntity implements Serializable {
 		this.concepto = concepto;
 		this.cantidad = cantidad;
 	
+	}
+	
+	
+	
+
+	public Boolean getEsPostpago() {
+		return esPostpago;
+	}
+
+	public void setEsPostpago(Boolean esPostpago)throws Exception {
+		
+		if (esPostpago.toString().isBlank() || esPostpago.toString().isEmpty()) {
+			this.esPostpago = null;
+			throw new BusinesException(
+					"El campo de verificacion de POST/PRE(PAGO) no puede ser nulo");
+			
+
+		} else {
+			this.esPostpago = esPostpago;
+		}
+		
 	}
 
 	public Long getDeudaClienteId() {

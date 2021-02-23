@@ -43,7 +43,7 @@ public interface IDeudaClienteDao extends JpaRepository<DeudaClienteEntity, Long
 	
 	@Query("SELECT new  bo.com.tesla.entidades.dto.ConceptoDto(d.nroRegistro, d.nombreCliente, d.nroDocumento, d.direccion, "
 			+ "	d.telefono, d.nit, d.tipo, d.concepto, d.montoUnitario, d.cantidad, "
-			+ "	d.subTotal, d.datoExtras, d.tipoComprobante, d.periodoCabecera) "
+			+ "	d.subTotal, d.datoExtras, d.tipoComprobante, d.periodoCabecera,d.esPostpago) "
 			+ " FROM DeudaClienteEntity d "
 			+ " WHERE d.archivoId.archivoId= :archivoId "
 			+ " and d.servicio= :servicio "

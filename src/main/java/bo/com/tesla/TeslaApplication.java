@@ -29,7 +29,7 @@ public class TeslaApplication implements CommandLineRunner {
 		System.out.println("entidad  "+passwordEncoder.encode(entidad));
 
 	}
-	@Bean
+	/*@Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
@@ -37,6 +37,6 @@ public class TeslaApplication implements CommandLineRunner {
                 registry.addMapping("/api/deudaCliente/upload").allowedOrigins("http://localhost:8080").allowedMethods("GET", "POST","PUT", "DELETE");
             }
         };
-    }
+    }*/
 
 }

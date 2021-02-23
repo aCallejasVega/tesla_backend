@@ -33,6 +33,7 @@ public class DeudaClienteService implements IDeudaClienteService {
 		Pageable paging = PageRequest.of(page, size);
 		
 		deudaClienteList = this.deudaClienteDao.groupByDeudasClientes(archivoId,paramBusqueda,paging);
+		Integer key=0;
 
 		for (DeudasClienteDto deudasClienteDto : deudaClienteList) {
 			
@@ -41,12 +42,14 @@ public class DeudaClienteService implements IDeudaClienteService {
 					deudasClienteDto.codigoCliente);
 			
 			if(!conceptosList.isEmpty()) {
-				deudasClienteDto.key=conceptosList.get(0).nroRegistro+"_"+conceptosList.get(0).archivoId;
+				key++;
+				deudasClienteDto.key=key+"";
 				deudasClienteDto.nombreCliente=conceptosList.get(0).nombreCliente;
 				deudasClienteDto.direccion=conceptosList.get(0).direccion;
 				deudasClienteDto.nit=conceptosList.get(0).nit;
 				deudasClienteDto.nroDocumento=conceptosList.get(0).nroDocumento;
-				deudasClienteDto.telefono=conceptosList.get(0).telefono;					
+				deudasClienteDto.telefono=conceptosList.get(0).telefono;	
+				deudasClienteDto.esPostpago=conceptosList.get(0).esPostpago;
 			}
 					
 			deudasClienteDto.conceptoLisit = conceptosList;

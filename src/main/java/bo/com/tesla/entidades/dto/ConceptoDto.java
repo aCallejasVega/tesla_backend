@@ -33,6 +33,7 @@ public class ConceptoDto {
 	public Boolean tipoComprobante;
 	public String periodoCabecera;
     public Long archivoId;
+    public Boolean esPostpago;
 	
 	
 	
@@ -40,7 +41,7 @@ public class ConceptoDto {
 	
 	public ConceptoDto(Integer nroRegistro, String nombreCliente, String nroDocumento, String direccion,
 			String telefono, String nit, Character tipo, String concepto, BigDecimal montoUnitario, BigDecimal cantidad,
-			BigDecimal subTotal, String datoExtras, Boolean tipoComprobante, String periodoCabecera) {
+			BigDecimal subTotal, String datoExtras, Boolean tipoComprobante, String periodoCabecera,Boolean esPostpago) {
 		
 		this.nroRegistro = nroRegistro;
 		this.nombreCliente = nombreCliente;
@@ -56,6 +57,7 @@ public class ConceptoDto {
 		this.datoExtras = datoExtras;
 		this.tipoComprobante = tipoComprobante;
 		this.periodoCabecera = periodoCabecera;
+		this.esPostpago=esPostpago;
 	}
 	
 	

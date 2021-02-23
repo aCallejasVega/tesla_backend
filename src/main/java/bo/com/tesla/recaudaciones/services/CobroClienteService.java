@@ -48,8 +48,8 @@ public class CobroClienteService implements ICobroClienteService {
     /*@Autowired
     private IAccionService iAccionService;*/
 
-    @Autowired
-    private IHistoricoDeudaService iHistoricoDeudaService;
+    /*@Autowired
+    private IHistoricoDeudaService iHistoricoDeudaService;*/
 
     @Autowired
     private IDetalleComprobanteCobroService iDetalleComprobanteCobroService;
@@ -155,10 +155,10 @@ public class CobroClienteService implements ICobroClienteService {
                      */
 
                     //2.1.2. Actualizar Historico Deudas
-                    HistoricoDeudaEntity historicoDeudaEntity = iHistoricoDeudaService.updateEstado(deudaClienteEntity.getDeudaClienteId(), "COBRADO");
+                 /*   HistoricoDeudaEntity historicoDeudaEntity = iHistoricoDeudaService.updateEstado(deudaClienteEntity.getDeudaClienteId(), "COBRADO");
                     if(historicoDeudaEntity == null) {
                         throw new Exception();
-                    }
+                    }*/
 
                     //2.1.3. Cargar Deudas en la lista
                     deudaClienteEntityList.add(deudaClienteEntity);
@@ -275,10 +275,10 @@ public class CobroClienteService implements ICobroClienteService {
 
                      */
                     //2.1.2. Actualizar Historico Deudas
-                    HistoricoDeudaEntity historicoDeudaEntity = iHistoricoDeudaService.updateEstado(deudaClienteEntity.getDeudaClienteId(), "COBRADO");
+                   /* HistoricoDeudaEntity historicoDeudaEntity = iHistoricoDeudaService.updateEstado(deudaClienteEntity.getDeudaClienteId(), "COBRADO");
                     if(historicoDeudaEntity == null) {
                         throw new Exception();
-                    }
+                    }*/
 
                     //2.1.3. Cargar Deudas en la lista
                     deudaClienteEntityList.add(deudaClienteEntity);
