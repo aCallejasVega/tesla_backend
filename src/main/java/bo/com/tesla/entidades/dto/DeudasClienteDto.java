@@ -17,6 +17,8 @@ public class DeudasClienteDto {
 	public String nombreCliente;
 	public String key;
 	public BigDecimal total;
+	public Boolean esPostpago;
+	
 	public List<ConceptoDto> conceptoLisit;
 	
 	
@@ -38,6 +40,7 @@ public class DeudasClienteDto {
 		this.periodo = periodo;
 		this.codigoCliente = codigoCliente;
 		this.total=total;
+		
 	}
 	
 	

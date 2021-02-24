@@ -89,7 +89,7 @@ public class Util {
 							+ ", por favor verifique el archivo y vulva a cargarlo.");
 
 				}
-				if (rowString.length != 18) {
+				if (rowString.length != 19) {
 					
 					throw new BusinesException(
 							"Falta columna(s) en la línea " + rowInt + " verifique el archivo y vuelva a cargarlo.");
@@ -105,9 +105,7 @@ public class Util {
 			throw new Technicalexception(e.getMessage(), e.getCause());
 		} catch (IOException e) {
 			throw new Technicalexception(e.getMessage(), e.getCause());
-		} catch (Exception e) {
-			throw new Technicalexception(e.getMessage(), e.getCause());
-		}
+		} 
 		return rowInt;
 
 	}

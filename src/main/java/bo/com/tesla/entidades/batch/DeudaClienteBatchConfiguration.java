@@ -61,7 +61,7 @@ public class DeudaClienteBatchConfiguration {
 				.delimiter("|")				
 				.names(new String[] { "nroRegistro", "codigoCliente", "nombreCliente", "nroDocumento", "direccion",
 						"telefono", "nit", "servicio", "tipoServicio", "periodo", "tipo", "concepto", "montoUnitario",
-						"cantidad","subTotal", "datoExtras", "tipoComprobante", "periodoCabecera" })
+						"cantidad","subTotal", "datoExtras", "tipoComprobante", "periodoCabecera","esPostpago" })
 				.fieldSetMapper(new BeanWrapperFieldSetMapper<DeudaClienteEntity>() {
 					{
 						setTargetType(DeudaClienteEntity.class);
@@ -78,8 +78,8 @@ public class DeudaClienteBatchConfiguration {
 		return new JdbcBatchItemWriterBuilder<DeudaClienteEntity>()
 				.itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
 				.sql("INSERT INTO tesla.deudas_clientes\r\n"
-						+ "(archivo_id, nro_registro, codigo_cliente, nombre_cliente, nro_documento, direccion, nit, telefono, servicio, tipo_servicio, periodo, tipo, concepto, cantidad, monto_unitario, sub_total, dato_extras, tipo_comprobante,  periodo_cabecera)\r\n"
-						+ "VALUES('"+archivoId+"', :nroRegistro, :codigoCliente, :nombreCliente, :nroDocumento, :direccion, :nit, :telefono, :servicio, :tipoServicio, :periodo, :tipo, :concepto, :cantidad, :montoUnitario, :subTotal, :datoExtras, :tipoComprobante,:periodoCabecera);\r\n"
+						+ "(archivo_id, nro_registro, codigo_cliente, nombre_cliente, nro_documento, direccion, nit, telefono, servicio, tipo_servicio, periodo, tipo, concepto, cantidad, monto_unitario, sub_total, dato_extras, tipo_comprobante,  periodo_cabecera,es_postpago)\r\n"
+						+ "VALUES('"+archivoId+"', :nroRegistro, :codigoCliente, :nombreCliente, :nroDocumento, :direccion, :nit, :telefono, :servicio, :tipoServicio, :periodo, :tipo, :concepto, :cantidad, :montoUnitario, :subTotal, :datoExtras, :tipoComprobante,:periodoCabecera,:esPostpago);\r\n"
 						+ "")
 				
 				.dataSource(dataSource)
