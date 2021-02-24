@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface IHistoricoDeudaDao extends JpaRepository<HistoricoDeudaEntity, Long> {
 
+
 	@Query("select h  from HistoricoDeudaEntity h  where h.deudaClienteId=:deudaClienteId ")
 	Optional<HistoricoDeudaEntity> findByDeudaClienteId(@Param("deudaClienteId") Long deudaClienteId);
 
