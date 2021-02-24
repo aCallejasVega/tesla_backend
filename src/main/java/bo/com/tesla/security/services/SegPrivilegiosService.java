@@ -19,10 +19,12 @@ public class SegPrivilegiosService implements ISegPrivilegiosService {
 	public List<SegPrivilegioEntity> getMenuByUserId(Long usuarioId) {
 
 		List<SegPrivilegioEntity> sePrivilegioList = this.segPrivilegiosDao.getMenuByUserId(usuarioId);
+		
+		List<SegPrivilegioEntity> segPrivilegioSubMenuNew = new ArrayList<>();
 
 		for (SegPrivilegioEntity segPrivilegio : sePrivilegioList) {
 
-			List<SegPrivilegioEntity> segPrivilegioSubMenuNew = new ArrayList<>();
+			
 
 			for (SegPrivilegioEntity segPrivilegioSubMenu : segPrivilegio.getSegPrivilegioEntityList()) {
 				String estado = segPrivilegiosDao.getEstadoPrivilegios(usuarioId,
@@ -31,11 +33,12 @@ public class SegPrivilegiosService implements ISegPrivilegiosService {
 					segPrivilegioSubMenuNew.add(segPrivilegioSubMenu);
 				}
 			}
-			segPrivilegio.setSegPrivilegioEntityList(segPrivilegioSubMenuNew);
+			//segPrivilegio.setSegPrivilegioEntityList(segPrivilegioSubMenuNew);
+			
 
 		}
 
-		return sePrivilegioList;
+		return segPrivilegioSubMenuNew;
 
 	}
 
