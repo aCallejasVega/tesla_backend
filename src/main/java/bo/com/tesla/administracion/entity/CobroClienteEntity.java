@@ -117,6 +117,9 @@ public class CobroClienteEntity implements Serializable {
     @Column(length = 15)
     private String transaccion;
 
+    @Column(name = "es_postpago")
+    private Boolean esPostpago;
+
     public CobroClienteEntity() {
     }
 
@@ -346,6 +349,14 @@ public class CobroClienteEntity implements Serializable {
 
     public void setTransaccion(String transaccion) {
         this.transaccion = transaccion;
+    }
+
+    public Boolean getEsPostpago() {
+        return esPostpago;
+    }
+
+    public void setEsPostpago(Boolean esPostpago) {
+        this.esPostpago = esPostpago;
     }
 
     @Override

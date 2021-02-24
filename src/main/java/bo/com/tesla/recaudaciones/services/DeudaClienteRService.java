@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -74,7 +73,6 @@ public class DeudaClienteRService implements IDeudaClienteRService {
                                                         codigoCliente);
     }
 
-
     @Transactional(readOnly = true)
     @Override
     public List<ServicioDeudaDto> getDeudasCompletas(List<ServicioDeudaDto> servicioDeudaDtos) {
@@ -91,6 +89,7 @@ public class DeudaClienteRService implements IDeudaClienteRService {
         }
         return servicioDeudaDtos;
     }
+
 
     @Override
     public Long deleteDeudasClientes(List<DeudaClienteEntity> deudaClienteEntities) {

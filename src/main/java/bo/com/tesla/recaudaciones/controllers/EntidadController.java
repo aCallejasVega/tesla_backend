@@ -1,11 +1,18 @@
 package bo.com.tesla.recaudaciones.controllers;
 
+import bo.com.tesla.administracion.entity.LogSistemaEntity;
+import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.recaudaciones.dto.ClienteDto;
 import bo.com.tesla.recaudaciones.dto.DominioDto;
 import bo.com.tesla.recaudaciones.dto.EntidadDto;
 import bo.com.tesla.recaudaciones.dto.ServicioDeudaDto;
 import bo.com.tesla.recaudaciones.services.IDeudaClienteRService;
 import bo.com.tesla.recaudaciones.services.IEntidadRService;
+import bo.com.tesla.security.services.ILogSistemaService;
+import bo.com.tesla.security.services.ISegUsuarioService;
+import bo.com.tesla.useful.config.Technicalexception;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +22,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("api/entidades")
 public class EntidadController {
+    private Logger logger = LoggerFactory.getLogger(CobroClienteController.class);
 
     @Autowired
     private IDeudaClienteRService iDeudaClienteRService;
@@ -30,9 +35,16 @@ public class EntidadController {
     @Autowired
     private IEntidadRService iEntidadRService;
 
+    @Autowired
+    private ILogSistemaService logSistemaService;
+
+    @Autowired
+    private ISegUsuarioService segUsuarioService;
+
     @GetMapping("/{entidadId}/clientes/{datoCliente}")
     public ResponseEntity<?> getAllClientesByEntidadId(@PathVariable Long entidadId,
-                                                       @PathVariable String datoCliente) {
+                                                       @PathVariable String datoCliente,
+                                                       Authentication authentication) {
         Map<String, Object> response = new HashMap<>();
 
         if(entidadId <= 0 || entidadId == null) {
@@ -49,6 +61,7 @@ public class EntidadController {
             return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
         }
 
+        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         try{
             Optional<List<ClienteDto>> optionalClienteDtos = iDeudaClienteRService.getByEntidadAndClienteLike(entidadId, datoCliente);
             if(optionalClienteDtos.isPresent()) {
@@ -71,10 +84,22 @@ public class EntidadController {
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
 
-        } catch(Exception e) {
-            response.put("status", "false");
+        } catch (Technicalexception e) {
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("RECAUDACIONES.ENTIDADES");
+            log.setController("api/entidades/" + entidadId + "/clientes/" + datoCliente);
+            log.setCausa(e.getCause()+"");
+            log.setMensaje(e.getMessage()+"");
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            logSistemaService.save(log);
+            this.logger.error("This is error", e.getMessage());
+            this.logger.error("This is cause", e.getCause());
+            e.printStackTrace();
+            response.put("status", false);
             response.put("result", null);
-            response.put("message", "Se ha producido un error");
+            response.put("message", "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+            response.put("code", log.getLogSistemaId()+"");
             return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
@@ -82,7 +107,8 @@ public class EntidadController {
 
     @GetMapping("/{entidadId}/clientes/{codigoCliente}/deudas")
     public ResponseEntity<?> getDeudasByCliente(@PathVariable Long entidadId,
-                                                        @PathVariable String codigoCliente) {
+                                                @PathVariable String codigoCliente,
+                                                Authentication authentication) {
         Map<String, Object> response = new HashMap<>();
 
         if(entidadId <= 0 || entidadId == null) {
@@ -98,7 +124,7 @@ public class EntidadController {
             response.put("result", null);
             return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
         }
-
+        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         try{
             List<ServicioDeudaDto> servicioDeudaDtos = iDeudaClienteRService.getDeudasByCliente(entidadId, codigoCliente);
             if(!servicioDeudaDtos.isEmpty()) {
@@ -112,10 +138,22 @@ public class EntidadController {
                 response.put("message", "No se encontraron deudas");
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
-        } catch (Exception e) {
-            response.put("status", "false");
+        } catch (Technicalexception e) {
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("RECAUDACIONES.ENTIDADES");
+            log.setController("api/entidades/" + entidadId + "/clientes/" + codigoCliente + "/deudas");
+            log.setCausa(e.getCause()+"");
+            log.setMensaje(e.getMessage()+"");
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            logSistemaService.save(log);
+            this.logger.error("This is error", e.getMessage());
+            this.logger.error("This is cause", e.getCause());
+            e.printStackTrace();
+            response.put("status", false);
             response.put("result", null);
-            response.put("message", "Se ha producido un error");
+            response.put("message", "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+            response.put("code", log.getLogSistemaId()+"");
             return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
@@ -124,8 +162,9 @@ public class EntidadController {
     public ResponseEntity<?> getEntidadesByTipo(Authentication authentication) {
         Map<String, Object> response = new HashMap<>();
 
+        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         try {
-            Optional<List<DominioDto>> optionalDominioDtos = iEntidadRService.getTipoEntidadByRecaudadorA(authentication.getName());
+            Optional<List<DominioDto>> optionalDominioDtos = iEntidadRService.getTipoEntidadByRecaudador(authentication.getName());
             if(optionalDominioDtos.isPresent()) {
                 response.put("status", "true");
                 response.put("result", optionalDominioDtos.get());
@@ -137,11 +176,23 @@ public class EntidadController {
                 response.put("message", "No existe Tipos Entidades encontrados");
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-        } catch(Exception e) {
-            response.put("status", "false");
+        } catch (Technicalexception e) {
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("RECAUDACIONES.ENTIDADES");
+            log.setController("api/entidades/tipos");
+            log.setCausa(e.getCause()+"");
+            log.setMensaje(e.getMessage()+"");
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            logSistemaService.save(log);
+            this.logger.error("This is error", e.getMessage());
+            this.logger.error("This is cause", e.getCause());
+            e.printStackTrace();
+            response.put("status", false);
             response.put("result", null);
-            response.put("message", "Se ha producido un error");
-            return  new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            response.put("message", "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+            response.put("code", log.getLogSistemaId()+"");
+            return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -156,8 +207,9 @@ public class EntidadController {
             return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
         }
 
+        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         try {
-            Optional<List<EntidadDto>> optionalEntidadDtos =  iEntidadRService.getByRecaudadoraIdAndTipoEntidadIdA(tipoEntidadId,authentication.getName());
+            Optional<List<EntidadDto>> optionalEntidadDtos =  iEntidadRService.getByRecaudadoraIdAndTipoEntidadId(tipoEntidadId,authentication.getName());
             if(optionalEntidadDtos.isPresent()){
                 response.put("status", "true");
                 response.put("result", optionalEntidadDtos.get());
@@ -169,10 +221,22 @@ public class EntidadController {
                 response.put("message", "No se encontraron Entidades por Tipo");
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-        } catch(Exception e) {
-            response.put("status", "false");
+        } catch (Technicalexception e) {
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("RECAUDACIONES.ENTIDADES");
+            log.setController("api/entidades/tipos/"+ tipoEntidadId);
+            log.setCausa(e.getCause()+"");
+            log.setMensaje(e.getMessage()+"");
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            logSistemaService.save(log);
+            this.logger.error("This is error", e.getMessage());
+            this.logger.error("This is cause", e.getCause());
+            e.printStackTrace();
+            response.put("status", false);
             response.put("result", null);
-            response.put("message", "Se ha producido un error");
+            response.put("message", "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+            response.put("code", log.getLogSistemaId()+"");
             return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
@@ -180,8 +244,9 @@ public class EntidadController {
     @GetMapping("")
     public ResponseEntity<?> getEntidades(Authentication authentication) {
         Map<String, Object> response = new HashMap<>();
+        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         try {
-            Optional<List<EntidadDto>> optionalEntidadDtos =  iEntidadRService.getAllByRecaudadoraIdA(authentication.getName());
+            Optional<List<EntidadDto>> optionalEntidadDtos =  iEntidadRService.getByRecaudadoraId(authentication.getName());
             if(optionalEntidadDtos.isPresent()){
                 response.put("status", "true");
                 response.put("result", optionalEntidadDtos.get());
@@ -193,10 +258,22 @@ public class EntidadController {
                 response.put("message", "Entidades no encontradas");
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-        } catch(Exception e) {
-            response.put("status", "false");
+        } catch (Technicalexception e) {
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("RECAUDACIONES.ENTIDADES");
+            log.setController("api/entidades");
+            log.setCausa(e.getCause()+"");
+            log.setMensaje(e.getMessage()+"");
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            logSistemaService.save(log);
+            this.logger.error("This is error", e.getMessage());
+            this.logger.error("This is cause", e.getCause());
+            e.printStackTrace();
+            response.put("status", false);
             response.put("result", null);
-            response.put("message", "Se ha producido un error");
+            response.put("message", "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+            response.put("code", log.getLogSistemaId()+"");
             return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
