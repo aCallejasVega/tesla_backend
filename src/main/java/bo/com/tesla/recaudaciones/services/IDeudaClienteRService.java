@@ -17,6 +17,6 @@ public interface IDeudaClienteRService {
                                                           String servicio,
                                                           String periodo,
                                                           String codigoCliente);
-    public List<ServicioDeudaDto> getDeudasCompletas(List<ServicioDeudaDto> servicioDeudaDtos);
+    public List<ServicioDeudaDto> getDeudasCompletas(List<ServicioDeudaDto> servicioDeudaDtos) throws Exception;
     public Long deleteDeudasClientes(List<DeudaClienteEntity> deudaClienteEntities);
 }

@@ -14,7 +14,7 @@ public interface IEntidadRService {
     public Optional<List<EntidadDto>> getAllByRecaudadoraId(Long recaudadoraId);
     public Optional<List<DominioDto>> getTipoEntidadByRecaudador(Long pTipoRecaudadorId);
 */
-    public Optional<List<EntidadDto>> getByRecaudadoraIdAndTipoEntidadIdA(Long tipoEntidadId, String login);
-    public Optional<List<EntidadDto>> getAllByRecaudadoraIdA(String login);
-    public Optional<List<DominioDto>> getTipoEntidadByRecaudadorA(String login);
+    public Optional<List<EntidadDto>> getByRecaudadoraIdAndTipoEntidadId(Long tipoEntidadId, String login);
+    public Optional<List<EntidadDto>> getByRecaudadoraId(String login);
+    public Optional<List<DominioDto>> getTipoEntidadByRecaudador(String login);
 }

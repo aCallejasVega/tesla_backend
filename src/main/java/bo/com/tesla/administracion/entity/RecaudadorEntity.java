@@ -65,6 +65,10 @@ public class RecaudadorEntity implements Serializable {
     private List<EntidadRecaudadorEntity> entidadRecaudadorEntityList;
     @OneToMany(mappedBy = "recaudadorId")
     private List<SucursalEntity> sucursalEntityList;
+    @Column(name = "comprobante_en_uno")
+    private Boolean comprobanteEnUno;
+
+
 
     public RecaudadorEntity() {
     }
@@ -180,6 +184,14 @@ public class RecaudadorEntity implements Serializable {
 
     public void setSucursalEntityList(List<SucursalEntity> sucursalEntityList) {
         this.sucursalEntityList = sucursalEntityList;
+    }
+
+    public Boolean getComprobanteEnUno() {
+        return comprobanteEnUno;
+    }
+
+    public void setComprobanteEnUno(Boolean comprobanteEnUno) {
+        this.comprobanteEnUno = comprobanteEnUno;
     }
 
     @Override

@@ -20,6 +20,7 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
             "d.codigoCliente, d.nombreCliente, d.nroDocumento)" +
             "from DeudaClienteEntity d " +
             "where d.archivoId.entidadId.entidadId = :pEntidadId " +
+            "and d.archivoId.estado = 'ACTIVO' " +
             "and (upper(d.codigoCliente) like upper(concat('%', :pDatoCliente, '%')) or upper(d.nroDocumento) like upper(concat('%', :pDatoCliente, '%')) or upper(d.nombreCliente) like upper(concat('%', :pDatoCliente, '%')) )")
     Optional<List<ClienteDto>> findByEntidadAndClienteLike(@Param("pEntidadId") Long pEntidadId, @Param("pDatoCliente") String pDatoCliente);
 
@@ -28,6 +29,7 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
             + " d.tipoServicio, d.servicio, d.periodo, d.archivoId.entidadId.entidadId, sum(d.subTotal)) "
             + " from DeudaClienteEntity d "
             + " where d.archivoId.entidadId.entidadId = :entidadId "
+            + " and d.archivoId.estado = 'ACTIVO' "
             + " and d.codigoCliente = :codigoCliente "
             + " group by d.tipoServicio, d.servicio, d.periodo, d.archivoId.entidadId.entidadId")
     Optional<List<ServicioDeudaDto>> groupByDeudasClientes(@Param("entidadId") Long entidadId , @Param("codigoCliente") String codigoCliente );
@@ -35,9 +37,10 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
 
     @Query("select new  bo.com.tesla.recaudaciones.dto.DeudaClienteDto( "
             + " d.deudaClienteId, d.nroRegistro, d.cantidad, d.concepto, d.montoUnitario, d.subTotal, "
-            + " d.tipo, d.datoExtras, d.tipoComprobante, d.periodoCabecera, d.codigoCliente, d.nroDocumento, d.nombreCliente) "
+            + " d.tipo, d.datoExtras, d.tipoComprobante, d.periodoCabecera, d.codigoCliente, d.nroDocumento, d.nombreCliente, d.esPostpago) "
             + " from DeudaClienteEntity d "
             + " where d.archivoId.entidadId.entidadId = :entidadId "
+            + " and d.archivoId.estado = 'ACTIVO' "
             + " and d.tipoServicio= :tipoServicio "
             + " and d.servicio= :servicio "
             + " and d.periodo= :periodo"
@@ -53,6 +56,7 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
     @Query("select d "
             + " from DeudaClienteEntity d "
             + " where d.archivoId.entidadId.entidadId = :entidadId "
+            + " and d.archivoId.estado = 'ACTIVO' "
             + " and d.tipoServicio= :tipoServicio "
             + " and d.servicio= :servicio "
             + " and d.periodo= :periodo"

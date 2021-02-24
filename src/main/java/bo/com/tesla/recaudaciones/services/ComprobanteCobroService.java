@@ -60,7 +60,7 @@ public class ComprobanteCobroService implements IComprobanteCobroService {
         if(!optionalSucursalEntity.isPresent())
             return null;
 
-        DosificacionEntity dosificacionEntity = iDosificacionDao.findByDosificacionId(1L); //Se debe modiicar para facturacion
+        DosificacionEntity dosificacionEntity = iDosificacionDao.findByDosificacionId(2L); //Se debe modiicar para facturacion
 
         ComprobanteCobroEntity comprobanteCobroEntity = new ComprobanteCobroEntity();
         comprobanteCobroEntity.setEntidadId(optionalEntidadEntity.get());

@@ -17,26 +17,6 @@ import bo.com.tesla.security.dao.ISegUsuarioDao;
 
 @Service
 public class EntidadRService implements IEntidadRService {
-/*
-    @Override
-    public Optional<List<EntidadDto>> getByRecaudadoraIdAndTipoEntidadId(Long recaudadoraId, Long tipoEntidadId) {
-        return IEntidadRDao.findByRecaudadoraIdAndTipoEntidadId(recaudadoraId, tipoEntidadId);
-    }
-
-    @Override
-    public Optional<List<EntidadDto>> getAllByRecaudadoraId(Long recaudadoraId) {
-        return IEntidadRDao.findByRecaudadoraId(recaudadoraId);
-    }
-
-    @Override
-    public Optional<List<DominioDto>> getTipoEntidadByRecaudador(Long recaudadoraId) {
-        return IEntidadRDao.findTipoEntidadByRecaudadorId(recaudadoraId);
-    }
-
-
-    /////////
-
-    */
 
     @Autowired
     private IEntidadRDao IEntidadRDao;
@@ -49,7 +29,7 @@ public class EntidadRService implements IEntidadRService {
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<List<EntidadDto>> getByRecaudadoraIdAndTipoEntidadIdA(Long tipoEntidadId, String login) {
+    public Optional<List<EntidadDto>> getByRecaudadoraIdAndTipoEntidadId(Long tipoEntidadId, String login) {
         SegUsuarioEntity usuario = this.usuarioDao.findByLogin(login);
         RecaudadorEntity recaudadorEntity = iRecaudadorDao.findRecaudadorByUserId(usuario.getUsuarioId());
         return IEntidadRDao.findByRecaudadoraIdAndTipoEntidadId(recaudadorEntity.getRecaudadorId(), tipoEntidadId);
@@ -57,7 +37,7 @@ public class EntidadRService implements IEntidadRService {
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<List<EntidadDto>> getAllByRecaudadoraIdA(String login) {
+    public Optional<List<EntidadDto>> getByRecaudadoraId(String login) {
         SegUsuarioEntity usuario =this.usuarioDao.findByLogin(login);
         RecaudadorEntity recaudadorEntity = this.iRecaudadorDao.findRecaudadorByUserId(usuario.getUsuarioId());
         return IEntidadRDao.findByRecaudadoraId(recaudadorEntity.getRecaudadorId());
@@ -65,7 +45,7 @@ public class EntidadRService implements IEntidadRService {
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<List<DominioDto>> getTipoEntidadByRecaudadorA(String login) {
+    public Optional<List<DominioDto>> getTipoEntidadByRecaudador(String login) {
         SegUsuarioEntity usuario = this.usuarioDao.findByLogin(login);
         RecaudadorEntity recaudadorEntity = iRecaudadorDao.findRecaudadorByUserId(usuario.getUsuarioId());
         return IEntidadRDao.findTipoEntidadByRecaudadorId(recaudadorEntity.getRecaudadorId());
