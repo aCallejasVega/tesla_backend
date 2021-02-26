@@ -13,11 +13,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import bo.com.tesla.administracion.entity.SegPrivilegioEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
+import bo.com.tesla.security.dto.OperacionesDto;
 import bo.com.tesla.security.services.ISegPrivilegiosService;
 import bo.com.tesla.security.services.ISegUsuarioService;
 
@@ -63,4 +65,34 @@ public class MenuController {
 		
 		
 	}
+	
+	
+
+	
+	@GetMapping(path = "/getOperaciones/{tabla}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<?> getOperaciones( @PathVariable("tabla") String tabla, Authentication authentication) {
+		Map<String, Object> response = new HashMap<>();
+		List<OperacionesDto> operacionesList=new ArrayList<>();
+		try {
+			operacionesList=segPrivilegiosService.getOperaciones(authentication.getName(), tabla);
+			if(operacionesList.isEmpty()) {
+				response.put("data", operacionesList);
+				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);					
+			}
+			response.put("data", operacionesList);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			this.logger.error("This is error", e.getMessage());
+			this.logger.error("This is cause", e.getCause());			
+			response.put("mensaje", "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+		}
+		
+		
+	}
+	
+	
 }

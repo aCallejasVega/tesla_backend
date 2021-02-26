@@ -31,4 +31,22 @@ public interface ISegPrivilegiosDao extends JpaRepository<SegPrivilegioEntity, L
 			+ " where u.usuario_id= :usuarioId "
 			+ " and privilegio_id= :privilegioId ", nativeQuery = true)
 	public  String getEstadoPrivilegios(@Param("usuarioId") Long usuarioId,@Param("privilegioId") Long privilegioId);
+	
+	
+	@Query(value=" SELECT t.transaccion_id,t.etiqueta,t.imagen,t.orden "
+			+ " FROM tesla.seg_transiciones t "
+			+ " left join tesla.seg_privilegios_roles_transiciones prt on (prt.tabla_id=t.tabla_id and prt.estado_inicial_id=t.estado_inicial and  prt.transaccion_id=t.transaccion_id) "
+			+ " left join tesla.seg_privilegios_roles pr on pr.privilegio_rol_id=prt.privilegio_rol_id "
+			+ " left join tesla.seg_roles r on r.rol_id=pr.rol_id "
+			+ " left join tesla.seg_usuarios_roles ur on ur.rol_id=r.rol_id "
+			+ " left join tesla.seg_usuarios u on u.usuario_id=ur.usuario_id "
+			+ " where t.estado='ACTIVO' "
+			+ " AND r.estado='ACTIVO' "
+			+ " AND u.estado='ACTIVO' "
+			+ " AND prt.estado='ACTIVO' "
+			+ " AND  u.login= :login "
+			+ " AND t.tabla_id= :tabla "
+			+ " order by t.orden ASC ", nativeQuery = true)
+	public  List<Object[]> getOperaciones(@Param("login") String login,@Param("tabla") String tabla);
+	
 }

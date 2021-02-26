@@ -44,6 +44,7 @@ public class TransaccionCobroService implements ITransaccionCobroService {
         transaccionCobroEntity.setUsuarioCreacion(usuarioId);
         transaccionCobroEntity.setFechaCreacion(new Date());
         transaccionCobroEntity.setEntidadId(optionalEntidadEntity.get());
+      
         //transaccionCobroEntity.setEstado("COBRADO");
         transaccionCobroEntity.setTransaccion("COBRAR");
 

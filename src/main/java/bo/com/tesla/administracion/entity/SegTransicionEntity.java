@@ -17,6 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
@@ -38,16 +40,19 @@ public class SegTransicionEntity implements Serializable {
     private Short orden;
     @Column(length = 15)
     private String estado;
+    @JsonIgnore
     @JoinColumns({
         @JoinColumn(name = "tabla_id", referencedColumnName = "estado_id", nullable = false, insertable = false, updatable = false)
         , @JoinColumn(name = "estado_inicial", referencedColumnName = "tabla_id", nullable = false, insertable = false, updatable = false)})
     @ManyToOne(optional = false)
     private SegEstadoEntity segEstadoEntity;
+    @JsonIgnore
     @JoinColumns({
         @JoinColumn(name = "tabla_id", referencedColumnName = "transaccion_id", nullable = false, insertable = false, updatable = false)
         , @JoinColumn(name = "transaccion_id", referencedColumnName = "tabla_id", nullable = false, insertable = false, updatable = false)})
     @ManyToOne(optional = false)
     private SegTransaccionEntity segTransaccionEntity;
+    @JsonIgnore
     @OneToMany(mappedBy = "segTransicionEntity")
     private List<SegPrivilegioRoleTransicionEntity> segPrivilegioRoleTransicionEntityList;
 
