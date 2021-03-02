@@ -1,10 +1,12 @@
 package bo.com.tesla.entidades.services;
 
-import java.util.Map;
+import java.util.Date;
 
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import bo.com.tesla.administracion.entity.ArchivoEntity;
+import bo.com.tesla.entidades.dto.ArchivoDto;
 
 public interface IArchivoService {
 
@@ -14,8 +16,7 @@ public interface IArchivoService {
 	
 	public ArchivoEntity findByEstado(String estado,Long archivoId);
 
-	/*public Map<String, Object>  upload(MultipartFile file, String login);
-
-	public Map<String, Object> process(Long archivoId, String login);*/
+	public Page<ArchivoDto> findByEntidadIdAndFechaIniAndFechaFin(Long entidadId, Date fechaIni, Date fechaFin,String estado,
+			int page,int size);
 
 }

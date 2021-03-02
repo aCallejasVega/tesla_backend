@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -70,6 +71,7 @@ public class SegUsuarioEntity implements Serializable {
     @JoinColumn(name = "persona_id", referencedColumnName = "persona_id")
     @ManyToOne
     private PersonaEntity personaId;
+   
 
     public SegUsuarioEntity() {
     }
@@ -185,7 +187,9 @@ public class SegUsuarioEntity implements Serializable {
         this.personaId = personaId;
     }
 
-    @Override
+   
+
+	@Override
     public int hashCode() {
         int hash = 0;
         hash += (usuarioId != null ? usuarioId.hashCode() : 0);

@@ -25,6 +25,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
@@ -54,7 +57,7 @@ public class ArchivoEntity implements Serializable {
     private Date finCargado;
     @Column(name = "usuario_creacion")
     private Long usuarioCreacion;
-    @Column(name = "fecha_creacion")
+    @Column(name = "fecha_creacion")  
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
     @Column(name = "usuario_modificacion")
@@ -66,6 +69,9 @@ public class ArchivoEntity implements Serializable {
     private String estado;
     @Column(length = 15)
     private String transaccion;
+    
+    @Column(name = "nro_registros")
+    private Long nroRegistros;
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "archivoId")
     private List<CobroClienteEntity> cobroClienteEntityList;
@@ -127,15 +133,18 @@ public class ArchivoEntity implements Serializable {
         this.finCargado = finCargado;
     }
 
-    public Long getUsuarioCreacion() {
-        return usuarioCreacion;
-    }
+    
+   
 
-    public void setUsuarioCreacion(Long usuarioCreacion) {
-        this.usuarioCreacion = usuarioCreacion;
-    }
+	public Long getUsuarioCreacion() {
+		return usuarioCreacion;
+	}
 
-    public Date getFechaCreacion() {
+	public void setUsuarioCreacion(Long usuarioCreacion) {
+		this.usuarioCreacion = usuarioCreacion;
+	}
+
+	public Date getFechaCreacion() {
         return fechaCreacion;
     }
 
@@ -209,6 +218,18 @@ public class ArchivoEntity implements Serializable {
 
 	public void setTransaccion(String transaccion) {
 		this.transaccion = transaccion;
+	}
+	
+	
+	
+	
+
+	public Long getNroRegistros() {
+		return nroRegistros;
+	}
+
+	public void setNroRegistros(Long nroRegistros) {
+		this.nroRegistros = nroRegistros;
 	}
 
 	@Override

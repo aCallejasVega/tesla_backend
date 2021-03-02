@@ -25,6 +25,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
@@ -57,6 +59,9 @@ public class HistoricoDeudaEntity implements Serializable {
     @Column(name = "tipo_servicio", nullable = false, length = 300)
     private String tipoServicio;
     @Basic(optional = false)
+    @Column(name = "servicio", nullable = false, length = 300)
+    private String servicio;
+    @Basic(optional = false)
     @Column(nullable = false, length = 250)
     private String periodo;
     @Basic(optional = false)
@@ -81,28 +86,20 @@ public class HistoricoDeudaEntity implements Serializable {
     @Basic(optional = false)
     @Column(name = "usuario_creacion", nullable = false)
     private Long usuarioCreacion;
-    //@Column(name = "transaccion", length = 15)
-    //private String transaccion;       
-
 	@Basic(optional = false)
     @Column(name = "fecha_creacion", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
+	@JsonIgnore
     @JoinColumn(name = "archivo_id", referencedColumnName = "archivo_id", nullable = false)
     @ManyToOne(optional = false)
     private ArchivoEntity archivoId;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "historicoDeudaId")
     private List<AccionEntity> accionEntityList;
+    @Column(name = "es_postpago")
+	private Boolean esPostpago;
     
-    
-   /* public String getTransaccion() {
-		return transaccion;
-	}
-
-	public void setTransaccion(String transaccion) {
-		this.transaccion = transaccion;
-	}*/
-
     @Basic(optional = false)
     @Column(length = 150)
     private String direccion;
@@ -118,7 +115,9 @@ public class HistoricoDeudaEntity implements Serializable {
     @Basic(optional = false)
     @Column(name = "sub_total", precision = 17, scale = 2)
     private BigDecimal subTotal;
-
+    
+    
+    
     @Column(nullable = false, length = 15)
     private String estado;
 
@@ -251,11 +250,10 @@ public class HistoricoDeudaEntity implements Serializable {
     }
 
 
-   
-    
-    
+     
+  
 
-    public boolean isTipoComprobante() {
+	public boolean isTipoComprobante() {
 		return tipoComprobante;
 	}
 
@@ -343,8 +341,25 @@ public class HistoricoDeudaEntity implements Serializable {
     public void setSubTotal(BigDecimal subTotal) {
         this.subTotal = subTotal;
     }
+    
+    
+    public Boolean getEsPostpago() {
+		return esPostpago;
+	}
 
-    @Override
+	public void setEsPostpago(Boolean esPostpago) {
+		this.esPostpago = esPostpago;
+	}
+
+	public String getServicio() {
+		return servicio;
+	}
+
+	public void setServicio(String servicio) {
+		this.servicio = servicio;
+	}
+
+	@Override
     public int hashCode() {
         int hash = 0;
         hash += (historicoDeudaId != null ? historicoDeudaId.hashCode() : 0);

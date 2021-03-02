@@ -3,6 +3,9 @@ package bo.com.tesla.useful.cross;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import com.opencsv.CSVReader;
@@ -108,5 +111,27 @@ public class Util {
 		} 
 		return rowInt;
 
+	}
+	
+	public static Date stringToDate(String fecha) {
+		try {
+			return new SimpleDateFormat("dd/MM/yyyy").parse(fecha);  
+		} catch (Exception e) {
+			new Technicalexception(e.getMessage(),e.getCause());
+			return null;
+		}
+	}
+	
+	public static Date formatDate(Date date) {
+		try {
+			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			Date todayWithZeroTime = formatter.parse(formatter.format(date));
+			return todayWithZeroTime;
+		} catch (Exception e) {
+			new Technicalexception(e.getMessage(),e.getCause());
+			return null;
+		}
+		
+		
 	}
 }

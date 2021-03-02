@@ -106,6 +106,7 @@ public class DeudaClienteController {
 			archivo.setPath(path);
 			archivo.setUsuarioCreacion(usuario.getUsuarioId());
 			archivo.setFechaCreacion(new Date());
+			archivo.setNroRegistros(cantidadRegistros);
 			archivo.setTransaccion("CREAR");
 			archivo = this.archivoService.save(archivo);
 			response.put("mensaje", "El archivo fue recepcionado con éxito, los registros encontrados en este archivo fueron "
@@ -116,13 +117,14 @@ public class DeudaClienteController {
 			
 		} 
 		catch (BusinesException e) {
+			e.printStackTrace();
 			LogSistemaEntity log=new LogSistemaEntity();
 			log.setModulo("ENTIDADES");
 			log.setController("api/deudaCliente/upload/");			
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());			
-			logSistemaService.save(log);			
+			this.logSistemaService.save(log);			
 			this.logger.error("This is cause", e.getMessage());
 			
 			response.put("mensaje", e.getMessage());
@@ -132,7 +134,7 @@ public class DeudaClienteController {
 			
 		}
 		catch (Technicalexception e) {
-			
+			e.printStackTrace();
 			LogSistemaEntity log=new LogSistemaEntity();
 			log.setModulo("ENTIDADES");
 			log.setController("api/deudaCliente/upload");
@@ -140,7 +142,7 @@ public class DeudaClienteController {
 			log.setMensaje(e.getMessage()+"");
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());			
-			logSistemaService.save(log);
+			this.logSistemaService.save(log);
 			
 			this.logger.error("This is error", e.getMessage());
 			this.logger.error("This is cause", e.getCause());
@@ -155,14 +157,14 @@ public class DeudaClienteController {
 	public ResponseEntity<?> processFile(@PathVariable("archivoId") Long archivoId, Authentication authentication) throws BusinesException {
 		Map<String, Object> response = new HashMap<>();
 		SegUsuarioEntity usuario =new SegUsuarioEntity();
-
+		ArchivoEntity archivo =new ArchivoEntity();
 		if (archivoId <= 0 || archivoId.toString().isBlank() || archivoId.toString().isEmpty()) {
 			response.put("mensaje", "Ocurrió un error en el servidor, por favor verifique los parametros de ingreso.");
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
 		try {
 			usuario = this.segUsuarioService.findByLogin(authentication.getName());
-			ArchivoEntity archivo = this.archivoService.findById(archivoId);
+			archivo = this.archivoService.findById(archivoId);
 			ArchivoEntity archivoPrevious = this.archivoService.findByEstado("ACTIVO",
 					archivo.getEntidadId().getEntidadId());
 
@@ -176,12 +178,15 @@ public class DeudaClienteController {
 				for (Throwable throwable : throwList) {
 					LogSistemaEntity log=new LogSistemaEntity();
 					log.setModulo("ENTIDADES");
-					log.setController("api/deudaCliente/processFile/{archivoId}");
+					log.setController("api/deudaCliente/processFile/"+archivoId);
 					log.setCausa(Util.causeRow(throwable.getCause() + "") +"");
 					log.setMensaje(Util.mensajeRow(throwable.getMessage() + "")+"");
 					log.setUsuarioCreacion(usuario.getUsuarioId());
 					log.setFechaCreacion(new Date());			
 					logSistemaService.save(log);
+					
+					archivo.setTransaccion("FALLAR");
+					this.archivoService.save(archivo);
 					
 					this.logger.error("This is error", throwable.getMessage());
 					this.logger.error("This is cause", throwable.getCause());
@@ -225,7 +230,10 @@ public class DeudaClienteController {
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());			
-			logSistemaService.save(log);
+			this.logSistemaService.save(log);
+			
+			archivo.setTransaccion("FALLAR");
+			this.archivoService.save(archivo);
 			
 			this.deudaClienteService.deletByArchivoId(archivoId);
 			
@@ -248,7 +256,10 @@ public class DeudaClienteController {
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());			
-			logSistemaService.save(log);
+			this.logSistemaService.save(log);
+			
+			archivo.setTransaccion("FALLAR");
+			this.archivoService.save(archivo);
 			
 			this.deudaClienteService.deletByArchivoId(archivoId);
 			this.logger.error("This is error", e.getMessage());
