@@ -31,9 +31,14 @@ public class SegPrivilegiosService implements ISegPrivilegiosService {
 			for (SegPrivilegioEntity segPrivilegioSubMenu : segPrivilegio.getSegPrivilegioEntityList()) {
 				String estado = this.segPrivilegiosDao.getEstadoPrivilegios(usuarioId,
 						segPrivilegioSubMenu.getPrivilegiosId());
-				if (estado.equals("ACTIVO")) {
-					segPrivilegioSubMenuNew.add(segPrivilegioSubMenu);
+				System.out.println("********************** "+ estado);
+				
+				if(estado!=null) {
+					if (estado.equals("ACTIVO")) {
+						segPrivilegioSubMenuNew.add(segPrivilegioSubMenu);
+					}	
 				}
+				
 			}
 			//segPrivilegio.setSegPrivilegioEntityList(segPrivilegioSubMenuNew);
 			

@@ -39,7 +39,7 @@ public class EntidadRService implements IEntidadRService {
     @Override
     public Optional<List<EntidadDto>> getByRecaudadoraId(String login) {
         SegUsuarioEntity usuario =this.usuarioDao.findByLogin(login);
-        RecaudadorEntity recaudadorEntity = this.iRecaudadorDao.findRecaudadorByUserId(usuario.getUsuarioId());
+        RecaudadorEntity recaudadorEntity = this.iRecaudadorDao.findRecaudadorByUserId(usuario.getUsuarioId());       
         return IEntidadRDao.findByRecaudadoraId(recaudadorEntity.getRecaudadorId());
     }
 

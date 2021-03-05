@@ -14,7 +14,7 @@ import bo.com.tesla.administracion.entity.SegPrivilegioEntity;
 public interface ISegPrivilegiosDao extends JpaRepository<SegPrivilegioEntity, Long>{
 	@Query("Select pr.privilegioId"
 			+ " From SegUsuarioRolEntity ur "
-			+ " left join SegPrivilegioRolEntity pr on pr.rolId.rolId=ur.rolId "
+			+ " left join SegPrivilegioRolEntity pr on pr.rolId.rolId=ur.rolId.rolId "
 			+ " Where pr.privilegioId.estado='ACTIVO' "
 			+ " and pr.estado='ACTIVO'"
 			+ " and ur.usuarioId.usuarioId=:usuarioId"
