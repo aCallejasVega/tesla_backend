@@ -57,7 +57,7 @@ public class DominioEntity implements Serializable {
     private Date fechaModificacion;
     @Column(length = 10)
     private String estado;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "metodoCobroId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "metodoCobro")
     private List<CobroClienteEntity> cobroClienteEntityList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "motivoCancelacionId")
     private List<CancelacionEntity> cancelacionEntityList;
@@ -69,12 +69,17 @@ public class DominioEntity implements Serializable {
     private List<PersonaEntity> personaEntityList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoDocumentoId")
     private List<PersonaEntity> personaEntityList1;
-    @OneToMany(mappedBy = "departamentoId")
-    private List<SucursalEntity> sucursalEntityList;
-    @OneToMany(mappedBy = "localidadId")
+    @OneToMany(mappedBy = "departamento")
+    private List<SucursalEntity> sucursalEntitDepartamentoList;
+    @OneToMany(mappedBy = "localidad")
     private List<SucursalEntity> sucursalEntityList1;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoEntidad")
     private List<EntidadEntity> entidadEntityList;
+    @OneToMany(mappedBy = "actividadEconomica")
+    private List<EntidadEntity> entidadEntityActividadEconomicaList;
+    @OneToMany(mappedBy = "municipio")
+    private List<EntidadEntity> entidadEntityMunicipioList;
+
 
     public DominioEntity() {
     }
@@ -86,7 +91,6 @@ public class DominioEntity implements Serializable {
     public Long getDominioId() {
         return dominioId;
     }
-
     public void setDominioId(Long dominioId) {
         this.dominioId = dominioId;
     }
@@ -203,12 +207,12 @@ public class DominioEntity implements Serializable {
         this.personaEntityList1 = personaEntityList1;
     }
 
-    public List<SucursalEntity> getSucursalEntityList() {
-        return sucursalEntityList;
+    public List<SucursalEntity> getSucursalEntitDepartamentoList() {
+        return sucursalEntitDepartamentoList;
     }
 
-    public void setSucursalEntityList(List<SucursalEntity> sucursalEntityList) {
-        this.sucursalEntityList = sucursalEntityList;
+    public void setSucursalEntitDepartamentoList(List<SucursalEntity> sucursalEntityList) {
+        this.sucursalEntitDepartamentoList = sucursalEntityList;
     }
 
     public List<SucursalEntity> getSucursalEntityList1() {
@@ -225,6 +229,22 @@ public class DominioEntity implements Serializable {
 
     public void setEntidadEntityList(List<EntidadEntity> entidadEntityList) {
         this.entidadEntityList = entidadEntityList;
+    }
+
+    public List<EntidadEntity> getEntidadEntityActividadEconomicaList() {
+        return entidadEntityActividadEconomicaList;
+    }
+
+    public void setEntidadEntityActividadEconomicaList(List<EntidadEntity> entidadEntityActividadEconomicaList) {
+        this.entidadEntityActividadEconomicaList = entidadEntityActividadEconomicaList;
+    }
+
+    public List<EntidadEntity> getEntidadEntityMunicipioList() {
+        return entidadEntityMunicipioList;
+    }
+
+    public void setEntidadEntityMunicipioList(List<EntidadEntity> entidadEntityMunicipioList) {
+        this.entidadEntityMunicipioList = entidadEntityMunicipioList;
     }
 
     @Override

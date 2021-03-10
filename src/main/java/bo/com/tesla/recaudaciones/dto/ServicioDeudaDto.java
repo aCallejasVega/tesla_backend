@@ -20,9 +20,12 @@ public class ServicioDeudaDto {
     public String periodo;
     public Long entidadId;
     public BigDecimal subTotal;
+    public String plantilla;
+    public Boolean editable;
+    public Boolean editando;
     public List<DeudaClienteDto> deudaClienteDtos;
-    @JsonIgnore
-    private List<DeudaClienteEntity> deudaClientes;
+    /*@JsonIgnore
+    public List<DeudaClienteEntity> deudaClientesTodoEntity;*/
 
     public ServicioDeudaDto(String tipoServicio, String servicio, String periodo, Long entidadId, BigDecimal subTotal) {
         this.tipoServicio = tipoServicio;
@@ -30,13 +33,5 @@ public class ServicioDeudaDto {
         this.periodo = periodo;
         this.entidadId = entidadId;
         this.subTotal = subTotal;
-    }
-
-    public List<DeudaClienteEntity> getDeudaClientes() {
-        return deudaClientes;
-    }
-
-    public void setDeudaClientes(List<DeudaClienteEntity> deudaClientes) {
-        this.deudaClientes = deudaClientes;
     }
 }

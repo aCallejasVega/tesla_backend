@@ -5,10 +5,13 @@ import bo.com.tesla.recaudaciones.dao.IDeudaClienteRDao;
 import bo.com.tesla.recaudaciones.dto.ClienteDto;
 import bo.com.tesla.recaudaciones.dto.DeudaClienteDto;
 import bo.com.tesla.recaudaciones.dto.ServicioDeudaDto;
+import bo.com.tesla.useful.config.Technicalexception;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,47 +24,50 @@ public class DeudaClienteRService implements IDeudaClienteRService {
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<List<ClienteDto>> getByEntidadAndClienteLike(Long entidadId, String datoCliente) {
+    public List<ClienteDto> getByEntidadAndClienteLike(Long entidadId, String datoCliente) {
         return iDeudaClienteRDao.findByEntidadAndClienteLike(entidadId, datoCliente);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<ServicioDeudaDto> getDeudasByCliente(Long entidadId, String codigoCliente) {
-        Optional<List<ServicioDeudaDto>> optionalServicioDeudaDtos = iDeudaClienteRDao.groupByDeudasClientes(entidadId, codigoCliente);
-        if(!optionalServicioDeudaDtos.isPresent()) {
-            return null;
+    public List<ServicioDeudaDto> getDeudasByCliente(Long entidadId, String codigoCliente) throws Technicalexception{
+        List<ServicioDeudaDto> servicioDeudaDtos = iDeudaClienteRDao.groupByDeudasClientes(entidadId, codigoCliente);
+        if(servicioDeudaDtos.isEmpty()) {
+            return new ArrayList<ServicioDeudaDto>();//el controller procedera con l captura del mensaje
         }
-
         Long key = 0L;
-        for (ServicioDeudaDto servicioDeuda : optionalServicioDeudaDtos.get()) {
+        for (ServicioDeudaDto servicioDeuda : servicioDeudaDtos) {
             servicioDeuda.key = key;
-            Optional<List<DeudaClienteDto>> optionalDeudaClienteDtos = iDeudaClienteRDao.findByEntidadByServicios(servicioDeuda.entidadId,
+            List<DeudaClienteDto> deudaClienteDtos = iDeudaClienteRDao.findByEntidadByServicios(servicioDeuda.entidadId,
                                                                             servicioDeuda.tipoServicio,
                                                                             servicioDeuda.servicio,
                                                                             servicioDeuda.periodo,
                                                                             codigoCliente);
-            if(!optionalDeudaClienteDtos.isPresent()){
-                return null;
+            if(deudaClienteDtos.isEmpty()){
+                throw new Technicalexception("No existen registros en deudas para agrupación");
             }
-            List<DeudaClienteDto> deudaClienteDtos =  optionalDeudaClienteDtos.get().stream()
-                                                        .filter(d -> d.tipo == 'D').collect(Collectors.toList());
-            if(!deudaClienteDtos.isEmpty()) {
-            	 servicioDeuda.deudaClienteDtos = deudaClienteDtos;
-                 servicioDeuda.nombreCliente = deudaClienteDtos.get(0).nombreCliente;
-                 servicioDeuda.codigoCliente = deudaClienteDtos.get(0).codigoCliente;
-                // servicioDeuda.nombreCliente = deudaClienteDtos.get(0).nombreCliente;
+            List<DeudaClienteDto> deudaClienteDtosDeudas =  deudaClienteDtos.stream()
+                                                                .filter(d -> d.tipo == 'D')
+                                                                .collect(Collectors
+                                                                .toList());
+            if(deudaClienteDtosDeudas.isEmpty()) {
+                throw new Technicalexception("No existen DEUDAS para EntidadId=" + entidadId + " y CodigoCliente=" + codigoCliente);
             }
-
-           
+            servicioDeuda.deudaClienteDtos = deudaClienteDtosDeudas;
+            servicioDeuda.nombreCliente = deudaClienteDtosDeudas.get(0).nombreCliente;
+            servicioDeuda.codigoCliente = deudaClienteDtosDeudas.get(0).codigoCliente;
+            //Para la edición verificar
+            Boolean esEditable = deudaClienteDtosDeudas.stream().anyMatch(d -> !d.esPostpago && d.subTotal.compareTo(BigDecimal.ZERO) == 0);
+            servicioDeuda.editable = esEditable;
+            servicioDeuda.editando = false;
+            servicioDeuda.plantilla = deudaClienteDtosDeudas.get(0).tipoComprobante ? "FACTURA" : "RECIBO";
             key++;
         }
-
-        return optionalServicioDeudaDtos.get();
+        return servicioDeudaDtos;
     }
 
     @Override
-    public Optional<List<DeudaClienteEntity>> getAllDeudasByCliente(Long entidadId,
+    public List<DeudaClienteEntity> getAllDeudasByCliente(Long entidadId,
                                                           String tipoServicio,
                                                           String servicio,
                                                           String periodo,
@@ -72,24 +78,6 @@ public class DeudaClienteRService implements IDeudaClienteRService {
                                                         periodo,
                                                         codigoCliente);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<ServicioDeudaDto> getDeudasCompletas(List<ServicioDeudaDto> servicioDeudaDtos) {
-        for(ServicioDeudaDto servicioDeudaDto : servicioDeudaDtos) {
-            Optional<List<DeudaClienteEntity>> optionalDeudaClienteEntities = getAllDeudasByCliente(servicioDeudaDto.entidadId,
-                    servicioDeudaDto.tipoServicio,
-                    servicioDeudaDto.servicio,
-                    servicioDeudaDto.periodo,
-                    servicioDeudaDto.codigoCliente);
-            if(!optionalDeudaClienteEntities.isPresent()) {
-                return null;
-            }
-            servicioDeudaDto.setDeudaClientes(optionalDeudaClienteEntities.get());
-        }
-        return servicioDeudaDtos;
-    }
-
 
     @Override
     public Long deleteDeudasClientes(List<DeudaClienteEntity> deudaClienteEntities) {

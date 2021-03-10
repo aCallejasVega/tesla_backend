@@ -66,7 +66,7 @@ public class ComprobanteCobroService implements IComprobanteCobroService {
         comprobanteCobroEntity.setEntidadId(optionalEntidadEntity.get());
         comprobanteCobroEntity.setSucursalId(optionalSucursalEntity.get());
         comprobanteCobroEntity.setDosificacionId(dosificacionEntity);
-        comprobanteCobroEntity.setNroFactura(1);//arrglar con facturacion
+        comprobanteCobroEntity.setNroFactura(1L);//arrglar con facturacion
         comprobanteCobroEntity.setFechaFactura(new Date());//Facturacion
         comprobanteCobroEntity.setNitCliente(nroDocumento);
         comprobanteCobroEntity.setNombreCliente(nombreCliente);

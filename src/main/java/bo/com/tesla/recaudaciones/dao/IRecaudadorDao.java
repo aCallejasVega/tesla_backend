@@ -7,18 +7,20 @@ import org.springframework.stereotype.Repository;
 
 import bo.com.tesla.administracion.entity.RecaudadorEntity;
 
+import java.util.Optional;
+
 @Repository
 public interface IRecaudadorDao extends JpaRepository <RecaudadorEntity, Long> {
 
-    @Query(value = "select e.sucursalId.recaudadorId "
+    @Query(value = "select e.sucursalId.recaudador "
             + " from SegUsuarioEntity u "
             + " inner join PersonaEntity  p on p.personaId = u.personaId.personaId "
             + " inner join EmpleadoEntity e on e.personaId.personaId = p.personaId "
             + " where u.estado = 'ACTIVO' "
             + " and e.sucursalId.estado = 'ACTIVO' "
-            + " and e.sucursalId.recaudadorId.estado = 'ACTIVO'"
+            + " and e.sucursalId.recaudador.estado = 'ACTIVO'"
             + " and u.usuarioId=:usuarioId")
-    RecaudadorEntity findRecaudadorByUserId(@Param("usuarioId") Long usuarioId);
+    Optional<RecaudadorEntity> findRecaudadorByUserId(@Param("usuarioId") Long usuarioId);
 
 
 }

@@ -9,18 +9,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 /**
  *
@@ -38,20 +27,23 @@ public class RecaudadorEntity implements Serializable {
     @Basic(optional = false)
     @Column(name = "recaudador_id", nullable = false)
     private Long recaudadorId;
-    /*@Column(name = "empleado_id")
-    private BigInteger empleadoId;*/
-    @Column(name = "tipo_recaudador_id")
-    private BigInteger tipoRecaudadorId;
-    @Column(length = 250)
+    @Basic(optional = false)
+    @Column(name = "tipo_recaudador_id", nullable = false)
+    private Long tipoRecaudadorId;
+    @Basic(optional = false)
+    @Column(nullable = false, length = 250)
     private String nombre;
-    @Column(length = 250)
+    @Basic(optional = false)
+    @Column(nullable = false, length = 250)
     private String direccion;
     @Basic(optional = false)
     @Column(nullable = false, length = 10)
     private String telefono;
-    @Column(name = "usuario_creacion")
-    private BigInteger usuarioCreacion;
-    @Column(name = "fecha_creacion")
+    @Basic(optional = false)
+    @Column(name = "usuario_creacion", nullable = false)
+    private Long usuarioCreacion;
+    @Basic(optional = false)
+    @Column(name = "fecha_creacion", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
     @Column(name = "usuario_modificacion")
@@ -59,16 +51,16 @@ public class RecaudadorEntity implements Serializable {
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
-    @Column(length = 15)
+    @Basic(optional = false)
+    @Column(nullable = false, length = 15)
     private String estado;
-    @OneToMany(mappedBy = "recaudador")
-    private List<EntidadRecaudadorEntity> entidadRecaudadorEntityList;
-    @OneToMany(mappedBy = "recaudadorId")
+    @Basic(optional = false)
+    @Column(nullable = false, length = 15)
+    private String transaccion;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recaudador")
     private List<SucursalEntity> sucursalEntityList;
-    @Column(name = "comprobante_en_uno")
-    private Boolean comprobanteEnUno;
-
-
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recaudador")
+    private List<EntidadRecaudadorEntity> entidadRecaudadorEntityList;
 
     public RecaudadorEntity() {
     }
@@ -77,9 +69,16 @@ public class RecaudadorEntity implements Serializable {
         this.recaudadorId = recaudadorId;
     }
 
-    public RecaudadorEntity(Long recaudadorId, String telefono) {
+    public RecaudadorEntity(Long recaudadorId, long tipoRecaudadorId, String nombre, String direccion, String telefono, boolean comprobanteEnUno, long usuarioCreacion, Date fechaCreacion, String estado, String transaccion) {
         this.recaudadorId = recaudadorId;
+        this.tipoRecaudadorId = tipoRecaudadorId;
+        this.nombre = nombre;
+        this.direccion = direccion;
         this.telefono = telefono;
+        this.usuarioCreacion = usuarioCreacion;
+        this.fechaCreacion = fechaCreacion;
+        this.estado = estado;
+        this.transaccion = transaccion;
     }
 
     public Long getRecaudadorId() {
@@ -89,20 +88,12 @@ public class RecaudadorEntity implements Serializable {
     public void setRecaudadorId(Long recaudadorId) {
         this.recaudadorId = recaudadorId;
     }
-/*
-    public BigInteger getEmpleadoId() {
-        return empleadoId;
-    }
 
-    public void setEmpleadoId(BigInteger empleadoId) {
-        this.empleadoId = empleadoId;
-    }
-*/
-    public BigInteger getTipoRecaudadorId() {
+    public long getTipoRecaudadorId() {
         return tipoRecaudadorId;
     }
 
-    public void setTipoRecaudadorId(BigInteger tipoRecaudadorId) {
+    public void setTipoRecaudadorId(long tipoRecaudadorId) {
         this.tipoRecaudadorId = tipoRecaudadorId;
     }
 
@@ -130,11 +121,11 @@ public class RecaudadorEntity implements Serializable {
         this.telefono = telefono;
     }
 
-    public BigInteger getUsuarioCreacion() {
+    public long getUsuarioCreacion() {
         return usuarioCreacion;
     }
 
-    public void setUsuarioCreacion(BigInteger usuarioCreacion) {
+    public void setUsuarioCreacion(long usuarioCreacion) {
         this.usuarioCreacion = usuarioCreacion;
     }
 
@@ -170,28 +161,28 @@ public class RecaudadorEntity implements Serializable {
         this.estado = estado;
     }
 
-    public List<EntidadRecaudadorEntity> getEntidadRecaudadorEntityList() {
-        return entidadRecaudadorEntityList;
+    public String getTransaccion() {
+        return transaccion;
     }
 
-    public void setEntidadRecaudadorEntityList(List<EntidadRecaudadorEntity> entidadRecaudadorEntityList) {
-        this.entidadRecaudadorEntityList = entidadRecaudadorEntityList;
+    public void setTransaccion(String transaccion) {
+        this.transaccion = transaccion;
     }
 
     public List<SucursalEntity> getSucursalEntityList() {
         return sucursalEntityList;
     }
 
-    public void setSucursalEntityList(List<SucursalEntity> sucursalEntityList) {
-        this.sucursalEntityList = sucursalEntityList;
+    public void setSucursalEntityList(List<SucursalEntity> sucursalEntityCollection) {
+        this.sucursalEntityList = sucursalEntityCollection;
     }
 
-    public Boolean getComprobanteEnUno() {
-        return comprobanteEnUno;
+    public List<EntidadRecaudadorEntity> getEntidadRecaudadorEntityList() {
+        return entidadRecaudadorEntityList;
     }
 
-    public void setComprobanteEnUno(Boolean comprobanteEnUno) {
-        this.comprobanteEnUno = comprobanteEnUno;
+    public void setEntidadRecaudadorEntityList(List<EntidadRecaudadorEntity> entidadRecaudadorEntityCollection) {
+        this.entidadRecaudadorEntityList = entidadRecaudadorEntityCollection;
     }
 
     @Override
@@ -204,7 +195,7 @@ public class RecaudadorEntity implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof RecaudadorEntity)) {
+        if (!( object instanceof RecaudadorEntity)) {
             return false;
         }
         RecaudadorEntity other = (RecaudadorEntity) object;
@@ -216,7 +207,7 @@ public class RecaudadorEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.com.tesla.administracion.entity.RecaudadorEntity[ recaudadorId=" + recaudadorId + " ]";
+        return "bo.com.tesla.administrador.entity.RecaudadorEntity[ recaudadorId=" + recaudadorId + " ]";
     }
     
 }

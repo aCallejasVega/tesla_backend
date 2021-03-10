@@ -5,11 +5,10 @@ import java.util.*;
 
 public class ClienteDto {
 
-    private String codigoCliente;
-    private String nombreCliente;
-    private String nroDocumento;
-
-    private List<ServicioDeudaDto> servicioDeudaDtoList;
+    public String codigoCliente;
+    public String nombreCliente;
+    public String nroDocumento;
+    public List<ServicioDeudaDto> servicioDeudaDtoList;
 
     public ClienteDto() {
     }
@@ -19,7 +18,7 @@ public class ClienteDto {
         this.nombreCliente = nombreCliente;
         this.nroDocumento = nroDocumento;
     }
-
+/*
     public String getCodigoCliente() {
         return codigoCliente;
     }
@@ -47,5 +46,5 @@ public class ClienteDto {
     public void setServicioDeudaDtoList(List<ServicioDeudaDto> servicioDeudaDtoList) {
         this.servicioDeudaDtoList = servicioDeudaDtoList;
     }
-
+*/
 }

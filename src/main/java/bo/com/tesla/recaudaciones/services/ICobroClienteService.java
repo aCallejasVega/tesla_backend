@@ -2,6 +2,7 @@ package bo.com.tesla.recaudaciones.services;
 
 import bo.com.tesla.administracion.entity.CobroClienteEntity;
 import bo.com.tesla.administracion.entity.DeudaClienteEntity;
+import bo.com.tesla.administracion.entity.TransaccionCobroEntity;
 import bo.com.tesla.recaudaciones.dto.ClienteDto;
 import bo.com.tesla.recaudaciones.dto.DeudaClienteDto;
 import bo.com.tesla.recaudaciones.dto.ServicioDeudaDto;
@@ -15,9 +16,12 @@ public interface ICobroClienteService {
     public CobroClienteEntity loadCobroClienteEntity(DeudaClienteEntity deudaClienteEntity,
                                                      List<DeudaClienteDto> deudaClienteDtos,
                                                      Long usuarioId,
-                                                     Long metodoPagoId);
+                                                     Long metodoPagoId,
+                                                     TransaccionCobroEntity transaccionCobroEntity);
+
     public void postCobrarDeudas(ClienteDto clienteDto,
                                  Long usuarioId,
-                                 Long metodoPagoId) throws Exception;
+                                 Long metodoPagoId); //throws Exception;
+
 
 }

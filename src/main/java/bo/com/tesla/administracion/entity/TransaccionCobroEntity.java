@@ -6,6 +6,7 @@
 package bo.com.tesla.administracion.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
@@ -38,16 +39,24 @@ public class TransaccionCobroEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "transaccion_cobro_id", nullable = false)
+    @Column(name = "transaccion_cobro_id")
     private Long transaccionCobroId;
-    @Column(name = "tipo_servicio", length = 300)
+    @Basic(optional = false)
+    @Column(name = "tipo_servicio")
     private String tipoServicio;
-    @Column(length = 300)
+    @Basic(optional = false)
+    @Column(name = "servicio")
     private String servicio;
-    @Column(length = 250)
+    @Basic(optional = false)
+    @Column(name = "periodo")
     private String periodo;
+    @Basic(optional = false)
+    @Column(name = "codigo_cliente")
+    private String codigoCliente;
+    @Basic(optional = false)
     @Column(name = "usuario_creacion")
-    private Long usuarioCreacion;
+    private long usuarioCreacion;
+    @Basic(optional = false)
     @Column(name = "fecha_creacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
@@ -56,17 +65,30 @@ public class TransaccionCobroEntity implements Serializable {
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
-    @Column(length = 15)
+    @Basic(optional = false)
+    @Column(name = "estado")
     private String estado;
-    @Column(length = 15)
+    @Basic(optional = false)
+    @Column(name = "transaccion")
     private String transaccion;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Basic(optional = false)
+    @Column(name = "total_deuda")
+    private BigDecimal totalDeuda;
+    @Basic(optional = false)
+    @Column(name = "nombre_cliente_pago")
+    private String nombreClientePago;
+    @Basic(optional = false)
+    @Column(name = "nro_documento_cliente_pago")
+    private String nroDocumentoClientePago;
+    @JoinColumn(name = "archivo_id", referencedColumnName = "archivo_id")
+    @ManyToOne(optional = false)
+    private ArchivoEntity archivoId;
     @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id")
-    @ManyToOne
+    @ManyToOne(optional = false)
     private EntidadEntity entidadId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "transaccionCobroId")
     private List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList;
-
-    
 
     public TransaccionCobroEntity() {
     }
@@ -146,8 +168,6 @@ public class TransaccionCobroEntity implements Serializable {
     public void setEstado(String estado) {
         this.estado = estado;
     }
-    
-    
 
 	public EntidadEntity getEntidadId() {
         return entidadId;
@@ -171,6 +191,50 @@ public class TransaccionCobroEntity implements Serializable {
 
     public void setTransaccion(String transaccion) {
         this.transaccion = transaccion;
+    }
+
+    public String getCodigoCliente() {
+        return codigoCliente;
+    }
+
+    public void setCodigoCliente(String codigoCliente) {
+        this.codigoCliente = codigoCliente;
+    }
+
+    public void setUsuarioCreacion(long usuarioCreacion) {
+        this.usuarioCreacion = usuarioCreacion;
+    }
+
+    public BigDecimal getTotalDeuda() {
+        return totalDeuda;
+    }
+
+    public void setTotalDeuda(BigDecimal totalDeuda) {
+        this.totalDeuda = totalDeuda;
+    }
+
+    public ArchivoEntity getArchivoId() {
+        return archivoId;
+    }
+
+    public void setArchivoId(ArchivoEntity archivoId) {
+        this.archivoId = archivoId;
+    }
+
+    public String getNombreClientePago() {
+        return nombreClientePago;
+    }
+
+    public void setNombreClientePago(String nombreClientePago) {
+        this.nombreClientePago = nombreClientePago;
+    }
+
+    public String getNroDocumentoClientePago() {
+        return nroDocumentoClientePago;
+    }
+
+    public void setNroDocumentoClientePago(String nroDocumentoClientePago) {
+        this.nroDocumentoClientePago = nroDocumentoClientePago;
     }
 
     @Override

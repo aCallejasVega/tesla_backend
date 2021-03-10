@@ -6,17 +6,9 @@
 package bo.com.tesla.administracion.entity;
 
 import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import java.math.BigInteger;
+import java.util.Date;
+import javax.persistence.*;
 
 /**
  *
@@ -40,6 +32,19 @@ public class EntidadRecaudadorEntity implements Serializable {
     @JoinColumn(name = "recaudador_id", referencedColumnName = "recaudador_id")
     @ManyToOne
     private RecaudadorEntity recaudador;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaCreacion;
+    @Column(name = "usuario_modificacion")
+    private BigInteger usuarioModificacion;
+    @Column(name = "fecha_modificacion")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaModificacion;
+    @Basic(optional = false)
+    @Column(nullable = false, length = 15)
+    private String estado;
+    @Basic(optional = false)
+    @Column(nullable = false, length = 15)
+    private String transaccion;
 
     public EntidadRecaudadorEntity() {
     }
@@ -70,6 +75,46 @@ public class EntidadRecaudadorEntity implements Serializable {
 
     public void setRecaudador(RecaudadorEntity recaudadorId) {
         this.recaudador = recaudadorId;
+    }
+
+    public Date getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    public BigInteger getUsuarioModificacion() {
+        return usuarioModificacion;
+    }
+
+    public void setUsuarioModificacion(BigInteger usuarioModificacion) {
+        this.usuarioModificacion = usuarioModificacion;
+    }
+
+    public Date getFechaModificacion() {
+        return fechaModificacion;
+    }
+
+    public void setFechaModificacion(Date fechaModificacion) {
+        this.fechaModificacion = fechaModificacion;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getTransaccion() {
+        return transaccion;
+    }
+
+    public void setTransaccion(String transaccion) {
+        this.transaccion = transaccion;
     }
 
     @Override

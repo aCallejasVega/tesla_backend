@@ -18,7 +18,7 @@ public interface ISucursalDao extends JpaRepository<SucursalEntity, Long> {
             + " inner join EmpleadoEntity e on e.personaId.personaId = p.personaId "
             + " where u.estado = 'ACTIVO' "
             + " and e.sucursalId.estado = 'ACTIVO' "
-            + " and e.sucursalId.recaudadorId.estado = 'ACTIVO'"
+            + " and e.sucursalId.recaudador.estado = 'ACTIVO'"
             + " and u.usuarioId=:usuarioId")
     Optional<SucursalEntity> findSucursalByUserId(@Param("usuarioId") Long usuarioId);
 

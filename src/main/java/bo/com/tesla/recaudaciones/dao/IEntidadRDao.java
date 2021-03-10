@@ -14,28 +14,26 @@ import java.util.Optional;
 @Repository
 public interface IEntidadRDao extends JpaRepository<EntidadEntity, Long> {
 
+    Optional<EntidadEntity> findByEntidadIdAndEstado(Long entidad_id, String estado);
+
     @Query(value = "select new bo.com.tesla.recaudaciones.dto.EntidadDto(" +
             " er.entidad.entidadId, er.entidad.nombre, er.entidad.nombreComercial, er.entidad.pathLogo) "+
             " from EntidadRecaudadorEntity er " +
             " where er.recaudador.recaudadorId = :pRecaudadorId " +
             " and er.entidad.tipoEntidad.dominioId = :pTipoEntidadId " +
-            " and er.entidad.estado = 'ACTIVO'")
-    Optional<List<EntidadDto>> findByRecaudadoraIdAndTipoEntidadId(@Param("pRecaudadorId") Long pRecaudadorId, @Param("pTipoEntidadId") Long pTipoEntidadId);
-
+            " and er.entidad.estado = 'ACTIVO' " +
+            " and er.entidad.estado = 'ACTIVO' " +
+            " and er.recaudador.estado = 'ACTIVO'")
+    List<EntidadDto> findByRecaudadoraIdAndTipoEntidadId(@Param("pRecaudadorId") Long pRecaudadorId, @Param("pTipoEntidadId") Long pTipoEntidadId);
 
     @Query(value = "select new bo.com.tesla.recaudaciones.dto.EntidadDto(" +
             " er.entidad.entidadId, er.entidad.nombre, er.entidad.nombreComercial, er.entidad.pathLogo) "+
             " from EntidadRecaudadorEntity er " +
             " where er.recaudador.recaudadorId = :pRecaudadorId " +
-            " and er.entidad.estado = 'ACTIVO'")
-    Optional<List<EntidadDto>> findByRecaudadoraId(@Param("pRecaudadorId") Long pRecaudadorId);
-
-    @Query(value = "select distinct new bo.com.tesla.recaudaciones.dto.DominioDto( " +
-            " er.entidad.tipoEntidad.dominioId, er.entidad.tipoEntidad.dominio, er.entidad.tipoEntidad.descripcion, er.entidad.tipoEntidad.abreviatura ) " +
-            " from EntidadRecaudadorEntity er " +
-            " where er.recaudador.recaudadorId = :pRecaudadorId " +
-            " and er.entidad.estado = 'ACTIVO'")
-    Optional<List<DominioDto>> findTipoEntidadByRecaudadorId(@Param("pRecaudadorId") Long pRecaudadorId);
+            " and er.entidad.estado = 'ACTIVO' " +
+            " and er.entidad.estado = 'ACTIVO' " +
+            " and er.recaudador.estado = 'ACTIVO'")
+    List<EntidadDto> findByRecaudadoraId(@Param("pRecaudadorId") Long pRecaudadorId);
 
     Optional<EntidadEntity> findByEntidadId(Long entidadId);
 }

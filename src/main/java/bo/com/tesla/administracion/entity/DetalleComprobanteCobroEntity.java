@@ -40,7 +40,7 @@ public class DetalleComprobanteCobroEntity implements Serializable {
     private Long detalleComprobanteCobroId;
     @Basic(optional = false)
     @Column(name = "usuario_creacion", nullable = false)
-    private long usuarioCreacion;
+    private Long usuarioCreacion;
     @Basic(optional = false)
     @Column(name = "fecha_creacion", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -73,7 +73,7 @@ public class DetalleComprobanteCobroEntity implements Serializable {
         this.detalleComprobanteCobroId = detalleComprobanteCobroId;
     }
 
-    public DetalleComprobanteCobroEntity(Long detalleComprobanteCobroId, long usuarioCreacion, Date fechaCreacion, String estado) {
+    public DetalleComprobanteCobroEntity(Long detalleComprobanteCobroId, Long usuarioCreacion, Date fechaCreacion, String estado) {
         this.detalleComprobanteCobroId = detalleComprobanteCobroId;
         this.usuarioCreacion = usuarioCreacion;
         this.fechaCreacion = fechaCreacion;
@@ -88,11 +88,11 @@ public class DetalleComprobanteCobroEntity implements Serializable {
         this.detalleComprobanteCobroId = detalleComprobanteCobroId;
     }
 
-    public long getUsuarioCreacion() {
+    public Long getUsuarioCreacion() {
         return usuarioCreacion;
     }
 
-    public void setUsuarioCreacion(long usuarioCreacion) {
+    public void setUsuarioCreacion(Long usuarioCreacion) {
         this.usuarioCreacion = usuarioCreacion;
     }
 

@@ -8,9 +8,7 @@ package bo.com.tesla.administracion.entity;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,7 +18,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -41,12 +38,15 @@ public class SucursalEntity implements Serializable {
     @Basic(optional = false)
     @Column(name = "sucursal_id", nullable = false)
     private Long sucursalId;
-    @Column(length = 250)
+    @Basic(optional = false)
+    @Column(nullable = false, length = 250)
     private String direccion;
     private Integer telefono;
-    @Column(name = "usuario_creacion")
-    private BigInteger usuarioCreacion;
-    @Column(name = "fecha_creacion")
+    @Basic(optional = false)
+    @Column(name = "usuario_creacion", nullable = false)
+    private long usuarioCreacion;
+    @Basic(optional = false)
+    @Column(name = "fecha_creacion", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
     @Column(name = "usuario_modificacion")
@@ -54,27 +54,36 @@ public class SucursalEntity implements Serializable {
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
-    @Column(length = 15)
+    @Basic(optional = false)
+    @Column(nullable = false, length = 15)
     private String estado;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sucursalId")
-    private List<ComprobanteCobroEntity> comprobanteCobroEntityList;
-    @OneToMany(mappedBy = "sucursalId")
-    private List<EmpleadoEntity> empleadoEntityList;
-    @JoinColumn(name = "departamento_id", referencedColumnName = "dominio_id")
-    @ManyToOne
-    private DominioEntity departamentoId;
-    @JoinColumn(name = "localidad_id", referencedColumnName = "dominio_id")
-    @ManyToOne
-    private DominioEntity localidadId;
-    @JoinColumn(name = "recaudador_id", referencedColumnName = "recaudador_id")
-    @ManyToOne
-    private RecaudadorEntity recaudadorId;
+    @Basic(optional = false)
+    @Column(nullable = false, length = 15)
+    private String transaccion;
+    @JoinColumn(name = "departamento_id", referencedColumnName = "dominio_id", nullable = false)
+    @ManyToOne(optional = false)
+    private DominioEntity departamento;
+    @JoinColumn(name = "localidad_id", referencedColumnName = "dominio_id", nullable = false)
+    @ManyToOne(optional = false)
+    private DominioEntity localidad;
+    @JoinColumn(name = "recaudador_id", referencedColumnName = "recaudador_id", nullable = false)
+    @ManyToOne(optional = false)
+    private RecaudadorEntity recaudador;
 
     public SucursalEntity() {
     }
 
     public SucursalEntity(Long sucursalId) {
         this.sucursalId = sucursalId;
+    }
+
+    public SucursalEntity(Long sucursalId, String direccion, long usuarioCreacion, Date fechaCreacion, String estado, String transaccion) {
+        this.sucursalId = sucursalId;
+        this.direccion = direccion;
+        this.usuarioCreacion = usuarioCreacion;
+        this.fechaCreacion = fechaCreacion;
+        this.estado = estado;
+        this.transaccion = transaccion;
     }
 
     public Long getSucursalId() {
@@ -101,11 +110,11 @@ public class SucursalEntity implements Serializable {
         this.telefono = telefono;
     }
 
-    public BigInteger getUsuarioCreacion() {
+    public long getUsuarioCreacion() {
         return usuarioCreacion;
     }
 
-    public void setUsuarioCreacion(BigInteger usuarioCreacion) {
+    public void setUsuarioCreacion(long usuarioCreacion) {
         this.usuarioCreacion = usuarioCreacion;
     }
 
@@ -141,44 +150,36 @@ public class SucursalEntity implements Serializable {
         this.estado = estado;
     }
 
-    public List<ComprobanteCobroEntity> getComprobanteCobroEntityList() {
-        return comprobanteCobroEntityList;
+    public String getTransaccion() {
+        return transaccion;
     }
 
-    public void setComprobanteCobroEntityList(List<ComprobanteCobroEntity> comprobanteCobroEntityList) {
-        this.comprobanteCobroEntityList = comprobanteCobroEntityList;
+    public void setTransaccion(String transaccion) {
+        this.transaccion = transaccion;
     }
 
-    public List<EmpleadoEntity> getEmpleadoEntityList() {
-        return empleadoEntityList;
+    public DominioEntity getDepartamento() {
+        return departamento;
     }
 
-    public void setEmpleadoEntityList(List<EmpleadoEntity> empleadoEntityList) {
-        this.empleadoEntityList = empleadoEntityList;
+    public void setDepartamento(DominioEntity departamentoId) {
+        this.departamento = departamentoId;
     }
 
-    public DominioEntity getDepartamentoId() {
-        return departamentoId;
+    public DominioEntity getLocalidad() {
+        return localidad;
     }
 
-    public void setDepartamentoId(DominioEntity departamentoId) {
-        this.departamentoId = departamentoId;
+    public void setLocalidad(DominioEntity localidadId) {
+        this.localidad = localidadId;
     }
 
-    public DominioEntity getLocalidadId() {
-        return localidadId;
+    public RecaudadorEntity getRecaudador() {
+        return recaudador;
     }
 
-    public void setLocalidadId(DominioEntity localidadId) {
-        this.localidadId = localidadId;
-    }
-
-    public RecaudadorEntity getRecaudadorId() {
-        return recaudadorId;
-    }
-
-    public void setRecaudadorId(RecaudadorEntity recaudadorId) {
-        this.recaudadorId = recaudadorId;
+    public void setRecaudador(RecaudadorEntity recaudadorId) {
+        this.recaudador = recaudadorId;
     }
 
     @Override
@@ -203,7 +204,6 @@ public class SucursalEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.com.tesla.administracion.entity.SucursalEntity[ sucursalId=" + sucursalId + " ]";
+        return "bo.com.tesla.administrador.entity.SucursalEntity[ sucursalId=" + sucursalId + " ]";
     }
-    
 }

@@ -22,17 +22,10 @@ public class HistoricoDeudaService implements IHistoricoDeudaService {
     @Autowired
     private IHistoricoDeudaDao iHistoricoDeudaDao;
 
-    @Override
-    public HistoricoDeudaEntity updateEstado(Long deudaClienteId, String estado) {
-        Optional<HistoricoDeudaEntity> optionalHistoricoDeudaEntity = this.iHistoricoDeudaDao.findByDeudaClienteId(deudaClienteId);
-        if(!optionalHistoricoDeudaEntity.isPresent()) {
-            return null;
-        } else {
-            HistoricoDeudaEntity historicoDeudaEntity = optionalHistoricoDeudaEntity.get();
-            historicoDeudaEntity.setEstado(estado);
-            return historicoDeudaEntity;
-        }
-    }
+	@Override
+	public Integer updateEstado(Long deudaClienteId, String estado) {
+		return iHistoricoDeudaDao.updateEstado(deudaClienteId, estado);
+	}
 
     @Transactional(readOnly = true)
 	@Override

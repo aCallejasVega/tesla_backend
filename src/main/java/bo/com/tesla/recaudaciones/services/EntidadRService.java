@@ -3,6 +3,8 @@ package bo.com.tesla.recaudaciones.services;
 import java.util.List;
 import java.util.Optional;
 
+import bo.com.tesla.recaudaciones.dao.IDominioDao;
+import bo.com.tesla.useful.config.Technicalexception;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,30 +27,44 @@ public class EntidadRService implements IEntidadRService {
     private IRecaudadorDao iRecaudadorDao;
 
     @Autowired
-    private ISegUsuarioDao usuarioDao;
+    private IDominioDao iDominioDao;
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<List<EntidadDto>> getByRecaudadoraIdAndTipoEntidadId(Long tipoEntidadId, String login) {
-        SegUsuarioEntity usuario = this.usuarioDao.findByLogin(login);
-        RecaudadorEntity recaudadorEntity = iRecaudadorDao.findRecaudadorByUserId(usuario.getUsuarioId());
-        return IEntidadRDao.findByRecaudadoraIdAndTipoEntidadId(recaudadorEntity.getRecaudadorId(), tipoEntidadId);
+    public List<EntidadDto> getEntidadesByTipoEntidad(Long tipoEntidadId, SegUsuarioEntity usuario) throws Technicalexception{
+        Optional<RecaudadorEntity> recaudadorEntityOptional = iRecaudadorDao.findRecaudadorByUserId(usuario.getUsuarioId());
+        if(!recaudadorEntityOptional.isPresent()) {
+            throw new Technicalexception("El usuario " + usuario.getLogin() + "no esta registrado en ninguna sucursal de recaudadción");
+        }
+        return IEntidadRDao.findByRecaudadoraIdAndTipoEntidadId(recaudadorEntityOptional.get().getRecaudadorId(), tipoEntidadId);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<List<EntidadDto>> getByRecaudadoraId(String login) {
-        SegUsuarioEntity usuario =this.usuarioDao.findByLogin(login);
-        RecaudadorEntity recaudadorEntity = this.iRecaudadorDao.findRecaudadorByUserId(usuario.getUsuarioId());       
-        return IEntidadRDao.findByRecaudadoraId(recaudadorEntity.getRecaudadorId());
+    public List<EntidadDto> getByRecaudadoraId(SegUsuarioEntity usuario) throws Technicalexception{
+        Optional<RecaudadorEntity> recaudadorEntityOptional = iRecaudadorDao.findRecaudadorByUserId(usuario.getUsuarioId());
+        if(!recaudadorEntityOptional.isPresent()) {
+            throw new Technicalexception("El usuario " + usuario.getLogin() + "no esta registrado en ninguna sucursal de recaudadción");
+        }
+        return IEntidadRDao.findByRecaudadoraId(recaudadorEntityOptional.get().getRecaudadorId());
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<List<DominioDto>> getTipoEntidadByRecaudador(String login) {
-        SegUsuarioEntity usuario = this.usuarioDao.findByLogin(login);
-        RecaudadorEntity recaudadorEntity = iRecaudadorDao.findRecaudadorByUserId(usuario.getUsuarioId());
-        return IEntidadRDao.findTipoEntidadByRecaudadorId(recaudadorEntity.getRecaudadorId());
+    public List<DominioDto> getTipoEntidadByRecaudador(SegUsuarioEntity usuario) throws Technicalexception{
+        try {
+            Optional<RecaudadorEntity> recaudadorEntityOptional = iRecaudadorDao.findRecaudadorByUserId(usuario.getUsuarioId());
+            if(!recaudadorEntityOptional.isPresent()) {
+                throw new Technicalexception("El usuario " + usuario.getLogin() + "no esta registrado en ninguna sucursal de recaudadción");
+            }
+            List<DominioDto> dominioDtos = iDominioDao.findTipoEntidadByRecaudadorId(recaudadorEntityOptional.get().getRecaudadorId());
+            if(dominioDtos.isEmpty()) {
+                throw new Technicalexception("No existe TiposEntidad por RecaudadoraId=" + recaudadorEntityOptional.get().getRecaudadorId());
+            }
+            return dominioDtos;
+        } catch (Exception e) {
+            throw new Technicalexception(e.getMessage(), e.getCause());
+        }
     }
 
 
