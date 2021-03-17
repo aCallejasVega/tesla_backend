@@ -8,22 +8,7 @@ package bo.com.tesla.administracion.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 /**
  *
@@ -89,36 +74,36 @@ public class CobroClienteEntity implements Serializable {
     @Basic(optional = false)
     @Column(nullable = false, length = 15)
     private String estado;
+    @Basic(optional = false)
+    @Column(nullable = false, length = 15)
+    private String transaccion;
+    @Column(length = 150)
+    private String direccion;
+    @Column(length = 15)
+    private String nit;
+    @Column(length = 10)
+    private String telefono;
+    @Column(name = "sub_total", precision = 17, scale = 2)
+    private BigDecimal subTotal;
+    @Basic(optional = false)
+    @Column(name = "es_postpago", nullable = false)
+    private boolean esPostpago;
+    @Column(name = "monto_modificado")
+    private Boolean montoModificado;
     @JoinColumn(name = "archivo_id", referencedColumnName = "archivo_id", nullable = false)
     @ManyToOne(optional = false)
     private ArchivoEntity archivoId;
     @JoinColumn(name = "metodo_cobro_id", referencedColumnName = "dominio_id", nullable = false)
     @ManyToOne(optional = false)
-    private DominioEntity metodoCobroId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cobroClienteId")
-    private List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList;
+    private DominioEntity metodoCobro;
 
-    @Basic(optional = false)
-    @Column(length = 150)
-    private String direccion;
+    @JoinColumn(name = "transaccion_cobro_id", referencedColumnName = "transaccion_cobro_id")
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = TransaccionCobroEntity.class)
+    private TransaccionCobroEntity transaccionCobro;
 
-    @Basic(optional = false)
-    @Column(length = 10)
-    private String telefono;
-
-    @Basic(optional = false)
-    @Column(length = 15)
-    private String nit;
-
-    @Basic(optional = false)
-    @Column(name = "sub_total", precision = 17, scale = 2)
-    private BigDecimal subTotal;
-
-    @Column(length = 15)
-    private String transaccion;
-
-    @Column(name = "es_postpago")
-    private Boolean esPostpago;
+    @JoinColumn(name = "historico_deuda_id", referencedColumnName = "historico_deuda_id")
+    @ManyToOne
+    private HistoricoDeudaEntity historicoDeuda;
 
     public CobroClienteEntity() {
     }
@@ -127,7 +112,7 @@ public class CobroClienteEntity implements Serializable {
         this.cobroClienteId = cobroClienteId;
     }
 
-    public CobroClienteEntity(Long cobroClienteId, int nroRegistro, String codigoCliente, String tipoServicio, String servicio, String periodo, Character tipo, BigDecimal cantidad, String concepto, boolean tipoComprobante, long usuarioCreacion, Date fechaCreacion, String estado) {
+    public CobroClienteEntity(Long cobroClienteId, int nroRegistro, String codigoCliente, String tipoServicio, String servicio, String periodo, Character tipo, BigDecimal cantidad, String concepto, boolean tipoComprobante, long usuarioCreacion, Date fechaCreacion, String estado, String transaccion, boolean esPostpago) {
         this.cobroClienteId = cobroClienteId;
         this.nroRegistro = nroRegistro;
         this.codigoCliente = codigoCliente;
@@ -141,6 +126,8 @@ public class CobroClienteEntity implements Serializable {
         this.usuarioCreacion = usuarioCreacion;
         this.fechaCreacion = fechaCreacion;
         this.estado = estado;
+        this.transaccion = transaccion;
+        this.esPostpago = esPostpago;
     }
 
     public Long getCobroClienteId() {
@@ -287,28 +274,12 @@ public class CobroClienteEntity implements Serializable {
         this.estado = estado;
     }
 
-    public ArchivoEntity getArchivoId() {
-        return archivoId;
+    public String getTransaccion() {
+        return transaccion;
     }
 
-    public void setArchivoId(ArchivoEntity archivoId) {
-        this.archivoId = archivoId;
-    }
-
-    public DominioEntity getMetodoCobroId() {
-        return metodoCobroId;
-    }
-
-    public void setMetodoCobroId(DominioEntity metodoCobroId) {
-        this.metodoCobroId = metodoCobroId;
-    }
-
-    public List<DetalleComprobanteCobroEntity> getDetalleComprobanteCobroEntityList() {
-        return detalleComprobanteCobroEntityList;
-    }
-
-    public void setDetalleComprobanteCobroEntityList(List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList) {
-        this.detalleComprobanteCobroEntityList = detalleComprobanteCobroEntityList;
+    public void setTransaccion(String transaccion) {
+        this.transaccion = transaccion;
     }
 
     public String getDireccion() {
@@ -319,20 +290,20 @@ public class CobroClienteEntity implements Serializable {
         this.direccion = direccion;
     }
 
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
     public String getNit() {
         return nit;
     }
 
     public void setNit(String nit) {
         this.nit = nit;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
     }
 
     public BigDecimal getSubTotal() {
@@ -343,20 +314,52 @@ public class CobroClienteEntity implements Serializable {
         this.subTotal = subTotal;
     }
 
-    public String getTransaccion() {
-        return transaccion;
-    }
-
-    public void setTransaccion(String transaccion) {
-        this.transaccion = transaccion;
-    }
-
-    public Boolean getEsPostpago() {
+    public boolean getEsPostpago() {
         return esPostpago;
     }
 
-    public void setEsPostpago(Boolean esPostpago) {
+    public void setEsPostpago(boolean esPostpago) {
         this.esPostpago = esPostpago;
+    }
+
+    public ArchivoEntity getArchivoId() {
+        return archivoId;
+    }
+
+    public void setArchivoId(ArchivoEntity archivoId) {
+        this.archivoId = archivoId;
+    }
+
+    public DominioEntity getMetodoCobro() {
+        return metodoCobro;
+    }
+
+    public void setMetodoCobro(DominioEntity metodoCobroId) {
+        this.metodoCobro = metodoCobroId;
+    }
+
+    public TransaccionCobroEntity getTransaccionCobro() {
+        return transaccionCobro;
+    }
+
+    public void setTransaccionCobro(TransaccionCobroEntity transaccionCobroId) {
+        this.transaccionCobro = transaccionCobroId;
+    }
+
+    public HistoricoDeudaEntity getHistoricoDeuda() {
+        return historicoDeuda;
+    }
+
+    public void setHistoricoDeuda(HistoricoDeudaEntity historicoDeudaId) {
+        this.historicoDeuda = historicoDeudaId;
+    }
+
+    public boolean getMontoModificado() {
+        return montoModificado;
+    }
+
+    public void setMontoModificado(boolean montoModificado) {
+        this.montoModificado = montoModificado;
     }
 
     @Override
@@ -383,5 +386,5 @@ public class CobroClienteEntity implements Serializable {
     public String toString() {
         return "bo.com.tesla.administracion.entity.CobroClienteEntity[ cobroClienteId=" + cobroClienteId + " ]";
     }
-    
+
 }

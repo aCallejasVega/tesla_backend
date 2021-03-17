@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+<<<<<<< HEAD
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -23,6 +24,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+=======
+import javax.persistence.*;
+>>>>>>> 0d76ff440f69e0af8af574994a35ff1c074f7939
 
 /**
  *
@@ -33,6 +37,7 @@ import javax.persistence.TemporalType;
 
 public class TransaccionCobroEntity implements Serializable {
 
+<<<<<<< HEAD
 	 private static final long serialVersionUID = 1L;
 	    @Id
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -284,4 +289,313 @@ public class TransaccionCobroEntity implements Serializable {
 				+ " ]";
 	}
 
+=======
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "transaccion_cobro_id", nullable = false)
+    private Long transaccionCobroId;
+    @Basic(optional = false)
+    @Column(name = "tipo_servicio", nullable = false, length = 300)
+    private String tipoServicio;
+    @Basic(optional = false)
+    @Column(nullable = false, length = 300)
+    private String servicio;
+    @Basic(optional = false)
+    @Column(nullable = false, length = 250)
+    private String periodo;
+    @Basic(optional = false)
+    @Column(name = "codigo_cliente", nullable = false, length = 15)
+    private String codigoCliente;
+    @Basic(optional = false)
+    @Column(name = "usuario_creacion", nullable = false)
+    private long usuarioCreacion;
+    @Basic(optional = false)
+    @Column(name = "fecha_creacion", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaCreacion;
+    @Column(name = "usuario_modificacion")
+    private Long usuarioModificacion;
+    @Column(name = "fecha_modificacion")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaModificacion;
+    @Basic(optional = false)
+    @Column(nullable = false, length = 15)
+    private String estado;
+    @Basic(optional = false)
+    @Column(nullable = false, length = 15)
+    private String transaccion;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Basic(optional = false)
+    @Column(name = "total_deuda", nullable = false, precision = 17, scale = 2)
+    private BigDecimal totalDeuda;
+    @Basic(optional = false)
+    @Column(name = "nombre_cliente_pago", nullable = false, length = 200)
+    private String nombreClientePago;
+    @Basic(optional = false)
+    @Column(name = "nro_documento_cliente_pago", nullable = false, length = 15)
+    private String nroDocumentoClientePago;
+    @Basic(optional = false)
+    @Column(nullable = false, precision = 17, scale = 2)
+    private BigDecimal comision;
+    @Column(name = "nombre_cliente_archivo", length = 200)
+    private String nombreClienteArchivo;
+    @Column(name = "nro_documento_cliente_archivo", length = 15)
+    private String nroDocumentoClienteArchivo;
+
+    @OneToMany(mappedBy = "transaccionCobro", fetch= FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private List<CobroClienteEntity> cobroClienteEntityList;
+
+    @JoinColumn(name = "archivo_id", referencedColumnName = "archivo_id", nullable = false)
+    @ManyToOne(optional = false)
+    private ArchivoEntity archivoId;
+    @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id", nullable = false)
+    @ManyToOne(optional = false)
+    private EntidadEntity entidadId;
+    @JoinColumn(name = "entidad_comision_id", referencedColumnName = "entidad_comision_id", nullable = false)
+    @ManyToOne(optional = false)
+    private EntidadComisionEntity entidadComision;
+    @JoinColumn(name = "recaudador_id", referencedColumnName = "recaudador_id", nullable = false)
+    @ManyToOne(optional = false)
+    private RecaudadorEntity recaudador;
+
+
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "transaccionCobroId")
+    private List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList;
+
+    public TransaccionCobroEntity() {
+    }
+
+    public TransaccionCobroEntity(Long transaccionCobroId) {
+        this.transaccionCobroId = transaccionCobroId;
+    }
+
+    public TransaccionCobroEntity(Long transaccionCobroId, String tipoServicio, String servicio, String periodo, String codigoCliente, long usuarioCreacion, Date fechaCreacion, String estado, String transaccion, BigDecimal totalDeuda, String nombreClientePago, String nroDocumentoClientePago, BigDecimal comision) {
+        this.transaccionCobroId = transaccionCobroId;
+        this.tipoServicio = tipoServicio;
+        this.servicio = servicio;
+        this.periodo = periodo;
+        this.codigoCliente = codigoCliente;
+        this.usuarioCreacion = usuarioCreacion;
+        this.fechaCreacion = fechaCreacion;
+        this.estado = estado;
+        this.transaccion = transaccion;
+        this.totalDeuda = totalDeuda;
+        this.nombreClientePago = nombreClientePago;
+        this.nroDocumentoClientePago = nroDocumentoClientePago;
+        this.comision = comision;
+    }
+
+    public Long getTransaccionCobroId() {
+        return transaccionCobroId;
+    }
+
+    public void setTransaccionCobroId(Long transaccionCobroId) {
+        this.transaccionCobroId = transaccionCobroId;
+    }
+
+    public String getTipoServicio() {
+        return tipoServicio;
+    }
+
+    public void setTipoServicio(String tipoServicio) {
+        this.tipoServicio = tipoServicio;
+    }
+
+    public String getServicio() {
+        return servicio;
+    }
+
+    public void setServicio(String servicio) {
+        this.servicio = servicio;
+    }
+
+    public String getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(String periodo) {
+        this.periodo = periodo;
+    }
+
+    public String getCodigoCliente() {
+        return codigoCliente;
+    }
+
+    public void setCodigoCliente(String codigoCliente) {
+        this.codigoCliente = codigoCliente;
+    }
+
+    public long getUsuarioCreacion() {
+        return usuarioCreacion;
+    }
+
+    public void setUsuarioCreacion(long usuarioCreacion) {
+        this.usuarioCreacion = usuarioCreacion;
+    }
+
+    public Date getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    public Long getUsuarioModificacion() {
+        return usuarioModificacion;
+    }
+
+    public void setUsuarioModificacion(Long usuarioModificacion) {
+        this.usuarioModificacion = usuarioModificacion;
+    }
+
+    public Date getFechaModificacion() {
+        return fechaModificacion;
+    }
+
+    public void setFechaModificacion(Date fechaModificacion) {
+        this.fechaModificacion = fechaModificacion;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getTransaccion() {
+        return transaccion;
+    }
+
+    public void setTransaccion(String transaccion) {
+        this.transaccion = transaccion;
+    }
+
+    public BigDecimal getTotalDeuda() {
+        return totalDeuda;
+    }
+
+    public void setTotalDeuda(BigDecimal totalDeuda) {
+        this.totalDeuda = totalDeuda;
+    }
+
+    public String getNombreClientePago() {
+        return nombreClientePago;
+    }
+
+    public void setNombreClientePago(String nombreClientePago) {
+        this.nombreClientePago = nombreClientePago;
+    }
+
+    public String getNroDocumentoClientePago() {
+        return nroDocumentoClientePago;
+    }
+
+    public void setNroDocumentoClientePago(String nroDocumentoClientePago) {
+        this.nroDocumentoClientePago = nroDocumentoClientePago;
+    }
+
+    public BigDecimal getComision() {
+        return comision;
+    }
+
+    public void setComision(BigDecimal comision) {
+        this.comision = comision;
+    }
+
+    public String getNombreClienteArchivo() {
+        return nombreClienteArchivo;
+    }
+
+    public void setNombreClienteArchivo(String nombreClienteArchivo) {
+        this.nombreClienteArchivo = nombreClienteArchivo;
+    }
+
+    public String getNroDocumentoClienteArchivo() {
+        return nroDocumentoClienteArchivo;
+    }
+
+    public void setNroDocumentoClienteArchivo(String nroDocumentoClienteArchivo) {
+        this.nroDocumentoClienteArchivo = nroDocumentoClienteArchivo;
+    }
+
+    public List<CobroClienteEntity> getCobroClienteEntityList() {
+        return cobroClienteEntityList;
+    }
+
+    public void setCobroClienteEntityList(List<CobroClienteEntity> cobroClienteEntityList) {
+        this.cobroClienteEntityList = cobroClienteEntityList;
+    }
+
+    public ArchivoEntity getArchivoId() {
+        return archivoId;
+    }
+
+    public void setArchivoId(ArchivoEntity archivoId) {
+        this.archivoId = archivoId;
+    }
+
+    public EntidadEntity getEntidadId() {
+        return entidadId;
+    }
+
+    public void setEntidadId(EntidadEntity entidadId) {
+        this.entidadId = entidadId;
+    }
+
+    public RecaudadorEntity getRecaudador() {
+        return recaudador;
+    }
+
+    public void setRecaudador(RecaudadorEntity recaudadorId) {
+        this.recaudador = recaudadorId;
+    }
+
+    public List<DetalleComprobanteCobroEntity> getDetalleComprobanteCobroEntityList() {
+        return detalleComprobanteCobroEntityList;
+    }
+
+    public void setDetalleComprobanteCobroEntityList(List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList) {
+        this.detalleComprobanteCobroEntityList = detalleComprobanteCobroEntityList;
+    }
+
+    public EntidadComisionEntity getEntidadComision() {
+        return entidadComision;
+    }
+
+    public void setEntidadComision(EntidadComisionEntity entidadComision) {
+        this.entidadComision = entidadComision;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (transaccionCobroId != null ? transaccionCobroId.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof TransaccionCobroEntity)) {
+            return false;
+        }
+        TransaccionCobroEntity other = (TransaccionCobroEntity) object;
+        if ((this.transaccionCobroId == null && other.transaccionCobroId != null) || (this.transaccionCobroId != null && !this.transaccionCobroId.equals(other.transaccionCobroId))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "bo.com.tesla.administracion.entity.TransaccionCobroEntity[ transaccionCobroId=" + transaccionCobroId + " ]";
+    }
+    
+>>>>>>> 0d76ff440f69e0af8af574994a35ff1c074f7939
 }

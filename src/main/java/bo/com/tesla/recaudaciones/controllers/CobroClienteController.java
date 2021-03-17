@@ -44,44 +44,43 @@ public class CobroClienteController {
     private ILogSistemaService logSistemaService;
 
 
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @PostMapping("/{metodoPagoId}")
     public ResponseEntity<?> postCobrarDeudas(@RequestBody ClienteDto clienteDto,
                                               @PathVariable Long metodoPagoId,
-                                              Authentication authentication) throws Exception {
+                                              Authentication authentication) {
     	System.out.println("****************postCobrarDeudas*******************");
         Map<String, Object> response = new HashMap<>();
-        if(clienteDto == null || clienteDto.getNombreCliente() == null || clienteDto.getNroDocumento() == null || clienteDto.getCodigoCliente() == null) {
-            response.put("status", "false");
+        if(clienteDto == null || clienteDto.nombreCliente == null || clienteDto.nroDocumento == null || clienteDto.codigoCliente == null) {
+            response.put("status", false);
             response.put("message", "Ocurrió un error en el servidor, por favor verifique selecciona de deudas o datos de clientes");
             response.put("result", null);
-            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
         if(metodoPagoId == null || metodoPagoId <= 0) {
-            response.put("status", "false");
+            response.put("status", false);
             response.put("message", "Ocurrió un error en el servidor, por favor verifique parametros");
             response.put("result", null);
-            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
 
         SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         try {
             iCobroClienteService.postCobrarDeudas(clienteDto, usuario.getUsuarioId(), metodoPagoId);
-            response.put("status", "true");
-            response.put("message", "Se realizó el cobro de las deudas correctamente");
-            response.put("result", "true");
+            response.put("status", true);
+            response.put("message", "Se realizó el cobro de las deudas correctamente.");
+            response.put("result", true);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Technicalexception e) {
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("RECAUDACION.COBROS");
-            log.setController("api/cobros/" + metodoPagoId);
-            log.setCausa(e.getCause()+"");
+            log.setController("POST: api/cobros/" + metodoPagoId);
+            log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
             log.setMensaje(e.getMessage()+"");
             log.setUsuarioCreacion(usuario.getUsuarioId());
             log.setFechaCreacion(new Date());
             logSistemaService.save(log);
             this.logger.error("This is error", e.getMessage());
-            this.logger.error("This is cause", e.getCause());
+            this.logger.error("This is cause", e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
         	e.printStackTrace();
             response.put("status", false);
             response.put("result", null);

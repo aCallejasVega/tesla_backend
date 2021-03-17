@@ -147,7 +147,7 @@ public class DeudaClienteEntity implements Serializable {
 
 	public void setEsPostpago(Boolean esPostpago)throws Exception {
 		
-		if (esPostpago.toString().isBlank() || esPostpago.toString().isEmpty()) {
+		if (/*esPostpago.toString().isBlank() ||*/ esPostpago.toString().isEmpty()) {
 			this.esPostpago = null;
 			throw new BusinesException(
 					"El campo de verificacion de POST/PRE(PAGO) no puede ser nulo");

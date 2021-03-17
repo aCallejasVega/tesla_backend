@@ -2,10 +2,10 @@ package bo.com.tesla.recaudaciones.dto;
 
 public class EntidadDto {
 
-    private Long entidadId;
-    private String nombre;
-    private String nombreComercial;
-    private String pathLogo;
+    public Long entidadId;
+    public String nombre;
+    public String nombreComercial;
+    public String pathLogo;
 
     public EntidadDto() {
     }
@@ -17,7 +17,7 @@ public class EntidadDto {
         this.pathLogo = pathLogo;
     }
 
-
+/*
     public Long getEntidadId() {
         return entidadId;
     }
@@ -49,5 +49,7 @@ public class EntidadDto {
     public void setPathLogo(String pathLogo) {
         this.pathLogo = pathLogo;
     }
+*/
 }
+
 

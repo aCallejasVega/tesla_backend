@@ -9,18 +9,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -40,29 +29,31 @@ public class RecaudadorEntity implements Serializable {
     @Basic(optional = false)
     @Column(name = "recaudador_id", nullable = false)
     private Long recaudadorId;
-    /*@Column(name = "empleado_id")
-    private BigInteger empleadoId;*/
-    @Column(name = "tipo_recaudador_id")
-    private BigInteger tipoRecaudadorId;
-    @Column(length = 250)
+    @Basic(optional = false)
+    @Column(nullable = false, length = 250)
     private String nombre;
-    @Column(length = 250)
+    @Basic(optional = false)
+    @Column(nullable = false, length = 250)
     private String direccion;
     @Basic(optional = false)
     @Column(nullable = false, length = 10)
     private String telefono;
-    @Column(name = "usuario_creacion")
-    private BigInteger usuarioCreacion;
-    @Column(name = "fecha_creacion")
+    @Basic(optional = false)
+    @Column(name = "usuario_creacion", nullable = false)
+    private long usuarioCreacion;
+    @Basic(optional = false)
+    @Column(name = "fecha_creacion", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
     @Column(name = "usuario_modificacion")
-    private BigInteger usuarioModificacion;
+    private long usuarioModificacion;
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
-    @Column(length = 15)
+    @Basic(optional = false)
+    @Column(nullable = false, length = 15)
     private String estado;
+<<<<<<< HEAD
     @JsonIgnore
     @OneToMany(mappedBy = "recaudador")
     private List<EntidadRecaudadorEntity> entidadRecaudadorEntityList;
@@ -71,6 +62,17 @@ public class RecaudadorEntity implements Serializable {
     private List<SucursalEntity> sucursalEntityList;
     
     
+=======
+    @Basic(optional = false)
+    @Column(nullable = false, length = 15)
+    private String transaccion;
+    @JoinColumn(name = "tipo_recaudador_id", referencedColumnName = "dominio_id", nullable = false)
+    @ManyToOne(optional = false)
+    private DominioEntity tipoRecaudador;
+
+    @OneToMany(mappedBy = "recaudador", fetch= FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private List<EntidadRecaudadorEntity> entidadRecaudadorEntityList;
+>>>>>>> 0d76ff440f69e0af8af574994a35ff1c074f7939
 
 
     public RecaudadorEntity() {
@@ -80,9 +82,15 @@ public class RecaudadorEntity implements Serializable {
         this.recaudadorId = recaudadorId;
     }
 
-    public RecaudadorEntity(Long recaudadorId, String telefono) {
+    public RecaudadorEntity(Long recaudadorId, String nombre, String direccion, String telefono, long usuarioCreacion, Date fechaCreacion, String estado, String transaccion) {
         this.recaudadorId = recaudadorId;
+        this.nombre = nombre;
+        this.direccion = direccion;
         this.telefono = telefono;
+        this.usuarioCreacion = usuarioCreacion;
+        this.fechaCreacion = fechaCreacion;
+        this.estado = estado;
+        this.transaccion = transaccion;
     }
 
     public Long getRecaudadorId() {
@@ -91,22 +99,6 @@ public class RecaudadorEntity implements Serializable {
 
     public void setRecaudadorId(Long recaudadorId) {
         this.recaudadorId = recaudadorId;
-    }
-/*
-    public BigInteger getEmpleadoId() {
-        return empleadoId;
-    }
-
-    public void setEmpleadoId(BigInteger empleadoId) {
-        this.empleadoId = empleadoId;
-    }
-*/
-    public BigInteger getTipoRecaudadorId() {
-        return tipoRecaudadorId;
-    }
-
-    public void setTipoRecaudadorId(BigInteger tipoRecaudadorId) {
-        this.tipoRecaudadorId = tipoRecaudadorId;
     }
 
     public String getNombre() {
@@ -133,11 +125,11 @@ public class RecaudadorEntity implements Serializable {
         this.telefono = telefono;
     }
 
-    public BigInteger getUsuarioCreacion() {
+    public long getUsuarioCreacion() {
         return usuarioCreacion;
     }
 
-    public void setUsuarioCreacion(BigInteger usuarioCreacion) {
+    public void setUsuarioCreacion(long usuarioCreacion) {
         this.usuarioCreacion = usuarioCreacion;
     }
 
@@ -149,11 +141,11 @@ public class RecaudadorEntity implements Serializable {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public BigInteger getUsuarioModificacion() {
+    public Long getUsuarioModificacion() {
         return usuarioModificacion;
     }
 
-    public void setUsuarioModificacion(BigInteger usuarioModificacion) {
+    public void setUsuarioModificacion(Long usuarioModificacion) {
         this.usuarioModificacion = usuarioModificacion;
     }
 
@@ -173,22 +165,23 @@ public class RecaudadorEntity implements Serializable {
         this.estado = estado;
     }
 
-    public List<EntidadRecaudadorEntity> getEntidadRecaudadorEntityList() {
-        return entidadRecaudadorEntityList;
+    public String getTransaccion() {
+        return transaccion;
     }
 
-    public void setEntidadRecaudadorEntityList(List<EntidadRecaudadorEntity> entidadRecaudadorEntityList) {
-        this.entidadRecaudadorEntityList = entidadRecaudadorEntityList;
+    public void setTransaccion(String transaccion) {
+        this.transaccion = transaccion;
     }
 
-    public List<SucursalEntity> getSucursalEntityList() {
-        return sucursalEntityList;
+    public DominioEntity getTipoRecaudador() {
+        return tipoRecaudador;
     }
 
-    public void setSucursalEntityList(List<SucursalEntity> sucursalEntityList) {
-        this.sucursalEntityList = sucursalEntityList;
+    public void setTipoRecaudador(DominioEntity tipoRecaudadorId) {
+        this.tipoRecaudador = tipoRecaudadorId;
     }
 
+<<<<<<< HEAD
     
     
     
@@ -196,6 +189,15 @@ public class RecaudadorEntity implements Serializable {
    
 
     
+=======
+    public List<EntidadRecaudadorEntity> getEntidadRecaudadorEntityList() {
+        return entidadRecaudadorEntityList;
+    }
+
+    public void setEntidadRecaudadorEntityList(List<EntidadRecaudadorEntity> entidadRecaudadorEntityList) {
+        this.entidadRecaudadorEntityList = entidadRecaudadorEntityList;
+    }
+>>>>>>> 0d76ff440f69e0af8af574994a35ff1c074f7939
 
 	@Override
     public int hashCode() {
@@ -221,5 +223,5 @@ public class RecaudadorEntity implements Serializable {
     public String toString() {
         return "bo.com.tesla.administracion.entity.RecaudadorEntity[ recaudadorId=" + recaudadorId + " ]";
     }
-    
+
 }

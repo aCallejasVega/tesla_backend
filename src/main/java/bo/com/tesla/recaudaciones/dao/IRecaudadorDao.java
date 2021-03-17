@@ -1,25 +1,83 @@
 package bo.com.tesla.recaudaciones.dao;
 
+<<<<<<< HEAD
 import java.util.List;
 
+=======
+import bo.com.tesla.administracion.dto.RecaudadorAdmDto;
+>>>>>>> 0d76ff440f69e0af8af574994a35ff1c074f7939
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import bo.com.tesla.administracion.entity.RecaudadorEntity;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface IRecaudadorDao extends JpaRepository <RecaudadorEntity, Long> {
 
-    @Query(value = "select e.sucursalId.recaudadorId "
+    /************************ABM****************************/
+
+    @Modifying
+    @Query(value = "UPDATE RecaudadorEntity e " +
+            "SET e.transaccion = :transaccion, e.usuarioModificacion = :usuarioModificacion, e.fechaModificacion = current_timestamp " +
+            "WHERE e.recaudadorId = :recaudadoraId")
+    Integer updateTransaccionRecaudadora(@Param("recaudadoraId") Long entidadId,
+                                      @Param("transaccion") String transaccion,
+                                      @Param("usuarioModificacion") Long usuarioModificacion);
+
+    @Modifying
+    @Query(value = "UPDATE RecaudadorEntity e " +
+            "SET e.transaccion = :transaccion, e.usuarioModificacion = :usuarioModificacion, e.fechaModificacion = current_timestamp " +//:fechaModificacion  " +
+            "WHERE e.recaudadorId IN :recaudadoraIdLst")
+    Integer updateLstTransaccionRecaudadora(@Param("recaudadoraIdLst") List<Long> recaudadoraIdLst,
+                                         @Param("transaccion") String transaccion,
+                                         @Param("usuarioModificacion") Long usuarioModificacion);
+
+    @Query(value = "SELECT new bo.com.tesla.administracion.dto.RecaudadorAdmDto(" +
+            "r.recaudadorId, r.tipoRecaudador.dominioId, r.tipoRecaudador.descripcion, " +
+            "r.nombre, r.direccion, r.telefono, s.login, r.fechaCreacion, r.estado) " +
+            "FROM RecaudadorEntity r " +
+            "INNER JOIN SegUsuarioEntity s ON s.usuarioId = r.usuarioCreacion " +
+            "WHERE r.estado <> 'ELIMINADO'" +
+            "ORDER BY r.nombre  ")
+    List<RecaudadorAdmDto> findRecaudadorDtoAll();
+
+    @Query(value = "SELECT new bo.com.tesla.administracion.dto.RecaudadorAdmDto( " +
+            "r.recaudadorId, r.tipoRecaudador.dominioId, r.tipoRecaudador.descripcion, " +
+            "r.nombre, r.direccion, r.telefono, s.login, r.fechaCreacion, r.estado ) " +
+            "FROM RecaudadorEntity r " +
+            "INNER JOIN SegUsuarioEntity s ON s.usuarioId = r.usuarioCreacion " +
+            "WHERE r.recaudadorId = :recaudadorId")
+    Optional<RecaudadorAdmDto> findRecaudadorDtoById(@Param("recaudadorId") Long recaudadorId);
+
+
+    @Query(value = "SELECT new bo.com.tesla.administracion.dto.RecaudadorAdmDto( " +
+            "er.recaudador.recaudadorId, er.recaudador.tipoRecaudador.dominioId, er.recaudador.tipoRecaudador.descripcion, " +
+            "er.recaudador.nombre, er.recaudador.direccion, er.recaudador.telefono, s.login, er.recaudador.fechaCreacion, er.recaudador.estado ) " +
+            "FROM EntidadRecaudadorEntity er " +
+            "INNER JOIN SegUsuarioEntity s ON s.usuarioId = er.recaudador.usuarioCreacion " +
+            "WHERE er.entidad.entidadId = :entidadId " +
+            "AND er.recaudador.estado <> 'ELIMINADO'")
+    List<RecaudadorAdmDto> findRecaudadorDtoByEntidadId(@Param("entidadId") Long entidadId);
+
+
+    /************************COBROS****************************/
+
+    @Query(value = "select e.sucursalId.recaudador "
             + " from SegUsuarioEntity u "
             + " left join PersonaEntity  p on p.personaId = u.personaId.personaId "
             + " left join EmpleadoEntity e on e.personaId.personaId = p.personaId "
             + " where u.estado = 'ACTIVO' "
             + " and e.sucursalId.estado = 'ACTIVO' "
-            + " and e.sucursalId.recaudadorId.estado = 'ACTIVO'"
+            + " and e.sucursalId.recaudador.estado = 'ACTIVO'"
             + " and u.usuarioId=:usuarioId")
+<<<<<<< HEAD
     RecaudadorEntity findRecaudadorByUserId(@Param("usuarioId") Long usuarioId);
     
     
@@ -33,6 +91,9 @@ public interface IRecaudadorDao extends JpaRepository <RecaudadorEntity, Long> {
 			+ " and e.entidadId= :entidadId")
 	public List<RecaudadorEntity> findRecaudadoresByEntidadId(@Param("entidadId") Long entidadId);
 
+=======
+    Optional<RecaudadorEntity> findRecaudadorByUserId(@Param("usuarioId") Long usuarioId);
+>>>>>>> 0d76ff440f69e0af8af574994a35ff1c074f7939
 
 
 }

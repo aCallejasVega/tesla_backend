@@ -45,10 +45,10 @@ public class DosificacionEntity implements Serializable {
     private String nroAutorizacion;
     @Basic(optional = false)
     @Column(name = "nro_inicial", nullable = false)
-    private long nroInicial;
+    private Long nroInicial;
     @Basic(optional = false)
     @Column(name = "nro_final", nullable = false)
-    private long nroFinal;
+    private Long nroFinal;
     @Basic(optional = false)
     @Column(name = "nro_factura", nullable = false, length = 255)
     private String nroFactura;
@@ -87,7 +87,7 @@ public class DosificacionEntity implements Serializable {
         this.dosificacionId = dosificacionId;
     }
 
-    public DosificacionEntity(Long dosificacionId, String nroAutorizacion, long nroInicial, long nroFinal, String nroFactura, Date fechaLimite, String usuarioCreacion, Date fechaCreacion, String estado) {
+    public DosificacionEntity(Long dosificacionId, String nroAutorizacion, Long nroInicial, Long nroFinal, String nroFactura, Date fechaLimite, String usuarioCreacion, Date fechaCreacion, String estado) {
         this.dosificacionId = dosificacionId;
         this.nroAutorizacion = nroAutorizacion;
         this.nroInicial = nroInicial;
@@ -115,19 +115,19 @@ public class DosificacionEntity implements Serializable {
         this.nroAutorizacion = nroAutorizacion;
     }
 
-    public long getNroInicial() {
+    public Long getNroInicial() {
         return nroInicial;
     }
 
-    public void setNroInicial(long nroInicial) {
+    public void setNroInicial(Long nroInicial) {
         this.nroInicial = nroInicial;
     }
 
-    public long getNroFinal() {
+    public Long getNroFinal() {
         return nroFinal;
     }
 
-    public void setNroFinal(long nroFinal) {
+    public void setNroFinal(Long nroFinal) {
         this.nroFinal = nroFinal;
     }
 

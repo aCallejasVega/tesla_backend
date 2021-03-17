@@ -44,7 +44,7 @@ public class ComprobanteCobroEntity implements Serializable {
     private Long comprobanteCobroId;
     @Basic(optional = false)
     @Column(name = "nro_factura", nullable = false)
-    private long nroFactura;
+    private Long nroFactura;
     @Basic(optional = false)
     @Column(name = "fecha_factura", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -61,7 +61,7 @@ public class ComprobanteCobroEntity implements Serializable {
     private String codigoControl;
     @Basic(optional = false)
     @Column(name = "usuario_creacion", nullable = false)
-    private long usuarioCreacion;
+    private Long usuarioCreacion;
     @Basic(optional = false)
     @Column(name = "fecha_creacion", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -98,7 +98,7 @@ public class ComprobanteCobroEntity implements Serializable {
         this.comprobanteCobroId = comprobanteCobroId;
     }
 
-    public ComprobanteCobroEntity(Long comprobanteCobroId, long nroFactura, Date fechaFactura, BigDecimal montoTotal, long usuarioCreacion, Date fechaCreacion, String estado) {
+    public ComprobanteCobroEntity(Long comprobanteCobroId, Long nroFactura, Date fechaFactura, BigDecimal montoTotal, long usuarioCreacion, Date fechaCreacion, String estado) {
         this.comprobanteCobroId = comprobanteCobroId;
         this.nroFactura = nroFactura;
         this.fechaFactura = fechaFactura;
@@ -116,11 +116,11 @@ public class ComprobanteCobroEntity implements Serializable {
         this.comprobanteCobroId = comprobanteCobroId;
     }
 
-    public long getNroFactura() {
+    public Long getNroFactura() {
         return nroFactura;
     }
 
-    public void setNroFactura(long nroFactura) {
+    public void setNroFactura(Long nroFactura) {
         this.nroFactura = nroFactura;
     }
 
@@ -164,11 +164,11 @@ public class ComprobanteCobroEntity implements Serializable {
         this.codigoControl = codigoControl;
     }
 
-    public long getUsuarioCreacion() {
+    public Long getUsuarioCreacion() {
         return usuarioCreacion;
     }
 
-    public void setUsuarioCreacion(long usuarioCreacion) {
+    public void setUsuarioCreacion(Long usuarioCreacion) {
         this.usuarioCreacion = usuarioCreacion;
     }
 

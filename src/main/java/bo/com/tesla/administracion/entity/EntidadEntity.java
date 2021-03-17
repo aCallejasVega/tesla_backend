@@ -1,29 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package bo.com.tesla.administracion.entity;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -34,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "entidades", catalog = "exacta", schema = "tesla")
 @NamedQueries({
-    @NamedQuery(name = "EntidadEntity.findAll", query = "SELECT e FROM EntidadEntity e")})
+        @NamedQuery(name = "EntidadEntity.findAll", query = "SELECT e FROM EntidadEntity e")})
 public class EntidadEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -62,36 +42,51 @@ public class EntidadEntity implements Serializable {
     private String llaveDosificacion;
     @Column(name = "path_logo", length = 255)
     private String pathLogo;
+    @Column(name = "comprobante_en_uno", nullable = false)
+    private Boolean comprobanteEnUno;
     @Basic(optional = false)
     @Column(name = "fecha_creacion", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
     @Basic(optional = false)
     @Column(name = "usuario_creacion", nullable = false)
-    private long usuarioCreacion;
+    private Long usuarioCreacion;
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
     @Column(name = "usuario_modificacion")
-    private BigInteger usuarioModificacion;
+    private Long usuarioModificacion;
     @Basic(optional = false)
     @Column(nullable = false, length = 10)
     private String estado;
+<<<<<<< HEAD
     @JsonIgnore
+=======
+
+>>>>>>> 0d76ff440f69e0af8af574994a35ff1c074f7939
     @OneToMany(mappedBy = "entidadId")
     private List<TipoTransaccionEntity> tipoTransaccionEntityList;
+
     @OneToMany(mappedBy = "entidadId")
     @JsonIgnore
     private List<ArchivoEntity> archivoEntityList;
+
     @OneToMany(mappedBy = "entidadId")
     @JsonIgnore
     private List<TransaccionCobroEntity> transaccionCobroEntityList;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
     @JsonIgnore
     private List<ComprobanteCobroEntity> comprobanteCobroEntityList;
+<<<<<<< HEAD
     @OneToMany(mappedBy = "entidad")
     @JsonIgnore
+=======
+
+    @OneToMany(mappedBy = "entidad", fetch= FetchType.LAZY, cascade = CascadeType.PERSIST)
+>>>>>>> 0d76ff440f69e0af8af574994a35ff1c074f7939
     private List<EntidadRecaudadorEntity> entidadRecaudadorEntityList;
+
     @OneToMany(mappedBy = "entidadId")
     @JsonIgnore
     private List<EmpleadoEntity> empleadoEntityList;
@@ -105,7 +100,23 @@ public class EntidadEntity implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
     @JsonIgnore
     private List<PlantillaEntity> plantillaEntityList;
-
+    @Column(name = "login_sin", length = 30)
+    private String loginSin;
+    @Column(name = "password_sin", length = 50)
+    private String passwordSin;
+    @Basic(optional = false)
+    @Column(nullable = false, length = 15)
+    private String transaccion;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidad")
+    private List<SucursalEntidadEntity> sucursalEntidadEntityList;
+    @JoinColumn(name = "actividad_economica_id", referencedColumnName = "dominio_id")
+    @ManyToOne
+    private DominioEntity actividadEconomica;
+    @JoinColumn(name = "municipio_id", referencedColumnName = "dominio_id")
+    @ManyToOne
+    private DominioEntity municipio;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidad")
+    private List<EntidadComisionEntity> entidadComisionEntityList;
     public EntidadEntity() {
     }
 
@@ -113,7 +124,7 @@ public class EntidadEntity implements Serializable {
         this.entidadId = entidadId;
     }
 
-    public EntidadEntity(Long entidadId, String nombre, String nombreComercial, String direccion, String telefono, String nit, Date fechaCreacion, long usuarioCreacion, String estado) {
+    public EntidadEntity(Long entidadId, String nombre, String nombreComercial, String direccion, String telefono, String nit, Date fechaCreacion, Long usuarioCreacion, String estado) {
         this.entidadId = entidadId;
         this.nombre = nombre;
         this.nombreComercial = nombreComercial;
@@ -189,6 +200,14 @@ public class EntidadEntity implements Serializable {
         this.pathLogo = pathLogo;
     }
 
+    public Boolean getComprobanteEnUno() {
+        return comprobanteEnUno;
+    }
+
+    public void setComprobanteEnUno(Boolean comprobanteEnUno) {
+        this.comprobanteEnUno = comprobanteEnUno;
+    }
+
     public Date getFechaCreacion() {
         return fechaCreacion;
     }
@@ -197,11 +216,11 @@ public class EntidadEntity implements Serializable {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public long getUsuarioCreacion() {
+    public Long getUsuarioCreacion() {
         return usuarioCreacion;
     }
 
-    public void setUsuarioCreacion(long usuarioCreacion) {
+    public void setUsuarioCreacion(Long usuarioCreacion) {
         this.usuarioCreacion = usuarioCreacion;
     }
 
@@ -213,11 +232,11 @@ public class EntidadEntity implements Serializable {
         this.fechaModificacion = fechaModificacion;
     }
 
-    public BigInteger getUsuarioModificacion() {
+    public Long getUsuarioModificacion() {
         return usuarioModificacion;
     }
 
-    public void setUsuarioModificacion(BigInteger usuarioModificacion) {
+    public void setUsuarioModificacion(Long usuarioModificacion) {
         this.usuarioModificacion = usuarioModificacion;
     }
 
@@ -301,6 +320,62 @@ public class EntidadEntity implements Serializable {
         this.plantillaEntityList = plantillaEntityList;
     }
 
+    public String getLoginSin() {
+        return loginSin;
+    }
+
+    public void setLoginSin(String loginSin) {
+        this.loginSin = loginSin;
+    }
+
+    public String getPasswordSin() {
+        return passwordSin;
+    }
+
+    public void setPasswordSin(String passwordSin) {
+        this.passwordSin = passwordSin;
+    }
+
+    public String getTransaccion() {
+        return transaccion;
+    }
+
+    public void setTransaccion(String transaccion) {
+        this.transaccion = transaccion;
+    }
+
+    public List<SucursalEntidadEntity> getSucursalEntidadEntityList() {
+        return sucursalEntidadEntityList;
+    }
+
+    public void setSucursalEntidadEntityList(List<SucursalEntidadEntity> sucursalEntidadEntityList) {
+        this.sucursalEntidadEntityList = sucursalEntidadEntityList;
+    }
+
+    public DominioEntity getActividadEconomica() {
+        return actividadEconomica;
+    }
+
+    public void setActividadEconomica(DominioEntity actividadEconomicaId) {
+        this.actividadEconomica = actividadEconomicaId;
+    }
+
+    public DominioEntity getMunicipio() {
+        return municipio;
+    }
+
+    public void setMunicipio(DominioEntity municipioId) {
+        this.municipio = municipioId;
+    }
+
+    public List<EntidadComisionEntity> getEntidadComisionEntityList() {
+        return entidadComisionEntityList;
+    }
+
+    public void setEntidadComisionEntityList(List<EntidadComisionEntity> entidadComisionEntityList) {
+        this.entidadComisionEntityList = entidadComisionEntityList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -325,5 +400,5 @@ public class EntidadEntity implements Serializable {
     public String toString() {
         return "bo.com.tesla.administracion.entity.EntidadEntity[ entidadId=" + entidadId + " ]";
     }
-    
+
 }

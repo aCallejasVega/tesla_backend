@@ -8,6 +8,7 @@ import bo.com.tesla.recaudaciones.dto.EstadoTablasDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -20,10 +21,20 @@ import java.util.Optional;
 @Repository
 public interface IHistoricoDeudaDao extends JpaRepository<HistoricoDeudaEntity, Long> {
 
-	@Query("select h  from HistoricoDeudaEntity h  where h.deudaClienteId=:deudaClienteId ")
-	Optional<HistoricoDeudaEntity> findByDeudaClienteId(@Param("deudaClienteId") Long deudaClienteId);
+	Optional<HistoricoDeudaEntity> findByDeudaClienteId(Long deudaClienteId);
+/*
+	@Modifying
+	@Query(value = "UPDATE HistoricoDeudaEntity h " +
+			"SET h.estado = :estado " +
+			"where h.deudaClienteId = :deudaClienteId")
+	Integer updateEstado(@Param("deudaClienteId") Long deudaClienteId, @Param("estado") String estado);
+*/
+	@Modifying
+	@Query(value = "UPDATE HistoricoDeudaEntity h " +
+			"SET h.estado = :estado " +
+			"where h.deudaClienteId IN :deudaClienteIdLst")
+	Integer updateLstEstado(@Param("deudaClienteIdLst") List<Long> deudaClienteIdLst, @Param("estado") String estado);
 
-	
 	/**
 	 * Obtiene todas la deudas hitoricas asociadas 
 	 * al archivo.

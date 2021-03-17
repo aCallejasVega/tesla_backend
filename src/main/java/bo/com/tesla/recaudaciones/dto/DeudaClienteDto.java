@@ -18,8 +18,9 @@ public class DeudaClienteDto {
     public String nombreCliente;
     public String nroDocumento;
     public Boolean esPostpago;
+    public Boolean editable;
 
-    public DeudaClienteDto(Long deudaClienteId, Integer nroRegistro, BigDecimal cantidad, String concepto, BigDecimal montoUnitario, BigDecimal subTotal, Character tipo, String datoExtras, Boolean tipoComprobante, String periodoCabecera, String codigoCliente, String nombreCliente, String nroDocumento, Boolean esPostpago) {
+    public DeudaClienteDto(Long deudaClienteId, Integer nroRegistro, BigDecimal cantidad, String concepto, BigDecimal montoUnitario, BigDecimal subTotal, Character tipo, String datoExtras, Boolean tipoComprobante, String periodoCabecera, String codigoCliente, String nombreCliente, String nroDocumento, Boolean esPostpago, Boolean editable) {
         this.deudaClienteId = deudaClienteId;
         this.nroRegistro = nroRegistro;
         this.cantidad = cantidad;
@@ -34,5 +35,6 @@ public class DeudaClienteDto {
         this.nombreCliente = nombreCliente;
         this.nroDocumento = nroDocumento;
         this.esPostpago = esPostpago;
+        this.editable = editable;
     }
 }
