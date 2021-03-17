@@ -1,16 +1,74 @@
 package bo.com.tesla.recaudaciones.dao;
 
+import bo.com.tesla.administracion.dto.RecaudadorAdmDto;
+import bo.com.tesla.administracion.dto.SucursalAdmDto;
 import bo.com.tesla.administracion.entity.RecaudadorEntity;
 import bo.com.tesla.administracion.entity.SucursalEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ISucursalDao extends JpaRepository<SucursalEntity, Long> {
+
+    /************************ABM****************************/
+
+    @Modifying
+    @Query(value = "UPDATE SucursalEntity e " +
+            "SET e.transaccion = :transaccion, e.usuarioModificacion = :usuarioModificacion, e.fechaModificacion = current_timestamp " +
+            "WHERE e.sucursalId = :sucursalId")
+    Integer updateTransaccionSucursal(@Param("sucursalId") Long sucursalId,
+                                         @Param("transaccion") String transaccion,
+                                         @Param("usuarioModificacion") Long usuarioModificacion);
+
+    @Modifying
+    @Query(value = "UPDATE SucursalEntity e " +
+            "SET e.transaccion = :transaccion, e.usuarioModificacion = :usuarioModificacion, e.fechaModificacion = current_timestamp " +//:fechaModificacion  " +
+            "WHERE e.sucursalId IN :sucursalIdLst")
+    Integer updateLstTransaccionSucursal(@Param("sucursalIdLst") List<Long> sucursalIdLst,
+                                            @Param("transaccion") String transaccion,
+                                            @Param("usuarioModificacion") Long usuarioModificacion);
+
+    @Query(value = "SELECT new bo.com.tesla.administracion.dto.SucursalAdmDto(" +
+            "su.sucursalId, su.recaudador.recaudadorId, su.nombre, su.direccion, su.telefono, " +
+            "su.departamento.dominioId, su.departamento.descripcion, " +
+            "su.localidad.dominioId, su.localidad.descripcion, " +
+            "s.login, su.fechaCreacion, su.estado) " +
+            "FROM SucursalEntity su " +
+            "INNER JOIN SegUsuarioEntity s ON s.usuarioId = su.usuarioCreacion " +
+            "WHERE su.estado <> 'ELIMINADO'" +
+            "ORDER BY su.nombre  ")
+    List<SucursalAdmDto> findRecaudadorDtoAll();
+
+    @Query(value = "SELECT new bo.com.tesla.administracion.dto.SucursalAdmDto(" +
+            "su.sucursalId, su.recaudador.recaudadorId, su.nombre, su.direccion, su.telefono, " +
+            "su.departamento.dominioId, su.departamento.descripcion, " +
+            "su.localidad.dominioId, su.localidad.descripcion, " +
+            "s.login, su.fechaCreacion, su.estado) " +
+            "FROM SucursalEntity su " +
+            "INNER JOIN SegUsuarioEntity s ON s.usuarioId = su.usuarioCreacion " +
+            "WHERE su.sucursalId = :sucursalId")
+    Optional<SucursalAdmDto> findSucursalDtoById(@Param("sucursalId") Long sucursalId);
+
+    @Query(value = "SELECT new bo.com.tesla.administracion.dto.SucursalAdmDto(" +
+            "su.sucursalId, su.recaudador.recaudadorId, su.nombre, su.direccion, su.telefono, " +
+            "su.departamento.dominioId, su.departamento.descripcion, " +
+            "su.localidad.dominioId, su.localidad.descripcion, " +
+            "s.login, su.fechaCreacion, su.estado) " +
+            "FROM SucursalEntity su " +
+            "INNER JOIN SegUsuarioEntity s ON s.usuarioId = su.usuarioCreacion " +
+            "WHERE su.estado <> 'ELIMINADO' " +
+            "AND su.recaudador.recaudadorId = :recaudadorId " +
+            "ORDER BY su.nombre")
+    List<SucursalAdmDto> findLstSucursalesDtoByRecaudadorId(@Param("recaudadorId") Long recaudadorId);
+
+
+    /************************COBROS****************************/
 
     @Query(value = "select e.sucursalId "
             + " from SegUsuarioEntity u "

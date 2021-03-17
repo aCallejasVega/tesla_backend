@@ -8,19 +8,7 @@ package bo.com.tesla.administracion.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 /**
  *
@@ -101,16 +89,18 @@ public class CobroClienteEntity implements Serializable {
     @Column(name = "es_postpago", nullable = false)
     private boolean esPostpago;
     @Column(name = "monto_modificado")
-    private boolean montoModificado;
+    private Boolean montoModificado;
     @JoinColumn(name = "archivo_id", referencedColumnName = "archivo_id", nullable = false)
     @ManyToOne(optional = false)
     private ArchivoEntity archivoId;
     @JoinColumn(name = "metodo_cobro_id", referencedColumnName = "dominio_id", nullable = false)
     @ManyToOne(optional = false)
     private DominioEntity metodoCobro;
+
     @JoinColumn(name = "transaccion_cobro_id", referencedColumnName = "transaccion_cobro_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = TransaccionCobroEntity.class)
     private TransaccionCobroEntity transaccionCobro;
+
     @JoinColumn(name = "historico_deuda_id", referencedColumnName = "historico_deuda_id")
     @ManyToOne
     private HistoricoDeudaEntity historicoDeuda;

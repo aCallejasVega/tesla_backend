@@ -13,18 +13,26 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ISucursalEntidadAdmDao extends JpaRepository<SucursalEntidadEntity, Long> {
+public interface ISucursalEntidadDao extends JpaRepository<SucursalEntidadEntity, Long> {
 
-    SucursalEntidadEntity findBySucursalEntidadId(Long sucursalEntidadId);
+    /************************ABM****************************/
 
-    @Transactional
     @Modifying
     @Query(value = "UPDATE SucursalEntidadEntity se " +
             "SET se.transaccion = :transaccion, se.usuarioModificacion = :usuarioModificacion, se.fechaModificacion = CURRENT_TIMESTAMP " +
             "WHERE se.sucursalEntidadId = :sucursalEntidadId ")
-    void updateTransaccionSucursalEntidad(@Param("sucursalEntidadId") Long sucursalEntidadId,
+    Integer updateTransaccionSucursalEntidad(@Param("sucursalEntidadId") Long sucursalEntidadId,
                                            @Param("transaccion") String transaccion,
                                            @Param("usuarioModificacion") Long usuarioModificacion);
+
+    @Modifying
+    @Query(value = "UPDATE SucursalEntidadEntity se " +
+            "SET se.transaccion = :transaccion, se.usuarioModificacion = :usuarioModificacion, se.fechaModificacion = CURRENT_TIMESTAMP " +
+            "WHERE se.sucursalEntidadId IN :sucursalEntidadLstId ")
+    Integer updateLstTransaccionSucursalEntidad(@Param("sucursalEntidadLstId") List<Long> sucursalEntidadLstId,
+                                             @Param("transaccion") String transaccion,
+                                             @Param("usuarioModificacion") Long usuarioModificacion);
+
 
     @Query(value = "SELECT new bo.com.tesla.administracion.dto.SucursalEntidadAdmDto( " +
             "se.sucursalEntidadId, se.entidad.entidadId, se.nombreSucursal,se.direccion, se.telefono, u.login, se.fechaCreacion, se.estado) " +
@@ -38,7 +46,7 @@ public interface ISucursalEntidadAdmDao extends JpaRepository<SucursalEntidadEnt
             "FROM SucursalEntidadEntity se " +
             "INNER JOIN SegUsuarioEntity u ON se.usuarioCreacion = u.usuarioId " +
             "WHERE se.sucursalEntidadId = :sucursalEntidadId")
-    SucursalEntidadAdmDto findSucursalEntidadDtoById(@Param("sucursalEntidadId") Long sucursalEntidadId);
+    Optional<SucursalEntidadAdmDto> findSucursalEntidadDtoById(@Param("sucursalEntidadId") Long sucursalEntidadId);
 
     @Query(value = "SELECT new bo.com.tesla.administracion.dto.SucursalEntidadAdmDto( " +
             "se.sucursalEntidadId, se.entidad.entidadId, se.nombreSucursal,se.direccion, se.telefono, u.login, se.fechaCreacion, se.estado) " +

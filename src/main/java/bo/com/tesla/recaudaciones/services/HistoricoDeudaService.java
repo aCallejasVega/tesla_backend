@@ -3,7 +3,9 @@ package bo.com.tesla.recaudaciones.services;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import bo.com.tesla.administracion.entity.DeudaClienteEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,9 +24,18 @@ public class HistoricoDeudaService implements IHistoricoDeudaService {
     @Autowired
     private IHistoricoDeudaDao iHistoricoDeudaDao;
 
-	@Override
+	/*@Override
 	public Integer updateEstado(Long deudaClienteId, String estado) {
 		return iHistoricoDeudaDao.updateEstado(deudaClienteId, estado);
+	}*/
+
+	@Override
+	public Integer updateHistoricoDeudaLst(List<DeudaClienteEntity> deudaClienteEntities) {
+		List<Long> deudaClienteIdLst = deudaClienteEntities.stream()
+				.mapToLong(d -> d.getDeudaClienteId()).boxed()
+				.collect(Collectors.toList());
+
+		return iHistoricoDeudaDao.updateLstEstado(deudaClienteIdLst, "COBRADO");
 	}
 
     @Transactional(readOnly = true)

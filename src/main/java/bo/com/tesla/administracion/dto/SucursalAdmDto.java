@@ -11,19 +11,21 @@ public class SucursalAdmDto {
 
     public Long sucursalId;
     public Long recaudadorId;
+    public String nombre;
     public String direccion;
-    public Integer telefono;
+    public String telefono;
     public Long departamentoId;
     public String departamentoDescripcion;
     public Long localidadId;
-    public Long localidadDescripcion;
-    public Long usuarioCreacionLogin;
+    public String localidadDescripcion;
+    public String usuarioCreacionLogin;
     public Date fechaCreacion;
     public String estado;
 
-    public SucursalAdmDto(Long sucursalId, Long recaudadorId, String direccion, Integer telefono, Long departamentoId, String departamentoDescripcion, Long localidadId, Long localidadDescripcion, Long usuarioCreacionLogin, Date fechaCreacion, String estado) {
+    public SucursalAdmDto(Long sucursalId, Long recaudadorId, String nombre, String direccion, String telefono, Long departamentoId, String departamentoDescripcion, Long localidadId, String localidadDescripcion, String usuarioCreacionLogin, Date fechaCreacion, String estado) {
         this.sucursalId = sucursalId;
         this.recaudadorId = recaudadorId;
+        this.nombre = nombre;
         this.direccion = direccion;
         this.telefono = telefono;
         this.departamentoId = departamentoId;

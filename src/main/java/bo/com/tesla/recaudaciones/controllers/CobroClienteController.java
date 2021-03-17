@@ -73,7 +73,7 @@ public class CobroClienteController {
         } catch (Technicalexception e) {
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("RECAUDACION.COBROS");
-            log.setController("api/cobros/" + metodoPagoId);
+            log.setController("POST: api/cobros/" + metodoPagoId);
             log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
             log.setMensaje(e.getMessage()+"");
             log.setUsuarioCreacion(usuario.getUsuarioId());

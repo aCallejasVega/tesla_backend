@@ -3,21 +3,7 @@ package bo.com.tesla.administracion.entity;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 /**
  *
@@ -71,16 +57,22 @@ public class EntidadEntity implements Serializable {
     @Basic(optional = false)
     @Column(nullable = false, length = 10)
     private String estado;
+
     @OneToMany(mappedBy = "entidadId")
     private List<TipoTransaccionEntity> tipoTransaccionEntityList;
+
     @OneToMany(mappedBy = "entidadId")
     private List<ArchivoEntity> archivoEntityList;
+
     @OneToMany(mappedBy = "entidadId")
     private List<TransaccionCobroEntity> transaccionCobroEntityList;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
     private List<ComprobanteCobroEntity> comprobanteCobroEntityList;
-    @OneToMany(mappedBy = "entidad")
+
+    @OneToMany(mappedBy = "entidad", fetch= FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<EntidadRecaudadorEntity> entidadRecaudadorEntityList;
+
     @OneToMany(mappedBy = "entidadId")
     private List<EmpleadoEntity> empleadoEntityList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
@@ -105,6 +97,8 @@ public class EntidadEntity implements Serializable {
     @JoinColumn(name = "municipio_id", referencedColumnName = "dominio_id")
     @ManyToOne
     private DominioEntity municipio;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidad")
+    private List<EntidadComisionEntity> entidadComisionEntityList;
     public EntidadEntity() {
     }
 
@@ -354,6 +348,14 @@ public class EntidadEntity implements Serializable {
 
     public void setMunicipio(DominioEntity municipioId) {
         this.municipio = municipioId;
+    }
+
+    public List<EntidadComisionEntity> getEntidadComisionEntityList() {
+        return entidadComisionEntityList;
+    }
+
+    public void setEntidadComisionEntityList(List<EntidadComisionEntity> entidadComisionEntityList) {
+        this.entidadComisionEntityList = entidadComisionEntityList;
     }
 
     @Override

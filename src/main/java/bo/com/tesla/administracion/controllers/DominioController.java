@@ -2,10 +2,12 @@ package bo.com.tesla.administracion.controllers;
 
 import bo.com.tesla.administracion.entity.LogSistemaEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
-import bo.com.tesla.administracion.services.IDominioAdmService;
+import bo.com.tesla.administracion.services.IDominioService;
 import bo.com.tesla.recaudaciones.dto.DominioDto;
 import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegUsuarioService;
+import bo.com.tesla.useful.config.Technicalexception;
+import org.bouncycastle.asn1.dvcs.TargetEtcChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +25,9 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("api/adm/dominios")//
-public class DominioAdmController {
-    private Logger logger = LoggerFactory.getLogger(EntidadAdmController.class);
+@RequestMapping("api/dominios")
+public class DominioController {
+    private Logger logger = LoggerFactory.getLogger(DominioController.class);
 
     @Autowired
     private ILogSistemaService logSistemaService;
@@ -34,7 +36,7 @@ public class DominioAdmController {
     private ISegUsuarioService segUsuarioService;
 
     @Autowired
-    private IDominioAdmService iDominioAdmService;
+    private IDominioService iDominioService;
 
     @GetMapping("/{dominio}")
     public ResponseEntity<?> getListSucursalesEntidades(@PathVariable String dominio,
@@ -43,7 +45,7 @@ public class DominioAdmController {
         SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         Map<String, Object> response = new HashMap<>();
         try {
-            List<DominioDto> dominioDtoList = iDominioAdmService.getListDominios(dominio);
+            List<DominioDto> dominioDtoList = iDominioService.getListDominios(dominio);
             if (!dominioDtoList.isEmpty()) {
                 response.put("status", true);
                 response.put("message", "El listado fue encontrado.");
@@ -53,9 +55,9 @@ public class DominioAdmController {
                 response.put("status", false);
                 response.put("message", "El listado no fue encontrado.");
                 response.put("result", null);
-                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
-        } catch (Exception e) {
+        } catch (Technicalexception e) {
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.DOMINIOS");
             log.setController("api/adm/dominios/" + dominio);

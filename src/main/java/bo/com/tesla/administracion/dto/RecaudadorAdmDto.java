@@ -13,17 +13,24 @@ public class RecaudadorAdmDto {
     public Long recaudadorId;
     public Long tipoRecaudadorId;
     public String tipoRecaudadorDescripcion;
-    public Long usuarioCreacion;
+    public String nombre;
+    public String direccion;
+    public String telefono;
+    public String usuarioCreacionLogin;
     public Date fechaCreacion;
     public String estado;
     public List<SucursalAdmDto> sucursalAdmDtoList;
-    public List<EntidadRecaudadorAdmDto> entidadRecaudadorAdmDtoList;
+    public List<EntidadAdmDto> entidadAdmDtoList;
+    public List<Long> entidadIdLst;
 
-    public RecaudadorAdmDto(Long recaudadorId, Long tipoRecaudadorId, String tipoRecaudadorDescripcion, Long usuarioCreacion, Date fechaCreacion, String estado) {
+    public RecaudadorAdmDto(Long recaudadorId, Long tipoRecaudadorId, String tipoRecaudadorDescripcion, String nombre, String direccion, String telefono, String usuarioCreacionLogin, Date fechaCreacion, String estado) {
         this.recaudadorId = recaudadorId;
         this.tipoRecaudadorId = tipoRecaudadorId;
         this.tipoRecaudadorDescripcion = tipoRecaudadorDescripcion;
-        this.usuarioCreacion = usuarioCreacion;
+        this.nombre = nombre;
+        this.direccion = direccion;
+        this.telefono = telefono;
+        this.usuarioCreacionLogin = usuarioCreacionLogin;
         this.fechaCreacion = fechaCreacion;
         this.estado = estado;
     }

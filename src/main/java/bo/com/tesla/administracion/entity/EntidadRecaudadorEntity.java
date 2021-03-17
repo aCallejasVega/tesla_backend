@@ -5,6 +5,8 @@
  */
 package bo.com.tesla.administracion.entity;
 
+import javafx.scene.Parent;
+
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
@@ -26,22 +28,28 @@ public class EntidadRecaudadorEntity implements Serializable {
     @Basic(optional = false)
     @Column(name = "entidad_recaudador_id", nullable = false)
     private Long entidadRecaudadorId;
+
     @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = EntidadEntity.class)
     private EntidadEntity entidad;
+
     @JoinColumn(name = "recaudador_id", referencedColumnName = "recaudador_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = RecaudadorEntity.class)
     private RecaudadorEntity recaudador;
+
+    @Column(name = "usuario_creacion")
+    private Long usuarioCreacion;
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
     @Column(name = "usuario_modificacion")
-    private BigInteger usuarioModificacion;
+    private Long usuarioModificacion;
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
     @Basic(optional = false)
     @Column(nullable = false, length = 15)
     private String estado;
+
     @Basic(optional = false)
     @Column(nullable = false, length = 15)
     private String transaccion;
@@ -85,11 +93,11 @@ public class EntidadRecaudadorEntity implements Serializable {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public BigInteger getUsuarioModificacion() {
+    public Long getUsuarioModificacion() {
         return usuarioModificacion;
     }
 
-    public void setUsuarioModificacion(BigInteger usuarioModificacion) {
+    public void setUsuarioModificacion(Long usuarioModificacion) {
         this.usuarioModificacion = usuarioModificacion;
     }
 
@@ -101,21 +109,30 @@ public class EntidadRecaudadorEntity implements Serializable {
         this.fechaModificacion = fechaModificacion;
     }
 
-    public String getEstado() {
-        return estado;
+    public Long getUsuarioCreacion() {
+        return usuarioCreacion;
     }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
+    public void setUsuarioCreacion(Long usuarioCreacion) {
+        this.usuarioCreacion = usuarioCreacion;
     }
 
-    public String getTransaccion() {
-        return transaccion;
-    }
 
-    public void setTransaccion(String transaccion) {
-        this.transaccion = transaccion;
-    }
+        public String getEstado() {
+            return estado;
+        }
+
+        public void setEstado(String estado) {
+            this.estado = estado;
+        }
+
+        public String getTransaccion() {
+            return transaccion;
+        }
+
+        public void setTransaccion(String transaccion) {
+            this.transaccion = transaccion;
+        }
 
     @Override
     public int hashCode() {

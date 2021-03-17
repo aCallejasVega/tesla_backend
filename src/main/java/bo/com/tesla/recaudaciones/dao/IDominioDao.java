@@ -13,10 +13,9 @@ import java.util.Optional;
 @Repository
 public interface IDominioDao extends JpaRepository<DominioEntity, Long> {
 
-    Optional<DominioEntity> findByDominioId(Long dominioId);
-    Optional<DominioEntity> findByDominioIdAndDominio(Long dominioId, String dominio);
-
-    Optional<DominioEntity> getDominioEntityByDominioIdAndEstado(Long dominioId, String estado);
+    //Optional<DominioEntity> findByDominioId(Long dominioId);
+    //Optional<DominioEntity> findByDominioIdAndDominio(Long dominioId, String dominio);
+    Optional<DominioEntity> getDominioEntityByDominioIdAndDominioAndEstado(Long dominioId, String dominio, String estado);
 
     @Query(value = "select distinct new bo.com.tesla.recaudaciones.dto.DominioDto( " +
             " er.entidad.tipoEntidad.dominioId, er.entidad.tipoEntidad.dominio, er.entidad.tipoEntidad.descripcion, er.entidad.tipoEntidad.abreviatura ) " +

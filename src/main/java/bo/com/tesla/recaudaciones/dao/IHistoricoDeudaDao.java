@@ -20,12 +20,18 @@ import java.util.Optional;
 public interface IHistoricoDeudaDao extends JpaRepository<HistoricoDeudaEntity, Long> {
 
 	Optional<HistoricoDeudaEntity> findByDeudaClienteId(Long deudaClienteId);
-
+/*
 	@Modifying
 	@Query(value = "UPDATE HistoricoDeudaEntity h " +
 			"SET h.estado = :estado " +
 			"where h.deudaClienteId = :deudaClienteId")
 	Integer updateEstado(@Param("deudaClienteId") Long deudaClienteId, @Param("estado") String estado);
+*/
+	@Modifying
+	@Query(value = "UPDATE HistoricoDeudaEntity h " +
+			"SET h.estado = :estado " +
+			"where h.deudaClienteId IN :deudaClienteIdLst")
+	Integer updateLstEstado(@Param("deudaClienteIdLst") List<Long> deudaClienteIdLst, @Param("estado") String estado);
 
 	/**
 	 * Obtiene todas la deudas hitoricas asociadas 

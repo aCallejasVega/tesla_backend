@@ -4,6 +4,6 @@ import bo.com.tesla.recaudaciones.dto.DominioDto;
 
 import java.util.List;
 
-public interface IDominioAdmService {
+public interface IDominioService {
     public List<DominioDto> getListDominios(String dominio);
 }

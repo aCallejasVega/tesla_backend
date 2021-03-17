@@ -6,7 +6,7 @@
 package bo.com.tesla.administracion.entity;
 
 import java.io.Serializable;
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -24,25 +24,24 @@ import javax.persistence.TemporalType;
 
 /**
  *
- * @author aCallejas
+ * @author Carmin
  */
 @Entity
-@Table(name = "sucursales", catalog = "exacta", schema = "tesla")
+@Table(name = "entidades_comisiones", catalog = "exacta", schema = "tesla")
 @NamedQueries({
-    @NamedQuery(name = "SucursalEntity.findAll", query = "SELECT s FROM SucursalEntity s")})
-public class SucursalEntity implements Serializable {
+        @NamedQuery(name = "EntidadComisionEntity.findAll", query = "SELECT e FROM EntidadComisionEntity e")})
+public class EntidadComisionEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "sucursal_id", nullable = false)
-    private Long sucursalId;
+    @Column(name = "entidad_comision_id", nullable = false)
+    private Long entidadComisionId;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Basic(optional = false)
-    @Column(nullable = false, length = 250)
-    private String direccion;
-    @Column(length = 2147483647)
-    private String telefono;
+    @Column(nullable = false, precision = 17, scale = 2)
+    private BigDecimal comision;
     @Basic(optional = false)
     @Column(name = "usuario_creacion", nullable = false)
     private long usuarioCreacion;
@@ -56,63 +55,48 @@ public class SucursalEntity implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
     @Basic(optional = false)
-    @Column(nullable = false, length = 15)
+    @Column(nullable = false, length = 255)
     private String estado;
     @Basic(optional = false)
     @Column(nullable = false, length = 15)
     private String transaccion;
-    @Basic(optional = false)
-    @Column(nullable = false, length = 250)
-    private String nombre;
-    @JoinColumn(name = "departamento_id", referencedColumnName = "dominio_id", nullable = false)
+    @JoinColumn(name = "tipo_comision_id", referencedColumnName = "dominio_id", nullable = false)
     @ManyToOne(optional = false)
-    private DominioEntity departamento;
-    @JoinColumn(name = "localidad_id", referencedColumnName = "dominio_id", nullable = false)
+    private DominioEntity tipoComision;
+    @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id", nullable = false)
     @ManyToOne(optional = false)
-    private DominioEntity localidad;
-    @JoinColumn(name = "recaudador_id", referencedColumnName = "recaudador_id", nullable = false)
-    @ManyToOne(optional = false)
-    private RecaudadorEntity recaudador;
+    private EntidadEntity entidad;
 
-    public SucursalEntity() {
+    public EntidadComisionEntity() {
     }
 
-    public SucursalEntity(Long sucursalId) {
-        this.sucursalId = sucursalId;
+    public EntidadComisionEntity(Long entidadComisionId) {
+        this.entidadComisionId = entidadComisionId;
     }
 
-    public SucursalEntity(Long sucursalId, String direccion, long usuarioCreacion, Date fechaCreacion, String estado, String transaccion, String nombre) {
-        this.sucursalId = sucursalId;
-        this.direccion = direccion;
+    public EntidadComisionEntity(Long entidadComisionId, BigDecimal comision, long usuarioCreacion, Date fechaCreacion, String estado, String transaccion) {
+        this.entidadComisionId = entidadComisionId;
+        this.comision = comision;
         this.usuarioCreacion = usuarioCreacion;
         this.fechaCreacion = fechaCreacion;
         this.estado = estado;
         this.transaccion = transaccion;
-        this.nombre = nombre;
     }
 
-    public Long getSucursalId() {
-        return sucursalId;
+    public Long getEntidadComisionId() {
+        return entidadComisionId;
     }
 
-    public void setSucursalId(Long sucursalId) {
-        this.sucursalId = sucursalId;
+    public void setEntidadComisionId(Long entidadComisionId) {
+        this.entidadComisionId = entidadComisionId;
     }
 
-    public String getDireccion() {
-        return direccion;
+    public BigDecimal getComision() {
+        return comision;
     }
 
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
+    public void setComision(BigDecimal comision) {
+        this.comision = comision;
     }
 
     public long getUsuarioCreacion() {
@@ -163,53 +147,37 @@ public class SucursalEntity implements Serializable {
         this.transaccion = transaccion;
     }
 
-    public String getNombre() {
-        return nombre;
+    public DominioEntity getTipoComision() {
+        return tipoComision;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setTipoComision(DominioEntity tipoComisionId) {
+        this.tipoComision = tipoComisionId;
     }
 
-    public DominioEntity getDepartamento() {
-        return departamento;
+    public EntidadEntity getEntidad() {
+        return entidad;
     }
 
-    public void setDepartamento(DominioEntity departamentoId) {
-        this.departamento = departamentoId;
-    }
-
-    public DominioEntity getLocalidad() {
-        return localidad;
-    }
-
-    public void setLocalidad(DominioEntity localidadId) {
-        this.localidad = localidadId;
-    }
-
-    public RecaudadorEntity getRecaudador() {
-        return recaudador;
-    }
-
-    public void setRecaudador(RecaudadorEntity recaudadorId) {
-        this.recaudador = recaudadorId;
+    public void setEntidad(EntidadEntity entidadId) {
+        this.entidad = entidadId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (sucursalId != null ? sucursalId.hashCode() : 0);
+        hash += (entidadComisionId != null ? entidadComisionId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof SucursalEntity)) {
+        if (!(object instanceof EntidadComisionEntity)) {
             return false;
         }
-        SucursalEntity other = (SucursalEntity) object;
-        if ((this.sucursalId == null && other.sucursalId != null) || (this.sucursalId != null && !this.sucursalId.equals(other.sucursalId))) {
+        EntidadComisionEntity other = (EntidadComisionEntity) object;
+        if ((this.entidadComisionId == null && other.entidadComisionId != null) || (this.entidadComisionId != null && !this.entidadComisionId.equals(other.entidadComisionId))) {
             return false;
         }
         return true;
@@ -217,7 +185,7 @@ public class SucursalEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.com.tesla.administracion.entity.SucursalEntity[ sucursalId=" + sucursalId + " ]";
+        return "bo.com.tesla.administracion.entity.EntidadComisionEntity[ entidadComisionId=" + entidadComisionId + " ]";
     }
 
 }

@@ -11,14 +11,13 @@ public class EntidadRecaudadorAdmDto {
 
     public Long entidadRecaudadorId;
     public Long entidadId;
-    public EntidadAdmDto entidadAdmDto;
     public Long recaudadorId;
-    public RecaudadorAdmDto recaudadorAdmDto;
     public String usuarioCreacionLogin;
     public Date fechaCreacion;
     public String estado;
 
-    public EntidadRecaudadorAdmDto(Long entidadId, Long recaudadorId, String usuarioCreacionLogin, Date fechaCreacion, String estado) {
+    public EntidadRecaudadorAdmDto(Long entidadRecaudadorId, Long entidadId, Long recaudadorId, String usuarioCreacionLogin, Date fechaCreacion, String estado) {
+        this.entidadRecaudadorId = entidadRecaudadorId;
         this.entidadId = entidadId;
         this.recaudadorId = recaudadorId;
         this.usuarioCreacionLogin = usuarioCreacionLogin;

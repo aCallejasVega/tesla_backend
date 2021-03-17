@@ -52,4 +52,44 @@ public class HandlingFiles {
 
 	}
 
+	public static String getDirectoryLogo(Long entidadId, String pathOrigin) throws Exception {
+		String path = pathOrigin + File.separator + entidadId.toString();
+		File directory = new File(path);
+		if (!directory.exists()) {
+			if (directory.mkdirs()) {
+				return path;
+			} else {
+				throw new Exception("No se pudo crear el directorio");
+			}
+		}
+		return path;
+
+	}
+
+	public static String saveLogoToDisc(MultipartFile file, Long entidadId, String pathOrigin) throws Exception {
+
+		String fileName = file.getOriginalFilename();
+		FileOutputStream os = null;
+		String path = null;
+		try {
+			path = getDirectoryLogo(entidadId, pathOrigin) + File.separator + fileName;
+			os = new FileOutputStream(path);
+			os.write(file.getBytes());
+			return (File.separator + entidadId.toString() + File.separator + fileName);
+
+		} catch (Exception e) {
+			// todo manejo de excepciones
+			e.printStackTrace();
+		} finally {
+			if (os != null) {
+				try {
+					os.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return null;
+	}
+
 }

@@ -52,7 +52,7 @@ public class CobroClienteService implements ICobroClienteService {
                                                      Long usuarioId,
                                                      Long metodoPagoId,
                                                      TransaccionCobroEntity transaccionCobroEntity) {
-        Optional<DominioEntity> optionalDominioEntity = iDominioDao.findByDominioIdAndDominio(metodoPagoId, "metodo_pago_id");
+        Optional<DominioEntity> optionalDominioEntity = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(metodoPagoId, "metodo_pago_id", "ACTIVO");
         if(!optionalDominioEntity.isPresent()) {
             throw new Technicalexception("No existe el dominio='metodo_pago_id' para dominioId=" + metodoPagoId );
         }
@@ -123,15 +123,9 @@ public class CobroClienteService implements ICobroClienteService {
             //Lamar a Facturacion o Recibo
             /******************************************************************************************/
 
-            List<CobroClienteEntity> cobroClienteEntityList = new ArrayList<>();
             //Recorrer las agrupaciones
             for(ServicioDeudaDto servicioDeudaDto : clienteDto.servicioDeudaDtoList){
-                //Registrar las agrupaciones
-                TransaccionCobroEntity transaccionCobroEntity = iTransaccionCobroService.loadTransaccionCobro(servicioDeudaDto, usuarioId, clienteDto.nombreCliente, clienteDto.nroDocumento);
-                transaccionCobroEntity = iTransaccionCobroService.saveTransaccionCobro(transaccionCobroEntity);
-
-
-                //Recuperar Deudas Completas
+                //Recuperar Deudas Completas por agrupacion
                 List<DeudaClienteEntity> deudaClienteEntityList = iDeudaClienteRService.getAllDeudasByCliente(servicioDeudaDto.entidadId,
                         servicioDeudaDto.tipoServicio,
                         servicioDeudaDto.servicio,
@@ -140,27 +134,36 @@ public class CobroClienteService implements ICobroClienteService {
                 if(deudaClienteEntityList.isEmpty()) {
                     throw new Technicalexception("No se ha encontrado el Listado de Todas las Deudas del cliente: " + servicioDeudaDto.codigoCliente);
                 }
+
+                //Cargar transaccion las agrupaciones
+                TransaccionCobroEntity transaccionCobroEntity = iTransaccionCobroService.loadTransaccionCobro(servicioDeudaDto, usuarioId, clienteDto.nombreCliente, clienteDto.nroDocumento);
+
+                List<CobroClienteEntity> cobroClienteEntityList = new ArrayList<>();
                 //Recorrer cada deuda asociada a la agrupacion
                 for(DeudaClienteEntity deudaClienteEntity : deudaClienteEntityList) {
                     //Cargando Cobro
                     CobroClienteEntity cobroClienteEntity = loadCobroClienteEntity(deudaClienteEntity, servicioDeudaDto.deudaClienteDtos, usuarioId, metodoPagoId, transaccionCobroEntity);
                     cobroClienteEntityList.add(cobroClienteEntity);
 
-                    //Actualizar Historico
-                    Integer updateHistorico = iHistoricoDeudaService.updateEstado(deudaClienteEntity.getDeudaClienteId(), "COBRADO");
-                    if(updateHistorico == 0) {
-                        throw new Technicalexception("Se produjo un error al actualizar estado HistoricoDeuda con deudaClienteId=" + deudaClienteEntity.getDeudaClienteId());
-                    }
                 }
-                //Registrar cobros por agrupacion
-                cobroClienteEntityList = iCobroClienteDao.saveAll(cobroClienteEntityList);
+                //Registrar transaccion  por agrupacion
+                transaccionCobroEntity.setCobroClienteEntityList(cobroClienteEntityList);
+                transaccionCobroEntity = iTransaccionCobroService.saveTransaccionCobro(transaccionCobroEntity);
+                if(transaccionCobroEntity.getTransaccionCobroId() == null) {
+                    throw new Technicalexception("No se ha registrado la transacción");
+                }
+
+                //Actualizar Historico por agrupacion
+                Integer countUpdate = iHistoricoDeudaService.updateHistoricoDeudaLst(deudaClienteEntityList);
+                if(countUpdate != deudaClienteEntityList.size()) {
+                    throw new Technicalexception("Se produjo un problema al actualizar Historico de la lista de DeudasClientes");
+                }
                 //Eliminar Deudas por agrupacion
                 Long recordDeletes = iDeudaClienteRService.deleteDeudasClientes(deudaClienteEntityList);
-                if (recordDeletes == 0) {
+                if (recordDeletes != deudaClienteEntityList.size()) {
                     throw new Technicalexception("Se produjo un problema al borrar la lista de DeudasClientes");
                 }
             }
-
         } catch (Exception e) {
             throw new Technicalexception(e.getMessage(), e.getCause());
         }

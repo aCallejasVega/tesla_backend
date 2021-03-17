@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class DominioAdmService implements IDominioAdmService{
+public class DominioService implements IDominioService {
 
     @Autowired
     private IDominioDao iDominioDao;

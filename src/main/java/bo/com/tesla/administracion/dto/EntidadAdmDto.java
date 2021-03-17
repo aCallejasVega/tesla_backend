@@ -25,6 +25,10 @@ public class EntidadAdmDto {
     public String usuarioCreacionLogin;
     public String estado;
     public List<SucursalEntidadAdmDto> sucursalEntidadAdmDtoList;
+    //public List<RecaudadorAdmDto> recaudadorAdmDtoList;
+    public List<Long> recaudadorIdLst;
+
+    public EntidadAdmDto() {}
 
     public EntidadAdmDto(Long entidadId, String nombre, String nombreComercial, String direccion, String telefono, String nit, String pathLogo, Boolean comprobanteEnUno, Long actividadEconomicaId, String actividadEconomicaDescripcion, Long municipioId, String municipioDescripcion, Long tipoEntidadId, String tipoEntidadDescripcion, Date fechaCreacion, String usuarioCreacionLogin, String estado) {
         this.entidadId = entidadId;

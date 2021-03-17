@@ -1,5 +1,6 @@
 package bo.com.tesla.recaudaciones.controllers;
 
+import bo.com.tesla.administracion.dto.EntidadAdmDto;
 import bo.com.tesla.administracion.entity.LogSistemaEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.recaudaciones.dto.ClienteDto;
@@ -10,18 +11,19 @@ import bo.com.tesla.recaudaciones.services.IDeudaClienteRService;
 import bo.com.tesla.recaudaciones.services.IEntidadRService;
 import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegUsuarioService;
+import bo.com.tesla.useful.config.BusinesException;
 import bo.com.tesla.useful.config.Technicalexception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.*;
 
 @RestController
@@ -40,6 +42,238 @@ public class EntidadController {
 
     @Autowired
     private ISegUsuarioService segUsuarioService;
+
+    @Value("${tesla.path.files-debts}")
+    private String filesBets;
+
+
+    /*********************ABM ENTIDADES**************************/
+    @PostMapping("")
+    public ResponseEntity<?> addUpdateEntidad(@Valid @RequestBody EntidadAdmDto entidadAdmDto,
+                                              Authentication authentication) {
+        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Boolean esModificacion = entidadAdmDto.entidadId != null;
+            entidadAdmDto = iEntidadRService.addUpdateEntidad(entidadAdmDto, usuario.getUsuarioId());
+            response.put("status", true);
+            response.put("message", esModificacion ? "Se realizó la actualización del registro correctamente." : "Se realizó el registro correctamente.");
+            response.put("result", entidadAdmDto);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Technicalexception e) {
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("ADMINISTRACION.ENTIDAD");
+            log.setController("POST: api/entidades");
+            log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
+            log.setMensaje(e.getMessage()+"");
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            logSistemaService.save(log);
+            this.logger.error("This is error", e.getMessage());
+            this.logger.error("This is cause", e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
+            response.put("status", false);
+            response.put("result", null);
+            response.put("message", "Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+            response.put("code", log.getLogSistemaId()+"");
+            return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/{entidadId}/{transaccion}")
+    public ResponseEntity<?> setTransaccion(@PathVariable Long entidadId,
+                                            @PathVariable String transaccion,
+                                            Authentication authentication) {
+        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
+        Map<String, Object> response = new HashMap<>();
+        try {
+            iEntidadRService.setTransaccion(entidadId, transaccion, usuario.getUsuarioId());
+            response.put("status", true);
+            response.put("message", "Se realizó la actualización de la transacción correctamente.");
+            response.put("result", true);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (Technicalexception e) {
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("ADMINISTRACION.ENTIDAD");
+            log.setController("PUT: api/entidades/" + entidadId + "/" + transaccion);
+            log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
+            log.setMensaje(e.getMessage()+"");
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            logSistemaService.save(log);
+            this.logger.error("This is error", e.getMessage());
+            this.logger.error("This is cause", e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
+            response.put("status", false);
+            response.put("result", null);
+            response.put("message", "Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+            response.put("code", log.getLogSistemaId()+"");
+            return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/listas/{transaccion}")
+    public ResponseEntity<?> setLstTransaccion(@RequestBody List<Long> entidadIdLst,
+                                               @PathVariable String transaccion,
+                                               Authentication authentication) {
+        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
+        Map<String, Object> response = new HashMap<>();
+        try {
+            iEntidadRService.setLstTransaccion(entidadIdLst, transaccion, usuario.getUsuarioId());
+            response.put("status", true);
+            response.put("message", "Se realizó la actualización de registro(s) con el nuevo estado.");
+            response.put("result", true);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (Technicalexception e) {
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("ADMINISTRACION.ENTIDAD");
+            log.setController("PUT: api/entidades/listas/" + transaccion);
+            log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
+            log.setMensaje(e.getMessage()+"");
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            logSistemaService.save(log);
+            this.logger.error("This is error", e.getMessage());
+            this.logger.error("This is cause", e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
+            response.put("status", false);
+            response.put("result", null);
+            response.put("message", "Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+            response.put("code", log.getLogSistemaId()+"");
+            return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/{entidadId}")
+    public ResponseEntity<?> getEntidadById(@PathVariable Long entidadId,
+                                            Authentication authentication) {
+        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
+        Map<String, Object> response = new HashMap<>();
+        try {
+            EntidadAdmDto entidadAdmDto = iEntidadRService.getEntidadById(entidadId);
+            if(entidadAdmDto != null ) {
+                response.put("status", true);
+                response.put("message", "El registro fue encontrado.");
+                response.put("result", entidadAdmDto);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                response.put("status", false);
+                response.put("message", "El registro no fue encontrado.");
+                response.put("result", null);
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+
+        } catch (Technicalexception e) {
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("ADMINISTRACION.ENTIDAD");
+            log.setController("GET: api/entidades/" + entidadId);
+            log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
+            log.setMensaje(e.getMessage()+"");
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            logSistemaService.save(log);
+            this.logger.error("This is error", e.getMessage());
+            this.logger.error("This is cause", e.getCause() != null ? e.getCause().getCause()+"" : e.getCause());
+            response.put("status", false);
+            response.put("result", null);
+            response.put("message", "Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+            response.put("code", log.getLogSistemaId()+"");
+            return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("")
+    public ResponseEntity<?> getListEntidades(Authentication authentication) {
+        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<EntidadAdmDto> entidadAdmDtoList = iEntidadRService.getAllEntidades();
+            if(!entidadAdmDtoList.isEmpty()) {
+                response.put("status", true);
+                response.put("message", "El listado fue encontrado.");
+                response.put("result", entidadAdmDtoList);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                response.put("status", false);
+                response.put("message", "El listado no fue encontrado.");
+                response.put("result", null);
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+        } catch (Technicalexception e) {
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("ADMINISTRACION.ENTIDAD");
+            log.setController("GET: api/entidades");
+            log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
+            log.setMensaje(e.getMessage()+"");
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            logSistemaService.save(log);
+            this.logger.error("This is error", e.getMessage());
+            this.logger.error("This is cause", e.getCause() != null ? e.getCause().getCause()+"" : e.getCause());
+            response.put("status", false);
+            response.put("result", null);
+            response.put("message", "Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+            response.put("code", log.getLogSistemaId()+"");
+            return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /*********************LOGOS**************************/
+
+    @PostMapping("/upload/{entidadId}")
+    public ResponseEntity<?> uploadLogo(@RequestParam("file") MultipartFile file
+            , @PathVariable Long entidadId
+            , Authentication authentication) throws Exception
+    {
+        Map<String, Object> response = new HashMap<>();
+        String path = null;
+        SegUsuarioEntity usuario =new SegUsuarioEntity();
+        try {
+            usuario = this.segUsuarioService.findByLogin(authentication.getName());
+            //EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
+            //path = HandlingFiles.saveLogoToDisc(file, entidadId, filesBets);
+            iEntidadRService.uploadLogo(file, entidadId, usuario.getUsuarioId());
+            response.put("message", "Registro de logo correcto.");
+            response.put("status", true);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        catch (BusinesException e) {
+            e.printStackTrace();
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("ENTIDADES");
+            log.setController("api/entidades/upload/");
+            log.setMensaje(e.getMessage());
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            this.logSistemaService.save(log);
+            this.logger.error("This is cause", e.getMessage());
+
+            response.put("message", e.getMessage());
+            response.put("code", log.getLogSistemaId()+"");
+            response.put("status", false);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+
+        }
+        catch (Technicalexception e) {
+            e.printStackTrace();
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("ENTIDADES");
+            log.setController("api/deudaCliente/upload");
+            log.setCausa(e.getCause()+"");
+            log.setMensaje(e.getMessage()+"");
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            this.logSistemaService.save(log);
+
+            this.logger.error("This is error", e.getMessage());
+            this.logger.error("This is cause", e.getCause());
+            response.put("message", "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+            response.put("code", log.getLogSistemaId()+"");
+            response.put("status", false);
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /*********************CARGADO CLIENTES POR ENTIDAD**************************/
 
     @GetMapping("/{entidadId}/clientes/{datoCliente}")
     public ResponseEntity<?> getAllClientesByEntidadId(@PathVariable Long entidadId,
@@ -93,7 +327,6 @@ public class EntidadController {
         }
     }
 
-
     @GetMapping("/{entidadId}/clientes/{codigoCliente}/deudas")
     public ResponseEntity<?> getDeudasByCliente(@PathVariable Long entidadId,
                                                 @PathVariable String codigoCliente,
@@ -144,6 +377,8 @@ public class EntidadController {
             return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
+
+    /*********************CARGADO ENTIDADES**************************/
 
     @GetMapping("/tipos")
     public ResponseEntity<?> getEntidadesByTipo(Authentication authentication) {
@@ -227,7 +462,7 @@ public class EntidadController {
         }
     }
 
-    @GetMapping("")
+    @GetMapping("/recaudadores")
     public ResponseEntity<?> getEntidadesByRecaudadora(Authentication authentication) {
         Map<String, Object> response = new HashMap<>();
         SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
@@ -261,4 +496,8 @@ public class EntidadController {
             return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
+
+
+
+
 }
