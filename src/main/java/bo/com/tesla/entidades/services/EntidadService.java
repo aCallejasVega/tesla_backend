@@ -1,5 +1,7 @@
 package bo.com.tesla.entidades.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,12 @@ public class EntidadService implements IEntidadService {
 	@Override
 	public EntidadEntity findEntidadByUserId(Long usuarioId) {
 		return this.entidadDao.findEntidadByUserId(usuarioId);		
+	}
+
+	@Override
+	public List<EntidadEntity> findEntidadByRecaudacionId(Long recaudadorId) {
+	
+		return entidadDao.findEntidadByRecaudacionId(recaudadorId);
 	}
 
 }

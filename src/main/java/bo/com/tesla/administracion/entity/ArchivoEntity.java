@@ -85,6 +85,9 @@ public class ArchivoEntity implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "archivoId")
     private List<DeudaClienteEntity> deudaClienteEntityList;
+    @OneToMany(mappedBy = "archivoId")
+    private List<TransaccionCobroEntity> transaccionesCobrosList;
+    
 
     public ArchivoEntity() {
     }
@@ -221,8 +224,13 @@ public class ArchivoEntity implements Serializable {
 	}
 	
 	
-	
-	
+	public List<TransaccionCobroEntity> getTransaccionesCobrosList() {
+		return transaccionesCobrosList;
+	}
+
+	public void setTransaccionesCobrosList(List<TransaccionCobroEntity> transaccionesCobrosList) {
+		this.transaccionesCobrosList = transaccionesCobrosList;
+	}
 
 	public Long getNroRegistros() {
 		return nroRegistros;

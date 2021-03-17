@@ -5,9 +5,15 @@ import java.util.Date;
 public class BusquedaReportesDto {
 	public Long entidadId;
 	public String recaudadorId;
+	public String recaudador;
 	public String estado;
 	public Date fechaInicio;
 	public Date fechaFin;
+	public String export;
+	public Long archivoId;
+	public Date fechaCreacion;
+	public int paginacion;
+	
 	
 	
 	public BusquedaReportesDto() {

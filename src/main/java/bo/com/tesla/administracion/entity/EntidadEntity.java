@@ -25,6 +25,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
@@ -75,24 +77,33 @@ public class EntidadEntity implements Serializable {
     @Basic(optional = false)
     @Column(nullable = false, length = 10)
     private String estado;
+    @JsonIgnore
     @OneToMany(mappedBy = "entidadId")
     private List<TipoTransaccionEntity> tipoTransaccionEntityList;
     @OneToMany(mappedBy = "entidadId")
+    @JsonIgnore
     private List<ArchivoEntity> archivoEntityList;
     @OneToMany(mappedBy = "entidadId")
+    @JsonIgnore
     private List<TransaccionCobroEntity> transaccionCobroEntityList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
+    @JsonIgnore
     private List<ComprobanteCobroEntity> comprobanteCobroEntityList;
     @OneToMany(mappedBy = "entidad")
+    @JsonIgnore
     private List<EntidadRecaudadorEntity> entidadRecaudadorEntityList;
     @OneToMany(mappedBy = "entidadId")
+    @JsonIgnore
     private List<EmpleadoEntity> empleadoEntityList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
+    @JsonIgnore
     private List<DosificacionEntity> dosificacionEntityList;
     @JoinColumn(name = "tipo_entidad_id", referencedColumnName = "dominio_id", nullable = false)
     @ManyToOne(optional = false)
+    @JsonIgnore
     private DominioEntity tipoEntidad;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
+    @JsonIgnore
     private List<PlantillaEntity> plantillaEntityList;
 
     public EntidadEntity() {

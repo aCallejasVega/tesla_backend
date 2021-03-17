@@ -6,6 +6,8 @@
 package bo.com.tesla.administracion.entity;
 
 import java.io.Serializable;
+import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +19,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -25,76 +29,150 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "entidades_recaudadores", catalog = "exacta", schema = "tesla")
 @NamedQueries({
-    @NamedQuery(name = "EntidadeRecaudadorEntity.findAll", query = "SELECT e FROM EntidadRecaudadorEntity e")})
+		@NamedQuery(name = "EntidadeRecaudadorEntity.findAll", query = "SELECT e FROM EntidadRecaudadorEntity e") })
 public class EntidadRecaudadorEntity implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "entidad_recaudador_id", nullable = false)
-    private Long entidadRecaudadorId;
-    @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id")
-    @ManyToOne
-    private EntidadEntity entidad;
-    @JoinColumn(name = "recaudador_id", referencedColumnName = "recaudador_id")
-    @ManyToOne
-    private RecaudadorEntity recaudador;
+	private static final long serialVersionUID = 1L;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Basic(optional = false)
+	@Column(name = "entidad_recaudador_id", nullable = false)
+	private Long entidadRecaudadorId;
 
-    public EntidadRecaudadorEntity() {
-    }
+	@Basic(optional = false)
+	@Column(name = "usuario_creacion", nullable = false)
+	private long usuarioCreacion;
+	@Basic(optional = false)
+	@Column(name = "fecha_creacion", nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date fechaCreacion;
+	@Column(name = "usuario_modificacion")
+	private Long usuarioModificacion;
+	@Column(name = "fecha_modificacion")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date fechaModificacion;
+	@Basic(optional = false)
+	@Column(nullable = false, length = 15)
+	private String estado;
+	@Basic(optional = false)
+	@Column(nullable = false, length = 15)
+	private String transaccion;
 
-    public EntidadRecaudadorEntity(Long entidadRecaudadorId) {
-        this.entidadRecaudadorId = entidadRecaudadorId;
-    }
+	@JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id")
+	@ManyToOne
+	private EntidadEntity entidad;
+	@JoinColumn(name = "recaudador_id", referencedColumnName = "recaudador_id")
+	@ManyToOne
+	private RecaudadorEntity recaudador;
 
-    public Long getEntidadRecaudadorId() {
-        return entidadRecaudadorId;
-    }
+	public EntidadRecaudadorEntity() {
+	}
 
-    public void setEntidadRecaudadorId(Long entidadRecaudadorId) {
-        this.entidadRecaudadorId = entidadRecaudadorId;
-    }
+	public EntidadRecaudadorEntity(Long entidadRecaudadorId) {
+		this.entidadRecaudadorId = entidadRecaudadorId;
+	}
 
-    public EntidadEntity getEntidad() {
-        return entidad;
-    }
+	public Long getEntidadRecaudadorId() {
+		return entidadRecaudadorId;
+	}
 
-    public void setEntidad(EntidadEntity entidadId) {
-        this.entidad = entidadId;
-    }
+	public void setEntidadRecaudadorId(Long entidadRecaudadorId) {
+		this.entidadRecaudadorId = entidadRecaudadorId;
+	}
 
-    public RecaudadorEntity getRecaudador() {
-        return recaudador;
-    }
+	public EntidadEntity getEntidad() {
+		return entidad;
+	}
 
-    public void setRecaudador(RecaudadorEntity recaudadorId) {
-        this.recaudador = recaudadorId;
-    }
+	public void setEntidad(EntidadEntity entidadId) {
+		this.entidad = entidadId;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (entidadRecaudadorId != null ? entidadRecaudadorId.hashCode() : 0);
-        return hash;
-    }
+	public RecaudadorEntity getRecaudador() {
+		return recaudador;
+	}
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof EntidadRecaudadorEntity)) {
-            return false;
-        }
-        EntidadRecaudadorEntity other = (EntidadRecaudadorEntity) object;
-        if ((this.entidadRecaudadorId == null && other.entidadRecaudadorId != null) || (this.entidadRecaudadorId != null && !this.entidadRecaudadorId.equals(other.entidadRecaudadorId))) {
-            return false;
-        }
-        return true;
-    }
+	public void setRecaudador(RecaudadorEntity recaudadorId) {
+		this.recaudador = recaudadorId;
+	}
 
-    @Override
-    public String toString() {
-        return "bo.com.tesla.administracion.entity.EntidadeRecaudadorEntity[ entidadRecaudadorId=" + entidadRecaudadorId + " ]";
-    }
-    
+	@Override
+	public int hashCode() {
+		int hash = 0;
+		hash += (entidadRecaudadorId != null ? entidadRecaudadorId.hashCode() : 0);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		// TODO: Warning - this method won't work in the case the id fields are not set
+		if (!(object instanceof EntidadRecaudadorEntity)) {
+			return false;
+		}
+		EntidadRecaudadorEntity other = (EntidadRecaudadorEntity) object;
+		if ((this.entidadRecaudadorId == null && other.entidadRecaudadorId != null)
+				|| (this.entidadRecaudadorId != null && !this.entidadRecaudadorId.equals(other.entidadRecaudadorId))) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "bo.com.tesla.administracion.entity.EntidadeRecaudadorEntity[ entidadRecaudadorId=" + entidadRecaudadorId
+				+ " ]";
+	}
+
+	public long getUsuarioCreacion() {
+		return usuarioCreacion;
+	}
+
+	public void setUsuarioCreacion(long usuarioCreacion) {
+		this.usuarioCreacion = usuarioCreacion;
+	}
+
+	public Date getFechaCreacion() {
+		return fechaCreacion;
+	}
+
+	public void setFechaCreacion(Date fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
+	}
+
+	public Long getUsuarioModificacion() {
+		return usuarioModificacion;
+	}
+
+	public void setUsuarioModificacion(Long usuarioModificacion) {
+		this.usuarioModificacion = usuarioModificacion;
+	}
+
+	public Date getFechaModificacion() {
+		return fechaModificacion;
+	}
+
+	public void setFechaModificacion(Date fechaModificacion) {
+		this.fechaModificacion = fechaModificacion;
+	}
+
+	public String getEstado() {
+		return estado;
+	}
+
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
+
+	public String getTransaccion() {
+		return transaccion;
+	}
+
+	public void setTransaccion(String transaccion) {
+		this.transaccion = transaccion;
+	}
+	
+	
+	
+	
+
 }

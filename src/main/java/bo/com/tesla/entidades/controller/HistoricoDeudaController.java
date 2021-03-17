@@ -1,7 +1,9 @@
 package bo.com.tesla.entidades.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import bo.com.tesla.administracion.entity.ArchivoEntity;
+import bo.com.tesla.administracion.entity.DominioEntity;
 import bo.com.tesla.administracion.entity.EntidadEntity;
 import bo.com.tesla.administracion.entity.HistoricoDeudaEntity;
 import bo.com.tesla.administracion.entity.LogSistemaEntity;
@@ -28,6 +31,7 @@ import bo.com.tesla.entidades.dto.ArchivoDto;
 import bo.com.tesla.entidades.dto.DeudasClienteDto;
 import bo.com.tesla.entidades.services.IArchivoService;
 import bo.com.tesla.entidades.services.IEntidadService;
+import bo.com.tesla.recaudaciones.dto.EstadoTablasDto;
 import bo.com.tesla.recaudaciones.services.IHistoricoDeudaService;
 import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegUsuarioService;
@@ -53,6 +57,9 @@ public class HistoricoDeudaController {
 
 	@Autowired
 	private IEntidadService entidadService;
+	
+	
+	
 
 	@GetMapping(path = { "/findArchivos/{paginacion}",
 			"/findArchivos/{paginacion}/{fechaInicio}/{fechaFin}/{estado}" }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -155,6 +162,29 @@ public class HistoricoDeudaController {
 			this.logger.error("This is cause", e.getCause());
 			response.put("mensaje",
 					"Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+		}
+
+	}
+	
+	@GetMapping(path = "/findEstadoHistorico")
+	public ResponseEntity<?> findEstadoHistorico( 
+			Authentication authentication) throws Exception {
+
+		Map<String, Object> response = new HashMap<>();
+		List<EstadoTablasDto> estadosList=new ArrayList<>();
+		
+		try {
+			estadosList=this.historicoDeudaService.findEstadoHistorico();
+			if(estadosList.isEmpty()) {
+				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
+			}
+			
+			response.put("data", estadosList);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
 

@@ -22,6 +22,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
@@ -61,13 +63,14 @@ public class RecaudadorEntity implements Serializable {
     private Date fechaModificacion;
     @Column(length = 15)
     private String estado;
+    @JsonIgnore
     @OneToMany(mappedBy = "recaudador")
     private List<EntidadRecaudadorEntity> entidadRecaudadorEntityList;
     @OneToMany(mappedBy = "recaudadorId")
+    @JsonIgnore
     private List<SucursalEntity> sucursalEntityList;
-    @Column(name = "comprobante_en_uno")
-    private Boolean comprobanteEnUno;
-
+    
+    
 
 
     public RecaudadorEntity() {
@@ -186,15 +189,15 @@ public class RecaudadorEntity implements Serializable {
         this.sucursalEntityList = sucursalEntityList;
     }
 
-    public Boolean getComprobanteEnUno() {
-        return comprobanteEnUno;
-    }
+    
+    
+    
+    
+   
 
-    public void setComprobanteEnUno(Boolean comprobanteEnUno) {
-        this.comprobanteEnUno = comprobanteEnUno;
-    }
+    
 
-    @Override
+	@Override
     public int hashCode() {
         int hash = 0;
         hash += (recaudadorId != null ? recaudadorId.hashCode() : 0);

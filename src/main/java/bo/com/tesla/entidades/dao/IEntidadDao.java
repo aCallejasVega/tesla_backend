@@ -1,5 +1,7 @@
 package bo.com.tesla.entidades.dao;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,4 +19,14 @@ public interface IEntidadDao extends JpaRepository<EntidadEntity, Long>  {
 			+ " left join EmpleadoEntity e on e.personaId.personaId=p.personaId  "
 			+ " Where u.estado='ACTIVO' AND e.entidadId.estado='ACTIVO' AND u.usuarioId=:usuarioId")
 	public EntidadEntity findEntidadByUserId(@Param("usuarioId") Long usuarioId);
+	
+	@Query("select e "
+			+ " from RecaudadorEntity r "
+			+ " left join EntidadRecaudadorEntity er on er.recaudador.recaudadorId=r.recaudadorId "
+			+ " left join EntidadEntity e on e.entidadId=er.entidad.entidadId "
+			+ " where "
+			+ " er.estado='ACTIVO' "
+			+ " and r.recaudadorId= :recaudadorId ")
+	public List<EntidadEntity> findEntidadByRecaudacionId(@Param("recaudadorId") Long recaudadorId);
+	
 }

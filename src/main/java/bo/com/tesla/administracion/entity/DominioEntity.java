@@ -23,6 +23,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
@@ -57,22 +59,31 @@ public class DominioEntity implements Serializable {
     private Date fechaModificacion;
     @Column(length = 10)
     private String estado;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "metodoCobroId")
     private List<CobroClienteEntity> cobroClienteEntityList;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "motivoCancelacionId")
     private List<CancelacionEntity> cancelacionEntityList;
+    @JsonIgnore
     @OneToMany(mappedBy = "tipoCancelacionId")
     private List<CancelacionEntity> cancelacionEntityList1;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoDocumentoCobroId")
     private List<DosificacionEntity> dosificacionEntityList;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciudadId")
     private List<PersonaEntity> personaEntityList;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoDocumentoId")
     private List<PersonaEntity> personaEntityList1;
+    @JsonIgnore
     @OneToMany(mappedBy = "departamentoId")
     private List<SucursalEntity> sucursalEntityList;
+    @JsonIgnore
     @OneToMany(mappedBy = "localidadId")
     private List<SucursalEntity> sucursalEntityList1;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoEntidad")
     private List<EntidadEntity> entidadEntityList;
 

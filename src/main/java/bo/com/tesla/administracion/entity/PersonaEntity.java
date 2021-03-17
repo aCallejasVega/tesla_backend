@@ -6,6 +6,7 @@
 package bo.com.tesla.administracion.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
@@ -30,8 +31,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "personas", catalog = "exacta", schema = "tesla")
-@NamedQueries({
-    @NamedQuery(name = "PersonaEntity.findAll", query = "SELECT p FROM PersonaEntity p")})
+
 public class PersonaEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -70,7 +70,7 @@ public class PersonaEntity implements Serializable {
     @Column(length = 15)
     private String estado;
     @Column(length = 15)
-    private String transaccion;
+    private String transaccion;  
     @OneToMany(mappedBy = "personaId")
     private List<EmpleadoEntity> empleadoEntityList;
     @JoinColumn(name = "ciudad_id", referencedColumnName = "dominio_id", nullable = false)
@@ -239,8 +239,9 @@ public class PersonaEntity implements Serializable {
     public void setSegUsuarioEntityList(List<SegUsuarioEntity> segUsuarioEntityList) {
         this.segUsuarioEntityList = segUsuarioEntityList;
     }
-
-    @Override
+    
+    
+	@Override
     public int hashCode() {
         int hash = 0;
         hash += (personaId != null ? personaId.hashCode() : 0);

@@ -1,5 +1,7 @@
 package bo.com.tesla.recaudaciones.services;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +17,8 @@ import bo.com.tesla.administracion.entity.HistoricoDeudaEntity;
 import bo.com.tesla.entidades.dto.ConceptoDto;
 import bo.com.tesla.entidades.dto.DeudasClienteDto;
 import bo.com.tesla.recaudaciones.dao.IHistoricoDeudaDao;
+import bo.com.tesla.recaudaciones.dto.EstadoTablasDto;
+import bo.com.tesla.recaudaciones.dto.RecaudadoraDto;
 
 @Service
 public class HistoricoDeudaService implements IHistoricoDeudaService {
@@ -60,6 +64,42 @@ public class HistoricoDeudaService implements IHistoricoDeudaService {
 		}
 		return historicoDeudasList;
 		
+	}
+
+	@Override
+	public List<EstadoTablasDto> findEstadoHistorico() {
+	
+		return this.iHistoricoDeudaDao.findEstadoHistorico();
+	}
+
+	@Override
+	public List<DeudasClienteDto> findDeudasByArchivoIdAndRecaudadorIdAndEstado(Long archivoId,Long recaudadorId, String estado) {
+		
+		return this.iHistoricoDeudaDao.findDeudasByArchivoIdAndRecaudadorIdAndEstado(archivoId,recaudadorId, estado);
+	}
+	
+	@Override
+	public List<DeudasClienteDto> findDeudasByArchivoIdAndEstado(Long archivoId, String estado) {
+		
+		return this.iHistoricoDeudaDao.findDeudasByArchivoIdAndEstado(archivoId, estado);
+	}
+
+	@Override
+	public BigDecimal getMontoTotalCobrados(Long archivoId, Long recaudadorId) {
+		
+		return this.iHistoricoDeudaDao.getMontoTotalCobrados(archivoId, recaudadorId);
+	}
+
+	@Override
+	public List<RecaudadoraDto> getMontoTotalPorRecaudadora(Long archivoId) {
+		
+		List<Object[]> objectList=this.iHistoricoDeudaDao.getMontoTotalPorRecaudadora(archivoId);
+		List<RecaudadoraDto> recaudadorList=new ArrayList<>();
+		for (Object[] objects : objectList) {
+			RecaudadoraDto recaudador=new RecaudadoraDto(objects[0]+"",new BigDecimal(objects[1]+""));
+			recaudadorList.add(recaudador);
+		}		
+		return recaudadorList;
 	}
     
 }
