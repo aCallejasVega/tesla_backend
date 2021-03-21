@@ -1,6 +1,9 @@
 package bo.com.tesla.recaudaciones.services;
 
 import bo.com.tesla.administracion.entity.*;
+import bo.com.tesla.administracion.services.IEntidadComisionService;
+import bo.com.tesla.administracion.services.IRecaudadorComisionService;
+import bo.com.tesla.entidades.dao.IArchivoDao;
 import bo.com.tesla.recaudaciones.dao.*;
 import bo.com.tesla.recaudaciones.dto.ClienteDto;
 import bo.com.tesla.recaudaciones.dto.DeudaClienteDto;
@@ -41,6 +44,18 @@ public class CobroClienteService implements ICobroClienteService {
     @Autowired
     private IHistoricoDeudaDao iHistoricoDeudaDao;
 
+    @Autowired
+    private IRecaudadorDao iRecaudadorDao;
+
+    @Autowired
+    private IEntidadComisionService iEntidadComisionService;
+
+    @Autowired
+    private IRecaudadorComisionService iRecaudadorComisionService;
+
+    @Autowired
+    private IArchivoDao iArchivoDao;
+
     @Override
     public List<CobroClienteEntity> saveAllCobrosClientes(List<CobroClienteEntity> cobroClienteEntities) {
         return this.iCobroClienteDao.saveAll(cobroClienteEntities);
@@ -52,10 +67,6 @@ public class CobroClienteService implements ICobroClienteService {
                                                      Long usuarioId,
                                                      Long metodoPagoId,
                                                      TransaccionCobroEntity transaccionCobroEntity) {
-        Optional<DominioEntity> optionalDominioEntity = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(metodoPagoId, "metodo_pago_id", "ACTIVO");
-        if(!optionalDominioEntity.isPresent()) {
-            throw new Technicalexception("No existe el dominio='metodo_pago_id' para dominioId=" + metodoPagoId );
-        }
 
         Optional<HistoricoDeudaEntity> historicoDeudaEntityOptional = iHistoricoDeudaDao.findByDeudaClienteId(deudaClienteEntity.getDeudaClienteId());
         if(!historicoDeudaEntityOptional.isPresent()) {
@@ -64,7 +75,6 @@ public class CobroClienteService implements ICobroClienteService {
 
         CobroClienteEntity cobroClienteEntity = new CobroClienteEntity();
         cobroClienteEntity.setArchivoId(deudaClienteEntity.getArchivoId());
-        cobroClienteEntity.setMetodoCobro(optionalDominioEntity.get());
         cobroClienteEntity.setNroRegistro(deudaClienteEntity.getNroRegistro());
         cobroClienteEntity.setCodigoCliente(deudaClienteEntity.getCodigoCliente());
         cobroClienteEntity.setNombreCliente(deudaClienteEntity.getNombreCliente());
@@ -105,20 +115,45 @@ public class CobroClienteService implements ICobroClienteService {
         }
 
         return  cobroClienteEntity;
-
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Technicalexception.class)
     public void postCobrarDeudas(ClienteDto clienteDto,
                                   Long usuarioId,
-                                  Long metodoPagoId) throws Technicalexception {
+                                  Long metodoCobroId) throws Technicalexception {
         try{
+            //Obtencion Datos Entidad
             Optional<EntidadEntity> entidadEntityOptional = iEntidadRDao.findByEntidadIdAndEstado(clienteDto.servicioDeudaDtoList.get(0).entidadId, "ACTIVO");
             if(!entidadEntityOptional.isPresent()) {
                 throw new Technicalexception("No existe Entidad, por tanto no hay configuracion de comprobanteEnUno");
             }
-            boolean comprobanteEnUno = entidadEntityOptional.get().getComprobanteEnUno();
 
+            //Obtencion de Archivo
+            ArchivoEntity archivoEntity = iArchivoDao.findByEstado("ACTIVO", clienteDto.servicioDeudaDtoList.get(0).entidadId);
+            if(archivoEntity == null) {
+                throw new Technicalexception("No se encontró la archivoId" + entidadEntityOptional.get().getEntidadId());
+            }
+
+            //Obtencon Datos de Recaudador
+            Optional<RecaudadorEntity> recaudadorEntityOptional = iRecaudadorDao.findRecaudadorByUserId(usuarioId);
+            if(!recaudadorEntityOptional.isPresent()) {
+                throw new Technicalexception("El usuarioId=" + usuarioId + " no esta registrado en ninguna sucursal de recaudadción");
+            }
+
+            //Obtencion de comisión entidad
+            EntidadComisionEntity entidadComisionEntity = iEntidadComisionService.getEntidadComisionActual(entidadEntityOptional.get());
+
+            //Obtencion de comisión recaudadora
+            RecaudadorComisionEntity recaudadorComisionEntity = iRecaudadorComisionService.getRecaudadorComisionActual(recaudadorEntityOptional.get());
+
+            //Verificar el dominio metodoPagoId
+            Optional<DominioEntity> metodoCobroOptional = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(metodoCobroId, "metodo_cobro_id", "ACTIVO");
+            if(!metodoCobroOptional.isPresent()) {
+                throw new Technicalexception("No existe el dominio='metodo_cobro_id' para dominioId=" + metodoCobroId );
+            }
+
+            //Para emision de comprobante
+            boolean comprobanteEnUno = entidadEntityOptional.get().getComprobanteEnUno();
             /******************************************************************************************/
             //Lamar a Facturacion o Recibo
             /******************************************************************************************/
@@ -136,13 +171,14 @@ public class CobroClienteService implements ICobroClienteService {
                 }
 
                 //Cargar transaccion las agrupaciones
-                TransaccionCobroEntity transaccionCobroEntity = iTransaccionCobroService.loadTransaccionCobro(servicioDeudaDto, usuarioId, clienteDto.nombreCliente, clienteDto.nroDocumento);
+                TransaccionCobroEntity transaccionCobroEntity = iTransaccionCobroService.loadTransaccionCobro(servicioDeudaDto, entidadEntityOptional.get(), usuarioId, clienteDto.nombreCliente, clienteDto.nroDocumento,
+                        entidadComisionEntity, recaudadorEntityOptional.get(), recaudadorComisionEntity, archivoEntity, metodoCobroOptional.get());
 
                 List<CobroClienteEntity> cobroClienteEntityList = new ArrayList<>();
                 //Recorrer cada deuda asociada a la agrupacion
                 for(DeudaClienteEntity deudaClienteEntity : deudaClienteEntityList) {
                     //Cargando Cobro
-                    CobroClienteEntity cobroClienteEntity = loadCobroClienteEntity(deudaClienteEntity, servicioDeudaDto.deudaClienteDtos, usuarioId, metodoPagoId, transaccionCobroEntity);
+                    CobroClienteEntity cobroClienteEntity = loadCobroClienteEntity(deudaClienteEntity, servicioDeudaDto.deudaClienteDtos, usuarioId, metodoCobroId, transaccionCobroEntity);
                     cobroClienteEntityList.add(cobroClienteEntity);
 
                 }

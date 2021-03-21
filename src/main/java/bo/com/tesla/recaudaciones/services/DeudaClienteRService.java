@@ -38,24 +38,26 @@ public class DeudaClienteRService implements IDeudaClienteRService {
         Long key = 0L;
         for (ServicioDeudaDto servicioDeuda : servicioDeudaDtos) {
             servicioDeuda.key = key;
-            List<DeudaClienteDto> deudaClienteDtos = iDeudaClienteRDao.findByEntidadByServicios(servicioDeuda.entidadId,
+            List<DeudaClienteDto> deudaClienteDtosDeudas = iDeudaClienteRDao.findByEntidadByServiciosDeudas(servicioDeuda.entidadId,
                                                                             servicioDeuda.tipoServicio,
                                                                             servicioDeuda.servicio,
                                                                             servicioDeuda.periodo,
                                                                             codigoCliente);
-            if(deudaClienteDtos.isEmpty()){
+            /*if(deudaClienteDtos.isEmpty()){
                 throw new Technicalexception("No existen registros en deudas para agrupación");
             }
             List<DeudaClienteDto> deudaClienteDtosDeudas =  deudaClienteDtos.stream()
                                                                 .filter(d -> d.tipo == 'D')
                                                                 .collect(Collectors
-                                                                .toList());
+                                                                .toList());*/
             if(deudaClienteDtosDeudas.isEmpty()) {
                 throw new Technicalexception("No existen DEUDAS para EntidadId=" + entidadId + " y CodigoCliente=" + codigoCliente);
             }
             servicioDeuda.deudaClienteDtos = deudaClienteDtosDeudas;
             servicioDeuda.nombreCliente = deudaClienteDtosDeudas.get(0).nombreCliente;
             servicioDeuda.codigoCliente = deudaClienteDtosDeudas.get(0).codigoCliente;
+            servicioDeuda.nroDocumento = deudaClienteDtosDeudas.get(0).nroDocumento;
+            //servicioDeuda.archivoId = deudaClienteDtosDeudas.get(0).archivoId;
             //Para la edición verificar
             Boolean esEditable = deudaClienteDtosDeudas.stream().anyMatch(d -> !d.esPostpago && d.subTotal.compareTo(BigDecimal.ZERO) == 0);
             servicioDeuda.editable = esEditable;
@@ -66,6 +68,7 @@ public class DeudaClienteRService implements IDeudaClienteRService {
         return servicioDeudaDtos;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<DeudaClienteEntity> getAllDeudasByCliente(Long entidadId,
                                                           String tipoServicio,

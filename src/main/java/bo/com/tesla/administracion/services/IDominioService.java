@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface IDominioService {
     public List<DominioDto> getListDominios(String dominio);
+    public List<DominioDto> getLstDominiosByAgrupador(Long agrupadorId);
 }

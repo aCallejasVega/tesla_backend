@@ -1,11 +1,11 @@
 package bo.com.tesla.administracion.controllers;
 
-
 import bo.com.tesla.administracion.dto.EntidadComisionAdmDto;
+import bo.com.tesla.administracion.dto.RecaudadorComisionAdmDto;
 import bo.com.tesla.administracion.entity.LogSistemaEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.administracion.services.IEntidadComisionService;
-import bo.com.tesla.recaudaciones.controllers.EntidadController;
+import bo.com.tesla.administracion.services.IRecaudadorComisionService;
 import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegUsuarioService;
 import bo.com.tesla.useful.config.Technicalexception;
@@ -23,12 +23,13 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("api/comisionesentidades")
-public class EntidadComisionController {
-    private Logger logger = LoggerFactory.getLogger(EntidadComisionController.class);
+@RequestMapping("api/comisionesrecaudadores")
+public class RecaudadorComisionController {
+
+    private Logger logger = LoggerFactory.getLogger(RecaudadorComisionController.class);
 
     @Autowired
-    private IEntidadComisionService entidadComisionService;
+    private IRecaudadorComisionService recaudadorComisionService;
 
     @Autowired
     private ILogSistemaService logSistemaService;
@@ -37,22 +38,22 @@ public class EntidadComisionController {
     private ISegUsuarioService segUsuarioService;
 
 
-    /*********************ABM ENTIDADES**************************/
+    /*********************ABM **************************/
     @PostMapping("")
-    public ResponseEntity<?> addUpdateEntidadComision(@RequestBody EntidadComisionAdmDto entidadComisionAdmDto,
+    public ResponseEntity<?> addUpdateRecaudadorComision(@RequestBody RecaudadorComisionAdmDto recaudadorComisionAdmDto,
                                                       Authentication authentication) {
         SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         Map<String, Object> response = new HashMap<>();
         try {
-            Boolean esModificacion = entidadComisionAdmDto.entidadComisionId != null;
-            entidadComisionAdmDto = entidadComisionService.addUpdateEntidadComision(entidadComisionAdmDto, usuario.getUsuarioId());
+            Boolean esModificacion = recaudadorComisionAdmDto.recaudadorComisionId != null;
+            recaudadorComisionAdmDto = recaudadorComisionService.addUpdateRecaudadorComision(recaudadorComisionAdmDto, usuario.getUsuarioId());
             response.put("status", true);
             response.put("message", esModificacion ? "Se realizó la actualización del registro correctamente." : "Se realizó el registro correctamente.");
-            response.put("result", entidadComisionAdmDto);
+            response.put("result", recaudadorComisionAdmDto);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Technicalexception e) {
             LogSistemaEntity log=new LogSistemaEntity();
-            log.setModulo("ADMINISTRACION.ENTIDADCOMISION");
+            log.setModulo("ADMINISTRACION.RECAUDADORCOMISION");
             log.setController("POST: api/entidades");
             log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
             log.setMensaje(e.getMessage()+"");
@@ -69,17 +70,17 @@ public class EntidadComisionController {
         }
     }
 
-    @GetMapping("/{entidadComisionId}")
-    public ResponseEntity<?> getEntidadComisionById(@PathVariable Long entidadComisionId,
+    @GetMapping("/{recaudadorComisionId}")
+    public ResponseEntity<?> getEntidadComisionById(@PathVariable Long recaudadorComisionId,
                                                     Authentication authentication) {
         SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         Map<String, Object> response = new HashMap<>();
         try {
-            EntidadComisionAdmDto entidadComisionAdmDto = entidadComisionService.getEntidadComisionById(entidadComisionId);
-            if(entidadComisionAdmDto != null ) {
+            RecaudadorComisionAdmDto recaudadorComisionAdmDto = recaudadorComisionService.getRecaudadorComisionById(recaudadorComisionId);
+            if(recaudadorComisionAdmDto != null ) {
                 response.put("status", true);
                 response.put("message", "El registro fue encontrado.");
-                response.put("result", entidadComisionAdmDto);
+                response.put("result", recaudadorComisionAdmDto);
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
                 response.put("status", false);
@@ -90,8 +91,8 @@ public class EntidadComisionController {
 
         } catch (Technicalexception e) {
             LogSistemaEntity log=new LogSistemaEntity();
-            log.setModulo("ADMINISTRACION.ENTIDADCOMISION");
-            log.setController("GET: api/comisionesentidades/" + entidadComisionId);
+            log.setModulo("ADMINISTRACION.RECAUDADORCOMISION");
+            log.setController("GET: api/comisionesrecaudadores/" + recaudadorComisionId);
             log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
             log.setMensaje(e.getMessage()+"");
             log.setUsuarioCreacion(usuario.getUsuarioId());
@@ -107,17 +108,17 @@ public class EntidadComisionController {
         }
     }
 
-    @GetMapping("/entidades/{entidadId}")
-    public ResponseEntity<?> getListEntidadesComisionesByEntidad(@PathVariable Long entidadId,
-            Authentication authentication) {
+    @GetMapping("/recaudadores/{recaudadorId}")
+    public ResponseEntity<?> getListRecaudadoressComisionesByEntidad(@PathVariable Long recaudadorId,
+                                                                 Authentication authentication) {
         SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         Map<String, Object> response = new HashMap<>();
         try {
-            List<EntidadComisionAdmDto> entidadComisionAdmDtos = entidadComisionService.getAllEntidadesComisionesByEntidadId(entidadId);
-            if(!entidadComisionAdmDtos.isEmpty()) {
+            List<RecaudadorComisionAdmDto> recaudadorComisionAdmDtos = recaudadorComisionService.getAllRecaudadoresComisionesByRecaudadorId(recaudadorId);
+            if(!recaudadorComisionAdmDtos.isEmpty()) {
                 response.put("status", true);
                 response.put("message", "El listado fue encontrado.");
-                response.put("result", entidadComisionAdmDtos);
+                response.put("result", recaudadorComisionAdmDtos);
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
                 response.put("status", false);
@@ -127,7 +128,7 @@ public class EntidadComisionController {
             }
         } catch (Technicalexception e) {
             LogSistemaEntity log=new LogSistemaEntity();
-            log.setModulo("ADMINISTRACION.ENTIDADCOMISION");
+            log.setModulo("ADMINISTRACION.RECAUDADORCOMISION");
             log.setController("GET: api/comisiones");
             log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
             log.setMensaje(e.getMessage()+"");
@@ -143,8 +144,4 @@ public class EntidadComisionController {
             return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
-
-
-
-
 }

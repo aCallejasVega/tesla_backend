@@ -27,15 +27,16 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
 
 
     @Query("select new bo.com.tesla.recaudaciones.dto.ServicioDeudaDto( "
-            + " d.tipoServicio, d.servicio, d.periodo, d.archivoId.entidadId.entidadId, sum(d.subTotal)) "
+            + " d.archivoId.entidadId.entidadId, d.tipoServicio, d.servicio, d.periodo, sum(d.subTotal)) "
             + " from DeudaClienteEntity d "
             + " where d.archivoId.entidadId.entidadId = :entidadId "
+            + " and d.archivoId.entidadId.estado = 'ACTIVO' "
             + " and d.archivoId.estado = 'ACTIVO' "
             + " and d.codigoCliente = :codigoCliente "
             + " group by d.tipoServicio, d.servicio, d.periodo, d.archivoId.entidadId.entidadId")
     List<ServicioDeudaDto> groupByDeudasClientes(@Param("entidadId") Long entidadId , @Param("codigoCliente") String codigoCliente );
 
-
+/*
     @Query("select new  bo.com.tesla.recaudaciones.dto.DeudaClienteDto( "
             + " d.deudaClienteId, d.nroRegistro, d.cantidad, d.concepto, d.montoUnitario, d.subTotal, "
             + " d.tipo, d.datoExtras, d.tipoComprobante, d.periodoCabecera, d.codigoCliente, d.nroDocumento, d.nombreCliente, d.esPostpago, CASE WHEN d.esPostpago = false AND d.subTotal = 0 AND d.tipo = 'D' THEN true ELSE false END) "
@@ -47,6 +48,24 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
             + " and d.periodo= :periodo"
             + " and d.codigoCliente= :codigoCliente ")
     List<DeudaClienteDto> findByEntidadByServicios(
+            @Param("entidadId") Long entidadId,
+            @Param("tipoServicio") String tipoServicio,
+            @Param("servicio") String servicio,
+            @Param("periodo") String periodo,
+            @Param("codigoCliente") String codigoCliente);*/
+
+    @Query("select new  bo.com.tesla.recaudaciones.dto.DeudaClienteDto( "
+            + " d.deudaClienteId, d.archivoId.archivoId, d.cantidad, d.concepto, d.montoUnitario, d.subTotal, "
+            + " d.tipoComprobante, d.periodoCabecera, d.codigoCliente, d.nroDocumento, d.nombreCliente, d.esPostpago, CASE WHEN d.esPostpago = false AND d.subTotal = 0 AND d.tipo = 'D' THEN true ELSE false END) "
+            + " from DeudaClienteEntity d "
+            + " where d.archivoId.entidadId.entidadId = :entidadId "
+            + " and d.archivoId.estado = 'ACTIVO' "
+            + " and d.tipoServicio= :tipoServicio "
+            + " and d.servicio= :servicio "
+            + " and d.periodo= :periodo"
+            + " and d.codigoCliente= :codigoCliente "
+            + " and d.tipo = 'D'")
+    List<DeudaClienteDto> findByEntidadByServiciosDeudas(
             @Param("entidadId") Long entidadId,
             @Param("tipoServicio") String tipoServicio,
             @Param("servicio") String servicio,

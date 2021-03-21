@@ -10,6 +10,7 @@ public class EntidadAdmDto {
     @NotBlank(message = "El NOMBRE es obligatorio.")
     public String nombre;
     public String nombreComercial;
+    @NotBlank(message = "La DIRECCION es obligatoria.")
     public String direccion;
     public String telefono;
     public String nit;

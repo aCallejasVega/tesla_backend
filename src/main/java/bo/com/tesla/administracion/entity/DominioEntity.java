@@ -9,19 +9,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 /**
  *
@@ -58,7 +46,7 @@ public class DominioEntity implements Serializable {
     @Column(length = 10)
     private String estado;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "metodoCobro")
-    private List<CobroClienteEntity> cobroClienteEntityList;
+    private List<TransaccionCobroEntity> transaccionCobroEntityList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "motivoCancelacionId")
     private List<CancelacionEntity> cancelacionEntityList;
     @OneToMany(mappedBy = "tipoCancelacionId")
@@ -83,6 +71,12 @@ public class DominioEntity implements Serializable {
     private List<RecaudadorEntity> recaudadorEntityList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoComision")
     private List<EntidadComisionEntity> entidadComisionEntityList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dominio")
+    private List<AgrupadorDominioEntity> agrupadorDominioEntityList;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "dominio")
+    private AgrupadorDominioEntity agrupadorDominioEntity;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoComision")
+    private List<RecaudadorComisionEntity> recaudadorComisionEntityLst;
 
 
     public DominioEntity() {
@@ -163,12 +157,12 @@ public class DominioEntity implements Serializable {
         this.estado = estado;
     }
 
-    public List<CobroClienteEntity> getCobroClienteEntityList() {
-        return cobroClienteEntityList;
+    public List<TransaccionCobroEntity> getTransaccionCobroEntityList() {
+        return transaccionCobroEntityList;
     }
 
-    public void setCobroClienteEntityList(List<CobroClienteEntity> cobroClienteEntityList) {
-        this.cobroClienteEntityList = cobroClienteEntityList;
+    public void setTransaccionCobroEntityList(List<TransaccionCobroEntity> transaccionCobroEntityList) {
+        this.transaccionCobroEntityList = transaccionCobroEntityList;
     }
 
     public List<CancelacionEntity> getCancelacionEntityList() {
@@ -257,6 +251,14 @@ public class DominioEntity implements Serializable {
 
     public void setRecaudadorEntityList(List<RecaudadorEntity> recaudadorEntityList) {
         this.recaudadorEntityList = recaudadorEntityList;
+    }
+
+    public List<RecaudadorComisionEntity> getRecaudadorComisionEntityLst() {
+        return recaudadorComisionEntityLst;
+    }
+
+    public void setRecaudadorComisionEntityLst(List<RecaudadorComisionEntity> recaudadorComisionEntityLst) {
+        this.recaudadorComisionEntityLst = recaudadorComisionEntityLst;
     }
 
     @Override

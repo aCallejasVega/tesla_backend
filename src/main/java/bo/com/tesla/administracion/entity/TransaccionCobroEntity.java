@@ -69,6 +69,8 @@ public class TransaccionCobroEntity implements Serializable {
     @Basic(optional = false)
     @Column(nullable = false, precision = 17, scale = 2)
     private BigDecimal comision;
+    @Column(name = "comision_recaudacion", nullable = false, precision = 17, scale = 2)
+    private BigDecimal comisionRecaudacion;
     @Column(name = "nombre_cliente_archivo", length = 200)
     private String nombreClienteArchivo;
     @Column(name = "nro_documento_cliente_archivo", length = 15)
@@ -89,11 +91,17 @@ public class TransaccionCobroEntity implements Serializable {
     @JoinColumn(name = "recaudador_id", referencedColumnName = "recaudador_id", nullable = false)
     @ManyToOne(optional = false)
     private RecaudadorEntity recaudador;
-
+    @JoinColumn(name = "recaudador_comision_id", referencedColumnName = "recaudador_comision_id", nullable = false)
+    @ManyToOne(optional = false)
+    private RecaudadorComisionEntity recaudadorComision;
 
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "transaccionCobroId")
     private List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList;
+
+    @JoinColumn(name = "metodo_cobro_id", referencedColumnName = "dominio_id", nullable = false)
+    @ManyToOne(optional = false)
+    private DominioEntity metodoCobro;
 
     public TransaccionCobroEntity() {
     }
@@ -300,6 +308,30 @@ public class TransaccionCobroEntity implements Serializable {
 
     public void setEntidadComision(EntidadComisionEntity entidadComision) {
         this.entidadComision = entidadComision;
+    }
+
+    public BigDecimal getComisionRecaudacion() {
+        return comisionRecaudacion;
+    }
+
+    public void setComisionRecaudacion(BigDecimal comisionRecaudacion) {
+        this.comisionRecaudacion = comisionRecaudacion;
+    }
+
+    public RecaudadorComisionEntity getRecaudadorComision() {
+        return recaudadorComision;
+    }
+
+    public void setRecaudadorComision(RecaudadorComisionEntity recaudadorComision) {
+        this.recaudadorComision = recaudadorComision;
+    }
+
+    public DominioEntity getMetodoCobro() {
+        return metodoCobro;
+    }
+
+    public void setMetodoCobro(DominioEntity metodoCobroId) {
+        this.metodoCobro = metodoCobroId;
     }
 
     @Override

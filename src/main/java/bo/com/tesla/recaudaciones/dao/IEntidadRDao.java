@@ -91,8 +91,8 @@ public interface IEntidadRDao extends JpaRepository<EntidadEntity, Long> {
             " where er.recaudador.recaudadorId = :pRecaudadorId " +
             " and er.entidad.tipoEntidad.dominioId = :pTipoEntidadId " +
             " and er.entidad.estado = 'ACTIVO' " +
-            " and er.entidad.estado = 'ACTIVO' " +
-            " and er.recaudador.estado = 'ACTIVO'")
+            " and er.recaudador.estado = 'ACTIVO' " +
+            " and er.estado = 'ACTIVO'")
     List<EntidadDto> findByRecaudadoraIdAndTipoEntidadId(@Param("pRecaudadorId") Long pRecaudadorId, @Param("pTipoEntidadId") Long pTipoEntidadId);
 
     @Query(value = "select new bo.com.tesla.recaudaciones.dto.EntidadDto(" +
@@ -100,8 +100,8 @@ public interface IEntidadRDao extends JpaRepository<EntidadEntity, Long> {
             " from EntidadRecaudadorEntity er " +
             " where er.recaudador.recaudadorId = :pRecaudadorId " +
             " and er.entidad.estado = 'ACTIVO' " +
-            " and er.entidad.estado = 'ACTIVO' " +
-            " and er.recaudador.estado = 'ACTIVO'")
+            " and er.recaudador.estado = 'ACTIVO' " +
+            " and er.estado = 'ACTIVO'")
     List<EntidadDto> findByRecaudadoraId(@Param("pRecaudadorId") Long pRecaudadorId);
 
     Optional<EntidadEntity> findByEntidadId(Long entidadId);

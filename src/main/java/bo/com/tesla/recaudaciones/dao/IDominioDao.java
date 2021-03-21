@@ -13,15 +13,15 @@ import java.util.Optional;
 @Repository
 public interface IDominioDao extends JpaRepository<DominioEntity, Long> {
 
-    //Optional<DominioEntity> findByDominioId(Long dominioId);
-    //Optional<DominioEntity> findByDominioIdAndDominio(Long dominioId, String dominio);
     Optional<DominioEntity> getDominioEntityByDominioIdAndDominioAndEstado(Long dominioId, String dominio, String estado);
 
     @Query(value = "select distinct new bo.com.tesla.recaudaciones.dto.DominioDto( " +
             " er.entidad.tipoEntidad.dominioId, er.entidad.tipoEntidad.dominio, er.entidad.tipoEntidad.descripcion, er.entidad.tipoEntidad.abreviatura ) " +
             " from EntidadRecaudadorEntity er " +
             " where er.recaudador.recaudadorId = :pRecaudadorId " +
-            " and er.entidad.estado = 'ACTIVO'")
+            " and er.entidad.estado = 'ACTIVO' " +
+            " and er.recaudador.estado = 'ACTIVO' " +
+            " and er.estado = 'ACTIVO'")
     List<DominioDto> findTipoEntidadByRecaudadorId(@Param("pRecaudadorId") Long pRecaudadorId);
 
     @Query(value = "SELECT new bo.com.tesla.recaudaciones.dto.DominioDto( " +
@@ -30,4 +30,12 @@ public interface IDominioDao extends JpaRepository<DominioEntity, Long> {
             "WHERE d.estado = 'ACTIVO' " +
             "AND d.dominio = :dominio")
     List<DominioDto> findDominioDtoByDominio(String dominio);
+
+    @Query(value = "SELECT new bo.com.tesla.recaudaciones.dto.DominioDto( " +
+            "a.dominio.dominioId, a.dominio.dominio, a.dominio.descripcion, a.dominio.abreviatura) " +
+            "FROM AgrupadorDominioEntity a " +
+            "WHERE a.agrupadorId = :agrupadorId " +
+            "AND a.estado = 'ACTIVO' " +
+            "AND a.dominio.estado = 'ACTIVO'")
+    List<DominioDto> findLstByAgrupador(@Param("agrupadorId") Long agrupadorId);
 }

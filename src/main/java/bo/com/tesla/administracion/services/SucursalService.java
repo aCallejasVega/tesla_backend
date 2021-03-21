@@ -58,13 +58,12 @@ public class SucursalService implements ISucursalService{
     }
 
     private SucursalAdmDto saveSucursal(SucursalAdmDto sucursalAdmDto, SucursalEntity sucursalEntity) {
-
+/*
         Optional<DominioEntity> departamentoOptional = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(sucursalAdmDto.departamentoId, "departamento_id","ACTIVO");
         if (!departamentoOptional.isPresent()) {
             throw new Technicalexception("No existe Dominio departamento_id=" + sucursalAdmDto.departamentoId);
         }
 
-        ///////Arreglar
         Optional<DominioEntity> localidadOptional = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(sucursalAdmDto.localidadId, "municipio_id","ACTIVO");
         if (!localidadOptional.isPresent()) {
             throw new Technicalexception("No existe Dominio municipio_id=" + sucursalAdmDto.departamentoId);
@@ -77,7 +76,11 @@ public class SucursalService implements ISucursalService{
 
         sucursalEntity.setRecaudador(recaudadorEntityOptional.get());
         sucursalEntity.setDepartamento(departamentoOptional.get());
-        sucursalEntity.setLocalidad(localidadOptional.get());
+        sucursalEntity.setLocalidad(localidadOptional.get());*/
+        sucursalEntity.setRecaudador(iRecaudadorDao.getOne(sucursalAdmDto.recaudadorId));
+        sucursalEntity.setDepartamento(iDominioDao.getOne(sucursalAdmDto.departamentoId));
+        sucursalEntity.setLocalidad(iDominioDao.getOne(sucursalAdmDto.localidadId));
+
         sucursalEntity.setNombre(sucursalAdmDto.nombre.toUpperCase().trim());
         sucursalEntity.setDireccion(sucursalAdmDto.direccion.toUpperCase().trim());
         sucursalEntity.setTelefono(sucursalAdmDto.telefono);

@@ -59,30 +59,6 @@ public class EntidadRService implements IEntidadRService {
                 entidadEntityOriginal.setUsuarioModificacion(usuarioId);
                 entidadEntityOriginal.setTransaccion("MODIFICAR");
 
-/* Para modificar cfrearse metodos especificos
-                if(entidadAdmDto.recaudadorIdLst.size() > 0) {
-                    List<EntidadRecaudadorEntity> entidadRecaudadorEntityList = new ArrayList<>();
-                    for(Long recaudadorId : entidadAdmDto.recaudadorIdLst) {
-                        Optional<RecaudadorEntity> recaudadorEntityOptional = iRecaudadorDao.findById(recaudadorId);
-                        if(!recaudadorEntityOptional.isPresent()) {
-                            throw new Technicalexception("No existe la recaudadoraId=" + recaudadorId);
-                        }
-
-                        EntidadRecaudadorEntity entidadRecaudadorEntity = new EntidadRecaudadorEntity();
-                        entidadRecaudadorEntity.setEntidad(entidadEntityOriginal);
-                        entidadRecaudadorEntity.setRecaudador(recaudadorEntityOptional.get());
-                        entidadRecaudadorEntity.setFechaCreacion(new Timestamp(System.currentTimeMillis()));
-                        entidadRecaudadorEntity.setUsuarioCreacion(usuarioId);
-                        entidadRecaudadorEntity.setEstado("CREADO");
-
-                        entidadRecaudadorEntityList.add(entidadRecaudadorEntity);
-                    }
-                    entidadEntityOriginal.setEntidadRecaudadorEntityList(entidadRecaudadorEntityList);
-                }
-
-*/
-
-
                 return saveEntidad(entidadAdmDto, entidadEntityOriginal);
             } else {
                 /***Creación***/
@@ -91,8 +67,8 @@ public class EntidadRService implements IEntidadRService {
                 entidadEntity.setUsuarioCreacion(usuarioId);
                 entidadEntity.setTransaccion("CREAR");
 
-                //
-                if(entidadAdmDto.recaudadorIdLst != null) {
+                /*
+                    if(entidadAdmDto.recaudadorIdLst != null) {
                     if (entidadAdmDto.recaudadorIdLst.size() > 0) {
                         List<EntidadRecaudadorEntity> entidadRecaudadorEntityList = new ArrayList<>();
                         for (Long recaudadorId : entidadAdmDto.recaudadorIdLst) {
@@ -106,18 +82,44 @@ public class EntidadRService implements IEntidadRService {
                             entidadRecaudadorEntity.setRecaudador(recaudadorEntityOptional.get());
                             entidadRecaudadorEntity.setFechaCreacion(new Timestamp(System.currentTimeMillis()));
                             entidadRecaudadorEntity.setUsuarioCreacion(usuarioId);
-                            entidadRecaudadorEntity.setEstado("CREADO");
+                            entidadRecaudadorEntity.setTransaccion("ACTIVAR");
 
                             entidadRecaudadorEntityList.add(entidadRecaudadorEntity);
                         }
                         entidadEntity.setEntidadRecaudadorEntityList(entidadRecaudadorEntityList);
                     }
-                }
+                }*/
                 //
+                loadEntidadRecaudadorEntityList(entidadAdmDto, entidadEntity, usuarioId);
                 return saveEntidad(entidadAdmDto, entidadEntity);
             }
         } catch (Exception e) {
             throw new Technicalexception(e.getMessage(), e.getCause());
+        }
+    }
+
+    private void loadEntidadRecaudadorEntityList(EntidadAdmDto entidadAdmDto, EntidadEntity entidadEntity, Long usuarioId) {
+        if(entidadAdmDto.recaudadorIdLst != null) {
+            if (entidadAdmDto.recaudadorIdLst.size() > 0) {
+                List<EntidadRecaudadorEntity> entidadRecaudadorEntityList = new ArrayList<>();
+                for (Long recaudadorId : entidadAdmDto.recaudadorIdLst) {
+                    /*Optional<RecaudadorEntity> recaudadorEntityOptional = iRecaudadorDao.findById(recaudadorId);
+                    if (!recaudadorEntityOptional.isPresent()) {
+                        throw new Technicalexception("No existe la recaudadoraId=" + recaudadorId);
+                    }*/
+
+                    EntidadRecaudadorEntity entidadRecaudadorEntity = new EntidadRecaudadorEntity();
+                    entidadRecaudadorEntity.setEntidad(entidadEntity);
+                    //entidadRecaudadorEntity.setRecaudador(recaudadorEntityOptional.get());
+                    entidadRecaudadorEntity.setRecaudador(iRecaudadorDao.getOne(recaudadorId));
+                    entidadRecaudadorEntity.setFechaCreacion(new Timestamp(System.currentTimeMillis()));
+                    entidadRecaudadorEntity.setUsuarioCreacion(usuarioId);
+                    entidadRecaudadorEntity.setTransaccion("ACTIVAR");
+
+                    entidadRecaudadorEntityList.add(entidadRecaudadorEntity);
+                }
+                entidadEntity.setEntidadRecaudadorEntityList(entidadRecaudadorEntityList);
+            }
         }
     }
 
@@ -242,7 +244,7 @@ public class EntidadRService implements IEntidadRService {
 
     /*********************COBROS**************************/
 
-    @Transactional(readOnly = true)
+    //@Transactional(readOnly = true)
     @Override
     public List<EntidadDto> getEntidadesByTipoEntidad(Long tipoEntidadId, SegUsuarioEntity usuario) throws Technicalexception{
         Optional<RecaudadorEntity> recaudadorEntityOptional = iRecaudadorDao.findRecaudadorByUserId(usuario.getUsuarioId());
@@ -252,14 +254,18 @@ public class EntidadRService implements IEntidadRService {
         return iEntidadRDao.findByRecaudadoraIdAndTipoEntidadId(recaudadorEntityOptional.get().getRecaudadorId(), tipoEntidadId);
     }
 
-    @Transactional(readOnly = true)
+    //@Transactional(readOnly = true)
     @Override
     public List<EntidadDto> getByRecaudadoraId(SegUsuarioEntity usuario) throws Technicalexception{
-        Optional<RecaudadorEntity> recaudadorEntityOptional = iRecaudadorDao.findRecaudadorByUserId(usuario.getUsuarioId());
-        if(!recaudadorEntityOptional.isPresent()) {
-            throw new Technicalexception("El usuario " + usuario.getLogin() + "no esta registrado en ninguna sucursal de recaudadción");
+        try {
+            Optional<RecaudadorEntity> recaudadorEntityOptional = iRecaudadorDao.findRecaudadorByUserId(usuario.getUsuarioId());
+            if (!recaudadorEntityOptional.isPresent()) {
+                throw new Technicalexception("El usuario " + usuario.getLogin() + "no esta registrado en ninguna sucursal de recaudadción");
+            }
+            return iEntidadRDao.findByRecaudadoraId(recaudadorEntityOptional.get().getRecaudadorId());
+        } catch (Exception e) {
+            throw new Technicalexception(e.getMessage(), e.getCause());
         }
-        return iEntidadRDao.findByRecaudadoraId(recaudadorEntityOptional.get().getRecaudadorId());
     }
 
     @Transactional(readOnly = true)
@@ -274,6 +280,14 @@ public class EntidadRService implements IEntidadRService {
             if(dominioDtos.isEmpty()) {
                 throw new Technicalexception("No existe TiposEntidad por RecaudadoraId=" + recaudadorEntityOptional.get().getRecaudadorId());
             }
+
+            dominioDtos.forEach(e -> {
+                if(e.abreviatura != null) {
+                    e.abreviatura = serverFile + e.abreviatura;
+                }
+            });
+
+
             return dominioDtos;
         } catch (Exception e) {
             throw new Technicalexception(e.getMessage(), e.getCause());

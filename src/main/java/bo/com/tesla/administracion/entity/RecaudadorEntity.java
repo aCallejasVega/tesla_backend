@@ -17,8 +17,6 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "recaudadores", catalog = "exacta", schema = "tesla")
-@NamedQueries({
-    @NamedQuery(name = "RecaudadorEntity.findAll", query = "SELECT r FROM RecaudadorEntity r")})
 public class RecaudadorEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -38,13 +36,13 @@ public class RecaudadorEntity implements Serializable {
     private String telefono;
     @Basic(optional = false)
     @Column(name = "usuario_creacion", nullable = false)
-    private long usuarioCreacion;
+    private Long usuarioCreacion;
     @Basic(optional = false)
     @Column(name = "fecha_creacion", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
     @Column(name = "usuario_modificacion")
-    private long usuarioModificacion;
+    private Long usuarioModificacion;
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
@@ -61,6 +59,8 @@ public class RecaudadorEntity implements Serializable {
     @OneToMany(mappedBy = "recaudador", fetch= FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<EntidadRecaudadorEntity> entidadRecaudadorEntityList;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recaudador")
+    private List<RecaudadorComisionEntity> recaudadorComisionEntityLst;
 
     public RecaudadorEntity() {
     }
@@ -69,7 +69,7 @@ public class RecaudadorEntity implements Serializable {
         this.recaudadorId = recaudadorId;
     }
 
-    public RecaudadorEntity(Long recaudadorId, String nombre, String direccion, String telefono, long usuarioCreacion, Date fechaCreacion, String estado, String transaccion) {
+    public RecaudadorEntity(Long recaudadorId, String nombre, String direccion, String telefono, Long usuarioCreacion, Date fechaCreacion, String estado, String transaccion) {
         this.recaudadorId = recaudadorId;
         this.nombre = nombre;
         this.direccion = direccion;
@@ -112,7 +112,7 @@ public class RecaudadorEntity implements Serializable {
         this.telefono = telefono;
     }
 
-    public long getUsuarioCreacion() {
+    public Long getUsuarioCreacion() {
         return usuarioCreacion;
     }
 
@@ -174,6 +174,14 @@ public class RecaudadorEntity implements Serializable {
 
     public void setEntidadRecaudadorEntityList(List<EntidadRecaudadorEntity> entidadRecaudadorEntityList) {
         this.entidadRecaudadorEntityList = entidadRecaudadorEntityList;
+    }
+
+    public List<RecaudadorComisionEntity> getRecaudadorComisionEntityLst() {
+        return recaudadorComisionEntityLst;
+    }
+
+    public void setRecaudadorComisionEntityLst(List<RecaudadorComisionEntity> recaudadorComisionEntityLst) {
+        this.recaudadorComisionEntityLst = recaudadorComisionEntityLst;
     }
 
     @Override

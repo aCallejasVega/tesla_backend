@@ -93,9 +93,7 @@ public class CobroClienteEntity implements Serializable {
     @JoinColumn(name = "archivo_id", referencedColumnName = "archivo_id", nullable = false)
     @ManyToOne(optional = false)
     private ArchivoEntity archivoId;
-    @JoinColumn(name = "metodo_cobro_id", referencedColumnName = "dominio_id", nullable = false)
-    @ManyToOne(optional = false)
-    private DominioEntity metodoCobro;
+
 
     @JoinColumn(name = "transaccion_cobro_id", referencedColumnName = "transaccion_cobro_id")
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = TransaccionCobroEntity.class)
@@ -330,13 +328,6 @@ public class CobroClienteEntity implements Serializable {
         this.archivoId = archivoId;
     }
 
-    public DominioEntity getMetodoCobro() {
-        return metodoCobro;
-    }
-
-    public void setMetodoCobro(DominioEntity metodoCobroId) {
-        this.metodoCobro = metodoCobroId;
-    }
 
     public TransaccionCobroEntity getTransaccionCobro() {
         return transaccionCobro;
