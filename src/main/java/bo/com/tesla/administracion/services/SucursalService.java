@@ -58,7 +58,7 @@ public class SucursalService implements ISucursalService{
     }
 
     private SucursalAdmDto saveSucursal(SucursalAdmDto sucursalAdmDto, SucursalEntity sucursalEntity) {
-/*
+
         Optional<DominioEntity> departamentoOptional = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(sucursalAdmDto.departamentoId, "departamento_id","ACTIVO");
         if (!departamentoOptional.isPresent()) {
             throw new Technicalexception("No existe Dominio departamento_id=" + sucursalAdmDto.departamentoId);
@@ -76,10 +76,7 @@ public class SucursalService implements ISucursalService{
 
         sucursalEntity.setRecaudador(recaudadorEntityOptional.get());
         sucursalEntity.setDepartamento(departamentoOptional.get());
-        sucursalEntity.setLocalidad(localidadOptional.get());*/
-        sucursalEntity.setRecaudador(iRecaudadorDao.getOne(sucursalAdmDto.recaudadorId));
-        sucursalEntity.setDepartamento(iDominioDao.getOne(sucursalAdmDto.departamentoId));
-        sucursalEntity.setLocalidad(iDominioDao.getOne(sucursalAdmDto.localidadId));
+        sucursalEntity.setLocalidad(localidadOptional.get());
 
         sucursalEntity.setNombre(sucursalAdmDto.nombre.toUpperCase().trim());
         sucursalEntity.setDireccion(sucursalAdmDto.direccion.toUpperCase().trim());
@@ -110,22 +107,6 @@ public class SucursalService implements ISucursalService{
     @Override
     public void setLstTransaccion(List<Long> sucursalIdLst, String transaccion, Long usuarioId) throws Technicalexception{
         try {
-
-            /******************
-             * SE DEBE ARREGLAR LAS RELACIONES DE LA TABLAS DE SEG_TRANSCICIONES
-             * CASO CONTRATIO MAPEAR NUEVAMNTE PARA CONSULTA
-
-             for(Long entidadId : entidadIdLst) {
-             Optional<EntidadEntity> entidadEntityOptional = iEntidadAdmDao.findById(entidadId);
-             if(!entidadEntityOptional.isPresent()) {
-             throw new Technicalexception("No existe registro con EntidadId=" + entidadId);
-             }
-             Long countEntidades = iSegTransicionDao.countByTablaAndTransaccion("ENTIDADES", transaccion, entidadEntityOptional.get().getEstado());
-             if(countEntidades < 1) {
-             throw new Technicalexception("No cumple parametrización de estado para EntidadId=" + entidadId);
-             }
-             }
-             */
 
             Integer countUpdate = iSucursalDao.updateLstTransaccionSucursal(sucursalIdLst, transaccion, usuarioId);
             if(countUpdate != sucursalIdLst.size()) {

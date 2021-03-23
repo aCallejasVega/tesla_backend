@@ -73,10 +73,12 @@ public class DominioEntity implements Serializable {
     private List<EntidadComisionEntity> entidadComisionEntityList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "dominio")
     private List<AgrupadorDominioEntity> agrupadorDominioEntityList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "dominio")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "dominioAgrupador")
     private AgrupadorDominioEntity agrupadorDominioEntity;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoComision")
     private List<RecaudadorComisionEntity> recaudadorComisionEntityLst;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoFacturacion")
+    private List<EntidadEntity> entidadEntityTipoFacturaList;
 
 
     public DominioEntity() {
@@ -259,6 +261,14 @@ public class DominioEntity implements Serializable {
 
     public void setRecaudadorComisionEntityLst(List<RecaudadorComisionEntity> recaudadorComisionEntityLst) {
         this.recaudadorComisionEntityLst = recaudadorComisionEntityLst;
+    }
+
+    public List<EntidadEntity> getEntidadEntityTipoFacturaList() {
+        return entidadEntityTipoFacturaList;
+    }
+
+    public void setEntidadEntityTipoFacturaList(List<EntidadEntity> entidadEntityTipoFacturaList) {
+        this.entidadEntityTipoFacturaList = entidadEntityTipoFacturaList;
     }
 
     @Override

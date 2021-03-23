@@ -71,14 +71,14 @@ public class RecaudadorService implements IRecaudadorService{
             if (recaudadorAdmDto.entidadIdLst.size() > 0) {
                 List<EntidadRecaudadorEntity> entidadRecaudadorEntityList = new ArrayList<>();
                 for (Long entidadId : recaudadorAdmDto.entidadIdLst) {
-                    /*Optional<EntidadEntity> entidadEntityOptional = iEntidadRDao.findById(entidadId);
+                    Optional<EntidadEntity> entidadEntityOptional = iEntidadRDao.findById(entidadId);
                     if (!entidadEntityOptional.isPresent()) {
                         throw new Technicalexception("No existe la entidadId=" + entidadId);
                     }
-*/
+
                     EntidadRecaudadorEntity entidadRecaudadorEntity = new EntidadRecaudadorEntity();
-                    //entidadRecaudadorEntity.setEntidad(entidadEntityOptional.get());
-                    entidadRecaudadorEntity.setEntidad(iEntidadRDao.getOne(entidadId));
+                    entidadRecaudadorEntity.setEntidad(entidadEntityOptional.get());
+                    //entidadRecaudadorEntity.setEntidad(iEntidadRDao.getOne(entidadId));
                     entidadRecaudadorEntity.setRecaudador(recaudadorEntity);
                     entidadRecaudadorEntity.setFechaCreacion(new Timestamp(System.currentTimeMillis()));
                     entidadRecaudadorEntity.setUsuarioCreacion(usuarioId);
@@ -127,23 +127,6 @@ public class RecaudadorService implements IRecaudadorService{
     @Override
     public void setLstTransaccion(List<Long> recaudadorIdLst, String transaccion, Long usuarioId) throws Technicalexception{
         try {
-
-            /******************
-             * SE DEBE ARREGLAR LAS RELACIONES DE LA TABLAS DE SEG_TRANSCICIONES
-             * CASO CONTRATIO MAPEAR NUEVAMNTE PARA CONSULTA
-
-             for(Long entidadId : entidadIdLst) {
-             Optional<EntidadEntity> entidadEntityOptional = iEntidadAdmDao.findById(entidadId);
-             if(!entidadEntityOptional.isPresent()) {
-             throw new Technicalexception("No existe registro con EntidadId=" + entidadId);
-             }
-             Long countEntidades = iSegTransicionDao.countByTablaAndTransaccion("ENTIDADES", transaccion, entidadEntityOptional.get().getEstado());
-             if(countEntidades < 1) {
-             throw new Technicalexception("No cumple parametrización de estado para EntidadId=" + entidadId);
-             }
-             }
-             */
-
             Integer countUpdate = iRecaudadorDao.updateLstTransaccionRecaudadora(recaudadorIdLst, transaccion, usuarioId);
             if(countUpdate != recaudadorIdLst.size()) {
                 throw new Technicalexception("No se actualizaron todos los registros o no se encuentran algunos registros.");

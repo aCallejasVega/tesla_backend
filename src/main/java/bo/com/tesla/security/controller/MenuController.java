@@ -1,9 +1,6 @@
 package bo.com.tesla.security.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,6 +90,38 @@ public class MenuController {
 		
 		
 	}
-	
-	
+
+
+	@GetMapping(path = { "/operaciones/{tabla}", "/operaciones/{tabla}/{estadoInicial}"},produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<?> getOperacionesByEstadoInicial( @PathVariable("tabla") String tabla,
+											 @PathVariable(name = "estadoInicial", required = false) Optional<String> estadoInicial,
+											 Authentication authentication) {
+		Map<String, Object> response = new HashMap<>();
+		List<OperacionesDto> operacionesList=new ArrayList<>();
+		try {
+			if(estadoInicial.isPresent()) {
+				operacionesList = segPrivilegiosService.getOperacionesByEstadoInicial(authentication.getName(), tabla, estadoInicial.get());
+			} else {
+				operacionesList=segPrivilegiosService.getOperaciones(authentication.getName(), tabla);
+			}
+			if(operacionesList.isEmpty()) {
+				response.put("data", operacionesList);
+				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
+			}
+			response.put("data", operacionesList);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			this.logger.error("This is error", e.getMessage());
+			this.logger.error("This is cause", e.getCause());
+			response.put("mensaje", "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+		}
+
+
+	}
+
+
 }

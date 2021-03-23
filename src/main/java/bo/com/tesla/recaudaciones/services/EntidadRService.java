@@ -139,6 +139,13 @@ public class EntidadRService implements IEntidadRService {
         if (!municipioOptional.isPresent()) {
             throw new Technicalexception("No existe Dominio tipo_entidad_id=" + entidadAdmDto.tipoEntidadId);
         }
+
+        Optional<DominioEntity> tipoFacturacionOptional = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(entidadAdmDto.tipoFacturacionId, "tipo_facturacion_id", "ACTIVO");
+        if (!tipoFacturacionOptional.isPresent()) {
+            throw new Technicalexception("No existe Dominio tipo_facturacion_id=" + entidadAdmDto.tipoFacturacionId);
+        }
+
+
         entidadEntity.setActividadEconomica(actividadEconomicaOptional.get());
         entidadEntity.setMunicipio(municipioOptional.get());
         entidadEntity.setTipoEntidad(tipoEntidadOptional.get());
@@ -149,6 +156,9 @@ public class EntidadRService implements IEntidadRService {
         entidadEntity.setNit(entidadAdmDto.nit);
         entidadEntity.setPathLogo(entidadAdmDto.pathLogo);
         entidadEntity.setComprobanteEnUno(entidadAdmDto.comprobanteEnUno != null ? entidadAdmDto.comprobanteEnUno : false);
+        entidadEntity.setEsCobradora(entidadAdmDto.esCobradora != null ? entidadAdmDto.esCobradora : false);
+        entidadEntity.setEsPagadora(entidadAdmDto.esPagadora != null ? entidadAdmDto.esPagadora : false);
+        entidadEntity.setTipoFacturacion(tipoFacturacionOptional.get());
 
         entidadEntity = iEntidadRDao.save(entidadEntity);
         entidadAdmDto.entidadId = entidadEntity.getEntidadId();
@@ -175,23 +185,6 @@ public class EntidadRService implements IEntidadRService {
     @Override
     public void setLstTransaccion(List<Long> entidadIdLst, String transaccion, Long usuarioId) throws Technicalexception{
         try {
-
-            /******************
-             * SE DEBE ARREGLAR LAS RELACIONES DE LA TABLAS DE SEG_TRANSCICIONES
-             * CASO CONTRATIO MAPEAR NUEVAMNTE PARA CONSULTA
-
-             for(Long entidadId : entidadIdLst) {
-             Optional<EntidadEntity> entidadEntityOptional = iEntidadAdmDao.findById(entidadId);
-             if(!entidadEntityOptional.isPresent()) {
-             throw new Technicalexception("No existe registro con EntidadId=" + entidadId);
-             }
-             Long countEntidades = iSegTransicionDao.countByTablaAndTransaccion("ENTIDADES", transaccion, entidadEntityOptional.get().getEstado());
-             if(countEntidades < 1) {
-             throw new Technicalexception("No cumple parametrización de estado para EntidadId=" + entidadId);
-             }
-             }
-             */
-
             Integer countUpdate = iEntidadRDao.updateLstTransaccionEntidad(entidadIdLst, transaccion, usuarioId);
             if(countUpdate != entidadIdLst.size()) {
                 throw new Technicalexception("No se actualizaron todos los registros o no se encuentran algunos registros.");
@@ -286,8 +279,6 @@ public class EntidadRService implements IEntidadRService {
                     e.abreviatura = serverFile + e.abreviatura;
                 }
             });
-
-
             return dominioDtos;
         } catch (Exception e) {
             throw new Technicalexception(e.getMessage(), e.getCause());
