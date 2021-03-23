@@ -47,7 +47,7 @@ public class EntidadController {
     @Autowired
     private ISegUsuarioService segUsuarioService;
 
-    @Value("${tesla.path.files-debts}")
+    @Value("${tesla.path.logos}")
     private String filesBets;
 
 

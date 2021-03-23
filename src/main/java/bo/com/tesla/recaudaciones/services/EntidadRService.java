@@ -37,7 +37,7 @@ public class EntidadRService implements IEntidadRService {
     @Autowired
     private IEntidadRecaudadorDao iEntidadRecaudadorDao;
 
-    @Value("${tesla.path.files-debts}")
+    @Value("${tesla.path.logos}")
     private String pathLogos;
 
     @Value("${tesla.path.server-files}")
