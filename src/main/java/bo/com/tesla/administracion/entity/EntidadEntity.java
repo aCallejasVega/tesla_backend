@@ -113,6 +113,16 @@ public class EntidadEntity implements Serializable {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidad")
     private List<EntidadComisionEntity> entidadComisionEntityList;
+    @Column(name = "es_cobradora")
+    private Boolean esCobradora;
+    @Column(name = "es_pagadora")
+    private Boolean esPagadora;
+    @JoinColumn(name = "tipo_facturacion_id", referencedColumnName = "dominio_id", nullable = false)
+    @ManyToOne(optional = false)
+    private DominioEntity tipoFacturacion;
+
+
+
     public EntidadEntity() {
     }
 
@@ -370,6 +380,30 @@ public class EntidadEntity implements Serializable {
 
     public void setEntidadComisionEntityList(List<EntidadComisionEntity> entidadComisionEntityList) {
         this.entidadComisionEntityList = entidadComisionEntityList;
+    }
+
+    public Boolean getEsCobradora() {
+        return esCobradora;
+    }
+
+    public void setEsCobradora(Boolean esCobradora) {
+        this.esCobradora = esCobradora;
+    }
+
+    public Boolean getEsPagadora() {
+        return esPagadora;
+    }
+
+    public void setEsPagadora(Boolean esPagadora) {
+        this.esPagadora = esPagadora;
+    }
+
+    public DominioEntity getTipoFacturacion() {
+        return tipoFacturacion;
+    }
+
+    public void setTipoFacturacion(DominioEntity tipoFacturacion) {
+        this.tipoFacturacion = tipoFacturacion;
     }
 
     @Override

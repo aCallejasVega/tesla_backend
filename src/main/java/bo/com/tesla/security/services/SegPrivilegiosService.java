@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import bo.com.tesla.administracion.entity.SegPrivilegioEntity;
-import bo.com.tesla.administracion.entity.SegTransicionEntity;
 import bo.com.tesla.security.dao.ISegPrivilegiosDao;
 import bo.com.tesla.security.dto.OperacionesDto;
 
@@ -58,6 +57,18 @@ public class SegPrivilegiosService implements ISegPrivilegiosService {
 			transicionEntities.add(operacion);
 		}
 		
+		return transicionEntities;
+	}
+
+	@Override
+	public List<OperacionesDto> getOperacionesByEstadoInicial(String login, String tabla, String estadoInicial) {
+		List<Object[]> operacionesLis= this.segPrivilegiosDao.getOperacionesByEstadoInicial(login, tabla, estadoInicial);
+		List<OperacionesDto> transicionEntities=new ArrayList<>();
+		for (Object[] objects : operacionesLis) {
+			OperacionesDto operacion=new OperacionesDto(objects[0]+"",objects[1]+"",objects[2]+"",objects[3]+"");
+			transicionEntities.add(operacion);
+		}
+
 		return transicionEntities;
 	}
 

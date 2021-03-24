@@ -92,23 +92,6 @@ public class SucursalEntidadService implements ISucursalEntidadService {
     @Override
     public void setLstTransaccion(List<Long> sucursalEntidadIdLst, String transaccion, Long usuarioId) throws Technicalexception{
         try {
-
-            /******************
-             * SE DEBE ARREGLAR LAS RELACIONES DE LA TABLAS DE SEG_TRANSCICIONES
-             * CASO CONTRATIO MAPEAR NUEVAMNTE PARA CONSULTA
-
-             for(Long entidadId : entidadIdLst) {
-             Optional<EntidadEntity> entidadEntityOptional = iEntidadAdmDao.findById(entidadId);
-             if(!entidadEntityOptional.isPresent()) {
-             throw new Technicalexception("No existe registro con EntidadId=" + entidadId);
-             }
-             Long countEntidades = iSegTransicionDao.countByTablaAndTransaccion("ENTIDADES", transaccion, entidadEntityOptional.get().getEstado());
-             if(countEntidades < 1) {
-             throw new Technicalexception("No cumple parametrización de estado para EntidadId=" + entidadId);
-             }
-             }
-             */
-
             Integer countUpdate = iSucursalEntidadDao.updateLstTransaccionSucursalEntidad(sucursalEntidadIdLst, transaccion, usuarioId);
             if(countUpdate != sucursalEntidadIdLst.size()) {
                 throw new Technicalexception("No se actualizaron todos los registros o no se encuentran algunos registros.");

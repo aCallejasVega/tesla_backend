@@ -10,6 +10,7 @@ public class EntidadAdmDto {
     @NotBlank(message = "El NOMBRE es obligatorio.")
     public String nombre;
     public String nombreComercial;
+    @NotBlank(message = "La DIRECCION es obligatoria.")
     public String direccion;
     public String telefono;
     public String nit;
@@ -21,16 +22,19 @@ public class EntidadAdmDto {
     public String municipioDescripcion;
     public Long tipoEntidadId;
     public String tipoEntidadDescripcion;
+    public Long tipoFacturacionId;
+    public String tipoFacturacionDescripcion;
+    public Boolean esCobradora;
+    public Boolean esPagadora;
     public Date fechaCreacion;
     public String usuarioCreacionLogin;
     public String estado;
     public List<SucursalEntidadAdmDto> sucursalEntidadAdmDtoList;
-    //public List<RecaudadorAdmDto> recaudadorAdmDtoList;
     public List<Long> recaudadorIdLst;
 
     public EntidadAdmDto() {}
 
-    public EntidadAdmDto(Long entidadId, String nombre, String nombreComercial, String direccion, String telefono, String nit, String pathLogo, Boolean comprobanteEnUno, Long actividadEconomicaId, String actividadEconomicaDescripcion, Long municipioId, String municipioDescripcion, Long tipoEntidadId, String tipoEntidadDescripcion, Date fechaCreacion, String usuarioCreacionLogin, String estado) {
+    public EntidadAdmDto(Long entidadId, @NotBlank(message = "El NOMBRE es obligatorio.") String nombre, String nombreComercial, @NotBlank(message = "La DIRECCION es obligatoria.") String direccion, String telefono, String nit, String pathLogo, Boolean comprobanteEnUno, Long actividadEconomicaId, String actividadEconomicaDescripcion, Long municipioId, String municipioDescripcion, Long tipoEntidadId, String tipoEntidadDescripcion, Long tipoFacturacionId, String tipoFacturacionDescripcion, Boolean esCobradora, Boolean esPagadora, Date fechaCreacion, String usuarioCreacionLogin, String estado) {
         this.entidadId = entidadId;
         this.nombre = nombre;
         this.nombreComercial = nombreComercial;
@@ -45,8 +49,13 @@ public class EntidadAdmDto {
         this.municipioDescripcion = municipioDescripcion;
         this.tipoEntidadId = tipoEntidadId;
         this.tipoEntidadDescripcion = tipoEntidadDescripcion;
+        this.tipoFacturacionId = tipoFacturacionId;
+        this.tipoFacturacionDescripcion = tipoFacturacionDescripcion;
+        this.esCobradora = esCobradora;
+        this.esPagadora = esPagadora;
         this.fechaCreacion = fechaCreacion;
         this.usuarioCreacionLogin = usuarioCreacionLogin;
         this.estado = estado;
     }
+
 }

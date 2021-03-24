@@ -1,12 +1,16 @@
 package bo.com.tesla.recaudaciones.dto;
 
+import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.util.*;
 
 public class ClienteDto {
 
+    @NotBlank(message = "El 'Codigo Cliente' es obligatorio.")
     public String codigoCliente;
+    @NotBlank(message = "El 'Nombre Cliente' es obligatorio.")
     public String nombreCliente;
+    @NotBlank(message = "El 'Nro. Documento Cliente' es obligatorio.")
     public String nroDocumento;
     public List<ServicioDeudaDto> servicioDeudaDtoList;
 

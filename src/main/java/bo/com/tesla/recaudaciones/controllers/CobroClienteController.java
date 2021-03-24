@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 import bo.com.tesla.recaudaciones.dto.ClienteDto;
 import bo.com.tesla.recaudaciones.services.ICobroClienteService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("api/cobros")
 public class CobroClienteController {

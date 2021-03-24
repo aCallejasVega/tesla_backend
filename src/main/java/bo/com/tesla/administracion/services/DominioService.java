@@ -18,9 +18,15 @@ public class DominioService implements IDominioService {
     public List<DominioDto> getListDominios(String dominio) {
         return iDominioDao.findDominioDtoByDominio(dominio);
     }
+
     @Override
 	public List<DominioEntity> findByDominio(String dominio) {	
 		return iDominioDao.findByDominio(dominio);
 	}
+
+    @Override
+    public List<DominioDto> getLstDominiosByAgrupador(Long agrupadorId) {
+        return iDominioDao.findLstByAgrupador(agrupadorId);
+    }
 
 }

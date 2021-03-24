@@ -64,7 +64,6 @@ public class SucursalService implements ISucursalService{
             throw new Technicalexception("No existe Dominio departamento_id=" + sucursalAdmDto.departamentoId);
         }
 
-        ///////Arreglar
         Optional<DominioEntity> localidadOptional = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(sucursalAdmDto.localidadId, "municipio_id","ACTIVO");
         if (!localidadOptional.isPresent()) {
             throw new Technicalexception("No existe Dominio municipio_id=" + sucursalAdmDto.departamentoId);
@@ -78,6 +77,7 @@ public class SucursalService implements ISucursalService{
         sucursalEntity.setRecaudador(recaudadorEntityOptional.get());
         sucursalEntity.setDepartamento(departamentoOptional.get());
         sucursalEntity.setLocalidad(localidadOptional.get());
+
         sucursalEntity.setNombre(sucursalAdmDto.nombre.toUpperCase().trim());
         sucursalEntity.setDireccion(sucursalAdmDto.direccion.toUpperCase().trim());
         sucursalEntity.setTelefono(sucursalAdmDto.telefono);
@@ -107,22 +107,6 @@ public class SucursalService implements ISucursalService{
     @Override
     public void setLstTransaccion(List<Long> sucursalIdLst, String transaccion, Long usuarioId) throws Technicalexception{
         try {
-
-            /******************
-             * SE DEBE ARREGLAR LAS RELACIONES DE LA TABLAS DE SEG_TRANSCICIONES
-             * CASO CONTRATIO MAPEAR NUEVAMNTE PARA CONSULTA
-
-             for(Long entidadId : entidadIdLst) {
-             Optional<EntidadEntity> entidadEntityOptional = iEntidadAdmDao.findById(entidadId);
-             if(!entidadEntityOptional.isPresent()) {
-             throw new Technicalexception("No existe registro con EntidadId=" + entidadId);
-             }
-             Long countEntidades = iSegTransicionDao.countByTablaAndTransaccion("ENTIDADES", transaccion, entidadEntityOptional.get().getEstado());
-             if(countEntidades < 1) {
-             throw new Technicalexception("No cumple parametrización de estado para EntidadId=" + entidadId);
-             }
-             }
-             */
 
             Integer countUpdate = iSucursalDao.updateLstTransaccionSucursal(sucursalIdLst, transaccion, usuarioId);
             if(countUpdate != sucursalIdLst.size()) {

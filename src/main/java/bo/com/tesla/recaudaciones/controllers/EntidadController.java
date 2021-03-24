@@ -20,11 +20,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/entidades")
@@ -43,14 +47,16 @@ public class EntidadController {
     @Autowired
     private ISegUsuarioService segUsuarioService;
 
-    @Value("${tesla.path.files-debts}")
+    @Value("${tesla.path.logos}")
     private String filesBets;
 
 
     /*********************ABM ENTIDADES**************************/
     @PostMapping("")
     public ResponseEntity<?> addUpdateEntidad(@Valid @RequestBody EntidadAdmDto entidadAdmDto,
-                                              Authentication authentication) {
+                                              Authentication authentication,
+                                              BindingResult result) {
+
         SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         Map<String, Object> response = new HashMap<>();
         try {
@@ -273,7 +279,7 @@ public class EntidadController {
         }
     }
 
-    /*********************CARGADO CLIENTES POR ENTIDAD**************************/
+        /*********************CARGADO CLIENTES POR ENTIDAD**************************/
 
     @GetMapping("/{entidadId}/clientes/{datoCliente}")
     public ResponseEntity<?> getAllClientesByEntidadId(@PathVariable Long entidadId,

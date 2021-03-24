@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class EntdadComisionService implements IEntidadComisionService {
+public class EntidadComisionService implements IEntidadComisionService {
 
     @Autowired
     private IEntidadComisionesDao iEntidadComisionesDao;
@@ -144,31 +144,6 @@ public class EntdadComisionService implements IEntidadComisionService {
         return montoCalculado;
     }
 
-    @Override
-    public BigDecimal calculateMontoByComisonByEntidadID(EntidadEntity entidadEntity, BigDecimal monto) {
-        Optional<EntidadComisionEntity> entidadComisionEntityOptional = iEntidadComisionesDao.findEntidadComisionEntityByEntidadAndEstado(entidadEntity, "ACTIVO");
-        if(!entidadComisionEntityOptional.isPresent()) {
-            throw new Technicalexception("No se encuentra registro activo de comision para entidadId=" + entidadEntity.getEntidadId());
-        }
-
-        /*********INGRESAR CALCULOS*****************/
-        EntidadComisionEntity entidadComisionEntity = entidadComisionEntityOptional.get();
-        BigDecimal comision = new BigDecimal(0);
-        BigDecimal cien = BigDecimal.valueOf(100);
-
-        BigDecimal montoCalculado = new BigDecimal(0);
-
-        //Aumentar otros cálculos
-        if (entidadComisionEntity.getTipoComision().getDominioId() == 38L) { //Porcentaje
-            comision = entidadComisionEntity.getComision().divide(cien);
-            montoCalculado = monto.multiply(comision);
-        } else if (entidadComisionEntity.getTipoComision().getDominioId() == 39L) { //Fijo bolivianos
-            /*comision = entidadComisionEntity.getComision();
-            montoCalculado = monto.subtract(comision);*/
-            montoCalculado = entidadComisionEntity.getComision();
-        }
-        return montoCalculado;
-    }
 
 
 
