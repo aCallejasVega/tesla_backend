@@ -1,22 +1,16 @@
 package bo.com.tesla.recaudaciones.dao;
 
-<<<<<<< HEAD
 import java.util.List;
+import java.util.Optional;
 
-=======
-import bo.com.tesla.administracion.dto.RecaudadorAdmDto;
->>>>>>> 0d76ff440f69e0af8af574994a35ff1c074f7939
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import bo.com.tesla.administracion.dto.RecaudadorAdmDto;
 import bo.com.tesla.administracion.entity.RecaudadorEntity;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface IRecaudadorDao extends JpaRepository <RecaudadorEntity, Long> {
@@ -71,14 +65,16 @@ public interface IRecaudadorDao extends JpaRepository <RecaudadorEntity, Long> {
 
     @Query(value = "select e.sucursalId.recaudador "
             + " from SegUsuarioEntity u "
-            + " left join PersonaEntity  p on p.personaId = u.personaId.personaId "
-            + " left join EmpleadoEntity e on e.personaId.personaId = p.personaId "
+            + " inner join PersonaEntity  p on p.personaId = u.personaId.personaId "
+            + " inner join EmpleadoEntity e on e.personaId.personaId = p.personaId "
             + " where u.estado = 'ACTIVO' "
             + " and e.sucursalId.estado = 'ACTIVO' "
             + " and e.sucursalId.recaudador.estado = 'ACTIVO'"
             + " and u.usuarioId=:usuarioId")
-<<<<<<< HEAD
-    RecaudadorEntity findRecaudadorByUserId(@Param("usuarioId") Long usuarioId);
+    Optional<RecaudadorEntity> findRecaudadorByUserId(@Param("usuarioId") Long usuarioId);
+    
+    
+    
     
     
     @Query("Select r from RecaudadorEntity r where r.recaudadorId= :recaudadorId and r.estado='ACTIVO'")
@@ -91,9 +87,8 @@ public interface IRecaudadorDao extends JpaRepository <RecaudadorEntity, Long> {
 			+ " and e.entidadId= :entidadId")
 	public List<RecaudadorEntity> findRecaudadoresByEntidadId(@Param("entidadId") Long entidadId);
 
-=======
-    Optional<RecaudadorEntity> findRecaudadorByUserId(@Param("usuarioId") Long usuarioId);
->>>>>>> 0d76ff440f69e0af8af574994a35ff1c074f7939
-
-
+	@Query(" Select r " 
+			+ " from RecaudadorEntity r "
+			+ " Where r.estado='ACTIVO'")
+	public List<RecaudadorEntity> findAllRecaudadora();
 }

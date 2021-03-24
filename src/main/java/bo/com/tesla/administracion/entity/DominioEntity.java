@@ -23,8 +23,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  *
  * @author aCallejas
@@ -59,41 +57,22 @@ public class DominioEntity implements Serializable {
     private Date fechaModificacion;
     @Column(length = 10)
     private String estado;
-<<<<<<< HEAD
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "metodoCobroId")
-=======
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "metodoCobro")
->>>>>>> 0d76ff440f69e0af8af574994a35ff1c074f7939
     private List<CobroClienteEntity> cobroClienteEntityList;
-    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "motivoCancelacionId")
     private List<CancelacionEntity> cancelacionEntityList;
-    @JsonIgnore
     @OneToMany(mappedBy = "tipoCancelacionId")
     private List<CancelacionEntity> cancelacionEntityList1;
-    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoDocumentoCobroId")
     private List<DosificacionEntity> dosificacionEntityList;
-    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciudadId")
     private List<PersonaEntity> personaEntityList;
-    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoDocumentoId")
     private List<PersonaEntity> personaEntityList1;
-<<<<<<< HEAD
-    @JsonIgnore
-    @OneToMany(mappedBy = "departamentoId")
-    private List<SucursalEntity> sucursalEntityList;
-    @JsonIgnore
-    @OneToMany(mappedBy = "localidadId")
-=======
     @OneToMany(mappedBy = "departamento")
     private List<SucursalEntity> sucursalEntitDepartamentoList;
     @OneToMany(mappedBy = "localidad")
->>>>>>> 0d76ff440f69e0af8af574994a35ff1c074f7939
     private List<SucursalEntity> sucursalEntityList1;
-    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoEntidad")
     private List<EntidadEntity> entidadEntityList;
     @OneToMany(mappedBy = "actividadEconomica")

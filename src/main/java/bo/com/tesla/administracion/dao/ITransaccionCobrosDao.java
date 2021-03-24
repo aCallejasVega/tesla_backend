@@ -1,4 +1,4 @@
-package bo.com.tesla.entidades.dao;
+package bo.com.tesla.administracion.dao;
 
 import java.util.Date;
 import java.util.List;
@@ -94,7 +94,7 @@ public interface ITransaccionCobrosDao  extends JpaRepository<TransaccionCobroEn
 			+ " left join PersonaEntity p on p.personaId=u.personaId.personaId "
 			+ " left join EmpleadoEntity e on e.personaId.personaId=p.personaId "
 			+ " left join SucursalEntity s on s.sucursalId=e.sucursalId.sucursalId "
-			+ " left join RecaudadorEntity r on r.recaudadorId=s.recaudadorId.recaudadorId "
+			+ " left join RecaudadorEntity r on r.recaudadorId=s.recaudador.recaudadorId "
 			+ " where c.entidadId.entidadId= :entidadId "
 			+ " and CAST(r.recaudadorId as string ) like concat( :recaudadorId,'%') "
 			+ " and c.estado like concat(:estado,'%') "
@@ -118,7 +118,7 @@ public interface ITransaccionCobrosDao  extends JpaRepository<TransaccionCobroEn
 			+ "											 and tc.servicio=hd.servicio "
 			+ "											 and tc.tipoServicio=hd.tipoServicio "
 			+ "											 and tc.periodo=hd.periodo ) "
-			+ " left join RecaudadorEntity r on r.recaudadorId=tc.recaudadorId.recaudadorId "
+			+ " left join RecaudadorEntity r on r.recaudadorId=tc.recaudador.recaudadorId "
 			+ " inner join ArchivoEntity a on a.archivoId=hd.archivoId.archivoId "
 			+ " inner join EntidadEntity e on e.entidadId=a.entidadId.entidadId "
 			+ " Where "			
@@ -149,7 +149,7 @@ public interface ITransaccionCobrosDao  extends JpaRepository<TransaccionCobroEn
 			+ "											 and tc.servicio=hd.servicio "
 			+ "											 and tc.tipoServicio=hd.tipoServicio "
 			+ "											 and tc.periodo=hd.periodo ) "
-			+ " left join RecaudadorEntity r on r.recaudadorId=tc.recaudadorId.recaudadorId "
+			+ " left join RecaudadorEntity r on r.recaudadorId=tc.recaudador.recaudadorId "
 			+ " inner join ArchivoEntity a on a.archivoId=hd.archivoId.archivoId "
 			+ " inner join EntidadEntity e on e.entidadId=a.entidadId.entidadId "
 			+ " Where "			

@@ -106,9 +106,19 @@ public interface IHistoricoDeudaDao extends JpaRepository<HistoricoDeudaEntity, 
 	 * @return lista de EstadoTablasDto
 	 */
 	
-	@Query(" select new bo.com.tesla.entidades.dto.DeudasClienteDto( hd.archivoId.archivoId ,hd.codigoCliente,hd.servicio, "
-			+ "	hd.tipoServicio, hd.periodo ,hd.estado,p.nombres||' '||p.paterno||' '||p.materno, "
-			+ " c.nombreClientePago,c.fechaCreacion,c.totalDeuda, hd.nombreCliente,r.nombre )"
+
+	@Query(" select new bo.com.tesla.entidades.dto.DeudasClienteDto( "
+			+ " hd.archivoId.archivoId, "
+			+ "	hd.codigoCliente, "
+			+ " hd.servicio, "
+			+ " hd.tipoServicio, "
+			+ " hd.periodo, "
+			+ " hd.estado,"
+			+ " c.fechaCreacion, "
+			+ " c.totalDeuda, "
+			+ " hd.nombreCliente,"
+			+ " r.nombre,"
+			+ " c.comision )"
 			+ " from HistoricoDeudaEntity as hd "
 			+ " left join TransaccionCobroEntity c on ( c.archivoId=hd.archivoId.archivoId "
 			+ "											and c.codigoCliente=hd.codigoCliente "
@@ -117,44 +127,18 @@ public interface IHistoricoDeudaDao extends JpaRepository<HistoricoDeudaEntity, 
 			+ "											and c.periodo = hd.periodo ) "
 			+ "	left join SegUsuarioEntity u on u.usuarioId = c.usuarioCreacion  "
 			+ " left join PersonaEntity p on p.personaId=u.personaId.personaId "
-			+ " left join EmpleadoEntity e on e.personaId=p.personaId "
-			+ " left join SucursalEntity s on s.sucursalId=e.sucursalId.sucursalId "
-			+ " left join  RecaudadorEntity r on r.recaudadorId=s.recaudadorId.recaudadorId "
+			+ " left join EmpleadoEntity e on e.personaId=p.personaId "		
+			+ " left join  RecaudadorEntity r on r.recaudadorId=c.recaudador.recaudadorId "
 			+ " Where "
 			+ " hd.archivoId.archivoId= :archivoId "
-			+ " and hd.estado LIKE concat(:estado,'%')  "
-			+ " and r.recaudadorId = :recaudadorId "
+			/*+ " and COALESCE(CAST(r.recaudadorId as string ),'') like :recaudadorId"
+			+ " and hd.estado LIKE  :estado "*/		
 			+ " group by hd.archivoId ,hd.codigoCliente,hd.servicio,hd.tipoServicio, "
-			+ "	hd.periodo ,hd.estado,p.nombres||' '||p.paterno||' '||p.materno,c.nombreClientePago,c.fechaCreacion,c.totalDeuda,hd.nombreCliente,r.nombre  ")
-	public List<DeudasClienteDto> findDeudasByArchivoIdAndRecaudadorIdAndEstado(
-			@Param("archivoId") Long archivoId,
-			@Param("recaudadorId") Long recaudadorId,
-			@Param("estado") String estado);
-	
-	
-	
-	@Query(" select new bo.com.tesla.entidades.dto.DeudasClienteDto( hd.archivoId.archivoId ,hd.codigoCliente,hd.servicio, "
-			+ "	hd.tipoServicio, hd.periodo ,hd.estado,p.nombres||' '||p.paterno||' '||p.materno, "
-			+ " c.nombreClientePago,c.fechaCreacion,c.totalDeuda, hd.nombreCliente,r.nombre )"
-			+ " from HistoricoDeudaEntity as hd "
-			+ " left join TransaccionCobroEntity c on ( c.archivoId=hd.archivoId.archivoId "
-			+ "											and c.codigoCliente=hd.codigoCliente "
-			+ "											and c.servicio=hd.servicio "
-			+ "											and c.tipoServicio=hd.tipoServicio "
-			+ "											and c.periodo = hd.periodo ) "
-			+ "	left join SegUsuarioEntity u on u.usuarioId = c.usuarioCreacion  "
-			+ " left join PersonaEntity p on p.personaId=u.personaId.personaId "
-			+ " left join EmpleadoEntity e on e.personaId=p.personaId "
-			+ " left join SucursalEntity s on s.sucursalId=e.sucursalId.sucursalId "
-			+ " left join  RecaudadorEntity r on r.recaudadorId=s.recaudadorId.recaudadorId "
-			+ " Where "
-			+ " hd.archivoId.archivoId= :archivoId "
-			+ " and hd.estado LIKE concat(:estado,'%')  "			
-			+ " group by hd.archivoId ,hd.codigoCliente,hd.servicio,hd.tipoServicio, "
-			+ "	hd.periodo ,hd.estado,p.nombres||' '||p.paterno||' '||p.materno,c.nombreClientePago,c.fechaCreacion,c.totalDeuda,hd.nombreCliente,r.nombre  ")
-	public List<DeudasClienteDto> findDeudasByArchivoIdAndEstado(
-			@Param("archivoId") Long archivoId,			
-			@Param("estado") String estado);
+			+ "	hd.periodo ,hd.estado, "
+			+ " c.fechaCreacion,c.totalDeuda,hd.nombreCliente,r.nombre,c.comision  "
+			+ " Order by hd.estado, r.nombre desc ")
+	public List<DeudasClienteDto> findDeudasByArchivoIdAndEstadoForEntidad(
+			@Param("archivoId") Long archivoId);
 	
 	
 	

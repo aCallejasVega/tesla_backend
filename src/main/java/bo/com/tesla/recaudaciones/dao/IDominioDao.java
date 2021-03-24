@@ -13,15 +13,14 @@ import java.util.Optional;
 @Repository
 public interface IDominioDao extends JpaRepository<DominioEntity, Long> {
 
-<<<<<<< HEAD
+
     Optional<DominioEntity> findByDominioId(Long dominioId);
     Optional<DominioEntity> findByDominioIdAndDominio(Long dominioId, String dominio);
     
     @Query("Select d from DominioEntity d Where d.estado= 'ACTIVO'  and d.dominio= :dominio")
     List<DominioEntity> findByDominio(@Param("dominio") String dominio);
-=======
-    //Optional<DominioEntity> findByDominioId(Long dominioId);
-    //Optional<DominioEntity> findByDominioIdAndDominio(Long dominioId, String dominio);
+
+    
     Optional<DominioEntity> getDominioEntityByDominioIdAndDominioAndEstado(Long dominioId, String dominio, String estado);
 
     @Query(value = "select distinct new bo.com.tesla.recaudaciones.dto.DominioDto( " +
@@ -37,5 +36,5 @@ public interface IDominioDao extends JpaRepository<DominioEntity, Long> {
             "WHERE d.estado = 'ACTIVO' " +
             "AND d.dominio = :dominio")
     List<DominioDto> findDominioDtoByDominio(String dominio);
->>>>>>> 0d76ff440f69e0af8af574994a35ff1c074f7939
+
 }

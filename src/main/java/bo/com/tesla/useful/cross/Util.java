@@ -174,7 +174,7 @@ public class Util {
 
 			case "msword":
 
-				filePath = filesReport + UUID.randomUUID().toString() + ".docx";
+				filePath = filesReport +"/temp/"+ UUID.randomUUID().toString() + ".docx";
 				JRDocxExporter exporterdoc = new JRDocxExporter();
 				exporterdoc.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
 				exporterdoc.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, filePath);
@@ -184,7 +184,7 @@ public class Util {
 				return docx;
 
 			case "msexcel": //formato en excel
-				filePath = filesReport + UUID.randomUUID().toString() + ".xlsx";
+				filePath = filesReport +"/temp/"+ UUID.randomUUID().toString() + ".xlsx";
 				JRXlsxExporter exporterXls = new JRXlsxExporter();
 				exporterXls.setExporterInput(new SimpleExporterInput(jasperPrint));
 				File outputFileXls = new File(filePath);
@@ -201,7 +201,7 @@ public class Util {
 			
 			case "octet-stream": // formato en rtf
 				
-				filePath = filesReport + UUID.randomUUID().toString() + ".rtf";
+				filePath = filesReport +"/temp/"+ UUID.randomUUID().toString() + ".rtf";
 				JRRtfExporter rtfExporter = new JRRtfExporter();
 				rtfExporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
 				rtfExporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, filePath);		

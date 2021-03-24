@@ -6,10 +6,25 @@
 package bo.com.tesla.administracion.entity;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
+
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -40,39 +55,29 @@ public class RecaudadorEntity implements Serializable {
     private String telefono;
     @Basic(optional = false)
     @Column(name = "usuario_creacion", nullable = false)
-    private long usuarioCreacion;
+    private Long usuarioCreacion;
     @Basic(optional = false)
     @Column(name = "fecha_creacion", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
     @Column(name = "usuario_modificacion")
-    private long usuarioModificacion;
+    private Long usuarioModificacion;
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
     @Basic(optional = false)
     @Column(nullable = false, length = 15)
     private String estado;
-<<<<<<< HEAD
-    @JsonIgnore
-    @OneToMany(mappedBy = "recaudador")
-    private List<EntidadRecaudadorEntity> entidadRecaudadorEntityList;
-    @OneToMany(mappedBy = "recaudadorId")
-    @JsonIgnore
-    private List<SucursalEntity> sucursalEntityList;
-    
-    
-=======
     @Basic(optional = false)
     @Column(nullable = false, length = 15)
     private String transaccion;
     @JoinColumn(name = "tipo_recaudador_id", referencedColumnName = "dominio_id", nullable = false)
     @ManyToOne(optional = false)
+    @JsonIgnore
     private DominioEntity tipoRecaudador;
-
+    @JsonIgnore
     @OneToMany(mappedBy = "recaudador", fetch= FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<EntidadRecaudadorEntity> entidadRecaudadorEntityList;
->>>>>>> 0d76ff440f69e0af8af574994a35ff1c074f7939
 
 
     public RecaudadorEntity() {
@@ -125,11 +130,11 @@ public class RecaudadorEntity implements Serializable {
         this.telefono = telefono;
     }
 
-    public long getUsuarioCreacion() {
+    public Long getUsuarioCreacion() {
         return usuarioCreacion;
     }
 
-    public void setUsuarioCreacion(long usuarioCreacion) {
+    public void setUsuarioCreacion(Long usuarioCreacion) {
         this.usuarioCreacion = usuarioCreacion;
     }
 
@@ -181,15 +186,6 @@ public class RecaudadorEntity implements Serializable {
         this.tipoRecaudador = tipoRecaudadorId;
     }
 
-<<<<<<< HEAD
-    
-    
-    
-    
-   
-
-    
-=======
     public List<EntidadRecaudadorEntity> getEntidadRecaudadorEntityList() {
         return entidadRecaudadorEntityList;
     }
@@ -197,9 +193,8 @@ public class RecaudadorEntity implements Serializable {
     public void setEntidadRecaudadorEntityList(List<EntidadRecaudadorEntity> entidadRecaudadorEntityList) {
         this.entidadRecaudadorEntityList = entidadRecaudadorEntityList;
     }
->>>>>>> 0d76ff440f69e0af8af574994a35ff1c074f7939
 
-	@Override
+    @Override
     public int hashCode() {
         int hash = 0;
         hash += (recaudadorId != null ? recaudadorId.hashCode() : 0);

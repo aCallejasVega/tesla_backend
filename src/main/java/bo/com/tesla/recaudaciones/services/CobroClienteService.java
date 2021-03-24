@@ -106,23 +106,6 @@ public class CobroClienteService implements ICobroClienteService {
 
         return  cobroClienteEntity;
 
-<<<<<<< HEAD
-    //Método priniciapl para cobro de deudas
-    public void postCobrarDeudas(ClienteDto clienteDto,
-                                 Long usuarioId,
-                                 Long metodoPagoId) throws Exception {
-
-        /*RecaudadorEntity recaudadorEntity = this.iRecaudadorDao.findRecaudadorByUserId(usuarioId);
-        if(recaudadorEntity.getComprobanteEnUno() == null) {
-            throw new Technicalexception("No existe registrado la parametrización de emisión de comprobante en la Recaudadora");
-        }
-        if(recaudadorEntity.getComprobanteEnUno()) {
-            postCobrarDeudasGlobal(clienteDto, usuarioId, metodoPagoId);
-        } else {
-            postCobrarDeudasIndividual(clienteDto, usuarioId, metodoPagoId);
-        }*/
-=======
->>>>>>> 0d76ff440f69e0af8af574994a35ff1c074f7939
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Technicalexception.class)

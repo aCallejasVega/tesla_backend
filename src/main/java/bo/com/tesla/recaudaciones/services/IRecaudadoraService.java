@@ -11,5 +11,7 @@ public interface IRecaudadoraService {
 	public RecaudadorEntity findByRecaudadorId(Long recaudadorId);
 
 	public List<RecaudadorEntity> findRecaudadoresByEntidadId(Long entidadId);
+	
+	public List<RecaudadorEntity> findAllRecaudadora();
 
 }

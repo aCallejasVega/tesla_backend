@@ -16,9 +16,9 @@ public interface IReporteRecaudacionService {
 	public Page<DeudasClienteRecaudacionDto> findDeudasByParameter(
 			Date fechaInicio, 
 			Date fechaFin, 
-			String entidadId,
+			List<String> entidadId,
 			Long recaudadorId, 
-			String estado,
+			List<String> estado,
 			int page,
 			int size
 			);
@@ -26,9 +26,9 @@ public interface IReporteRecaudacionService {
 	public List<DeudasClienteRecaudacionDto>  findDeudasByParameterForReport(
 			 Date fechaInicio, 
 			 Date fechaFin,
-			 String entidadId,
+			 List<String> entidadId,
 			 Long recaudadorId,
-			 String estado			
+			 List<String> estado		
 			);
 
 }

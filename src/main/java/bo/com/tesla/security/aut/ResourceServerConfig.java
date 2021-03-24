@@ -27,7 +27,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		
 		http.headers().disable()
 		.authorizeRequests()
-		.antMatchers(HttpMethod.GET,"/api/ReportEntidad/findDeudasByArchivoIdAndEstado/{archivoId}/{recaudadorId}/{export}/{estado}").permitAll()
+		.antMatchers(HttpMethod.GET,"/api/ReportEntidad/findDeudasByArchivoIdAndEstado/{archivoId}/{export}").permitAll()
 		.antMatchers("/", "/resources/**","/resources/public/**","/resources/templates/**","/resources/templates/css/**","/static/js/**","/static/css/**","/public/css/**")
         .permitAll()
         .antMatchers("/js/**").permitAll()

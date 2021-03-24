@@ -1,9 +1,6 @@
 package bo.com.tesla.recaudaciones.controllers;
 
 import java.io.File;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,34 +16,21 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.ResourceUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import bo.com.tesla.administracion.entity.ArchivoEntity;
-import bo.com.tesla.administracion.entity.EntidadEntity;
-import bo.com.tesla.administracion.entity.LogSistemaEntity;
 import bo.com.tesla.administracion.entity.RecaudadorEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
-import bo.com.tesla.entidades.dto.BusquedaReportesDto;
 import bo.com.tesla.entidades.dto.DeudasClienteDto;
-import bo.com.tesla.entidades.services.IArchivoService;
 import bo.com.tesla.entidades.services.IEntidadService;
-
-import bo.com.tesla.entidades.services.IReporteEntidadesService;
 import bo.com.tesla.recaudaciones.dto.BusquedaReportesRecaudacionDto;
 import bo.com.tesla.recaudaciones.dto.DeudasClienteRecaudacionDto;
-import bo.com.tesla.recaudaciones.dto.RecaudadoraDto;
-import bo.com.tesla.recaudaciones.services.IHistoricoDeudaService;
 import bo.com.tesla.recaudaciones.services.IRecaudadoraService;
 import bo.com.tesla.recaudaciones.services.IReporteRecaudacionService;
 import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegUsuarioService;
-import bo.com.tesla.security.services.ITransaccionCobrosService;
-import bo.com.tesla.useful.config.Technicalexception;
 import bo.com.tesla.useful.cross.Util;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -98,25 +82,27 @@ public class ReportRecaudacionController {
 			if (busquedaReportesDto.fechaFin == null) {
 				busquedaReportesDto.fechaFin = Util.stringToDate("01/01/2100");
 			}
-			if (busquedaReportesDto.entidadId.equals("All") || busquedaReportesDto.entidadId == null) {
-				busquedaReportesDto.entidadId = "%";
-			}
-			if (busquedaReportesDto.estado.equals("All") || busquedaReportesDto.estado == null) {
-				busquedaReportesDto.estado = "%";
-			}
+		
 
 			SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());	
 			RecaudadorEntity recaudador=this.recaudadoraService.findRecaudadorByUserId(usuario.getUsuarioId());
-			System.out.println("--------------------------------------");
-			System.out.println("recaudador.getRecaudadorId() --------------------------------------"+recaudador.getRecaudadorId());
-			System.out.println("--------------------------------------");
+			
+			
+			
+			
+			
 			
 			Page<DeudasClienteRecaudacionDto> deudasClienteDtoList = this.reporteRecaudacionService.findDeudasByParameter(
-					busquedaReportesDto.fechaInicio, busquedaReportesDto.fechaFin, busquedaReportesDto.entidadId,
-					recaudador.getRecaudadorId(), busquedaReportesDto.estado, busquedaReportesDto.paginacion - 1,
+					busquedaReportesDto.fechaInicio, busquedaReportesDto.fechaFin, busquedaReportesDto.entidadArray,
+					recaudador.getRecaudadorId(), busquedaReportesDto.estadoArray, busquedaReportesDto.paginacion - 1,
 					10);
+			
+		
+			
+			
 
 			if (deudasClienteDtoList.isEmpty()) {
+				System.out.println("No tiene contenido");
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
 			}
 			response.put("data", deudasClienteDtoList);
@@ -159,28 +145,23 @@ public class ReportRecaudacionController {
 				busquedaReportesDto.fechaFin = Util.stringToDate("01/01/2100");
 			}
 
-		
-
-			if (busquedaReportesDto.estado.equals("All") || busquedaReportesDto.estado == null) {
-				busquedaReportesDto.estado = "%";
-				parameters.put("tituloReporte", "INFORMACIÓN DE TODAS LAS DEUDAS");
-			} else if (busquedaReportesDto.estado.equals("ACTIVO") ) {
-				parameters.put("tituloReporte", "INFORMACIÓN DE LAS DEUDAS POR PAGAR ");
-			} else if (busquedaReportesDto.estado.equals("COBRADO")) {
-				parameters.put("tituloReporte", "INFORMACIÓN DE LAS DEUDAS COBRADAS ");
-			}
-
-			
+						
+			parameters.put("tituloReporte", "INFORMACIÓN DE DEUDAS GENERALES" );
+			parameters.put("tituloEntidadRecaudadora", recaudador.getNombre().toUpperCase() );
+			parameters.put("logoTesla",filesReport+"/img/teslapng.png" );
+						
 			
 			List<DeudasClienteRecaudacionDto> deudasClienteDtoList = this.reporteRecaudacionService.findDeudasByParameterForReport(
-					busquedaReportesDto.fechaInicio, busquedaReportesDto.fechaFin, busquedaReportesDto.entidadId,
-					recaudador.getRecaudadorId(), busquedaReportesDto.estado);
+					busquedaReportesDto.fechaInicio, busquedaReportesDto.fechaFin, busquedaReportesDto.entidadArray,
+					recaudador.getRecaudadorId(), busquedaReportesDto.estadoArray);
 
+			
 			if (deudasClienteDtoList.isEmpty()) {
+				System.out.println("no tiene registro");
 				return new ResponseEntity<Map<String, Object>>(HttpStatus.NO_CONTENT);
 			}
 
-			File file = ResourceUtils.getFile("classpath:reportes/entidades/ListaDeudas.jrxml");
+			File file = ResourceUtils.getFile(filesReport+"/report_jrxml/reportes/recaudador/ListaDeudasRecaudacion.jrxml");
 			JasperReport jasper = JasperCompileManager.compileReport(file.getAbsolutePath());
 			JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(deudasClienteDtoList);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasper, parameters, ds);

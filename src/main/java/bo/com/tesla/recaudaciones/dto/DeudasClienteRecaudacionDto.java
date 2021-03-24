@@ -34,6 +34,7 @@ public class DeudasClienteRecaudacionDto {
 	public String estado;
 	public String nombreRecaudadora;
 	public BigDecimal comision;
+	public String nombreComercial;
 	
 
 	
@@ -48,7 +49,7 @@ public class DeudasClienteRecaudacionDto {
 	
 	public DeudasClienteRecaudacionDto(Long archivoId, String codigoCliente,String servicio,
 			String tipoServicio,String periodo, String estado,
-			String nombreClientePago,Date fechaCreacion,BigDecimal total,String nombreRecaudadora,BigDecimal comision,String cajero) {
+			String nombreClientePago,Date fechaCreacion,BigDecimal total,String nombreRecaudadora,BigDecimal comision,String cajero,String nombreComercial) {
 		
 	
 		this.archivoId=archivoId;
@@ -69,6 +70,7 @@ public class DeudasClienteRecaudacionDto {
 		this.nombreRecaudadora=nombreRecaudadora;
 		this.comision=comision;
 		this.cajero=cajero;
+		this.nombreComercial=nombreComercial;
 		
 	}
 	
@@ -218,12 +220,15 @@ public class DeudasClienteRecaudacionDto {
 	public void setComision(BigDecimal comision) {
 		this.comision = comision;
 	}
-	
-	
-	
-	
-	
-	
+
+
+	public String getNombreComercial() {
+		return nombreComercial;
+	}
+
+	public void setNombreComercial(String nombreComercial) {
+		this.nombreComercial = nombreComercial;
+	}
 	
 
 }

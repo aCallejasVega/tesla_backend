@@ -29,7 +29,9 @@ public interface ISegPrivilegiosDao extends JpaRepository<SegPrivilegioEntity, L
 			+ " left join tesla.seg_usuarios u on u.usuario_id=ur.usuario_id "
 			+ " left join tesla.seg_privilegios p on p.privilegios_id=pr.privilegio_id "
 			+ " where u.usuario_id= :usuarioId "
-			+ " and privilegio_id= :privilegioId ", nativeQuery = true)
+			+ " and privilegio_id= :privilegioId "
+			+ " and p.estado='ACTIVO' "
+			+ " and pr.estado='ACTIVO'", nativeQuery = true)
 	public  String getEstadoPrivilegios(@Param("usuarioId") Long usuarioId,@Param("privilegioId") Long privilegioId);
 	
 	

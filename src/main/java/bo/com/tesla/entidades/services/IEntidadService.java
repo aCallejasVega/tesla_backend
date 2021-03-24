@@ -9,5 +9,7 @@ public interface IEntidadService {
 	public EntidadEntity findEntidadByUserId(Long usuarioId);
 	
 	public List<EntidadEntity> findEntidadByRecaudacionId(Long recaudadorId);
+	
+	public List<EntidadEntity> findAllEntidades();
 
 }

@@ -35,10 +35,11 @@ public class MenuController {
 	private ISegPrivilegiosService segPrivilegiosService;
 	
 	
-	@GetMapping(path = "/",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<?> processFile( Authentication authentication) {
+	@GetMapping(path = "/menu",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<?> menu( Authentication authentication) {
 		Map<String, Object> response = new HashMap<>();
 		List<SegPrivilegioEntity> privilegioList=new ArrayList<>();
+		List<SegPrivilegioEntity> privilegioMenu=new ArrayList<>();
 		try {
 			SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
 			
@@ -48,8 +49,14 @@ public class MenuController {
 				response.put("status", false);
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
 			}
-							
-			response.put("data", privilegioList);
+			
+			for (SegPrivilegioEntity segPrivilegio : privilegioList) {
+				if(segPrivilegio.getSegPrivilegioEntityList().isEmpty()) {
+					privilegioMenu.add(segPrivilegio);
+				}
+			}
+			
+			response.put("data", privilegioMenu);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 			
 			
@@ -61,12 +68,46 @@ public class MenuController {
 			response.put("mensaje", "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");				
 			response.put("data", privilegioList);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
-		}
-		
+		}		
 		
 	}
 	
-	
+	@GetMapping(path = "/subMenu",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<?> menuSubMenu( Authentication authentication) {
+		Map<String, Object> response = new HashMap<>();
+		List<SegPrivilegioEntity> privilegioList=new ArrayList<>();
+		List<SegPrivilegioEntity> privilegioMenu=new ArrayList<>();
+		try {
+			SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
+			
+			privilegioList=	segPrivilegiosService.getMenuByUserId(usuario.getUsuarioId());
+			if(privilegioList.isEmpty()) {
+				response.put("mensaje", "No se encontraron ningún privilegio para el usuario: "+ usuario.getLogin() + ".");				
+				response.put("status", false);
+				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
+			}
+			
+			for (SegPrivilegioEntity segPrivilegio : privilegioList) {
+				if(!segPrivilegio.getSegPrivilegioEntityList().isEmpty()) {
+					privilegioMenu.add(segPrivilegio);
+				}
+			}
+			
+			response.put("data", privilegioMenu);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			this.logger.error("This is error", e.getMessage());
+			this.logger.error("This is cause", e.getCause());
+			
+			response.put("mensaje", "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");				
+			response.put("data", privilegioList);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+		}		
+		
+	}
 
 	
 	@GetMapping(path = "/getOperaciones/{tabla}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

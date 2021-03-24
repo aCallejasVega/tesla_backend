@@ -59,11 +59,7 @@ public class EntidadEntity implements Serializable {
     @Basic(optional = false)
     @Column(nullable = false, length = 10)
     private String estado;
-<<<<<<< HEAD
     @JsonIgnore
-=======
-
->>>>>>> 0d76ff440f69e0af8af574994a35ff1c074f7939
     @OneToMany(mappedBy = "entidadId")
     private List<TipoTransaccionEntity> tipoTransaccionEntityList;
 
@@ -78,13 +74,9 @@ public class EntidadEntity implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
     @JsonIgnore
     private List<ComprobanteCobroEntity> comprobanteCobroEntityList;
-<<<<<<< HEAD
-    @OneToMany(mappedBy = "entidad")
+  
     @JsonIgnore
-=======
-
     @OneToMany(mappedBy = "entidad", fetch= FetchType.LAZY, cascade = CascadeType.PERSIST)
->>>>>>> 0d76ff440f69e0af8af574994a35ff1c074f7939
     private List<EntidadRecaudadorEntity> entidadRecaudadorEntityList;
 
     @OneToMany(mappedBy = "entidadId")
@@ -107,14 +99,18 @@ public class EntidadEntity implements Serializable {
     @Basic(optional = false)
     @Column(nullable = false, length = 15)
     private String transaccion;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidad")
     private List<SucursalEntidadEntity> sucursalEntidadEntityList;
+    @JsonIgnore
     @JoinColumn(name = "actividad_economica_id", referencedColumnName = "dominio_id")
     @ManyToOne
     private DominioEntity actividadEconomica;
+    @JsonIgnore
     @JoinColumn(name = "municipio_id", referencedColumnName = "dominio_id")
     @ManyToOne
     private DominioEntity municipio;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidad")
     private List<EntidadComisionEntity> entidadComisionEntityList;
     public EntidadEntity() {

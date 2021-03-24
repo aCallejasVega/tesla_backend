@@ -56,7 +56,7 @@ public class ArchivoService implements IArchivoService{
 			int page,int size) {
 		Page<DeudasClienteDto> deudaClienteList ;
 		Pageable paging = PageRequest.of(page, size);
-		return archivoDao.findByEntidadIdAndFechaIniAndFechaFin(entidadId, fechaIni, fechaFin,estado, paging);
+		return this.archivoDao.findByEntidadIdAndFechaIniAndFechaFin(entidadId, fechaIni, fechaFin,estado, paging);
 	}
 
 	

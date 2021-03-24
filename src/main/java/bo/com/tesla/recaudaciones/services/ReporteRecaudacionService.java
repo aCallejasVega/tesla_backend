@@ -26,15 +26,15 @@ public class ReporteRecaudacionService implements IReporteRecaudacionService {
 	public Page<DeudasClienteRecaudacionDto> findDeudasByParameter(
 			Date fechaInicio, 
 			Date fechaFin, 
-			String entidadId,
+			List<String> entidadId,
 			Long recaudadorId, 
-			String estado,
+			List<String> estado,
 			int page,
 			int size
 			) {
 		
 		Pageable paging = PageRequest.of(page, size);
-		return this.transaccionCobrosDao.findDeudasByParameter(fechaInicio,	fechaFin,entidadId,	recaudadorId,estado,paging);
+		return this.transaccionCobrosDao.findDeudasByParameterForRecaudacion(fechaInicio,	fechaFin,entidadId,	recaudadorId,estado,paging);
 
 	}
 
@@ -43,11 +43,11 @@ public class ReporteRecaudacionService implements IReporteRecaudacionService {
 	public List<DeudasClienteRecaudacionDto> findDeudasByParameterForReport(
 			Date fechaInicio, 
 			Date fechaFin, 
-			String entidadId,
+			List<String> entidadId,
 			Long recaudadorId, 
-			String estado) {
+			List<String> estado) {
 	
-		return this.transaccionCobrosDao.findDeudasByParameterForReport(fechaInicio, fechaFin, entidadId, recaudadorId, estado);
+		return this.transaccionCobrosDao.findDeudasByParameterForReportRecaudacion(fechaInicio, fechaFin, entidadId, recaudadorId, estado);
 	}
 
 }

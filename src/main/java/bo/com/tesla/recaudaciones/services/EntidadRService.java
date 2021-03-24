@@ -67,19 +67,16 @@ public class EntidadRService implements IEntidadRService {
                         if(!recaudadorEntityOptional.isPresent()) {
                             throw new Technicalexception("No existe la recaudadoraId=" + recaudadorId);
                         }
-
                         EntidadRecaudadorEntity entidadRecaudadorEntity = new EntidadRecaudadorEntity();
                         entidadRecaudadorEntity.setEntidad(entidadEntityOriginal);
                         entidadRecaudadorEntity.setRecaudador(recaudadorEntityOptional.get());
                         entidadRecaudadorEntity.setFechaCreacion(new Timestamp(System.currentTimeMillis()));
                         entidadRecaudadorEntity.setUsuarioCreacion(usuarioId);
                         entidadRecaudadorEntity.setEstado("CREADO");
-
                         entidadRecaudadorEntityList.add(entidadRecaudadorEntity);
                     }
                     entidadEntityOriginal.setEntidadRecaudadorEntityList(entidadRecaudadorEntityList);
                 }
-
 */
 
 
@@ -177,7 +174,6 @@ public class EntidadRService implements IEntidadRService {
             /******************
              * SE DEBE ARREGLAR LAS RELACIONES DE LA TABLAS DE SEG_TRANSCICIONES
              * CASO CONTRATIO MAPEAR NUEVAMNTE PARA CONSULTA
-
              for(Long entidadId : entidadIdLst) {
              Optional<EntidadEntity> entidadEntityOptional = iEntidadAdmDao.findById(entidadId);
              if(!entidadEntityOptional.isPresent()) {

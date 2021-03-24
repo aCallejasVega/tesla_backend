@@ -29,4 +29,10 @@ public class EntidadService implements IEntidadService {
 		return entidadDao.findEntidadByRecaudacionId(recaudadorId);
 	}
 
+	@Override
+	public List<EntidadEntity> findAllEntidades() {
+	
+		return this.entidadDao.findAllEntidades();
+	}
+
 }

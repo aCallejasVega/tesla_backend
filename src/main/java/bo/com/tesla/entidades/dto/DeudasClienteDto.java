@@ -79,8 +79,10 @@ public class DeudasClienteDto {
 
 	}
 	
-	public DeudasClienteDto(Long archivoId, String codigoCliente,String servicio,
-			String tipoServicio,String periodo, String estado,String cajero,String nombreClientePago,Date fechaCreacion,BigDecimal total,String nombreCliente,String nombreRecaudadora) {
+	public DeudasClienteDto(Long archivoId, 
+			String codigoCliente,String servicio,
+			String tipoServicio,String periodo, 
+			String estado,String cajero,String nombreClientePago,Date fechaCreacion,BigDecimal total,String nombreCliente,String nombreRecaudadora) {
 		
 		this.archivoId=archivoId;
 		this.codigoCliente=codigoCliente;
@@ -124,6 +126,40 @@ public class DeudasClienteDto {
 		this.total=total;	
 		this.nombreRecaudadora=nombreRecaudadora;
 		this.comision=comision;
+		
+	}
+	
+	
+	/*se utiliza en le metodo  findDeudasByArchivoIdAndEstadoForEntidad IHistoricoDeudaDao
+	 * */
+		
+	public DeudasClienteDto(
+			Long archivoId, 
+			String codigoCliente,
+			String servicio,
+			String tipoServicio,
+			String periodo,
+			String estado,
+			Date fechaCreacion,
+			BigDecimal total,
+			String nombreCliente,
+			String nombreRecaudadora,
+			BigDecimal comision
+			) {
+		System.out.println("nombreRecaudadora :" +nombreRecaudadora);
+		
+		this.archivoId=archivoId;
+		this.codigoCliente=codigoCliente;
+		this.servicio=servicio;
+		this.tipoServicio=tipoServicio;
+		this.periodo=periodo;
+		this.estado=estado;		
+		this.nombreCliente=nombreCliente;
+		this.fechaCreacion=fechaCreacion;
+		this.total=total;	
+		this.nombreRecaudadora=nombreRecaudadora;
+		this.comision=comision;
+		
 		
 	}
 	

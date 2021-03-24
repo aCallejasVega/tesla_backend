@@ -29,4 +29,9 @@ public interface IEntidadDao extends JpaRepository<EntidadEntity, Long>  {
 			+ " and r.recaudadorId= :recaudadorId ")
 	public List<EntidadEntity> findEntidadByRecaudacionId(@Param("recaudadorId") Long recaudadorId);
 	
+	@Query("select e "
+			+ " from EntidadEntity e "
+			+ " Where e.estado='ACTIVO'")
+	public List<EntidadEntity> findAllEntidades();
+	
 }

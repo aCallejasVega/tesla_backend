@@ -27,6 +27,7 @@ import bo.com.tesla.administracion.entity.HistoricoDeudaEntity;
 import bo.com.tesla.administracion.entity.LogSistemaEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.entidades.dao.IArchivoDao;
+import bo.com.tesla.entidades.dao.SelectDto;
 import bo.com.tesla.entidades.dto.ArchivoDto;
 import bo.com.tesla.entidades.dto.DeudasClienteDto;
 import bo.com.tesla.entidades.services.IArchivoService;
@@ -173,14 +174,19 @@ public class HistoricoDeudaController {
 
 		Map<String, Object> response = new HashMap<>();
 		List<EstadoTablasDto> estadosList=new ArrayList<>();
+		List<SelectDto> selectDtoList=new ArrayList<>();
 		
 		try {
 			estadosList=this.historicoDeudaService.findEstadoHistorico();
 			if(estadosList.isEmpty()) {
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
 			}
+			for (EstadoTablasDto estados : estadosList) {
+				SelectDto select=new SelectDto( estados.estado,estados.estadoId);
+				selectDtoList.add(select);
+			}			
 			
-			response.put("data", estadosList);
+			response.put("data", selectDtoList);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 			
 		} catch (Exception e) {

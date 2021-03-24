@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,18 +32,18 @@ import bo.com.tesla.administracion.entity.EntidadEntity;
 import bo.com.tesla.administracion.entity.LogSistemaEntity;
 import bo.com.tesla.administracion.entity.RecaudadorEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
+import bo.com.tesla.entidades.dto.ArchivoDto;
 import bo.com.tesla.entidades.dto.BusquedaReportesDto;
 import bo.com.tesla.entidades.dto.DeudasClienteDto;
 import bo.com.tesla.entidades.services.IArchivoService;
 import bo.com.tesla.entidades.services.IEntidadService;
-
 import bo.com.tesla.entidades.services.IReporteEntidadesService;
 import bo.com.tesla.recaudaciones.dto.RecaudadoraDto;
 import bo.com.tesla.recaudaciones.services.IHistoricoDeudaService;
 import bo.com.tesla.recaudaciones.services.IRecaudadoraService;
 import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegUsuarioService;
-import bo.com.tesla.security.services.ITransaccionCobrosService;
+
 import bo.com.tesla.useful.config.Technicalexception;
 import bo.com.tesla.useful.cross.Util;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -55,9 +56,6 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 @RequestMapping("api/ReportEntidad")
 public class ReportEntidadController {
 	private Logger logger = LoggerFactory.getLogger(ReportEntidadController.class);
-
-	@Autowired
-	private ITransaccionCobrosService transaccionCobrosService;
 
 	@Autowired
 	private IReporteEntidadesService reporteEntidadesService;
@@ -82,72 +80,6 @@ public class ReportEntidadController {
 
 	@Value("${tesla.path.files-report}")
 	private String filesReport;
-
-	@PostMapping(path = "/linealChart")
-	public ResponseEntity<?> linealChart(@RequestBody BusquedaReportesDto busquedaReportesDto,
-			Authentication authentication) throws Exception {
-
-		Map<String, Object> response = new HashMap<>();
-		try {
-
-			List<Object[]> linealChart = this.transaccionCobrosService.getDeudasforDate(busquedaReportesDto.entidadId,
-					busquedaReportesDto.recaudadorId, busquedaReportesDto.estado, busquedaReportesDto.fechaInicio,
-					busquedaReportesDto.fechaFin);
-			if (linealChart.isEmpty()) {
-				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
-			}
-			response.put("data", linealChart);
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
-		}
-
-	}
-
-	@PostMapping(path = "/pieChart")
-	public ResponseEntity<?> pieChart(@RequestBody BusquedaReportesDto busquedaReportesDto,
-			Authentication authentication) throws Exception {
-
-		Map<String, Object> response = new HashMap<>();
-		try {
-
-			List<Object[]> linealChart = this.transaccionCobrosService.getDeudasforServicio(
-					busquedaReportesDto.entidadId, busquedaReportesDto.recaudadorId, busquedaReportesDto.estado,
-					busquedaReportesDto.fechaInicio, busquedaReportesDto.fechaFin);
-			if (linealChart.isEmpty()) {
-				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
-			}
-			response.put("data", linealChart);
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
-		}
-
-	}
-
-	@PostMapping(path = "/columnChart")
-	public ResponseEntity<?> columnChart(@RequestBody BusquedaReportesDto busquedaReportesDto,
-			Authentication authentication) throws Exception {
-
-		Map<String, Object> response = new HashMap<>();
-		try {
-
-			List<Object[]> linealChart = this.transaccionCobrosService.getDeudasforTipoServicio(
-					busquedaReportesDto.entidadId, busquedaReportesDto.recaudadorId, busquedaReportesDto.estado,
-					busquedaReportesDto.fechaInicio, busquedaReportesDto.fechaFin);
-			if (linealChart.isEmpty()) {
-				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
-			}
-			response.put("data", linealChart);
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
-		}
-
-	}
 
 	@PostMapping(path = "/deudasPagadas")
 	public ResponseEntity<?> deudasPagadas(@RequestBody BusquedaReportesDto busquedaReportesDto,
@@ -227,108 +159,27 @@ public class ReportEntidadController {
 
 	}
 
-	@GetMapping(path = "/findDeudasByArchivoIdAndEstado/{archivoId}/{recaudadorId}/{export}/{estado}")
-	public ResponseEntity<?> findDeudasByArchivoIdAndEstado(@PathVariable("archivoId") Long archivoId,
-			@PathVariable("recaudadorId") Long recaudadorId, @PathVariable("export") String export,
-			@PathVariable("estado") String estado, Authentication authentication) throws Exception {
-		Map<String, Object> parameters = new HashMap<>();
-		Map<String, Object> response = new HashMap<>();
-		BigDecimal montoTotal = new BigDecimal(0);
-		ArchivoEntity archivo = new ArchivoEntity();
-		List<DeudasClienteDto> deudasClienteList = new ArrayList<>();
-		String estadoTitulo = "";
-		try {
-
-			archivo = this.archivoService.findById(archivoId);
-			montoTotal = this.historicoDeudaService.getMontoTotalCobrados(archivoId, recaudadorId);
-			if (estado == "All") {
-				estado = "%";
-			}
-
-			if (estado == "ACTIVO") {
-				estadoTitulo = "DEUDAS POR PAGAR";
-			} else if (estado == "COBRADO") {
-				estadoTitulo = "DEUDAS COBRADAS";
-			}
-			parameters.put("estado", estado);
-
-			parameters.put("fecha_creacion", Util.dateToStringFormat(archivo.getFechaCreacion()));
-			parameters.put("monto_total", montoTotal);
-			parameters.put("prima", new BigDecimal(3));
-			parameters.put("estadoTitulo", estadoTitulo);
-			if (recaudadorId == 0) {
-				deudasClienteList = this.historicoDeudaService.findDeudasByArchivoIdAndEstado(archivoId, estado);
-			} else {
-				deudasClienteList = this.historicoDeudaService.findDeudasByArchivoIdAndRecaudadorIdAndEstado(archivoId,
-						recaudadorId, estado);
-			}
-
-			if (deudasClienteList.isEmpty()) {
-				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
-			}
-
-			if (montoTotal != null) {
-				parameters.put("comision", montoTotal.multiply(new BigDecimal(3)).divide(new BigDecimal(100)));
-				// parameters.put("comision", deudasClienteList.size()*3);
-
-			}
-
-			List<RecaudadoraDto> recaudadorList = this.historicoDeudaService.getMontoTotalPorRecaudadora(archivoId);
-			parameters.put("recaudadorList", recaudadorList);
-
-			File file = ResourceUtils.getFile("classpath:reportes_entidad/deudas_estado.jrxml");
-			JasperReport jasper = JasperCompileManager.compileReport(file.getAbsolutePath());
-			JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(deudasClienteList);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasper, parameters, ds);
-
-			byte[] report = Util.jasperExportFormat(jasperPrint, export, filesReport);
-
-			HttpHeaders headers = new HttpHeaders();
-
-			headers.setContentLength(report.length);
-			headers.setContentType(MediaType.parseMediaType("application/" + export));
-			headers.set("Content-Disposition", "inline; filename=report.pdf");
-			headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-			return new ResponseEntity<byte[]>(report, headers, HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
-		}
-
-	}
-
 	@PostMapping(path = "/findDeudasByParameter")
 	public ResponseEntity<?> findDeudasByParameter(@RequestBody BusquedaReportesDto busquedaReportesDto,
 			Authentication authentication) throws Exception {
-		Page<DeudasClienteDto> deudasClienteList;
+
 		Map<String, Object> response = new HashMap<>();
 		try {
 
-			if (busquedaReportesDto.fechaInicio == null ) {
+			if (busquedaReportesDto.fechaInicio == null) {
 				busquedaReportesDto.fechaInicio = Util.stringToDate("01/01/2021");
 			}
 			if (busquedaReportesDto.fechaFin == null) {
 				busquedaReportesDto.fechaFin = Util.stringToDate("01/01/2100");
 			}
-			if (busquedaReportesDto.recaudadorId.equals("All") || busquedaReportesDto.recaudadorId == null) {
-				busquedaReportesDto.recaudadorId = "%";
-			}
-			if (busquedaReportesDto.estado.equals("All") || busquedaReportesDto.estado == null) {
-				busquedaReportesDto.estado = "%";
-			}
 
 			SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
 			EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
-			
-			System.out.println("fechaInicio---" + busquedaReportesDto.fechaInicio);
-			System.out.println("fechaFin---" + busquedaReportesDto.fechaFin);
-			System.out.println("recaudadorId---" + busquedaReportesDto.recaudadorId);
-			System.out.println("estado---" + busquedaReportesDto.estado);
 
 			Page<DeudasClienteDto> deudasClienteDtoList = this.reporteEntidadesService.findDeudasByParameter(
 					busquedaReportesDto.fechaInicio, busquedaReportesDto.fechaFin, entidad.getEntidadId(),
-					busquedaReportesDto.recaudadorId, busquedaReportesDto.estado, busquedaReportesDto.paginacion - 1,
-					10);
+					busquedaReportesDto.recaudadorArray, busquedaReportesDto.estadoArray,
+					busquedaReportesDto.paginacion - 1, 10);
 
 			if (deudasClienteDtoList.isEmpty()) {
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
@@ -345,14 +196,14 @@ public class ReportEntidadController {
 	@PostMapping(path = "/findDeudasByParameterForReport")
 	public ResponseEntity<?> findDeudasByParameterForReport(@RequestBody BusquedaReportesDto busquedaReportesDto,
 			Authentication authentication) throws Exception {
-		Page<DeudasClienteDto> deudasClienteList;
+
 		Map<String, Object> parameters = new HashMap<>();
 		try {
 			SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
 			EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
 
 			if (busquedaReportesDto.fechaInicio == null && busquedaReportesDto.fechaFin == null) {
-				parameters.put("tituloRangoFechas", "");
+				parameters.put("tituloRangoFechas", "NO SE ESTABLECIÓ UN RANGO DE FECHAS");
 			} else if (busquedaReportesDto.fechaInicio == null && busquedaReportesDto.fechaFin != null) {
 				parameters.put("tituloRangoFechas",
 						"REPORTE GENERADO HASTA LA FECHA : " + Util.dateToStringFormat(busquedaReportesDto.fechaFin));
@@ -373,35 +224,21 @@ public class ReportEntidadController {
 				busquedaReportesDto.fechaFin = Util.stringToDate("01/01/2100");
 			}
 
-			if (busquedaReportesDto.recaudadorId.equals("All") || busquedaReportesDto.recaudadorId == null) {
-				busquedaReportesDto.recaudadorId = "%";
-				parameters.put("tituloEntidadRecaudadora", "TODAS LAS RECAUDADORAS");
-			} else {
-				RecaudadorEntity recaudador = this.recaudadoraService
-						.findByRecaudadorId(new Long(busquedaReportesDto.recaudadorId));
-				parameters.put("tituloEntidadRecaudadora", "RECAUDADORA : " + recaudador.getNombre());
-			}
+			parameters.put("tituloEntidad", entidad.getNombreComercial().toUpperCase());
+			parameters.put("tituloReporte", "INFORMACIÓN DE DEUDAS GENERALES");
+			parameters.put("logoTesla",filesReport+"/img/teslapng.png" );
+		
 
-			if (busquedaReportesDto.estado.equals("All") || busquedaReportesDto.estado == null) {
-				busquedaReportesDto.estado = "%";
-				parameters.put("tituloReporte", "INFORMACIÓN DE TODAS LAS DEUDAS");
-			} else if (busquedaReportesDto.estado.equals("ACTIVO") ) {
-				parameters.put("tituloReporte", "INFORMACIÓN DE LAS DEUDAS POR PAGAR ");
-			} else if (busquedaReportesDto.estado.equals("COBRADO")) {
-				parameters.put("tituloReporte", "INFORMACIÓN DE LAS DEUDAS COBRADAS ");
-			}
-
-			
-			
 			List<DeudasClienteDto> deudasClienteDtoList = this.reporteEntidadesService.findDeudasByParameterForReport(
 					busquedaReportesDto.fechaInicio, busquedaReportesDto.fechaFin, entidad.getEntidadId(),
-					busquedaReportesDto.recaudadorId, busquedaReportesDto.estado);
+					busquedaReportesDto.recaudadorArray, busquedaReportesDto.estadoArray);
 
 			if (deudasClienteDtoList.isEmpty()) {
 				return new ResponseEntity<Map<String, Object>>(HttpStatus.NO_CONTENT);
 			}
 
-			File file = ResourceUtils.getFile("classpath:reportes/entidades/ListaDeudas.jrxml");
+			File file = ResourceUtils.getFile(filesReport+"/report_jrxml/reportes/entidades/ListaDeudas.jrxml");
+			
 			JasperReport jasper = JasperCompileManager.compileReport(file.getAbsolutePath());
 			JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(deudasClienteDtoList);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasper, parameters, ds);
@@ -418,6 +255,115 @@ public class ReportEntidadController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.NOT_FOUND);
+		}
+
+	}
+
+	@GetMapping(path = { "/findArchivos/{paginacion}",
+			"/findArchivos/{paginacion}/{fechaInicio}/{fechaFin}/{estado}" }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<?> findArchivos(
+
+			@PathVariable("paginacion") int paginacion,
+			@PathVariable(name = "fechaInicio", required = false) Optional<Date> fechaInicio,
+			@PathVariable(name = "fechaFin", required = false) Optional<Date> fechaFin,
+			@PathVariable(name = "estado", required = false) Optional<String> estado, Authentication authentication)
+			throws Exception {
+		System.out.println("Ingreso a controlador " + paginacion);
+		Map<String, Object> response = new HashMap<>();
+		Page<ArchivoDto> archivosList;
+		SegUsuarioEntity usuario = new SegUsuarioEntity();
+		EntidadEntity entidad = new EntidadEntity();
+
+		Date dateFechaIni = new Date();
+		Date dateFechaFin = new Date();
+		String newEstado = "";
+		try {
+			usuario = this.segUsuarioService.findByLogin(authentication.getName());
+			entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
+
+			if (!estado.get().equals("All")) {
+				newEstado = estado.get();
+			} else {
+				newEstado = "%";
+			}
+
+			archivosList = this.reporteEntidadesService.findByEntidadIdAndFechaIniAndFechaFin(entidad.getEntidadId(),
+					fechaInicio.get(), fechaFin.get(), newEstado, paginacion - 1, 5);
+
+			if (archivosList.isEmpty()) {
+				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
+			}
+			response.put("status", "true");
+			response.put("data", archivosList);
+
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		} catch (Technicalexception e) {
+
+			LogSistemaEntity log = new LogSistemaEntity();
+			log.setModulo("ENTIDADES");
+			log.setController("api/historicoDeuda/getOperaciones/" + entidad.getEntidadId() + "/" + paginacion + "/"
+					+ dateFechaIni + "/" + dateFechaFin + "");
+			log.setCausa(e.getCause().getMessage() + "");
+			log.setMensaje(e.getMessage());
+			log.setUsuarioCreacion(usuario.getUsuarioId());
+			log.setFechaCreacion(new Date());
+			logSistemaService.save(log);
+			this.logger.error("This is error", e.getMessage());
+			this.logger.error("This is cause", e.getCause());
+			response.put("mensaje",
+					"Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+		}
+
+	}
+
+	@GetMapping(path = "/findDeudasByArchivoIdAndEstado/{archivoId}/{export}")
+	public ResponseEntity<?> findDeudasByArchivoIdAndEstado(@PathVariable("archivoId") Long archivoId,
+			@PathVariable("export") String export, Authentication authentication) throws Exception {
+		Map<String, Object> parameters = new HashMap<>();
+		Map<String, Object> response = new HashMap<>();
+
+		ArchivoEntity archivo = new ArchivoEntity();
+		List<DeudasClienteDto> deudasClienteList = new ArrayList<>();
+
+		try {
+
+			archivo = this.archivoService.findById(archivoId);
+			parameters.put("tituloFecha",
+					"Información del archivo enviado en fecha :" + Util.dateToStringFormat(archivo.getFechaCreacion()));
+
+			deudasClienteList = this.reporteEntidadesService.findDeudasByArchivoIdAndEstado(archivoId);
+
+			if (deudasClienteList.isEmpty()) {
+				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
+			}
+
+			/*List<RecaudadoraDto> recaudadorList = this.historicoDeudaService.getMontoTotalPorRecaudadora(archivoId);
+			parameters.put("recaudadorList", recaudadorList);*/
+			parameters.put("logoTesla",filesReport+"/img/teslapng.png" );
+			
+			System.out.println("-----------------");
+			System.out.println(filesReport+"/img/teslapng.png");
+			System.out.println("-----------------");
+
+			File file = ResourceUtils.getFile(filesReport+"/report_jrxml/reportes/entidades/PorArchivos.jrxml");
+
+			JasperReport jasper = JasperCompileManager.compileReport(file.getAbsolutePath());
+			JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(deudasClienteList);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasper, parameters, ds);
+
+			byte[] report = Util.jasperExportFormat(jasperPrint, export, filesReport);
+
+			HttpHeaders headers = new HttpHeaders();
+
+			headers.setContentLength(report.length);
+			headers.setContentType(MediaType.parseMediaType("application/" + export));
+			headers.set("Content-Disposition", "inline; filename=report." + export);
+			headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+			return new ResponseEntity<byte[]>(report, headers, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
 
 	}

@@ -35,5 +35,24 @@ public interface IArchivoDao extends JpaRepository<ArchivoEntity, Long> {
 			@Param("fechaFin") Date fechaFin, 
 			@Param("estado") String estado,
 			Pageable pageable);
+	
+	@Query(" Select  new bo.com.tesla.entidades.dto.ArchivoDto( "
+			+ " a.archivoId, a.nombre, p.nombres ||' '|| p.paterno||' '||p.materno , a.fechaCreacion, a.nroRegistros,a.estado)  "
+			+ " from ArchivoEntity a "
+			+ " inner join SegUsuarioEntity u on u.usuarioId=a.usuarioCreacion "
+			+ " inner join PersonaEntity p on p.personaId=u.personaId.personaId "			 
+			+ " Where a.entidadId.entidadId= :entidadId "
+			+ " and a.estado!='CREADO'  "
+			+ " and a.estado!='FALLIDO'"
+			+ " and a.estado LIKE  :estado "
+			+ " and CAST(a.fechaCreacion AS date) >= CAST(:fechaIni AS date) "
+			+ " and CAST(a.fechaCreacion AS date) <= CAST(:fechaFin AS date)  "
+			+ " order by a.fechaCreacion desc ")
+	public Page<ArchivoDto> findByEntidadIdAndFechaIniAndFechaFinForEntidades(
+			@Param("entidadId") Long entidadId,
+			@Param("fechaIni") Date fechaIni, 
+			@Param("fechaFin") Date fechaFin, 
+			@Param("estado") String estado,
+			Pageable pageable);
 
 }

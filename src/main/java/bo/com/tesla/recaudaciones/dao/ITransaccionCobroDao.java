@@ -10,7 +10,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import bo.com.tesla.administracion.dto.DeudasClienteAdmDto;
 import bo.com.tesla.administracion.entity.TransaccionCobroEntity;
+import bo.com.tesla.entidades.dto.DeudasClienteDto;
 import bo.com.tesla.recaudaciones.dto.DeudasClienteRecaudacionDto;
 
 
@@ -19,67 +21,221 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 	
 	@Query("Select new bo.com.tesla.recaudaciones.dto.DeudasClienteRecaudacionDto(hd.archivoId.archivoId, hd.codigoCliente,hd.servicio, "
 			+ " hd.tipoServicio,hd.periodo, hd.estado,hd.nombreCliente, "
-			+ "	tc.fechaCreacion,tc.totalDeuda,r.nombre,tc.comision,p.nombres ||' '||p.paterno||' '||p.materno) "			
+			+ "	tc.fechaCreacion,tc.totalDeuda,r.nombre,tc.comision,p.nombres ||' '||p.paterno||' '||p.materno,e.nombreComercial) "			
 			+ " from HistoricoDeudaEntity hd "
 			+ " left join TransaccionCobroEntity tc on ( tc.archivoId.archivoId=hd.archivoId.archivoId "
 			+ "											 and tc.codigoCliente=hd.codigoCliente "
 			+ "											 and tc.servicio=hd.servicio "
 			+ "											 and tc.tipoServicio=hd.tipoServicio "
 			+ "											 and tc.periodo=hd.periodo ) "
-			+ " left join RecaudadorEntity r on r.recaudadorId=tc.recaudadorId.recaudadorId "
-			+ " inner join ArchivoEntity a on a.archivoId=hd.archivoId.archivoId "
-			+ " inner join EntidadEntity e on e.entidadId=a.entidadId.entidadId "
-			+ " inner join SegUsuarioEntity u on u.usuarioId=tc.usuarioCreacion "
-			+ " inner join PersonaEntity p on p.personaId=u.personaId.personaId "
-			+ " Where "			
-			+ "  COALESCE(CAST(e.entidadId as string ),'') like :entidadId "
-			+ " and r.recaudadorId = :recaudadorId "
-			+ " and hd.estado like :estado"
+			+ " left join RecaudadorEntity r on r.recaudadorId=tc.recaudador.recaudadorId "
+			+ " left join ArchivoEntity a on a.archivoId=hd.archivoId.archivoId "
+			+ " left join EntidadEntity e on e.entidadId=a.entidadId.entidadId "
+			+ " left join SegUsuarioEntity u on u.usuarioId=tc.usuarioCreacion "
+			+ " left join PersonaEntity p on p.personaId=u.personaId.personaId "
+			+ " Where "					
+			+ " hd.estado in :estado "
+			+ " and (CAST(e.entidadId as string ) in :entidadId and r.recaudadorId = :recaudadorId or r.recaudadorId is null)  "
 			+ " and (  date(tc.fechaCreacion) BETWEEN   date(:fechaInicio) and date(:fechaFin) "
 			+ "         or tc.fechaCreacion is null) "
 			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.servicio,hd.tipoServicio,hd.periodo,hd.nombreCliente,hd.estado, "
-			+ " tc.totalDeuda,tc.fechaCreacion,tc.comision,r.nombre,p.nombres ||' '||p.paterno||' '||p.materno "
-			+ " ORDER BY tc.fechaCreacion ASC"
+			+ " tc.totalDeuda,tc.fechaCreacion,tc.comision,r.nombre,p.nombres ||' '||p.paterno||' '||p.materno,e.nombreComercial "
+			+ " ORDER BY hd.estado,e.nombreComercial,tc.fechaCreacion ASC"
 			)
-	public Page<DeudasClienteRecaudacionDto>  findDeudasByParameter(
+	public Page<DeudasClienteRecaudacionDto>  findDeudasByParameterForRecaudacion(
 			@Param("fechaInicio") Date fechaInicio, 
 			@Param("fechaFin") Date fechaFin,
-			@Param("entidadId") String entidadId,
+			@Param("entidadId") List<String> entidadId,
 			@Param("recaudadorId") Long recaudadorId,
-			@Param("estado") String estado,
+			@Param("estado") List<String> estado,
 			Pageable pageable
 			);
 	
 	@Query("Select new bo.com.tesla.recaudaciones.dto.DeudasClienteRecaudacionDto(hd.archivoId.archivoId, hd.codigoCliente,hd.servicio, "
 			+ " hd.tipoServicio,hd.periodo, hd.estado,hd.nombreCliente, "
-			+ "	tc.fechaCreacion,tc.totalDeuda,r.nombre,tc.comision,p.nombres ||' '||p.paterno||' '||p.materno) "			
+			+ "	tc.fechaCreacion,tc.totalDeuda,r.nombre,tc.comision,p.nombres ||' '||p.paterno||' '||p.materno,e.nombreComercial) "			
 			+ " from HistoricoDeudaEntity hd "
 			+ " left join TransaccionCobroEntity tc on ( tc.archivoId.archivoId=hd.archivoId.archivoId "
 			+ "											 and tc.codigoCliente=hd.codigoCliente "
 			+ "											 and tc.servicio=hd.servicio "
 			+ "											 and tc.tipoServicio=hd.tipoServicio "
 			+ "											 and tc.periodo=hd.periodo ) "
-			+ " left join RecaudadorEntity r on r.recaudadorId=tc.recaudadorId.recaudadorId "
+			+ " left join RecaudadorEntity r on r.recaudadorId=tc.recaudador.recaudadorId "
+			+ " left join ArchivoEntity a on a.archivoId=hd.archivoId.archivoId "
+			+ " left join EntidadEntity e on e.entidadId=a.entidadId.entidadId "
+			+ " left join SegUsuarioEntity u on u.usuarioId=tc.usuarioCreacion "
+			+ " left join PersonaEntity p on p.personaId=u.personaId.personaId "
+			+ " Where "					
+			+ " hd.estado in :estado "
+			+ " and (CAST(e.entidadId as string ) in :entidadId and r.recaudadorId = :recaudadorId or r.recaudadorId is null)  "
+			+ " and (  date(tc.fechaCreacion) BETWEEN   date(:fechaInicio) and date(:fechaFin) "
+			+ "         or tc.fechaCreacion is null) "
+			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.servicio,hd.tipoServicio,hd.periodo,hd.nombreCliente,hd.estado, "
+			+ " tc.totalDeuda,tc.fechaCreacion,tc.comision,r.nombre,p.nombres ||' '||p.paterno||' '||p.materno,e.nombreComercial "
+			+ " ORDER BY hd.estado,e.nombreComercial,tc.fechaCreacion ASC"
+			)
+	public List<DeudasClienteRecaudacionDto>  findDeudasByParameterForReportRecaudacion(
+			@Param("fechaInicio") Date fechaInicio, 
+			@Param("fechaFin") Date fechaFin,
+			@Param("entidadId") List<String> entidadId,
+			@Param("recaudadorId") Long recaudadorId,
+			@Param("estado") List<String> estado		
+			);
+	
+	
+	@Query("Select new bo.com.tesla.entidades.dto.DeudasClienteDto(hd.archivoId.archivoId, hd.codigoCliente,hd.servicio, "
+			+ " hd.tipoServicio,hd.periodo, hd.estado,hd.nombreCliente, "
+			+ "	tc.fechaCreacion,tc.totalDeuda,r.nombre,tc.comision) "			
+			+ " from HistoricoDeudaEntity hd "
+			+ " left join TransaccionCobroEntity tc on ( tc.archivoId.archivoId=hd.archivoId.archivoId "
+			+ "											 and tc.codigoCliente=hd.codigoCliente "
+			+ "											 and tc.servicio=hd.servicio "
+			+ "											 and tc.tipoServicio=hd.tipoServicio "
+			+ "											 and tc.periodo=hd.periodo ) "
+			+ " left join RecaudadorEntity r on r.recaudadorId=tc.recaudador.recaudadorId "
 			+ " inner join ArchivoEntity a on a.archivoId=hd.archivoId.archivoId "
 			+ " inner join EntidadEntity e on e.entidadId=a.entidadId.entidadId "
-			+ " inner join SegUsuarioEntity u on u.usuarioId=tc.usuarioCreacion "
-			+ " inner join PersonaEntity p on p.personaId=u.personaId.personaId "
 			+ " Where "			
-			+ " COALESCE(CAST(e.entidadId as string ),'') like :entidadId"
-			+ " and r.recaudadorId = :recaudadorId "
+			+ " e.entidadId= :entidadId "		
+			+ " and (COALESCE(CAST(r.recaudadorId as string ),'') in :recaudadorId or r.recaudadorId = null )"
+			+ " and hd.estado in :estado"
+			+ " and (  date(tc.fechaCreacion) BETWEEN   date(:fechaInicio) and date(:fechaFin) "
+			+ "         or tc.fechaCreacion is null) "
+			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.servicio,hd.tipoServicio,hd.periodo,hd.nombreCliente,hd.estado, "
+			+ " tc.totalDeuda,tc.fechaCreacion,tc.comision,r.nombre "
+			+ " ORDER BY hd.estado,r.nombre,tc.fechaCreacion ASC "
+			)
+	public Page<DeudasClienteDto>  findDeudasByParameterForEntidad(
+			@Param("fechaInicio") Date fechaInicio, 
+			@Param("fechaFin") Date fechaFin,
+			@Param("entidadId") Long entidadId,
+			@Param("recaudadorId") List<String> recaudadorId,
+			@Param("estado") List<String> estado,
+			Pageable pageable
+			);
+	
+	@Query("Select new bo.com.tesla.entidades.dto.DeudasClienteDto(hd.archivoId.archivoId, hd.codigoCliente,hd.servicio, "
+			+ " hd.tipoServicio,hd.periodo, hd.estado,hd.nombreCliente, "
+			+ "	tc.fechaCreacion,tc.totalDeuda,r.nombre,tc.comision) "			
+			+ " from HistoricoDeudaEntity hd "
+			+ " left join TransaccionCobroEntity tc on ( tc.archivoId.archivoId=hd.archivoId.archivoId "
+			+ "											 and tc.codigoCliente=hd.codigoCliente "
+			+ "											 and tc.servicio=hd.servicio "
+			+ "											 and tc.tipoServicio=hd.tipoServicio "
+			+ "											 and tc.periodo=hd.periodo ) "
+			+ " left join RecaudadorEntity r on r.recaudadorId=tc.recaudador.recaudadorId "
+			+ " inner join ArchivoEntity a on a.archivoId=hd.archivoId.archivoId "
+			+ " inner join EntidadEntity e on e.entidadId=a.entidadId.entidadId "
+			+ " Where "			
+			+ " e.entidadId= :entidadId "
+			+ " and (COALESCE(CAST(r.recaudadorId as string ),'') in :recaudadorId or r.recaudadorId = null )"
+			+ " and hd.estado in :estado"
+			+ " and (  date(tc.fechaCreacion) BETWEEN   date(:fechaInicio) and date(:fechaFin) "
+			+ "         or tc.fechaCreacion is null) "
+			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.servicio,hd.tipoServicio,hd.periodo,hd.nombreCliente,hd.estado, "
+			+ " tc.totalDeuda,tc.fechaCreacion,tc.comision,r.nombre "
+			+ " ORDER BY hd.estado,r.nombre,tc.fechaCreacion ASC "
+			)
+	public List<DeudasClienteDto>  findDeudasByParameterForReportEntidades(
+			@Param("fechaInicio") Date fechaInicio, 
+			@Param("fechaFin") Date fechaFin,
+			@Param("entidadId") Long entidadId,
+			@Param("recaudadorId") List<String> recaudadorId,
+			@Param("estado") List<String> estado			
+			);
+	
+	@Query(" Select new  bo.com.tesla.entidades.dto.DeudasClienteDto( "
+			+ "	c.servicio,c.tipoServicio,c.periodo,c.fechaCreacion,CONCAT(p.nombres,' ',p.paterno,' ',p.materno) as cajero , "
+			+ " c.nombreClientePago,c.totalDeuda )"
+			+ " from TransaccionCobroEntity c "
+			+ " left join SegUsuarioEntity u on u.usuarioId=c.usuarioCreacion "
+			+ " left join PersonaEntity p on p.personaId=u.personaId.personaId "
+			+ " left join EmpleadoEntity e on e.personaId.personaId=p.personaId "
+			+ " left join SucursalEntity s on s.sucursalId=e.sucursalId.sucursalId "
+			+ " left join RecaudadorEntity r on r.recaudadorId=s.recaudador.recaudadorId "
+			+ " where c.entidadId.entidadId= :entidadId "
+			+ " and CAST(r.recaudadorId as string ) like concat( :recaudadorId,'%') "
+			+ " and c.estado like concat(:estado,'%') "
+			+ " and CAST(c.fechaCreacion AS date) >= CAST(:fechaIni AS date) "
+			+ " and CAST(c.fechaCreacion AS date) <= CAST(:fechaFin AS date)  "
+			+ " ORDER BY c.fechaCreacion asc ")
+	public List<DeudasClienteDto>  findDeudasPagadasByParameter(
+			@Param("entidadId") Long entidadId, 
+			@Param("recaudadorId") String recaudadorId,
+			@Param("estado") String estado,
+			@Param("fechaIni") Date fechaIni,
+			@Param("fechaFin") Date fechaFin
+			);
+	
+	
+	
+	@Query("Select new bo.com.tesla.administracion.dto.DeudasClienteAdmDto(hd.archivoId.archivoId, hd.codigoCliente,hd.servicio, "
+			+ " hd.tipoServicio,hd.periodo, hd.estado,hd.nombreCliente, "
+			+ "	tc.fechaCreacion,tc.totalDeuda,r.nombre,tc.comision,p.nombres ||' '||p.paterno||' '||p.materno,e.nombreComercial) "			
+			+ " from HistoricoDeudaEntity hd "
+			+ " left join TransaccionCobroEntity tc on ( tc.archivoId.archivoId=hd.archivoId.archivoId "
+			+ "											 and tc.codigoCliente=hd.codigoCliente "
+			+ "											 and tc.servicio=hd.servicio "
+			+ "											 and tc.tipoServicio=hd.tipoServicio "
+			+ "											 and tc.periodo=hd.periodo ) "
+			+ " left join RecaudadorEntity r on r.recaudadorId=tc.recaudador.recaudadorId "
+			+ " left join ArchivoEntity a on a.archivoId=hd.archivoId.archivoId "
+			+ " left join EntidadEntity e on e.entidadId=a.entidadId.entidadId "
+			+ " left join SegUsuarioEntity u on u.usuarioId=tc.usuarioCreacion "
+			+ " left join PersonaEntity p on p.personaId=u.personaId.personaId "
+			+ " Where "			
+			+ " COALESCE(CAST(e.entidadId as string ),'') like :entidadId "
+			+ " and COALESCE(CAST(r.recaudadorId as string ),'') like :recaudadorId "			
 			+ " and hd.estado like :estado"
 			+ " and (  date(tc.fechaCreacion) BETWEEN   date(:fechaInicio) and date(:fechaFin) "
 			+ "         or tc.fechaCreacion is null) "
 			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.servicio,hd.tipoServicio,hd.periodo,hd.nombreCliente,hd.estado, "
-			+ " tc.totalDeuda,tc.fechaCreacion,tc.comision,r.nombre,p.nombres ||' '||p.paterno||' '||p.materno "
-			+ " ORDER BY hd.estado,tc.fechaCreacion ASC"
+			+ " tc.totalDeuda,tc.fechaCreacion,tc.comision,r.nombre,p.nombres ||' '||p.paterno||' '||p.materno,e.nombreComercial "
+			+ " ORDER BY tc.fechaCreacion ASC"
 			)
-	public List<DeudasClienteRecaudacionDto>  findDeudasByParameterForReport(
+	public Page<DeudasClienteAdmDto>  findDeudasByParameterForAdmin(
 			@Param("fechaInicio") Date fechaInicio, 
 			@Param("fechaFin") Date fechaFin,
 			@Param("entidadId") String entidadId,
-			@Param("recaudadorId") Long recaudadorId,
+			@Param("recaudadorId") String recaudadorId,
+			@Param("estado") String estado,
+			Pageable pageable
+			);
+	
+	@Query("Select new bo.com.tesla.administracion.dto.DeudasClienteAdmDto(hd.archivoId.archivoId, hd.codigoCliente,hd.servicio, "
+			+ " hd.tipoServicio,hd.periodo, hd.estado,hd.nombreCliente, "
+			+ "	tc.fechaCreacion,tc.totalDeuda,r.nombre,tc.comision, "
+			+ " p.nombres ||' '||p.paterno||' '||p.materno,e.nombreComercial) "			
+			+ " from HistoricoDeudaEntity hd "
+			+ " left join TransaccionCobroEntity tc on ( tc.archivoId.archivoId=hd.archivoId.archivoId "
+			+ "											 and tc.codigoCliente=hd.codigoCliente "
+			+ "											 and tc.servicio=hd.servicio "
+			+ "											 and tc.tipoServicio=hd.tipoServicio "
+			+ "											 and tc.periodo=hd.periodo ) "
+			+ " left join RecaudadorEntity r on r.recaudadorId=tc.recaudador.recaudadorId "
+			+ " left join ArchivoEntity a on a.archivoId=hd.archivoId.archivoId "
+			+ " left join EntidadEntity e on e.entidadId=a.entidadId.entidadId "
+			+ " left join SegUsuarioEntity u on u.usuarioId=tc.usuarioCreacion "
+			+ " left join PersonaEntity p on p.personaId=u.personaId.personaId "
+			+ " Where "			
+			+ " COALESCE(CAST(e.entidadId as string ),'') like :entidadId "
+			+ " and COALESCE(CAST(r.recaudadorId as string ),'') like :recaudadorId "		
+			+ " and hd.estado like :estado "
+			+ " and (  date(tc.fechaCreacion) BETWEEN   date(:fechaInicio) and date(:fechaFin) "
+			+ "         or tc.fechaCreacion is null) "
+			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.servicio,hd.tipoServicio,hd.periodo,hd.nombreCliente,hd.estado, "
+			+ " tc.totalDeuda,tc.fechaCreacion,tc.comision,r.nombre,p.nombres ||' '||p.paterno||' '||p.materno,e.nombreComercial "
+			+ " ORDER BY hd.estado,e.nombreComercial,r.nombre, tc.fechaCreacion ASC"
+			)
+	public List<DeudasClienteAdmDto>  findDeudasByParameterForReportAdmin(
+			@Param("fechaInicio") Date fechaInicio, 
+			@Param("fechaFin") Date fechaFin,
+			@Param("entidadId") String entidadId,
+			@Param("recaudadorId") String recaudadorId,
 			@Param("estado") String estado			
 			);
+	
+	
+	
 	
 }

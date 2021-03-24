@@ -158,7 +158,7 @@ public class DeudaClienteController {
 		Map<String, Object> response = new HashMap<>();
 		SegUsuarioEntity usuario =new SegUsuarioEntity();
 		ArchivoEntity archivo =new ArchivoEntity();
-		if (archivoId <= 0 || archivoId.toString().isBlank() || archivoId.toString().isEmpty()) {
+		if (archivoId <= 0 ||  archivoId.toString().isEmpty()) {
 			response.put("mensaje", "Ocurrió un error en el servidor, por favor verifique los parametros de ingreso.");
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
@@ -285,7 +285,7 @@ public class DeudaClienteController {
 		String newParamBusqueda = "";
 		SegUsuarioEntity usuario=new SegUsuarioEntity();
 
-		if (archivoId <= 0 || archivoId.toString().isBlank() || archivoId.toString().isEmpty()) {
+		if (archivoId <= 0 ||  archivoId.toString().isEmpty()) {
 			response.put("mensaje", "Ocurrió un error en el servidor, por favor verifique los parametros de ingreso.");
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}

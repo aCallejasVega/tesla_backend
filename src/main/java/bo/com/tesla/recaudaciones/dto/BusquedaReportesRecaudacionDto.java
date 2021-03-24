@@ -1,6 +1,8 @@
 package bo.com.tesla.recaudaciones.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class BusquedaReportesRecaudacionDto {
 	public String entidadId;
@@ -13,6 +15,8 @@ public class BusquedaReportesRecaudacionDto {
 	public Long archivoId;
 	public Date fechaCreacion;
 	public int paginacion;
+	public List<String> entidadArray=new ArrayList<>();
+	public List<String> estadoArray=new ArrayList<>();
 	
 	
 	
