@@ -47,10 +47,6 @@ public class EntidadController {
     @Autowired
     private ISegUsuarioService segUsuarioService;
 
-    @Value("${tesla.path.logos}")
-    private String filesBets;
-
-
     /*********************ABM ENTIDADES**************************/
     @PostMapping("")
     public ResponseEntity<?> addUpdateEntidad(@Valid @RequestBody EntidadAdmDto entidadAdmDto,
@@ -235,8 +231,6 @@ public class EntidadController {
         SegUsuarioEntity usuario =new SegUsuarioEntity();
         try {
             usuario = this.segUsuarioService.findByLogin(authentication.getName());
-            //EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
-            //path = HandlingFiles.saveLogoToDisc(file, entidadId, filesBets);
             iEntidadRService.uploadLogo(file, entidadId, usuario.getUsuarioId());
             response.put("message", "Registro de logo correcto.");
             response.put("status", true);
