@@ -4,10 +4,12 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 
 import bo.com.tesla.administracion.entity.DeudaClienteEntity;
 import bo.com.tesla.administracion.entity.HistoricoDeudaEntity;
 import bo.com.tesla.entidades.dto.DeudasClienteDto;
+import bo.com.tesla.recaudaciones.dto.DeudasCobradasFacturaDto;
 import bo.com.tesla.recaudaciones.dto.EstadoTablasDto;
 import bo.com.tesla.recaudaciones.dto.RecaudadoraDto;
 
@@ -27,4 +29,6 @@ public interface IHistoricoDeudaService {
 	
 	public List<RecaudadoraDto> getMontoTotalPorRecaudadora( Long archivoId);
 	
+	
+	public List<DeudasCobradasFacturaDto> findDeudasCobrasForFactura(List<Long> transaccionCobroIds);
 }

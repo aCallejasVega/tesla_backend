@@ -87,20 +87,11 @@ public class ReportRecaudacionController {
 			SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());	
 			RecaudadorEntity recaudador=this.recaudadoraService.findRecaudadorByUserId(usuario.getUsuarioId());
 			
-			
-			
-			
-			
-			
 			Page<DeudasClienteRecaudacionDto> deudasClienteDtoList = this.reporteRecaudacionService.findDeudasByParameter(
 					busquedaReportesDto.fechaInicio, busquedaReportesDto.fechaFin, busquedaReportesDto.entidadArray,
 					recaudador.getRecaudadorId(), busquedaReportesDto.estadoArray, busquedaReportesDto.paginacion - 1,
 					10);
 			
-		
-			
-			
-
 			if (deudasClienteDtoList.isEmpty()) {
 				System.out.println("No tiene contenido");
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);

@@ -19,7 +19,7 @@ public interface ICobroClienteService {
                                                      Long metodoPagoId,
                                                      TransaccionCobroEntity transaccionCobroEntity);
 
-    public void postCobrarDeudas(ClienteDto clienteDto,
+    public  List<TransaccionCobroEntity> postCobrarDeudas(ClienteDto clienteDto,
                                  Long usuarioId,
                                  Long metodoPagoId); //throws Exception;
 
