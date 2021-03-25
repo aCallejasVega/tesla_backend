@@ -53,7 +53,7 @@ public class EntidadComisionController {
         } catch (Technicalexception e) {
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.ENTIDADCOMISION");
-            log.setController("POST: api/entidades");
+            log.setController("POST: api/comisionesentidades");
             log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
             log.setMensaje(e.getMessage()+"");
             log.setUsuarioCreacion(usuario.getUsuarioId());
@@ -128,7 +128,7 @@ public class EntidadComisionController {
         } catch (Technicalexception e) {
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.ENTIDADCOMISION");
-            log.setController("GET: api/comisiones");
+            log.setController("GET: api/comisionesentidades");
             log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
             log.setMensaje(e.getMessage()+"");
             log.setUsuarioCreacion(usuario.getUsuarioId());

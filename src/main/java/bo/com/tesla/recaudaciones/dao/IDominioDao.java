@@ -28,7 +28,8 @@ public interface IDominioDao extends JpaRepository<DominioEntity, Long> {
             " where er.recaudador.recaudadorId = :pRecaudadorId " +
             " and er.entidad.estado = 'ACTIVO' " +
             " and er.recaudador.estado = 'ACTIVO' " +
-            " and er.estado = 'ACTIVO'")
+            " and er.estado = 'ACTIVO' " +
+            " and er.entidad.esCobradora = true")
     List<DominioDto> findTipoEntidadByRecaudadorId(@Param("pRecaudadorId") Long pRecaudadorId);
 
     @Query(value = "SELECT new bo.com.tesla.recaudaciones.dto.DominioDto( " +
