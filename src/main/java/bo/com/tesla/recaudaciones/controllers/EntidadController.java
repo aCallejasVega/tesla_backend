@@ -221,7 +221,7 @@ public class EntidadController {
 
     /*********************LOGOS**************************/
 
-    @PostMapping("/upload/{entidadId}")
+    @PostMapping("/upload/logo/{entidadId}")
     public ResponseEntity<?> uploadLogo(@RequestParam("file") MultipartFile file
             , @PathVariable Long entidadId
             , Authentication authentication) throws Exception

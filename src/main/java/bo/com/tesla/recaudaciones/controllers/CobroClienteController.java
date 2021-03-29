@@ -6,10 +6,8 @@ import java.util.Map;
 
 import bo.com.tesla.administracion.entity.LogSistemaEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
-import bo.com.tesla.entidades.controller.DeudaClienteController;
 import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegUsuarioService;
-import bo.com.tesla.useful.config.BusinesException;
 import bo.com.tesla.useful.config.Technicalexception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,8 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import bo.com.tesla.recaudaciones.dto.ClienteDto;
 import bo.com.tesla.recaudaciones.services.ICobroClienteService;
-
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping("api/cobros")
@@ -46,9 +40,9 @@ public class CobroClienteController {
     private ILogSistemaService logSistemaService;
 
 
-    @PostMapping("/{metodoPagoId}")
+    @PostMapping("/{metodoCobroId}")
     public ResponseEntity<?> postCobrarDeudas(@RequestBody ClienteDto clienteDto,
-                                              @PathVariable Long metodoPagoId,
+                                              @PathVariable Long metodoCobroId,
                                               Authentication authentication) {
     	System.out.println("****************postCobrarDeudas*******************");
         Map<String, Object> response = new HashMap<>();
@@ -58,7 +52,7 @@ public class CobroClienteController {
             response.put("result", null);
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
-        if(metodoPagoId == null || metodoPagoId <= 0) {
+        if(metodoCobroId == null || metodoCobroId <= 0) {
             response.put("status", false);
             response.put("message", "Ocurrió un error en el servidor, por favor verifique parametros");
             response.put("result", null);
@@ -67,7 +61,7 @@ public class CobroClienteController {
 
         SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         try {
-            iCobroClienteService.postCobrarDeudas(clienteDto, usuario.getUsuarioId(), metodoPagoId);
+            iCobroClienteService.postCobrarDeudas(clienteDto, usuario.getUsuarioId(), metodoCobroId);
             response.put("status", true);
             response.put("message", "Se realizó el cobro de las deudas correctamente.");
             response.put("result", true);
@@ -75,7 +69,7 @@ public class CobroClienteController {
         } catch (Technicalexception e) {
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("RECAUDACION.COBROS");
-            log.setController("POST: api/cobros/" + metodoPagoId);
+            log.setController("POST: api/cobros/" + metodoCobroId);
             log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
             log.setMensaje(e.getMessage()+"");
             log.setUsuarioCreacion(usuario.getUsuarioId());

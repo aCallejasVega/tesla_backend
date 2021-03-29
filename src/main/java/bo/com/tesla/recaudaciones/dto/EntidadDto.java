@@ -6,6 +6,7 @@ public class EntidadDto {
     public String nombre;
     public String nombreComercial;
     public String pathLogo;
+    public String imagen64;
 
     public EntidadDto() {
     }
