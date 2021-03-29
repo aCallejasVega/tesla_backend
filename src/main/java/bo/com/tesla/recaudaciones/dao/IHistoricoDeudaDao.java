@@ -3,6 +3,7 @@ package bo.com.tesla.recaudaciones.dao;
 import bo.com.tesla.administracion.entity.HistoricoDeudaEntity;
 import bo.com.tesla.entidades.dto.ConceptoDto;
 import bo.com.tesla.entidades.dto.DeudasClienteDto;
+import bo.com.tesla.recaudaciones.dto.DeudasCobradasFacturaDto;
 import bo.com.tesla.recaudaciones.dto.EstadoTablasDto;
 
 import org.springframework.data.domain.Page;
@@ -139,6 +140,27 @@ public interface IHistoricoDeudaDao extends JpaRepository<HistoricoDeudaEntity, 
 			+ " Order by hd.estado, r.nombre desc ")
 	public List<DeudasClienteDto> findDeudasByArchivoIdAndEstadoForEntidad(
 			@Param("archivoId") Long archivoId);
+	
+	
+	
+	
+	@Query(" Select  new bo.com.tesla.recaudaciones.dto.DeudasCobradasFacturaDto(hd.archivoId.archivoId, hd.codigoCliente, hd.nombreCliente, hd.tipoServicio, hd.servicio, "
+			+ "			hd.periodo, hd.cantidad, hd.concepto, hd.montoUnitario, hd.nit, "
+			+ "			hd.subTotal, tc.totalDeuda) "
+			+ " from TransaccionCobroEntity tc "
+			+ " inner join HistoricoDeudaEntity hd on ( hd.archivoId.archivoId=tc.archivoId.archivoId "
+			+ " 									   and hd.codigoCliente=tc.codigoCliente "
+			+ "										   and hd.servicio=tc.servicio "
+			+ "										   and hd.tipoServicio=tc.tipoServicio "
+			+ "										   and hd.periodo=tc.periodo ) "
+			+ " where "
+			+ " tc.transaccionCobroId in :transaccionCobroIds"
+			+ " and hd.tipo='D' "
+			+ " order by hd.archivoId.archivoId, hd.servicio, hd.tipoServicio,hd.periodo")	
+	public List<DeudasCobradasFacturaDto> findDeudasCobrasForFactura(
+			@Param("transaccionCobroIds") List<Long> transaccionCobroIds
+			);
+	
 	
 	
 	

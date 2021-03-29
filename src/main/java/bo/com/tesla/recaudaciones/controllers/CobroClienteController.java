@@ -44,7 +44,7 @@ public class CobroClienteController {
     public ResponseEntity<?> postCobrarDeudas(@RequestBody ClienteDto clienteDto,
                                               @PathVariable Long metodoCobroId,
                                               Authentication authentication) {
-    	System.out.println("****************postCobrarDeudas*******************");
+        System.out.println("****************postCobrarDeudas*******************");
         Map<String, Object> response = new HashMap<>();
         if(clienteDto == null || clienteDto.nombreCliente == null || clienteDto.nroDocumento == null || clienteDto.codigoCliente == null) {
             response.put("status", false);
@@ -77,7 +77,7 @@ public class CobroClienteController {
             logSistemaService.save(log);
             this.logger.error("This is error", e.getMessage());
             this.logger.error("This is cause", e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
-        	e.printStackTrace();
+            e.printStackTrace();
             response.put("status", false);
             response.put("result", null);
             response.put("message", "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");

@@ -16,6 +16,7 @@ import bo.com.tesla.administracion.entity.DeudaClienteEntity;
 import bo.com.tesla.entidades.dto.ConceptoDto;
 import bo.com.tesla.entidades.dto.DeudasClienteDto;
 import bo.com.tesla.recaudaciones.dao.IHistoricoDeudaDao;
+import bo.com.tesla.recaudaciones.dto.DeudasCobradasFacturaDto;
 import bo.com.tesla.recaudaciones.dto.EstadoTablasDto;
 import bo.com.tesla.recaudaciones.dto.RecaudadoraDto;
 
@@ -95,6 +96,11 @@ public class HistoricoDeudaService implements IHistoricoDeudaService {
 			recaudadorList.add(recaudador);
 		}
 		return recaudadorList;
+	}
+
+	@Override
+	public List<DeudasCobradasFacturaDto> findDeudasCobrasForFactura(List<Long> transaccionCobroIds) {		
+		return iHistoricoDeudaDao.findDeudasCobrasForFactura(transaccionCobroIds);
 	}
 
 }
