@@ -8,6 +8,7 @@ import java.util.Optional;
 import bo.com.tesla.administracion.dao.IEntidadRecaudadorDao;
 import bo.com.tesla.administracion.dto.EntidadAdmDto;
 import bo.com.tesla.administracion.entity.*;
+import bo.com.tesla.useful.converter.UtilBase64Image;
 import bo.com.tesla.recaudaciones.dao.IDominioDao;
 import bo.com.tesla.useful.config.Technicalexception;
 import bo.com.tesla.useful.cross.HandlingFiles;
@@ -191,6 +192,8 @@ public class EntidadRService implements IEntidadRService {
         List<EntidadAdmDto> entidadAdmDtoList = iEntidadRDao.findEntidadesDtoAll();
         entidadAdmDtoList.forEach(e -> {
             if(e.pathLogo != null) {
+                String base64 = UtilBase64Image.encoder(pathLogos + e.pathLogo);
+                e.imagen64 = base64 != null ? "data:image/png;base64," + base64 : null;
                 e.pathLogo = serverFile + e.pathLogo;
             }
         });
@@ -223,6 +226,8 @@ public class EntidadRService implements IEntidadRService {
         List<EntidadDto> entidadDtoList = iEntidadRDao.findByRecaudadoraIdAndTipoEntidadId(recaudadorEntityOptional.get().getRecaudadorId(), tipoEntidadId);
         entidadDtoList.forEach(e -> {
             if(e.pathLogo != null) {
+                String base64 = UtilBase64Image.encoder(pathLogos + e.pathLogo);
+                e.imagen64 = base64 != null ? "data:image/png;base64," + base64 : null;
                 e.pathLogo = serverFile + e.pathLogo;
             }
         });
@@ -237,7 +242,16 @@ public class EntidadRService implements IEntidadRService {
             if (!recaudadorEntityOptional.isPresent()) {
                 throw new Technicalexception("El usuario " + usuario.getLogin() + " no cuenta con la configuración correcta.");
             }
-            return iEntidadRDao.findByRecaudadoraId(recaudadorEntityOptional.get().getRecaudadorId());
+            List<EntidadDto> entidadAdmDtoList = iEntidadRDao.findByRecaudadoraId(recaudadorEntityOptional.get().getRecaudadorId());
+            entidadAdmDtoList.forEach(e -> {
+                if(e.pathLogo != null) {
+                    String base64 = UtilBase64Image.encoder(pathLogos + e.pathLogo);
+                    e.imagen64 = base64 != null ? "data:image/png;base64," + base64 : null;
+                    e.pathLogo = serverFile + e.pathLogo;
+                }
+            });
+
+            return  entidadAdmDtoList;
         } catch (Exception e) {
             throw new Technicalexception(e.getMessage(), e.getCause());
         }
@@ -254,6 +268,8 @@ public class EntidadRService implements IEntidadRService {
             List<DominioDto> dominioDtos = iDominioDao.findTipoEntidadByRecaudadorId(recaudadorEntityOptional.get().getRecaudadorId());
             dominioDtos.forEach(e -> {
                 if(e.abreviatura != null) {
+                    String base64 = UtilBase64Image.encoder(pathLogos + "/tipos/" + e.abreviatura);
+                    e.imagen64 = base64 != null ? "data:image/png;base64," + base64 : null;
                     e.abreviatura = serverFile + "/tipos/" + e.abreviatura;
                 }
             });

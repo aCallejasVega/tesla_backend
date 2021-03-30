@@ -13,9 +13,6 @@ import java.util.Optional;
 @Repository
 public interface IDominioDao extends JpaRepository<DominioEntity, Long> {
 
-
-    
-    
     @Query("Select d from DominioEntity d Where d.estado= 'ACTIVO'  and d.dominio= :dominio")
     List<DominioEntity> findByDominio(@Param("dominio") String dominio);
 
@@ -47,5 +44,12 @@ public interface IDominioDao extends JpaRepository<DominioEntity, Long> {
             "AND a.estado = 'ACTIVO' " +
             "AND a.dominio.estado = 'ACTIVO'")
     List<DominioDto> findLstByAgrupador(@Param("agrupadorId") Long agrupadorId);
+
+    @Query(value = "SELECT d.dominioId " +
+            "FROM DominioEntity d " +
+            "WHERE d.dominio = :dominio " +
+            "AND d.abreviatura = :abreviatura " +
+            "AND d.estado = 'ACTIVO'")
+    Optional<Long> getDominioIdByDominioAndAbreviatura(@Param("dominio") String dominio, @Param("abreviatura") String abreviatura);
 
 }

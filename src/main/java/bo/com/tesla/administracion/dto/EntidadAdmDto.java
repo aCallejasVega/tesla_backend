@@ -32,6 +32,8 @@ public class EntidadAdmDto {
     public List<SucursalEntidadAdmDto> sucursalEntidadAdmDtoList;
     public List<Long> recaudadorIdLst;
 
+    public String imagen64;
+
     public EntidadAdmDto() {}
 
     public EntidadAdmDto(Long entidadId, @NotBlank(message = "El NOMBRE es obligatorio.") String nombre, String nombreComercial, @NotBlank(message = "La DIRECCION es obligatoria.") String direccion, String telefono, String nit, String pathLogo, Boolean comprobanteEnUno, Long actividadEconomicaId, String actividadEconomicaDescripcion, Long municipioId, String municipioDescripcion, Long tipoEntidadId, String tipoEntidadDescripcion, Long tipoFacturacionId, String tipoFacturacionDescripcion, Boolean esCobradora, Boolean esPagadora, Date fechaCreacion, String usuarioCreacionLogin, String estado) {

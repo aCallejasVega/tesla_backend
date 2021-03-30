@@ -132,13 +132,22 @@ public class EntidadComisionService implements IEntidadComisionService {
 
         BigDecimal montoCalculado = new BigDecimal(0);
 
+
+        Optional<Long> porcentajeIdOptional = iDominioDao.getDominioIdByDominioAndAbreviatura("tipo_comision_id", "%");
+        if(!porcentajeIdOptional.isPresent()) {
+            throw new Technicalexception("No se encuentra dominio='tipo_comision_id', abreviatura='%'");
+        }
+
+        Optional<Long> montoBsIdOptional = iDominioDao.getDominioIdByDominioAndAbreviatura("tipo_comision_id", "Bs");
+        if(!montoBsIdOptional.isPresent()) {
+            throw new Technicalexception("No se encuentra dominio='tipo_comision_id', abreviatura='Bs'");
+        }
+
         //Aumentar otros cálculos
-        if (entidadComisionEntity.getTipoComision().getDominioId() == 41L) { //Porcentaje
+        if (entidadComisionEntity.getTipoComision().getDominioId() == porcentajeIdOptional.get()) { //Porcentaje
             comision = entidadComisionEntity.getComision().divide(cien);
             montoCalculado = monto.multiply(comision);
-        } else if (entidadComisionEntity.getTipoComision().getDominioId() == 42L) { //Fijo bolivianos
-            /*comision = entidadComisionEntity.getComision();
-            montoCalculado = monto.subtract(comision);*/
+        } else if (entidadComisionEntity.getTipoComision().getDominioId() == montoBsIdOptional.get()) { //Monto
             montoCalculado = entidadComisionEntity.getComision();
         }
         return montoCalculado;

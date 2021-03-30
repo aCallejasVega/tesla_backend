@@ -128,11 +128,21 @@ public class RecaudadorComisionService implements IRecaudadorComisionService {
 
         BigDecimal montoCalculado = new BigDecimal(0);
 
+        Optional<Long> porcentajeIdOptional = iDominioDao.getDominioIdByDominioAndAbreviatura("tipo_comision_id", "%");
+        if(!porcentajeIdOptional.isPresent()) {
+            throw new Technicalexception("No se encuentra dominio='tipo_comision_id', abreviatura='%'");
+        }
+
+        Optional<Long> montoBsIdOptional = iDominioDao.getDominioIdByDominioAndAbreviatura("tipo_comision_id", "Bs");
+        if(!montoBsIdOptional.isPresent()) {
+            throw new Technicalexception("No se encuentra dominio='tipo_comision_id', abreviatura='Bs'");
+        }
+
         //Aumentar otros cálculos
-        if (recaudadorComisionEntity.getTipoComision().getDominioId() == 41L) { //Porcentaje
+        if (recaudadorComisionEntity.getTipoComision().getDominioId() == porcentajeIdOptional.get()) { //Porcentaje
             comision = recaudadorComisionEntity.getComision().divide(cien);
             montoCalculado = monto.multiply(comision);
-        } else if (recaudadorComisionEntity.getTipoComision().getDominioId() == 42L) { //Fijo bolivianos
+        } else if (recaudadorComisionEntity.getTipoComision().getDominioId() == montoBsIdOptional.get()) { //Fijo bolivianos
             montoCalculado = recaudadorComisionEntity.getComision();
         }
         return montoCalculado;

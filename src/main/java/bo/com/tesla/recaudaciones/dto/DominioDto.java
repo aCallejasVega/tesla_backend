@@ -6,6 +6,7 @@ public class DominioDto {
     public String dominio;
     public String descripcion;
     public String abreviatura;
+    public String imagen64;
 
     public DominioDto(Long dominioId, String dominio, String descripcion, String abreviatura) {
         this.dominioId = dominioId;
