@@ -2,6 +2,7 @@ package bo.com.tesla.recaudaciones.controllers;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -92,17 +93,23 @@ public class CobroClienteController {
         List<TransaccionCobroEntity> transaccionesCobroList=new ArrayList<>();
         List<Long> transaccionesCobrosIds=new ArrayList<>();
         Map<String, Object> parameters = new HashMap<>();
+        BigDecimal montoTotal=new BigDecimal(0);
         
         try {
         	transaccionesCobroList=  iCobroClienteService.postCobrarDeudas(clienteDto, usuario.getUsuarioId(), metodoPagoId);
             for (TransaccionCobroEntity transaccionCobroEntity : transaccionesCobroList) {
             	transaccionesCobrosIds.add(transaccionCobroEntity.getTransaccionCobroId());
-            	
+            	montoTotal=montoTotal.add(transaccionCobroEntity.getTotalDeuda());
+            	System.out.println("----------------"+montoTotal);
+            		
 			}
             
             List<DeudasCobradasFacturaDto> deudasCobradasList= historicoDeudaService.findDeudasCobrasForFactura(transaccionesCobrosIds);
             
-            parameters.put("logoTesla",filesReport+"/img/teslablanco.png" ); 
+            
+            parameters.put("logoTesla",filesReport+"/img/teslablanco.png" );
+            parameters.put("montoLiteral",Util.translate(montoTotal+"") ); 
+            parameters.put("montoTotal",montoTotal);
             
             File file = ResourceUtils.getFile(filesReport+"/report_jrxml/reportes/recaudador/factura.jrxml");
 			JasperReport jasper = JasperCompileManager.compileReport(file.getAbsolutePath());

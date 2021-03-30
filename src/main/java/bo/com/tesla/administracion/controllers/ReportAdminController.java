@@ -1,6 +1,7 @@
 package bo.com.tesla.administracion.controllers;
 
 import java.io.File;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,14 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import bo.com.tesla.administracion.dto.BusquedaReportesAdmDto;
 import bo.com.tesla.administracion.dto.DeudasClienteAdmDto;
-import bo.com.tesla.administracion.entity.RecaudadorEntity;
+import bo.com.tesla.administracion.entity.LogSistemaEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.administracion.services.IReporteAdminService;
-import bo.com.tesla.entidades.dto.DeudasClienteDto;
-import bo.com.tesla.entidades.services.IEntidadService;
-import bo.com.tesla.recaudaciones.dto.BusquedaReportesRecaudacionDto;
-import bo.com.tesla.recaudaciones.dto.DeudasClienteRecaudacionDto;
-import bo.com.tesla.recaudaciones.services.IRecaudadoraService;
 import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegUsuarioService;
 import bo.com.tesla.useful.cross.Util;
@@ -45,39 +41,26 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 public class ReportAdminController {
 	private Logger logger = LoggerFactory.getLogger(ReportAdminController.class);
 
-	
 	@Autowired
 	private IReporteAdminService reporteAdminService;
 
 	@Autowired
-	private IRecaudadoraService recaudadoraService;
-
+	private ISegUsuarioService segUsuarioService;
+	
 	@Autowired
 	private ILogSistemaService logSistemaService;
-
-	@Autowired
-	private ISegUsuarioService segUsuarioService;
-
-	@Autowired
-	private IEntidadService entidadService;
-
-	
-
-	
 
 	@Value("${tesla.path.files-report}")
 	private String filesReport;
 
-
-
 	@PostMapping(path = "/findDeudasByParameter")
 	public ResponseEntity<?> findDeudasByParameter(@RequestBody BusquedaReportesAdmDto busquedaReportesDto,
 			Authentication authentication) throws Exception {
-		
+		SegUsuarioEntity usuario = new SegUsuarioEntity();
 		Map<String, Object> response = new HashMap<>();
 		try {
-
-			if (busquedaReportesDto.fechaInicio == null ) {
+			usuario = this.segUsuarioService.findByLogin(authentication.getName());
+			if (busquedaReportesDto.fechaInicio == null) {
 				busquedaReportesDto.fechaInicio = Util.stringToDate("01/01/2021");
 			}
 			if (busquedaReportesDto.fechaFin == null) {
@@ -91,11 +74,7 @@ public class ReportAdminController {
 			}
 			if (busquedaReportesDto.estado.equals("All") || busquedaReportesDto.estado == null) {
 				busquedaReportesDto.estado = "%";
-			}
-
-			SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());	
-			//RecaudadorEntity recaudador=this.recaudadoraService.findRecaudadorByUserId(usuario.getUsuarioId());
-			
+			}			
 			
 			Page<DeudasClienteAdmDto> deudasClienteDtoList = this.reporteAdminService.findDeudasByParameter(
 					busquedaReportesDto.fechaInicio, busquedaReportesDto.fechaFin, busquedaReportesDto.entidadId,
@@ -108,7 +87,20 @@ public class ReportAdminController {
 			response.put("data", deudasClienteDtoList);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LogSistemaEntity log = new LogSistemaEntity();
+			log.setModulo("ENTIDADES");
+			log.setController("api/ReportAdmin/findDeudasByParameter");
+			log.setMensaje(e.getMessage());
+			log.setCausa(e.getCause().toString());
+			log.setUsuarioCreacion(usuario.getUsuarioId());
+			log.setFechaCreacion(new Date());
+			this.logSistemaService.save(log);
+			this.logger.error("This is cause", e.getMessage());
+
+			response.put("mensaje",
+					"Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			response.put("codigo", log.getLogSistemaId() + "");
+			response.put("status", false);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
 
@@ -117,12 +109,12 @@ public class ReportAdminController {
 	@PostMapping(path = "/findDeudasByParameterForReport")
 	public ResponseEntity<?> findDeudasByParameterForReport(@RequestBody BusquedaReportesAdmDto busquedaReportesDto,
 			Authentication authentication) throws Exception {
-		Page<DeudasClienteDto> deudasClienteList;
+		SegUsuarioEntity usuario = new SegUsuarioEntity();
+		
+		Map<String, Object> response = new HashMap<>();
 		Map<String, Object> parameters = new HashMap<>();
 		try {
-			
-			
-
+			usuario = this.segUsuarioService.findByLogin(authentication.getName());
 			if (busquedaReportesDto.fechaInicio == null && busquedaReportesDto.fechaFin == null) {
 				parameters.put("tituloRangoFechas", "");
 			} else if (busquedaReportesDto.fechaInicio == null && busquedaReportesDto.fechaFin != null) {
@@ -145,24 +137,23 @@ public class ReportAdminController {
 				busquedaReportesDto.fechaFin = Util.stringToDate("01/01/2100");
 			}
 
-			if(busquedaReportesDto.entidadId.equalsIgnoreCase("All")) {
-				busquedaReportesDto.entidadId="%";
+			if (busquedaReportesDto.entidadId.equalsIgnoreCase("All")) {
+				busquedaReportesDto.entidadId = "%";
 			}
-			if(busquedaReportesDto.recaudadorId.equalsIgnoreCase("All")) {
-				busquedaReportesDto.recaudadorId="%";
+			if (busquedaReportesDto.recaudadorId.equalsIgnoreCase("All")) {
+				busquedaReportesDto.recaudadorId = "%";
 			}
-			
 
 			if (busquedaReportesDto.estado.equals("All") || busquedaReportesDto.estado == null) {
 				busquedaReportesDto.estado = "%";
 				parameters.put("tituloReporte", "INFORMACIÓN DE TODAS LAS DEUDAS");
-			} else if (busquedaReportesDto.estado.equals("ACTIVO") ) {
+			} else if (busquedaReportesDto.estado.equals("ACTIVO")) {
 				parameters.put("tituloReporte", "INFORMACIÓN DE LAS DEUDAS POR PAGAR ");
 			} else if (busquedaReportesDto.estado.equals("COBRADO")) {
 				parameters.put("tituloReporte", "INFORMACIÓN DE LAS DEUDAS COBRADAS ");
 			}
-			parameters.put("logoTesla",filesReport+"/img/teslapng.png" );
-			
+			parameters.put("logoTesla", filesReport + "/img/teslapng.png");
+
 			List<DeudasClienteAdmDto> deudasClienteDtoList = this.reporteAdminService.findDeudasByParameterForReport(
 					busquedaReportesDto.fechaInicio, busquedaReportesDto.fechaFin, busquedaReportesDto.entidadId,
 					busquedaReportesDto.recaudadorId, busquedaReportesDto.estado);
@@ -171,7 +162,8 @@ public class ReportAdminController {
 				return new ResponseEntity<Map<String, Object>>(HttpStatus.NO_CONTENT);
 			}
 
-			File file = ResourceUtils.getFile(filesReport+"/report_jrxml/reportes/administracion/ListaDeudasAdmin.jrxml");
+			File file = ResourceUtils
+					.getFile(filesReport + "/report_jrxml/reportes/administracion/ListaDeudasAdmin.jrxml");
 			JasperReport jasper = JasperCompileManager.compileReport(file.getAbsolutePath());
 			JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(deudasClienteDtoList);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasper, parameters, ds);
@@ -186,8 +178,21 @@ public class ReportAdminController {
 			return new ResponseEntity<byte[]>(report, headers, HttpStatus.OK);
 
 		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<Map<String, Object>>(HttpStatus.NOT_FOUND);
+			LogSistemaEntity log = new LogSistemaEntity();
+			log.setModulo("ENTIDADES");
+			log.setController("api/ReportAdmin/findDeudasByParameterForReport");
+			log.setMensaje(e.getMessage());
+			log.setCausa(e.getCause().toString());
+			log.setUsuarioCreacion(usuario.getUsuarioId());
+			log.setFechaCreacion(new Date());
+			this.logSistemaService.save(log);
+			this.logger.error("This is cause", e.getMessage());
+
+			response.put("mensaje",
+					"Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			response.put("codigo", log.getLogSistemaId() + "");
+			response.put("status", false);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
 
 	}

@@ -23,13 +23,7 @@ import java.util.Optional;
 public interface IHistoricoDeudaDao extends JpaRepository<HistoricoDeudaEntity, Long> {
 
 	Optional<HistoricoDeudaEntity> findByDeudaClienteId(Long deudaClienteId);
-/*
-	@Modifying
-	@Query(value = "UPDATE HistoricoDeudaEntity h " +
-			"SET h.estado = :estado " +
-			"where h.deudaClienteId = :deudaClienteId")
-	Integer updateEstado(@Param("deudaClienteId") Long deudaClienteId, @Param("estado") String estado);
-*/
+
 	@Modifying
 	@Query(value = "UPDATE HistoricoDeudaEntity h " +
 			"SET h.estado = :estado " +
@@ -211,6 +205,15 @@ public interface IHistoricoDeudaDao extends JpaRepository<HistoricoDeudaEntity, 
 			+ " group by deudas.nombre_recaudadora"
 			, nativeQuery = true)
 	public List<Object[]> getMontoTotalPorRecaudadora(@Param("archivoId") Long archivoId);
+	
+	
+	@Query(" Select hd"
+			+ " from HistoricoDeudaEntity hd "
+			+ " where hd.archivoId.archivoId= :archivoId ")	
+	public List<HistoricoDeudaEntity> findHistoricoDeudasByArchivoId(@Param("archivoId") Long archivoId);
+	
+	
+	
 	
 	
 }

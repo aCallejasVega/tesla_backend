@@ -1,5 +1,6 @@
 package bo.com.tesla.recaudaciones.services;
 
+import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -15,20 +16,20 @@ import bo.com.tesla.recaudaciones.dto.RecaudadoraDto;
 
 public interface IHistoricoDeudaService {
 
-    //public Integer updateEstado(Long deudaClienteId, String estado);
-    public Integer updateHistoricoDeudaLst(List<DeudaClienteEntity> deudaClienteEntities);
-    public Page<DeudasClienteDto> groupByDeudasClientes(Long archivoId , String paramBusqueda,int page,int size);
-    
-    
+	public Integer updateHistoricoDeudaLst(List<DeudaClienteEntity> deudaClienteEntities);
+
+	public Page<DeudasClienteDto> groupByDeudasClientes(Long archivoId, String paramBusqueda, int page, int size);
+
 	public List<EstadoTablasDto> findEstadoHistorico();
 
-	
-	//public List<DeudasClienteDto> findDeudasByArchivoIdAndEstado(Long archivoId, String recaudadorId, String estado);
-
 	public BigDecimal getMontoTotalCobrados(Long archivoId, Long recaudadorId);
-	
-	public List<RecaudadoraDto> getMontoTotalPorRecaudadora( Long archivoId);
-	
-	
+
+	public List<RecaudadoraDto> getMontoTotalPorRecaudadora(Long archivoId);
+
 	public List<DeudasCobradasFacturaDto> findDeudasCobrasForFactura(List<Long> transaccionCobroIds);
+	
+	public ByteArrayInputStream load(Long archivoId);
+	public ByteArrayInputStream writeDataToCsv(Long archivoId);
+	
+	
 }

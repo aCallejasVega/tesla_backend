@@ -1,6 +1,7 @@
 package bo.com.tesla.recaudaciones.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,8 +17,15 @@ public class RecaudadoraService implements IRecaudadoraService {
 
 	@Override
 	public RecaudadorEntity findRecaudadorByUserId(Long usuarioId) {
+		Optional<RecaudadorEntity>  recaudador=this.recaudadorDao.findRecaudadorByUserId(usuarioId);
+		
+		if(recaudador.isPresent()) {
+			return this.recaudadorDao.findRecaudadorByUserId(usuarioId).get();	
+		}else {
+			return null;
+		}
 	
-		return this.recaudadorDao.findRecaudadorByUserId(usuarioId).get();
+		
 	}
 
 	@Override

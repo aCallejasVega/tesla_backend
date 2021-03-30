@@ -62,35 +62,35 @@ public class EntidadEntity implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "entidadId")
     private List<TipoTransaccionEntity> tipoTransaccionEntityList;
-
-    @OneToMany(mappedBy = "entidadId")
     @JsonIgnore
+    @OneToMany(mappedBy = "entidadId")    
     private List<ArchivoEntity> archivoEntityList;
 
-    @OneToMany(mappedBy = "entidadId")
     @JsonIgnore
+    @OneToMany(mappedBy = "entidadId")    
     private List<TransaccionCobroEntity> transaccionCobroEntityList;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
     @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")    
     private List<ComprobanteCobroEntity> comprobanteCobroEntityList;
   
     @JsonIgnore
     @OneToMany(mappedBy = "entidad", fetch= FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<EntidadRecaudadorEntity> entidadRecaudadorEntityList;
-
-    @OneToMany(mappedBy = "entidadId")
     @JsonIgnore
+    @OneToMany(mappedBy = "entidadId")    
     private List<EmpleadoEntity> empleadoEntityList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
+    
     @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")    
     private List<DosificacionEntity> dosificacionEntityList;
+    
+    @JsonIgnore
     @JoinColumn(name = "tipo_entidad_id", referencedColumnName = "dominio_id", nullable = false)
-    @ManyToOne(optional = false)
-    @JsonIgnore
+    @ManyToOne(optional = false)    
     private DominioEntity tipoEntidad;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
     @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")    
     private List<PlantillaEntity> plantillaEntityList;
     @Column(name = "login_sin", length = 30)
     private String loginSin;
@@ -117,6 +117,7 @@ public class EntidadEntity implements Serializable {
     private Boolean esCobradora;
     @Column(name = "es_pagadora")
     private Boolean esPagadora;
+    @JsonIgnore
     @JoinColumn(name = "tipo_facturacion_id", referencedColumnName = "dominio_id", nullable = false)
     @ManyToOne(optional = false)
     private DominioEntity tipoFacturacion;

@@ -110,7 +110,7 @@ public class DeudaClienteController {
 			archivo.setTransaccion("CREAR");
 			archivo = this.archivoService.save(archivo);
 			response.put("mensaje", "El archivo fue recepcionado con éxito, los registros encontrados en este archivo fueron "
-					+ cantidadRegistros + ".");
+					+ cantidadRegistros + ". Presione en el botón 'Procesar' para cargar las deudas.");
 			response.put("archivo", archivo);
 			response.put("status", true);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);

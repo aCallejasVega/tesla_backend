@@ -69,14 +69,14 @@ public class RecaudadorEntity implements Serializable {
     @Basic(optional = false)
     @Column(nullable = false, length = 15)
     private String transaccion;
-    @JoinColumn(name = "tipo_recaudador_id", referencedColumnName = "dominio_id", nullable = false)
-    @ManyToOne(optional = false)
     @JsonIgnore
+    @JoinColumn(name = "tipo_recaudador_id", referencedColumnName = "dominio_id", nullable = false)
+    @ManyToOne(optional = false)   
     private DominioEntity tipoRecaudador;
     @JsonIgnore
     @OneToMany(mappedBy = "recaudador", fetch= FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<EntidadRecaudadorEntity> entidadRecaudadorEntityList;
-
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "recaudador")
     private List<RecaudadorComisionEntity> recaudadorComisionEntityLst;
 

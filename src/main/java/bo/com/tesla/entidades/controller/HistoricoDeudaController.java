@@ -10,7 +10,9 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +22,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import bo.com.tesla.administracion.entity.ArchivoEntity;
-import bo.com.tesla.administracion.entity.DominioEntity;
 import bo.com.tesla.administracion.entity.EntidadEntity;
-import bo.com.tesla.administracion.entity.HistoricoDeudaEntity;
 import bo.com.tesla.administracion.entity.LogSistemaEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
-import bo.com.tesla.entidades.dao.IArchivoDao;
 import bo.com.tesla.entidades.dao.SelectDto;
 import bo.com.tesla.entidades.dto.ArchivoDto;
 import bo.com.tesla.entidades.dto.DeudasClienteDto;
@@ -37,7 +35,7 @@ import bo.com.tesla.recaudaciones.services.IHistoricoDeudaService;
 import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegUsuarioService;
 import bo.com.tesla.useful.config.Technicalexception;
-import bo.com.tesla.useful.cross.Util;
+
 
 @RestController
 @RequestMapping("api/historicoDeuda")
@@ -58,9 +56,6 @@ public class HistoricoDeudaController {
 
 	@Autowired
 	private IEntidadService entidadService;
-	
-	
-	
 
 	@GetMapping(path = { "/findArchivos/{paginacion}",
 			"/findArchivos/{paginacion}/{fechaInicio}/{fechaFin}/{estado}" }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -167,33 +162,42 @@ public class HistoricoDeudaController {
 		}
 
 	}
-	
+
 	@GetMapping(path = "/findEstadoHistorico")
-	public ResponseEntity<?> findEstadoHistorico( 
-			Authentication authentication) throws Exception {
+	public ResponseEntity<?> findEstadoHistorico(Authentication authentication) throws Exception {
 
 		Map<String, Object> response = new HashMap<>();
-		List<EstadoTablasDto> estadosList=new ArrayList<>();
-		List<SelectDto> selectDtoList=new ArrayList<>();
-		
+		List<EstadoTablasDto> estadosList = new ArrayList<>();
+		List<SelectDto> selectDtoList = new ArrayList<>();
+
 		try {
-			estadosList=this.historicoDeudaService.findEstadoHistorico();
-			if(estadosList.isEmpty()) {
+			estadosList = this.historicoDeudaService.findEstadoHistorico();
+			if (estadosList.isEmpty()) {
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
 			}
 			for (EstadoTablasDto estados : estadosList) {
-				SelectDto select=new SelectDto( estados.estado,estados.estadoId);
+				SelectDto select = new SelectDto(estados.estado, estados.estadoId);
 				selectDtoList.add(select);
-			}			
-			
+			}
+
 			response.put("data", selectDtoList);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
 
+	}
+
+	@GetMapping("/getCsv/{archivoId}")
+	public ResponseEntity<?> getCsv(@PathVariable("archivoId") Long archivoId,Authentication authentication	) {
+		
+		
+		final InputStreamResource resource = new InputStreamResource(historicoDeudaService.load(archivoId));
+		
+		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "archivo.csv")
+				.contentType(MediaType.parseMediaType("text/csv")).body(resource);
 	}
 
 }

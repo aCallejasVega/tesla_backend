@@ -24,6 +24,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
@@ -50,11 +52,9 @@ public class SegUsuarioEntity implements Serializable {
     private String fechaInicio;
     @Basic(optional = false)
     @Column(name = "fecha_fin", nullable = false, length = 255)
-    private String fechaFin;
-    
+    private String fechaFin;    
     @Column(name = "usuario_creacion")
-    private BigInteger usuarioCreacion;
-    
+    private BigInteger usuarioCreacion;    
     @Column(name = "fecha_creacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
@@ -66,8 +66,10 @@ public class SegUsuarioEntity implements Serializable {
     @Basic(optional = false)
     @Column(nullable = false, length = 10)
     private String estado;
+    @JsonIgnore
     @OneToMany(mappedBy = "usuarioId")
     private List<SegUsuarioRolEntity> segUsuarioRolEntityList;
+    @JsonIgnore
     @JoinColumn(name = "persona_id", referencedColumnName = "persona_id")
     @ManyToOne
     private PersonaEntity personaId;

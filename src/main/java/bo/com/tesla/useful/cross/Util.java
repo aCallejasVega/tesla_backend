@@ -4,19 +4,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.apache.commons.lang3.StringUtils;
 
+import com.ibm.icu.text.RuleBasedNumberFormat;
+import com.ibm.icu.util.Currency;
+import com.ibm.icu.util.CurrencyAmount;
 import com.opencsv.CSVReader;
 
 import bo.com.tesla.useful.config.BusinesException;
@@ -31,7 +33,6 @@ import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
-import net.sf.jasperreports.export.WriterExporterOutput;
 
 public class Util {
 	public static String mensajeRow(String mensaje) {
@@ -215,6 +216,31 @@ public class Util {
 		}
 		return null;
 
+	}
+	
+	
+	public static String translate(String reqStr) {
+	    StringBuffer result = new StringBuffer();
+	    Locale locale =  new Locale("es", "BOL");
+	    Currency crncy = Currency.getInstance(locale);
+	    String inputArr[] = StringUtils.split(new BigDecimal(reqStr).abs().toPlainString(), ".");
+	    RuleBasedNumberFormat rule = new RuleBasedNumberFormat(locale, RuleBasedNumberFormat.SPELLOUT);
+	    int i = 0;
+	    boolean flac=true;
+	    for (String input : inputArr) {	    
+	        CurrencyAmount crncyAmt = new CurrencyAmount(new BigDecimal(input), crncy);
+	        if (i++ == 0) {
+	            result.append(rule.format(crncyAmt));
+	        } else {	   
+	        	flac=false;
+	        	result=result.append("  "+input+"/100") ;	          
+	        }	        
+	    }
+	    if(flac) {
+	    	result=result.append("  00/100") ;
+	    }
+	    
+	    return result.toString().toUpperCase()+" Bs.";
 	}
 
 }

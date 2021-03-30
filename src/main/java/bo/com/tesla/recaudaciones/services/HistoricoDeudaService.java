@@ -1,10 +1,17 @@
 package bo.com.tesla.recaudaciones.services;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import bo.com.tesla.administracion.entity.DeudaClienteEntity;
+import bo.com.tesla.administracion.entity.HistoricoDeudaEntity;
 import bo.com.tesla.entidades.dto.ConceptoDto;
 import bo.com.tesla.entidades.dto.DeudasClienteDto;
 import bo.com.tesla.recaudaciones.dao.IHistoricoDeudaDao;
@@ -73,13 +81,6 @@ public class HistoricoDeudaService implements IHistoricoDeudaService {
 		return this.iHistoricoDeudaDao.findEstadoHistorico();
 	}
 
-	
-	/*@Override
-	public List<DeudasClienteDto> findDeudasByArchivoIdAndEstado(Long archivoId, String recaudadorId, String estado) {
-
-		return this.iHistoricoDeudaDao.findDeudasByArchivoIdAndEstadoForEntidad(archivoId, recaudadorId, estado);
-	}*/
-
 	@Override
 	public BigDecimal getMontoTotalCobrados(Long archivoId, Long recaudadorId) {
 
@@ -99,8 +100,44 @@ public class HistoricoDeudaService implements IHistoricoDeudaService {
 	}
 
 	@Override
-	public List<DeudasCobradasFacturaDto> findDeudasCobrasForFactura(List<Long> transaccionCobroIds) {		
+	public List<DeudasCobradasFacturaDto> findDeudasCobrasForFactura(List<Long> transaccionCobroIds) {
 		return iHistoricoDeudaDao.findDeudasCobrasForFactura(transaccionCobroIds);
+	}
+
+	public ByteArrayInputStream load(Long archivoId) {
+		return writeDataToCsv(archivoId);
+	}
+
+	public ByteArrayInputStream writeDataToCsv(Long archivoId) {
+
+		String[] HEADERS =  { "nroRegistro", "codigoCliente", "nombreCliente", "nroDocumento", "direccion",
+				"telefono", "nit", "servicio", "tipoServicio", "periodo", "tipo", "concepto", "montoUnitario",
+				"cantidad","subTotal", "datoExtras", "tipoComprobante", "periodoCabecera","esPostpago" };
+
+		try (final ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				final CSVPrinter printer = new CSVPrinter(new PrintWriter(stream),
+						CSVFormat.DEFAULT.withHeader(HEADERS))) {
+			List<HistoricoDeudaEntity> historicoList = iHistoricoDeudaDao.findHistoricoDeudasByArchivoId(archivoId);
+			for (final HistoricoDeudaEntity historico : historicoList) {
+
+				final List<String> data = Arrays.asList(String.valueOf(historico.getNroRegistro()),
+						historico.getCodigoCliente(), historico.getNombreCliente(), historico.getNroDocumento(),
+						historico.getDireccion(), historico.getTelefono(), historico.getNit(), historico.getServicio(),
+						String.valueOf(historico.getTipo()), historico.getPeriodo(),
+						String.valueOf(historico.getTipo()), historico.getConcepto(),
+						String.valueOf(historico.getMontoUnitario()), String.valueOf(historico.getCantidad()),
+						String.valueOf(historico.getSubTotal()), historico.getDatoExtra(),
+						String.valueOf(historico.isTipoComprobante()), historico.getPeriodoCabecera(),
+						String.valueOf(historico.getEsPostpago()));
+
+				printer.printRecord(data);
+			}
+
+			printer.flush();
+			return new ByteArrayInputStream(stream.toByteArray());
+		} catch (final IOException e) {
+			throw new RuntimeException("Csv writing error: " + e.getMessage());
+		}
 	}
 
 }
