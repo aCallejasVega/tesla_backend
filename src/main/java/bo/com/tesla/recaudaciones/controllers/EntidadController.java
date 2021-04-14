@@ -417,6 +417,45 @@ public class EntidadController {
             return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
+    
+    
+    @GetMapping("/findTipoEntidadPagadoras")
+    public ResponseEntity<?> findTipoEntidadPagadoras(Authentication authentication) {
+        Map<String, Object> response = new HashMap<>();
+
+        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
+        try {
+            List<DominioDto> dominioDtos = iEntidadRService.findTipoEntidadPagadoras(usuario);
+            if(dominioDtos.isEmpty()) {
+                response.put("status", false);
+                response.put("result", null);
+                response.put("message", "No existe Tipos Entidades encontrados");
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            response.put("status", true);
+            response.put("result", dominioDtos);
+            response.put("message", "Tipos Entidades encontrados");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (Technicalexception e) {
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("RECAUDACIONES.ENTIDADES");
+            log.setController("api/entidades/tipos");
+            log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
+            log.setMensaje(e.getMessage()+"");
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            logSistemaService.save(log);
+            this.logger.error("This is error", e.getMessage());
+            this.logger.error("This is cause", e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
+            e.printStackTrace();
+            response.put("status", false);
+            response.put("result", null);
+            response.put("message", "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+            response.put("code", log.getLogSistemaId()+"");
+            return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
 
     @GetMapping("/tipos/{tipoEntidadId}")
     public ResponseEntity<?> getEntidadesByTipoEntidad(@PathVariable Long tipoEntidadId, Authentication authentication) {

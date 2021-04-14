@@ -24,7 +24,6 @@ import bo.com.tesla.entidades.dto.DeudasClienteDto;
 import bo.com.tesla.security.dao.ISegUsuarioDao;
 
 @Service
-
 public class ArchivoService implements IArchivoService{
 	
 	
@@ -57,6 +56,11 @@ public class ArchivoService implements IArchivoService{
 		Page<DeudasClienteDto> deudaClienteList ;
 		Pageable paging = PageRequest.of(page, size);
 		return this.archivoDao.findByEntidadIdAndFechaIniAndFechaFin(entidadId, fechaIni, fechaFin,estado, paging);
+	}
+
+	@Override
+	public ArchivoEntity findByEstadoAndEntidadAndServicio(String estado, Long entidadId, Long servicioProductoId) {		
+		return this.archivoDao.findByEstadoAndEntidadAndServicio(estado, entidadId, servicioProductoId);
 	}
 
 	

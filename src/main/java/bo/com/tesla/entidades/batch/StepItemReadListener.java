@@ -31,20 +31,8 @@ public class StepItemReadListener implements  ItemReadListener<DeudaClienteEntit
 	@Override
 	public void onReadError(Exception ex)  {
 		
-		System.out.println("-------------------onReadError----------------------");
 		
-		System.out.println("-----------------------------------------"+ex.getMessage());
-		System.out.println("-----------------------------------------");
 		
-		System.out.println("-----------------------------------------"+ex.getCause());
-		
-		//Todo delet en caso de encontrar un error.
-		/*System.out.println("*****************onReadError********************");
-		System.out.println(ex.getMessage());
-		
-		System.out.println("eliminando registros con id ="+this.archivoId);
-		this.deudaClienteService.deletByArchivoId(this.archivoId);
-		System.out.println("Termion de eliminar");*/
 		
 	}
 

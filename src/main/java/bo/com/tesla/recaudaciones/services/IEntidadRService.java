@@ -24,4 +24,6 @@ public interface IEntidadRService {
     public List<EntidadDto> getEntidadesByTipoEntidad(Long tipoEntidadId, SegUsuarioEntity usuario);
     public List<EntidadDto> getByRecaudadoraId(SegUsuarioEntity usuario);
     public List<DominioDto> getTipoEntidadByRecaudador(SegUsuarioEntity usuario);
+    public List<DominioDto> findTipoEntidadPagadoras(SegUsuarioEntity usuario);
+    
 }

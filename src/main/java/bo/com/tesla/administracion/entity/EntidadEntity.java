@@ -65,26 +65,21 @@ public class EntidadEntity implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "entidadId")    
     private List<ArchivoEntity> archivoEntityList;
-
     @JsonIgnore
     @OneToMany(mappedBy = "entidadId")    
     private List<TransaccionCobroEntity> transaccionCobroEntityList;
-
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")    
-    private List<ComprobanteCobroEntity> comprobanteCobroEntityList;
-  
+    private List<ComprobanteCobroEntity> comprobanteCobroEntityList;  
     @JsonIgnore
     @OneToMany(mappedBy = "entidad", fetch= FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<EntidadRecaudadorEntity> entidadRecaudadorEntityList;
     @JsonIgnore
     @OneToMany(mappedBy = "entidadId")    
-    private List<EmpleadoEntity> empleadoEntityList;
-    
+    private List<EmpleadoEntity> empleadoEntityList;    
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")    
-    private List<DosificacionEntity> dosificacionEntityList;
-    
+    private List<DosificacionEntity> dosificacionEntityList;    
     @JsonIgnore
     @JoinColumn(name = "tipo_entidad_id", referencedColumnName = "dominio_id", nullable = false)
     @ManyToOne(optional = false)    
@@ -121,8 +116,14 @@ public class EntidadEntity implements Serializable {
     @JoinColumn(name = "tipo_facturacion_id", referencedColumnName = "dominio_id", nullable = false)
     @ManyToOne(optional = false)
     private DominioEntity tipoFacturacion;
-
-
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
+    private List<PServicioProductoEntity> servicioProductoEntityList;
+   
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
+    private List<PTransaccionPagoEntity> pTransaccionPagoEntityList;
+    
 
     public EntidadEntity() {
     }
@@ -406,8 +407,27 @@ public class EntidadEntity implements Serializable {
     public void setTipoFacturacion(DominioEntity tipoFacturacion) {
         this.tipoFacturacion = tipoFacturacion;
     }
+    
+    
+    public List<PServicioProductoEntity> getServicioProductoEntityList() {
+		return servicioProductoEntityList;
+	}
 
-    @Override
+	public void setServicioProductoEntityList(List<PServicioProductoEntity> servicioProductoEntityList) {
+		this.servicioProductoEntityList = servicioProductoEntityList;
+	}
+
+	
+
+	public List<PTransaccionPagoEntity> getpTransaccionPagoEntityList() {
+		return pTransaccionPagoEntityList;
+	}
+
+	public void setpTransaccionPagoEntityList(List<PTransaccionPagoEntity> pTransaccionPagoEntityList) {
+		this.pTransaccionPagoEntityList = pTransaccionPagoEntityList;
+	}
+
+	@Override
     public int hashCode() {
         int hash = 0;
         hash += (entidadId != null ? entidadId.hashCode() : 0);

@@ -85,10 +85,26 @@ public class ArchivoEntity implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "archivoId")
     private List<DeudaClienteEntity> deudaClienteEntityList;
+    @JsonIgnore
     @OneToMany(mappedBy = "archivoId")
     private List<TransaccionCobroEntity> transaccionesCobrosList;
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "archivoId")
+    private List<PTransaccionPagoEntity> pTransaccionPagoEntityList;
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "archivoId")
+    private List<PBeneficiariosEntity> pAbonoClienteEntityList;
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "archivoId")
+    private List<PHistoricoAbonoClienteEntity> pHistoricoAbonoClienteEntityList;
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "archivoId")
+    private List<PPagoClienteEntity> pPagoClienteEntityList;
+    @JsonIgnore
+    @JoinColumn(name = "servicio_producto_id", referencedColumnName = "servicio_producto_id")
+    @ManyToOne
+    private PServicioProductoEntity servicioProductoId;
     
-
     public ArchivoEntity() {
     }
 
@@ -238,6 +254,49 @@ public class ArchivoEntity implements Serializable {
 
 	public void setNroRegistros(Long nroRegistros) {
 		this.nroRegistros = nroRegistros;
+	}
+	
+	
+	public List<PBeneficiariosEntity> getpAbonoClienteEntityList() {
+		return pAbonoClienteEntityList;
+	}
+
+	public void setpAbonoClienteEntityList(List<PBeneficiariosEntity> pAbonoClienteEntityList) {
+		this.pAbonoClienteEntityList = pAbonoClienteEntityList;
+	}
+
+	public List<PHistoricoAbonoClienteEntity> getpHistoricoAbonoClienteEntityList() {
+		return pHistoricoAbonoClienteEntityList;
+	}
+
+	public void setpHistoricoAbonoClienteEntityList(List<PHistoricoAbonoClienteEntity> pHistoricoAbonoClienteEntityList) {
+		this.pHistoricoAbonoClienteEntityList = pHistoricoAbonoClienteEntityList;
+	}
+
+	public List<PPagoClienteEntity> getpPagoClienteEntityList() {
+		return pPagoClienteEntityList;
+	}
+
+	public void setpPagoClienteEntityList(List<PPagoClienteEntity> pPagoClienteEntityList) {
+		this.pPagoClienteEntityList = pPagoClienteEntityList;
+	}
+	
+	
+	public List<PTransaccionPagoEntity> getpTransaccionPagoEntityList() {
+		return pTransaccionPagoEntityList;
+	}
+
+	public void setpTransaccionPagoEntityList(List<PTransaccionPagoEntity> pTransaccionPagoEntityList) {
+		this.pTransaccionPagoEntityList = pTransaccionPagoEntityList;
+	}
+
+		
+	public PServicioProductoEntity getServicioProductoId() {
+		return servicioProductoId;
+	}
+
+	public void setServicioProductoId(PServicioProductoEntity servicioProductoId) {
+		this.servicioProductoId = servicioProductoId;
 	}
 
 	@Override

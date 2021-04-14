@@ -261,9 +261,10 @@ public class EntidadRService implements IEntidadRService {
     @Override
     public List<DominioDto> getTipoEntidadByRecaudador(SegUsuarioEntity usuario) throws Technicalexception{
         try {
+        
             Optional<RecaudadorEntity> recaudadorEntityOptional = iRecaudadorDao.findRecaudadorByUserId(usuario.getUsuarioId());
             if(!recaudadorEntityOptional.isPresent()) {
-                throw new Technicalexception("El usuario " + usuario.getLogin() + "no esta registrado en ninguna sucursal de recaudadción");
+                throw new Technicalexception("El usuario " + usuario.getLogin() + " no esta registrado en ninguna sucursal de recaudadción");
             }
             List<DominioDto> dominioDtos = iDominioDao.findTipoEntidadByRecaudadorId(recaudadorEntityOptional.get().getRecaudadorId());
             dominioDtos.forEach(e -> {
@@ -279,6 +280,27 @@ public class EntidadRService implements IEntidadRService {
         }
     }
 
-
+    @Transactional(readOnly = true)
+    @Override
+    public List<DominioDto> findTipoEntidadPagadoras(SegUsuarioEntity usuario) throws Technicalexception{
+        try {
+        
+            Optional<RecaudadorEntity> recaudadorEntityOptional = iRecaudadorDao.findRecaudadorByUserId(usuario.getUsuarioId());
+            if(!recaudadorEntityOptional.isPresent()) {
+                throw new Technicalexception("El usuario " + usuario.getLogin() + " no esta registrado en ninguna sucursal de recaudadción");
+            }
+            List<DominioDto> dominioDtos = this.iDominioDao.findTipoEntidadPagadoras(recaudadorEntityOptional.get().getRecaudadorId());
+            dominioDtos.forEach(e -> {
+                if(e.abreviatura != null) {
+                    String base64 = UtilBase64Image.encoder(pathLogos + "/tipos/" + e.abreviatura);
+                    e.imagen64 = base64 != null ? "data:image/png;base64," + base64 : null;
+                    e.abreviatura = serverFile + "/tipos/" + e.abreviatura;
+                }
+            });
+            return dominioDtos;
+        } catch (Exception e) {
+            throw new Technicalexception(e.getMessage(), e.getCause());
+        }
+    }
 
 }

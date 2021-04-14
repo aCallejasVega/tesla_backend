@@ -1,9 +1,11 @@
 package bo.com.tesla.useful.cross;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -13,25 +15,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
-<<<<<<< HEAD
 
 import org.apache.commons.lang3.StringUtils;
-=======
-//import java.util.*;
-
-//import java.util.Locale;
-//import com.ibm.icu.text.RuleBasedNumberFormat;
-//import com.ibm.icu.util.CurrencyAmount;
-//import org.apache.commons.lang.StringUtils;
-import com.ibm.icu.text.RuleBasedNumberFormat;
-import com.ibm.icu.util.Currency;
-import com.ibm.icu.util.CurrencyAmount;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
->>>>>>> 28bd9263af345c6ecd40edfe47f141a1beb87347
 
 import com.ibm.icu.text.RuleBasedNumberFormat;
 import com.ibm.icu.util.Currency;
@@ -40,6 +25,7 @@ import com.opencsv.CSVReader;
 
 import bo.com.tesla.useful.config.BusinesException;
 import bo.com.tesla.useful.config.Technicalexception;
+import bo.com.tesla.useful.converter.UtilBase64Image;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -50,6 +36,8 @@ import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
+
+
 
 public class Util {
 	public static String mensajeRow(String mensaje) {
@@ -112,6 +100,45 @@ public class Util {
 		return "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.";
 	}
 
+	
+	public static Long fileDataValidatePagos(String path) throws BusinesException {
+		Long rowInt = 0L;
+		try {
+			if (!path.contains(".csv")) {
+				throw new BusinesException(
+						"El archivo debe tener la extensión ‘csv’, por favor verifique la extensión del archivo y vuelva a cargarlo.");
+			}
+			CSVReader reader = new CSVReader(new FileReader(path), '|');
+			List<String[]> allRows = reader.readAll();
+
+			for (String[] rowString : allRows) {
+				rowInt++;
+
+				if (rowString.length <= 1) {
+					throw new BusinesException("Se encontró un registro en blanco en la línea " + rowInt
+							+ ", por favor verifique el archivo y vulva a cargarlo.");
+
+				}
+				if (rowString.length != 12) {
+
+					throw new BusinesException(
+							"Falta columna(s) en la línea " + rowInt + " verifique el archivo y vuelva a cargarlo.");
+				}
+			}
+			if (rowInt == 0) {
+
+				throw new BusinesException(
+						"No se encontraron registros en el archivo, por favor verifique el contenido del archivo y vuelva a cargarlo.");
+			}
+
+		} catch (FileNotFoundException e) {
+			throw new Technicalexception(e.getMessage(), e.getCause());
+		} catch (IOException e) {
+			throw new Technicalexception(e.getMessage(), e.getCause());
+		}
+		return rowInt;
+
+	}
 	public static Long fileDataValidate(String path) throws BusinesException {
 		Long rowInt = 0L;
 		try {
@@ -261,6 +288,11 @@ public class Util {
 		return result.toString().toUpperCase()+" Bs.";
 	}
 
-
+	public static String imgToText(String path){
+		
+		String base64 = UtilBase64Image.encoder(path);
+        String img64 = base64 != null ? "data:image/png;base64," + base64 : null;
+        return img64;
+	}
 
 }
