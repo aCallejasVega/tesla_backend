@@ -510,12 +510,12 @@ public class EntidadController {
             if(entidadDtos.isEmpty()) {
                 response.put("status", false);
                 response.put("result", null);
-                response.put("message", "Empresas no encontradas.");
+                response.put("message", "Entidades no encontradas.");
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
             response.put("status", true);
             response.put("result", entidadDtos);
-            response.put("message", "Se encontraron Empresas.");
+            response.put("message", "Se encontraron Entidades.");
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Technicalexception e) {
             LogSistemaEntity log=new LogSistemaEntity();

@@ -38,8 +38,7 @@ public interface IRecaudadorDao extends JpaRepository <RecaudadorEntity, Long> {
             "r.nombre, r.direccion, r.telefono, s.login, r.fechaCreacion, r.estado) " +
             "FROM RecaudadorEntity r " +
             "INNER JOIN SegUsuarioEntity s ON s.usuarioId = r.usuarioCreacion " +
-            "WHERE r.estado <> 'ELIMINADO'" +
-            "ORDER BY r.nombre  ")
+            "WHERE r.estado <> 'ELIMINADO'")
     List<RecaudadorAdmDto> findRecaudadorDtoAll();
 
     @Query(value = "SELECT new bo.com.tesla.administracion.dto.RecaudadorAdmDto( " +
