@@ -29,7 +29,7 @@ public interface IEntidadComisionesDao extends JpaRepository<EntidadComisionEnti
 
     @Modifying
     @Query(value = "UPDATE EntidadComisionEntity e " +
-            "SET e.transaccion = 'DESACTIVAR', e.usuarioModificacion = :usuarioModificacion, e.fechaModificacion = current_timestamp " +
+            "SET e.transaccion = 'INACTIVAR', e.usuarioModificacion = :usuarioModificacion, e.fechaModificacion = current_timestamp " +
             "WHERE e.entidad.entidadId = :entidadId " +
             "AND e.estado = 'ACTIVO'")
     Integer updateEntidadComisionActiva(@Param("entidadId") Long entidadId, @Param("usuarioModificacion") long usuarioModificacion);

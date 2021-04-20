@@ -30,7 +30,7 @@ public interface IRecaudadorComisionDao extends JpaRepository<RecaudadorComision
 
     @Modifying
     @Query(value = "UPDATE RecaudadorComisionEntity e " +
-            "SET e.transaccion = 'DESACTIVAR', e.usuarioModificacion = :usuarioModificacion, e.fechaModificacion = current_timestamp " +
+            "SET e.transaccion = 'INACTIVAR', e.usuarioModificacion = :usuarioModificacion, e.fechaModificacion = current_timestamp " +
             "WHERE e.recaudador.recaudadorId = :recaudadorId " +
             "AND e.estado = 'ACTIVO'")
     Integer updateRecaudadorComisionActivo(@Param("recaudadorId") Long recaudadorId, @Param("usuarioModificacion") long usuarioModificacion);

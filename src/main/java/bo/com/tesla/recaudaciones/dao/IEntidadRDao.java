@@ -76,7 +76,7 @@ public interface IEntidadRDao extends JpaRepository<EntidadEntity, Long> {
     @Query(value = "UPDATE EntidadEntity e " +
             "SET e.pathLogo = :pathLogo, e.transaccion = :transaccion, e.usuarioModificacion = :usuarioModificacion, e.fechaModificacion = current_timestamp " +
             "WHERE e.entidadId = :entidadId " +
-            "AND e.estado NOT IN ('ELIMINADO', 'DESACTIVO')")
+            "AND e.estado NOT IN ('ELIMINADO', 'INACTIVO')")
     Integer updatePathLogo(@Param("entidadId") Long entidadId,
                            @Param("pathLogo") String pathLogo,
                            @Param("transaccion") String transaccion,
