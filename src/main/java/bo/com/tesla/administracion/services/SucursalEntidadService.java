@@ -2,8 +2,10 @@ package bo.com.tesla.administracion.services;
 
 import bo.com.tesla.administracion.dao.ISucursalEntidadDao;
 import bo.com.tesla.administracion.dto.SucursalEntidadAdmDto;
+import bo.com.tesla.administracion.entity.DominioEntity;
 import bo.com.tesla.administracion.entity.EntidadEntity;
 import bo.com.tesla.administracion.entity.SucursalEntidadEntity;
+import bo.com.tesla.recaudaciones.dao.IDominioDao;
 import bo.com.tesla.recaudaciones.dao.IEntidadRDao;
 import bo.com.tesla.useful.config.Technicalexception;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class SucursalEntidadService implements ISucursalEntidadService {
 
     @Autowired
     private IEntidadRDao iEntidadRDao;
+
+    @Autowired
+    private IDominioDao iDominioDao;
 
     /*********************ABM**************************/
 
@@ -62,10 +67,27 @@ public class SucursalEntidadService implements ISucursalEntidadService {
             throw new Technicalexception("No existe ENTIDAD EntidadId=" + sucursalEntidadAdmDto.entidadId);
         }
 
+        Optional<DominioEntity> departamentoOptional = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(sucursalEntidadAdmDto.departamentoId, "departamento_id","ACTIVO");
+        if (!departamentoOptional.isPresent()) {
+            throw new Technicalexception("No existe Dominio departamento_id=" + sucursalEntidadAdmDto.departamentoId);
+        }
+
+        Optional<DominioEntity> municipioOptional = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(sucursalEntidadAdmDto.municipioId, "municipio_id","ACTIVO");
+        if (!municipioOptional.isPresent()) {
+            throw new Technicalexception("No existe Dominio municipio_id=" + sucursalEntidadAdmDto.departamentoId);
+        }
+
         sucursalEntidadEntity.setEntidad(entidadEntityOptional.get());
         sucursalEntidadEntity.setNombreSucursal(sucursalEntidadAdmDto.nombreSucursal.toUpperCase().trim());
         sucursalEntidadEntity.setDireccion(sucursalEntidadAdmDto.direccion.toUpperCase().trim());
         sucursalEntidadEntity.setTelefono(sucursalEntidadAdmDto.telefono);
+        sucursalEntidadEntity.setEmail(sucursalEntidadAdmDto.email);
+        sucursalEntidadEntity.setCodigoActividadEconomica(sucursalEntidadAdmDto.codigoActividadEconomica);
+        sucursalEntidadEntity.setActividadEconomica(sucursalEntidadAdmDto.actividadEconomica);
+        sucursalEntidadEntity.setNumeroSucursalSin(sucursalEntidadAdmDto.numeroSucursalSin);
+        sucursalEntidadEntity.setEmiteFacturaTesla(sucursalEntidadAdmDto.emiteFacturaTesla != null ? sucursalEntidadAdmDto.emiteFacturaTesla : false);
+        sucursalEntidadEntity.setDepartamentoId(departamentoOptional.get());
+        sucursalEntidadEntity.setMunicipioId(municipioOptional.get());
 
         sucursalEntidadEntity = iSucursalEntidadDao.save(sucursalEntidadEntity);
         sucursalEntidadAdmDto.sucursalEntidadId = sucursalEntidadEntity.getSucursalEntidadId();

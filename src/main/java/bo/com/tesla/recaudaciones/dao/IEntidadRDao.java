@@ -45,8 +45,7 @@ public interface IEntidadRDao extends JpaRepository<EntidadEntity, Long> {
             "e.fechaCreacion, s.login, e.estado) " +
             "FROM EntidadEntity e " +
             "INNER JOIN SegUsuarioEntity s ON s.usuarioId = e.usuarioCreacion " +
-            "WHERE e.estado <> 'ELIMINADO'" +
-            "ORDER BY e.nombre  ")
+            "WHERE e.estado <> 'ELIMINADO'" )
     List<EntidadAdmDto> findEntidadesDtoAll();
 
     @Query(value = "SELECT new bo.com.tesla.administracion.dto.EntidadAdmDto(" +
@@ -70,15 +69,14 @@ public interface IEntidadRDao extends JpaRepository<EntidadEntity, Long> {
             "FROM EntidadRecaudadorEntity er " +
             "INNER JOIN SegUsuarioEntity s ON s.usuarioId = er.entidad.usuarioCreacion " +
             "WHERE er.recaudador.recaudadorId = :recaudadorId " +
-            "AND er.entidad.estado <> 'ELIMINADO' " +
-            "ORDER BY er.entidad.nombre  ")
+            "AND er.entidad.estado <> 'ELIMINADO' ")
     List<EntidadAdmDto> findEntidadesDtoByRecaudadorId(@Param("recaudadorId") Long recaudadorId);
 
     @Modifying
     @Query(value = "UPDATE EntidadEntity e " +
             "SET e.pathLogo = :pathLogo, e.transaccion = :transaccion, e.usuarioModificacion = :usuarioModificacion, e.fechaModificacion = current_timestamp " +
             "WHERE e.entidadId = :entidadId " +
-            "AND e.estado NOT IN ('ELIMINADO', 'DESACTIVO')")
+            "AND e.estado NOT IN ('ELIMINADO', 'INACTIVO')")
     Integer updatePathLogo(@Param("entidadId") Long entidadId,
                            @Param("pathLogo") String pathLogo,
                            @Param("transaccion") String transaccion,

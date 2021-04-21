@@ -35,21 +35,27 @@ public interface ISucursalEntidadDao extends JpaRepository<SucursalEntidadEntity
 
 
     @Query(value = "SELECT new bo.com.tesla.administracion.dto.SucursalEntidadAdmDto( " +
-            "se.sucursalEntidadId, se.entidad.entidadId, se.nombreSucursal,se.direccion, se.telefono, u.login, se.fechaCreacion, se.estado) " +
+            "se.sucursalEntidadId, se.entidad.entidadId, se.nombreSucursal,se.direccion, se.telefono, u.login, se.fechaCreacion, se.estado, " +
+            "se.email, se.codigoActividadEconomica, se.actividadEconomica, se.numeroSucursalSin, se.emiteFacturaTesla, " +
+            "se.departamentoId.dominioId, se.departamentoId.descripcion, se.municipioId.dominioId, se.municipioId.descripcion) " +
             "FROM SucursalEntidadEntity se " +
             "INNER JOIN SegUsuarioEntity u ON se.usuarioCreacion = u.usuarioId " +
             "WHERE se.estado <> 'ELIMINADO'")
     List<SucursalEntidadAdmDto> findSucursalesEntidadesDtoAll();
 
     @Query(value = "SELECT new bo.com.tesla.administracion.dto.SucursalEntidadAdmDto( " +
-            "se.sucursalEntidadId, se.entidad.entidadId, se.nombreSucursal,se.direccion, se.telefono, u.login, se.fechaCreacion, se.estado) " +
+            "se.sucursalEntidadId, se.entidad.entidadId, se.nombreSucursal,se.direccion, se.telefono, u.login, se.fechaCreacion, se.estado," +
+            "se.email, se.codigoActividadEconomica, se.actividadEconomica, se.numeroSucursalSin, se.emiteFacturaTesla, " +
+            "se.departamentoId.dominioId, se.departamentoId.descripcion, se.municipioId.dominioId, se.municipioId.descripcion) " +
             "FROM SucursalEntidadEntity se " +
             "INNER JOIN SegUsuarioEntity u ON se.usuarioCreacion = u.usuarioId " +
             "WHERE se.sucursalEntidadId = :sucursalEntidadId")
     Optional<SucursalEntidadAdmDto> findSucursalEntidadDtoById(@Param("sucursalEntidadId") Long sucursalEntidadId);
 
     @Query(value = "SELECT new bo.com.tesla.administracion.dto.SucursalEntidadAdmDto( " +
-            "se.sucursalEntidadId, se.entidad.entidadId, se.nombreSucursal,se.direccion, se.telefono, u.login, se.fechaCreacion, se.estado) " +
+            "se.sucursalEntidadId, se.entidad.entidadId, se.nombreSucursal,se.direccion, se.telefono, u.login, se.fechaCreacion, se.estado, " +
+            "se.email, se.codigoActividadEconomica, se.actividadEconomica, se.numeroSucursalSin, se.emiteFacturaTesla, " +
+            "se.departamentoId.dominioId, se.departamentoId.descripcion, se.municipioId.dominioId, se.municipioId.descripcion) " +
             "FROM SucursalEntidadEntity se " +
             "INNER JOIN SegUsuarioEntity u ON se.usuarioCreacion = u.usuarioId " +
             "WHERE se.entidad.entidadId = :entidadId " +

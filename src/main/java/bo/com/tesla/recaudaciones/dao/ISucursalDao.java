@@ -41,8 +41,7 @@ public interface ISucursalDao extends JpaRepository<SucursalEntity, Long> {
             "s.login, su.fechaCreacion, su.estado) " +
             "FROM SucursalEntity su " +
             "INNER JOIN SegUsuarioEntity s ON s.usuarioId = su.usuarioCreacion " +
-            "WHERE su.estado <> 'ELIMINADO'" +
-            "ORDER BY su.nombre  ")
+            "WHERE su.estado <> 'ELIMINADO'" )
     List<SucursalAdmDto> findRecaudadorDtoAll();
 
     @Query(value = "SELECT new bo.com.tesla.administracion.dto.SucursalAdmDto(" +
@@ -63,8 +62,7 @@ public interface ISucursalDao extends JpaRepository<SucursalEntity, Long> {
             "FROM SucursalEntity su " +
             "INNER JOIN SegUsuarioEntity s ON s.usuarioId = su.usuarioCreacion " +
             "WHERE su.estado <> 'ELIMINADO' " +
-            "AND su.recaudador.recaudadorId = :recaudadorId " +
-            "ORDER BY su.nombre")
+            "AND su.recaudador.recaudadorId = :recaudadorId ")
     List<SucursalAdmDto> findLstSucursalesDtoByRecaudadorId(@Param("recaudadorId") Long recaudadorId);
 
 

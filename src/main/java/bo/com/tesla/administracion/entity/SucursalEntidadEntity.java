@@ -58,6 +58,26 @@ public class SucursalEntidadEntity implements Serializable {
     @ManyToOne(optional = false)
     private EntidadEntity entidad;
 
+    private String email;
+    @Column(name = "codigo_actividad_economica", length = 10)
+    private String codigoActividadEconomica;
+    @Column(name = "actividad_economica", length = 255)
+    private String actividadEconomica;
+    @Column(name = "numero_sucursal_sin")
+    private Short numeroSucursalSin;
+    @Column(name = "usuario_facturacion", length = 30)
+    private String usuarioFacturacion;
+    @Column(name = "password_facturacion", length = 30)
+    private String passwordFacturacion;
+    @Column(name = "emite_factura_tesla")
+    private Boolean emiteFacturaTesla;
+    @JoinColumn(name = "departamento_id", referencedColumnName = "dominio_id")
+    @ManyToOne
+    private DominioEntity departamentoId;
+    @JoinColumn(name = "municipio_id", referencedColumnName = "dominio_id")
+    @ManyToOne
+    private DominioEntity municipioId;
+
     public SucursalEntidadEntity() {
     }
 
@@ -161,6 +181,78 @@ public class SucursalEntidadEntity implements Serializable {
 
     public void setEntidad(EntidadEntity entidad) {
         this.entidad = entidad;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getCodigoActividadEconomica() {
+        return codigoActividadEconomica;
+    }
+
+    public void setCodigoActividadEconomica(String codigoActividadEconomica) {
+        this.codigoActividadEconomica = codigoActividadEconomica;
+    }
+
+    public String getActividadEconomica() {
+        return actividadEconomica;
+    }
+
+    public void setActividadEconomica(String actividadEconomica) {
+        this.actividadEconomica = actividadEconomica;
+    }
+
+    public Short getNumeroSucursalSin() {
+        return numeroSucursalSin;
+    }
+
+    public void setNumeroSucursalSin(Short numeroSucursalSin) {
+        this.numeroSucursalSin = numeroSucursalSin;
+    }
+
+    public String getUsuarioFacturacion() {
+        return usuarioFacturacion;
+    }
+
+    public void setUsuarioFacturacion(String usuarioFacturacion) {
+        this.usuarioFacturacion = usuarioFacturacion;
+    }
+
+    public String getPasswordFacturacion() {
+        return passwordFacturacion;
+    }
+
+    public void setPasswordFacturacion(String passwordFacturacion) {
+        this.passwordFacturacion = passwordFacturacion;
+    }
+
+    public Boolean getEmiteFacturaTesla() {
+        return emiteFacturaTesla;
+    }
+
+    public void setEmiteFacturaTesla(Boolean emiteFacturaTesla) {
+        this.emiteFacturaTesla = emiteFacturaTesla;
+    }
+
+    public DominioEntity getDepartamentoId() {
+        return departamentoId;
+    }
+
+    public void setDepartamentoId(DominioEntity departamentoId) {
+        this.departamentoId = departamentoId;
+    }
+
+    public DominioEntity getMunicipioId() {
+        return municipioId;
+    }
+
+    public void setMunicipioId(DominioEntity municipioId) {
+        this.municipioId = municipioId;
     }
 
     @Override

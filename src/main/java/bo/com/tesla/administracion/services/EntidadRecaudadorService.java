@@ -99,7 +99,7 @@ public class EntidadRecaudadorService implements IEntidadRecaudadorService {
 
     public void anularRecaudadorLst(List<Long> recaudadorIdLst, Long entidadId, Long usuarioId) {
 
-        Integer countUpdate = iEntidadRecaudadorDao.updateLstTransaccionByRecaudadorIdActivo(entidadId, recaudadorIdLst, "DESACTIVAR", usuarioId);
+        Integer countUpdate = iEntidadRecaudadorDao.updateLstTransaccionByRecaudadorIdActivo(entidadId, recaudadorIdLst, "INACTIVAR", usuarioId);
         if(countUpdate != recaudadorIdLst.size()) {
             throw new Technicalexception("No se ha actualizado");
         }
