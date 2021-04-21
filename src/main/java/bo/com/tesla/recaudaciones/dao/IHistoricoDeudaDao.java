@@ -84,13 +84,23 @@ public interface IHistoricoDeudaDao extends JpaRepository<HistoricoDeudaEntity, 
 	@Query(" Select new bo.com.tesla.recaudaciones.dto.EstadoTablasDto( e.segEstadoEntityPK.estadoId,   "
 			+ " CASE e.segEstadoEntityPK.estadoId "
             + " WHEN 'ACTIVO' THEN 'POR PAGAR' "
-            + " WHEN 'COBRADO' THEN 'COBRADOS' "
-            + " WHEN 'REVERTIDO' THEN 'REVERTIDOS' "
+            + " WHEN 'COBRADO' THEN 'COBRADOS' "            
             + " WHEN 'ANULADO' THEN 'ANULADOS' "
             + " END) "
             + " from SegEstadoEntity e "
             + " where e.segEstadoEntityPK.tablaId='HISTORICOS_DEUDAS' ")
 	public List<EstadoTablasDto> findEstadoHistorico();
+	
+	@Query(" Select new bo.com.tesla.recaudaciones.dto.EstadoTablasDto( e.segEstadoEntityPK.estadoId,   "
+			+ " CASE e.segEstadoEntityPK.estadoId "
+            + " WHEN 'CREADO' THEN 'POR PAGAR' "
+            + " WHEN 'PAGADO' THEN 'PAGADO' "            
+            + " WHEN 'ANULADO' THEN 'ANULADOS' "
+            + " END) "
+            + " from SegEstadoEntity e "
+            + " where e.segEstadoEntityPK.tablaId='P_HISTORICOS_BENEFICIARIOS' ")
+	public List<EstadoTablasDto> findEstadoHistoricoPagos();
+	
 	
 	/**
 	 * Obtiene los estados de la tabla hitorico deudas 

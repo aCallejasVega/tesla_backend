@@ -60,7 +60,7 @@ public class AbonosClientesBatchConfiguration {
 				.delimited()
 				.delimiter("|")				
 				.names(new String[] { "nroRegistro", "codigoCliente", "nombreCliente", "fechaNacimientoCliente","genero",
-						"nroDocumentoCliente",	"extencionDocumento", "tipoDocumentoId","concepto",
+						"nroDocumentoCliente",	"tipoDocumentoId", "extencionDocumento","concepto",
 						"cantidad", "montoUnitario","periodo" })
 				.fieldSetMapper(new BeanWrapperFieldSetMapper<PBeneficiarioDto>() {
 					{

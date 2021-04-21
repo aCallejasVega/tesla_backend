@@ -8,7 +8,9 @@ package bo.com.tesla.administracion.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,11 +20,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -37,8 +38,8 @@ public class PBeneficiariosEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "beneficiarios_id", nullable = false)
-    private Long beneficiarios_id;
+    @Column(name = "beneficiario_id", nullable = false)
+    private Long beneficiarioId;
     @Basic(optional = false)
     @Column(name = "nro_registro", nullable = false)
     private int nroRegistro;
@@ -52,16 +53,13 @@ public class PBeneficiariosEntity implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date fechaNacimientoCliente;
     @Basic(optional = false)
-    @Column(name = "genero", nullable = false, length = 1)
-    private String genero;
-    @Basic(optional = false)
     @Column(name = "nro_documento_cliente", nullable = false, length = 15)
     private String nroDocumentoCliente;
     @Basic(optional = false)
     @Column(name = "extencion_documento_id", nullable = false, length = 5)
     private String extencionDocumentoId;
     @Basic(optional = false)
-    @Column(name = "tipo_documento_id", nullable = false)
+    @Column(name = "tipo_documento_id", nullable = false, length = 5)
     private String tipoDocumentoId;
     @Basic(optional = false)
     @Column(nullable = false)
@@ -74,23 +72,25 @@ public class PBeneficiariosEntity implements Serializable {
     @Column(nullable = false, length = 15)
     private String periodo;
     @Basic(optional = false)
-    @Column(name = "concepto", nullable = false, length = 150)
-    private String concepto;    
-    @JsonIgnore
+    @Column(nullable = false, length = 150)
+    private String concepto;
+    @Basic(optional = false)
+    @Column(nullable = false, length = 1)
+    private String genero;
     @JoinColumn(name = "archivo_id", referencedColumnName = "archivo_id", nullable = false)
     @ManyToOne(optional = false)
     private ArchivoEntity archivoId;
-   
+    
 
     public PBeneficiariosEntity() {
     }
 
-    public PBeneficiariosEntity(Long abonoClienteId) {
-        this.beneficiarios_id = abonoClienteId;
+    public PBeneficiariosEntity(Long beneficiarioId) {
+        this.beneficiarioId = beneficiarioId;
     }
 
-    public PBeneficiariosEntity(Long abonoClienteId, int nroRegistro, String codigoCliente, String nombreCliente, String nroDocumentoCliente, String extencionDocumentoId, String tipoDocumentoId, int cantidad, BigDecimal montoUnitario, String periodo) {
-        this.beneficiarios_id = abonoClienteId;
+    public PBeneficiariosEntity(Long beneficiarioId, int nroRegistro, String codigoCliente, String nombreCliente, String nroDocumentoCliente, String extencionDocumentoId, String tipoDocumentoId, int cantidad, BigDecimal montoUnitario, String periodo, String concepto, String genero) {
+        this.beneficiarioId = beneficiarioId;
         this.nroRegistro = nroRegistro;
         this.codigoCliente = codigoCliente;
         this.nombreCliente = nombreCliente;
@@ -100,15 +100,16 @@ public class PBeneficiariosEntity implements Serializable {
         this.cantidad = cantidad;
         this.montoUnitario = montoUnitario;
         this.periodo = periodo;
-       
+        this.concepto = concepto;
+        this.genero = genero;
     }
 
-    public Long getAbonoClienteId() {
-        return beneficiarios_id;
+    public Long getBeneficiarioId() {
+        return beneficiarioId;
     }
 
-    public void setAbonoClienteId(Long abonoClienteId) {
-        this.beneficiarios_id = abonoClienteId;
+    public void setBeneficiarioId(Long beneficiarioId) {
+        this.beneficiarioId = beneficiarioId;
     }
 
     public int getNroRegistro() {
@@ -159,17 +160,15 @@ public class PBeneficiariosEntity implements Serializable {
         this.extencionDocumentoId = extencionDocumentoId;
     }
 
-    
-
     public String getTipoDocumentoId() {
-		return tipoDocumentoId;
-	}
+        return tipoDocumentoId;
+    }
 
-	public void setTipoDocumentoId(String tipoDocumentoId) {
-		this.tipoDocumentoId = tipoDocumentoId;
-	}
+    public void setTipoDocumentoId(String tipoDocumentoId) {
+        this.tipoDocumentoId = tipoDocumentoId;
+    }
 
-	public int getCantidad() {
+    public int getCantidad() {
         return cantidad;
     }
 
@@ -193,7 +192,21 @@ public class PBeneficiariosEntity implements Serializable {
         this.periodo = periodo;
     }
 
-   
+    public String getConcepto() {
+        return concepto;
+    }
+
+    public void setConcepto(String concepto) {
+        this.concepto = concepto;
+    }
+
+    public String getGenero() {
+        return genero;
+    }
+
+    public void setGenero(String genero) {
+        this.genero = genero;
+    }
 
     public ArchivoEntity getArchivoId() {
         return archivoId;
@@ -203,33 +216,12 @@ public class PBeneficiariosEntity implements Serializable {
         this.archivoId = archivoId;
     }
 
-   
-    
-    
-    public String getConcepto() {
-		return concepto;
-	}
+  
 
-	public void setConcepto(String concepto) {
-		this.concepto = concepto;
-	}
-	
-	
-	
-	
-
-	public String getGenero() {
-		return genero;
-	}
-
-	public void setGenero(String genero) {
-		this.genero = genero;
-	}
-
-	@Override
+    @Override
     public int hashCode() {
         int hash = 0;
-        hash += (beneficiarios_id != null ? beneficiarios_id.hashCode() : 0);
+        hash += (beneficiarioId != null ? beneficiarioId.hashCode() : 0);
         return hash;
     }
 
@@ -240,7 +232,7 @@ public class PBeneficiariosEntity implements Serializable {
             return false;
         }
         PBeneficiariosEntity other = (PBeneficiariosEntity) object;
-        if ((this.beneficiarios_id == null && other.beneficiarios_id != null) || (this.beneficiarios_id != null && !this.beneficiarios_id.equals(other.beneficiarios_id))) {
+        if ((this.beneficiarioId == null && other.beneficiarioId != null) || (this.beneficiarioId != null && !this.beneficiarioId.equals(other.beneficiarioId))) {
             return false;
         }
         return true;
@@ -248,7 +240,7 @@ public class PBeneficiariosEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.com.tesla.administracion.entity.PAbonoClienteEntity[ abonoClienteId=" + beneficiarios_id + " ]";
+        return "bo.com.tesla.administracion.entity.PBeneficiarioEntity[ beneficiarioId=" + beneficiarioId + " ]";
     }
     
 }

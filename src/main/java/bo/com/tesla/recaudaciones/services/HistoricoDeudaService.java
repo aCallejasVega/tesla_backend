@@ -139,5 +139,12 @@ public class HistoricoDeudaService implements IHistoricoDeudaService {
 			throw new RuntimeException("Csv writing error: " + e.getMessage());
 		}
 	}
+	
+	
+	@Override
+	public List<EstadoTablasDto> findEstadoHistoricoPagos() {
+
+		return this.iHistoricoDeudaDao.findEstadoHistoricoPagos();
+	}
 
 }

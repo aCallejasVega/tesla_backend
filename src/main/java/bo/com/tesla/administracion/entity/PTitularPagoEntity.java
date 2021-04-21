@@ -132,7 +132,7 @@ public class PTitularPagoEntity implements Serializable {
     public void setTransaccionesPagoId(PTransaccionPagoEntity transaccionesPagoId) {
         this.transaccionesPagoId = transaccionesPagoId;
     }
-
+    
     @Override
     public int hashCode() {
         int hash = 0;

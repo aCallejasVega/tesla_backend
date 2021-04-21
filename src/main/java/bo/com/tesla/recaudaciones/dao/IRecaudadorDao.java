@@ -84,7 +84,9 @@ public interface IRecaudadorDao extends JpaRepository <RecaudadorEntity, Long> {
 	@Query(" Select r " 
 			+ " from RecaudadorEntity r "
 			+ " left join EntidadRecaudadorEntity er on er.recaudador.recaudadorId=r.recaudadorId "
-			+ " left join EntidadEntity e on e.entidadId=er.entidad.entidadId " + " Where " + " r.estado='ACTIVO' "
+			+ " left join EntidadEntity e on e.entidadId=er.entidad.entidadId " 
+			+ " Where " 
+			+ " r.estado='ACTIVO' "
 			+ " and e.entidadId= :entidadId")
 	public List<RecaudadorEntity> findRecaudadoresByEntidadId(@Param("entidadId") Long entidadId);
 

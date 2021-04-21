@@ -59,6 +59,12 @@ public class PTransaccionPagoEntity implements Serializable {
     @Column(name = "comision_exacta", nullable = false, precision = 7, scale = 2)
     private BigDecimal comisionExacta;
     @Basic(optional = false)
+    @Column(nullable = false, length = 15)
+    private String periodo;
+    @Basic(optional = false)
+    @Column(name = "codigo_transaccion", nullable = false, length = 30)
+    private String codigoTransaccion;
+    @Basic(optional = false)
     @Column(name = "usuario_creacion", nullable = false)
     private long usuarioCreacion;
     @Basic(optional = false)
@@ -66,7 +72,7 @@ public class PTransaccionPagoEntity implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
     @Column(name = "usuario_modificacion")
-    private BigInteger usuarioModificacion;
+    private Long usuarioModificacion;
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
@@ -185,11 +191,11 @@ public class PTransaccionPagoEntity implements Serializable {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public BigInteger getUsuarioModificacion() {
+    public Long getUsuarioModificacion() {
         return usuarioModificacion;
     }
 
-    public void setUsuarioModificacion(BigInteger usuarioModificacion) {
+    public void setUsuarioModificacion(Long usuarioModificacion) {
         this.usuarioModificacion = usuarioModificacion;
     }
 
@@ -276,6 +282,25 @@ public class PTransaccionPagoEntity implements Serializable {
 
 	public void setServicioProductoId(PServicioProductoEntity servicioProductoId) {
 		this.servicioProductoId = servicioProductoId;
+	}	
+	
+
+	public String getPeriodo() {
+		return periodo;
+	}
+
+	public void setPeriodo(String periodo) {
+		this.periodo = periodo;
+	}
+	
+	
+
+	public String getCodigoTransaccion() {
+		return codigoTransaccion;
+	}
+
+	public void setCodigoTransaccion(String codigoTransaccion) {
+		this.codigoTransaccion = codigoTransaccion;
 	}
 
 	@Override

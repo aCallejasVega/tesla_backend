@@ -40,6 +40,24 @@ public interface IPServicioProductosDao extends JpaRepository<PServicioProductoE
 			@Param("tipoEntidadId") String tipoEntidadId
 			);
 	
+	@Query("Select sp "
+			+ " from PServicioProductoEntity sp "
+			+ " 	left join EntidadEntity e on e.entidadId=sp.entidadId.entidadId "
+			+ " 	left join EntidadRecaudadorEntity er on er.entidad.entidadId=e.entidadId "
+			+ " Where "
+			+ "		er.recaudador.recaudadorId= :recaudadorId "
+			+ " 	and sp.estado='ACTIVO'")
+	public  List<PServicioProductoEntity> findServiciosForRecaudadorId(			  
+			@Param("recaudadorId") Long recaudadorId
+			);
+	
+	
+	@Query(" Select s "
+			+ " from PServicioProductoEntity s "
+			+ " where "
+			+ " s.estado= 'ACTIVO' "
+			+ " and s.productoServicioPadreId is null")
+	public  List<PServicioProductoEntity> findForSelect();
 	
 	
 

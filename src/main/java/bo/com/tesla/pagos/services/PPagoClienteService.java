@@ -14,7 +14,7 @@ import bo.com.tesla.administracion.entity.PTitularPagoEntity;
 import bo.com.tesla.administracion.entity.PTransaccionPagoEntity;
 import bo.com.tesla.entidades.dao.IArchivoDao;
 import bo.com.tesla.pagos.dao.IBeneficiarioDao;
-import bo.com.tesla.pagos.dao.IPHistoricoAbonoClienteDao;
+import bo.com.tesla.pagos.dao.IPHistoricoBeneficiariosDao;
 import bo.com.tesla.pagos.dao.IPPagoClienteDao;
 import bo.com.tesla.pagos.dao.PTitularPagoDao;
 import bo.com.tesla.pagos.dto.PBeneficiarioDto;
@@ -29,7 +29,7 @@ public class PPagoClienteService implements IPPagoClienteService {
 	private IArchivoDao archivoDao;
 
 	@Autowired
-	private IPHistoricoAbonoClienteDao historicoAbonoClienteDao;
+	private IPHistoricoBeneficiariosDao historicoAbonoClienteDao;
 
 	@Autowired
 	private IBeneficiarioDao abonoClienteDao;
@@ -47,15 +47,20 @@ public class PPagoClienteService implements IPPagoClienteService {
 
 	@Transactional
 	@Override
-	public PTransaccionPagoEntity realizarPago(List<PBeneficiarioDto> abonoCliente, Long usuarioId) {
+	public List<PTransaccionPagoEntity> realizarPago(List<PBeneficiarioDto> abonoCliente, Long usuarioId) {
 		
 		List<PPagoClienteEntity> pagoClienteList=new ArrayList<>();
 
-		PTransaccionPagoEntity transaccionPago = this.transaccionPagoService.saveForPagoAbonado(abonoCliente,
-				usuarioId);
 		
-
+		PTransaccionPagoEntity transaccionPago =new PTransaccionPagoEntity();
+		List<PTransaccionPagoEntity> transaccionPagoList =new ArrayList<>();
+		
+		Long secuencialTransaccion=this.transaccionPagoService.getSecuencialTransaccion();
+		
 		for (PBeneficiarioDto pAbonoClienteDto : abonoCliente) {
+			 transaccionPago = this.transaccionPagoService.saveForPagoAbonado(pAbonoClienteDto,	usuarioId,secuencialTransaccion);
+			 
+			 transaccionPagoList.add(transaccionPago);
 
 			ArchivoEntity archivo = this.archivoDao.findById(pAbonoClienteDto.archivoId).get();
 
@@ -96,7 +101,7 @@ public class PPagoClienteService implements IPPagoClienteService {
 		
 		//pagoClienteList=this.pagoClienteDao.findByTransaccionPagoId(transaccionPago.getTransaccionPagoId());
 
-		return transaccionPago;
+		return transaccionPagoList;
 	}
 
 }

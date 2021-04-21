@@ -42,7 +42,7 @@ import bo.com.tesla.administracion.entity.PServicioProductoEntity;
 import bo.com.tesla.entidades.services.IArchivoService;
 import bo.com.tesla.entidades.services.IEntidadService;
 import bo.com.tesla.pagos.dto.PBeneficiarioDto;
-import bo.com.tesla.pagos.services.IPAbonoClienteService;
+import bo.com.tesla.pagos.services.IPBeneficiariosService;
 import bo.com.tesla.pagos.services.IPServicioProductosService;
 import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegUsuarioService;
@@ -69,7 +69,7 @@ public class EntidadPagoController {
 	@Autowired
 	private ILogSistemaService logSistemaService;
 	@Autowired
-	private IPAbonoClienteService abonoClienteService;
+	private IPBeneficiariosService abonoClienteService;
 	
 	@Autowired
 	JobLauncher jobLauncher;
@@ -109,8 +109,8 @@ public class EntidadPagoController {
 			archivo.setTransaccion("CREAR");
 			archivo = this.archivoService.save(archivo);
 			response.put("mensaje",
-					"El archivo fue recepcionado con éxito, los registros encontrados en este archivo fueron "
-							+ cantidadRegistros + ". Presione en el botón 'Procesar' para cargar a los beneficiarios.");
+					"Los registros encontrados en este archivo fueron "
+							+ cantidadRegistros + ". Presione en el botón 'Procesar Cargado de Datos' para cargar a los abonados.");
 			response.put("archivo", archivo);
 			response.put("status", true);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
@@ -142,7 +142,7 @@ public class EntidadPagoController {
 			if(e.getCause()!=null) {
 				log.setCausa(e.getCause().getMessage() + "");	
 			}	
-			log.setCausa(e.getCause() + "");
+			
 			log.setMensaje(e.getMessage() + "");
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());

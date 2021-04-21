@@ -10,7 +10,7 @@ public interface IPPagoClienteService {
 	
 	public PPagoClienteEntity save(PPagoClienteEntity entity);
 	
-	public PTransaccionPagoEntity realizarPago(List<PBeneficiarioDto> abonoCliente,Long usuarioId);
+	public  List<PTransaccionPagoEntity> realizarPago(List<PBeneficiarioDto> abonoCliente,Long usuarioId);
 	
 	
 

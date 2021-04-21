@@ -13,8 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Entity
 @Table(name = "entidades", catalog = "exacta", schema = "tesla")
-@NamedQueries({
-        @NamedQuery(name = "EntidadEntity.findAll", query = "SELECT e FROM EntidadEntity e")})
+
 public class EntidadEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

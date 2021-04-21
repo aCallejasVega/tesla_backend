@@ -17,8 +17,7 @@ public class RecaudadoraService implements IRecaudadoraService {
 
 	@Override
 	public RecaudadorEntity findRecaudadorByUserId(Long usuarioId) {
-		Optional<RecaudadorEntity>  recaudador=this.recaudadorDao.findRecaudadorByUserId(usuarioId);
-		
+		Optional<RecaudadorEntity>  recaudador=this.recaudadorDao.findRecaudadorByUserId(usuarioId);		
 		if(recaudador.isPresent()) {
 			return this.recaudadorDao.findRecaudadorByUserId(usuarioId).get();	
 		}else {
@@ -32,13 +31,10 @@ public class RecaudadoraService implements IRecaudadoraService {
 	public RecaudadorEntity findByRecaudadorId(Long recaudadorId) {	
 		return this.recaudadorDao.findByRecaudadorId(recaudadorId);
 	}
-
 	@Override
-	public List<RecaudadorEntity> findRecaudadoresByEntidadId(Long entidadId) {
-		
+	public List<RecaudadorEntity> findRecaudadoresByEntidadId(Long entidadId) {		
 		return this.recaudadorDao.findRecaudadoresByEntidadId(entidadId);
 	}
-
 	@Override
 	public List<RecaudadorEntity> findAllRecaudadora() {
 	

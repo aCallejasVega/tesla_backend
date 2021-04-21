@@ -141,6 +141,9 @@ public class ReportEntidadController {
 			LogSistemaEntity log = new LogSistemaEntity();
 			log.setModulo("ENTIDADES");
 			log.setController("api/ReportEntidad/deudasPagadas");
+			if(e.getCause()!=null) {
+				log.setCausa(e.getCause().getMessage() + "");	
+			}
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());
@@ -187,6 +190,9 @@ public class ReportEntidadController {
 			LogSistemaEntity log = new LogSistemaEntity();
 			log.setModulo("ENTIDADES");
 			log.setController("api/ReportEntidad/findDeudasByParameter");
+			if(e.getCause()!=null) {
+				log.setCausa(e.getCause().getMessage() + "");	
+			}
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());
@@ -238,6 +244,9 @@ public class ReportEntidadController {
 			parameters.put("tituloEntidad", entidad.getNombreComercial().toUpperCase());
 			parameters.put("tituloReporte", "INFORMACIÓN DE DEUDAS GENERALES");
 			parameters.put("logoTesla", filesReport + "/img/teslapng.png");
+			if( busquedaReportesDto.export.equals("msexcel")) {			
+				parameters.put("IS_IGNORE_PAGINATION", true);
+			}
 
 			List<DeudasClienteDto> deudasClienteDtoList = this.reporteEntidadesService.findDeudasByParameterForReport(
 					busquedaReportesDto.fechaInicio, busquedaReportesDto.fechaFin, entidad.getEntidadId(),
@@ -252,6 +261,7 @@ public class ReportEntidadController {
 			JasperReport jasper = JasperCompileManager.compileReport(file.getAbsolutePath());
 			JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(deudasClienteDtoList);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasper, parameters, ds);
+			
 
 			byte[] report = Util.jasperExportFormat(jasperPrint, busquedaReportesDto.export, filesReport);
 
@@ -263,7 +273,7 @@ public class ReportEntidadController {
 			return new ResponseEntity<byte[]>(report, headers, HttpStatus.OK);
 
 		} catch (Technicalexception e) {
-
+			e.printStackTrace();
 			LogSistemaEntity log = new LogSistemaEntity();
 			log.setModulo("ENTIDADES");
 			log.setController("api/ReportEntidad/findDeudasByParameterForReport");
@@ -280,9 +290,13 @@ public class ReportEntidadController {
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			LogSistemaEntity log = new LogSistemaEntity();
 			log.setModulo("ENTIDADES");
 			log.setController("api/ReportEntidad/findDeudasByParameterForReport");
+			if(e.getCause()!=null) {
+				log.setCausa(e.getCause().getMessage() + "");	
+			}
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());
@@ -307,7 +321,7 @@ public class ReportEntidadController {
 			@PathVariable(name = "fechaFin", required = false) Optional<Date> fechaFin,
 			@PathVariable(name = "estado", required = false) Optional<String> estado, Authentication authentication)
 			 {
-		System.out.println("Ingreso a controlador " + paginacion);
+		
 		Map<String, Object> response = new HashMap<>();
 		Page<ArchivoDto> archivosList;
 		SegUsuarioEntity usuario = new SegUsuarioEntity();
@@ -342,7 +356,9 @@ public class ReportEntidadController {
 			log.setModulo("ENTIDADES");
 			log.setController("api/ReportEntidad/findArchivos/" + entidad.getEntidadId() + "/" + paginacion + "/"
 					+ dateFechaIni + "/" + dateFechaFin + "");
-			log.setCausa(e.getCause().getMessage() + "");
+			if(e.getCause()!=null) {
+				log.setCausa(e.getCause().getMessage() + "");	
+			}
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());
@@ -378,6 +394,9 @@ public class ReportEntidadController {
 			}
 
 			parameters.put("logoTesla", filesReport + "/img/teslapng.png");
+			if( export.equals("msexcel")) {				
+				parameters.put("IS_IGNORE_PAGINATION", true);
+			}
 			File file = ResourceUtils.getFile(filesReport + "/report_jrxml/reportes/entidades/PorArchivos.jrxml");
 			JasperReport jasper = JasperCompileManager.compileReport(file.getAbsolutePath());
 			JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(deudasClienteList);
@@ -393,7 +412,9 @@ public class ReportEntidadController {
 			LogSistemaEntity log = new LogSistemaEntity();
 			log.setModulo("ENTIDADES");
 			log.setController("api/ReportEntidad/findDeudasByArchivoIdAndEstado/"+archivoId+"/"+export);
-			log.setCausa(e.getCause().getMessage() + "");
+			if(e.getCause()!=null) {
+				log.setCausa(e.getCause().getMessage() + "");	
+			}			
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());

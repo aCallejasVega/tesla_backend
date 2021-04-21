@@ -28,16 +28,16 @@ import javax.persistence.TemporalType;
  * @author aCallejas
  */
 @Entity
-@Table(name = "p_historicos_abonos_clientes", catalog = "exactabo_tesla", schema = "tesla")
+@Table(name = "p_historicos_beneficiarios", catalog = "exactabo_tesla", schema = "tesla")
 
-public class PHistoricoAbonoClienteEntity implements Serializable {
+public class PHistoricoBeneficiariosEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "historico_abono_cliente_id", nullable = false)
-    private Long historicoAbonoClienteId;
+    @Column(name = "historico_beneficiario_id", nullable = false)
+    private Long historicoBeneficiarioId;
     @Basic(optional = false)
     @Column(name = "nro_registro", nullable = false)
     private int nroRegistro;
@@ -57,8 +57,8 @@ public class PHistoricoAbonoClienteEntity implements Serializable {
     @Column(name = "extencion_documento_id", nullable = false, length = 5)
     private String extencionDocumentoId;
     @Basic(optional = false)
-    @Column(name = "tipo_documento_id", nullable = false)
-    private long tipoDocumentoId;
+    @Column(name = "tipo_documento_id", nullable = false, length = 5)
+    private String tipoDocumentoId;
     @Basic(optional = false)
     @Column(name = "genero", nullable = false, length = 1)
     private String genero;
@@ -94,17 +94,18 @@ public class PHistoricoAbonoClienteEntity implements Serializable {
     @JoinColumn(name = "archivo_id", referencedColumnName = "archivo_id", nullable = false)
     @ManyToOne(optional = false)
     private ArchivoEntity archivoId;
+    
    
 
-    public PHistoricoAbonoClienteEntity() {
+    public PHistoricoBeneficiariosEntity() {
     }
 
-    public PHistoricoAbonoClienteEntity(Long historicoAbonoClienteId) {
-        this.historicoAbonoClienteId = historicoAbonoClienteId;
+    public PHistoricoBeneficiariosEntity(Long historicoAbonoClienteId) {
+        this.historicoBeneficiarioId = historicoAbonoClienteId;
     }
 
-    public PHistoricoAbonoClienteEntity(Long historicoAbonoClienteId, int nroRegistro, String codigoCliente, String nombreCliente, String nroDocumentoCliente, String extencionDocumentoId, long tipoDocumentoId, int cantidad, BigDecimal montoUnitario, String periodo, long usuarioCreacion, Date fechaCreacion, String estado) {
-        this.historicoAbonoClienteId = historicoAbonoClienteId;
+    public PHistoricoBeneficiariosEntity(Long historicoAbonoClienteId, int nroRegistro, String codigoCliente, String nombreCliente, String nroDocumentoCliente, String extencionDocumentoId, String tipoDocumentoId, int cantidad, BigDecimal montoUnitario, String periodo, long usuarioCreacion, Date fechaCreacion, String estado) {
+        this.historicoBeneficiarioId = historicoAbonoClienteId;
         this.nroRegistro = nroRegistro;
         this.codigoCliente = codigoCliente;
         this.nombreCliente = nombreCliente;
@@ -119,14 +120,7 @@ public class PHistoricoAbonoClienteEntity implements Serializable {
         this.estado = estado;
     }
 
-    public Long getHistoricoAbonoClienteId() {
-        return historicoAbonoClienteId;
-    }
-
-    public void setHistoricoAbonoClienteId(Long historicoAbonoClienteId) {
-        this.historicoAbonoClienteId = historicoAbonoClienteId;
-    }
-
+   
     public int getNroRegistro() {
         return nroRegistro;
     }
@@ -175,11 +169,11 @@ public class PHistoricoAbonoClienteEntity implements Serializable {
         this.extencionDocumentoId = extencionDocumentoId;
     }
 
-    public long getTipoDocumentoId() {
+    public String getTipoDocumentoId() {
         return tipoDocumentoId;
     }
 
-    public void setTipoDocumentoId(long tipoDocumentoId) {
+    public void setTipoDocumentoId(String tipoDocumentoId) {
         this.tipoDocumentoId = tipoDocumentoId;
     }
 
@@ -256,23 +250,49 @@ public class PHistoricoAbonoClienteEntity implements Serializable {
         this.archivoId = archivoId;
     }
 
- 
+    
 
-    @Override
+    public Long getHistoricoBeneficiarioId() {
+		return historicoBeneficiarioId;
+	}
+
+	public void setHistoricoBeneficiarioId(Long historicoBeneficiarioId) {
+		this.historicoBeneficiarioId = historicoBeneficiarioId;
+	}
+
+	public String getGenero() {
+		return genero;
+	}
+
+	public void setGenero(String genero) {
+		this.genero = genero;
+	}
+
+	public String getConcepto() {
+		return concepto;
+	}
+
+	public void setConcepto(String concepto) {
+		this.concepto = concepto;
+	}
+
+
+
+	@Override
     public int hashCode() {
         int hash = 0;
-        hash += (historicoAbonoClienteId != null ? historicoAbonoClienteId.hashCode() : 0);
+        hash += (historicoBeneficiarioId != null ? historicoBeneficiarioId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof PHistoricoAbonoClienteEntity)) {
+        if (!(object instanceof PHistoricoBeneficiariosEntity)) {
             return false;
         }
-        PHistoricoAbonoClienteEntity other = (PHistoricoAbonoClienteEntity) object;
-        if ((this.historicoAbonoClienteId == null && other.historicoAbonoClienteId != null) || (this.historicoAbonoClienteId != null && !this.historicoAbonoClienteId.equals(other.historicoAbonoClienteId))) {
+        PHistoricoBeneficiariosEntity other = (PHistoricoBeneficiariosEntity) object;
+        if ((this.historicoBeneficiarioId == null && other.historicoBeneficiarioId != null) || (this.historicoBeneficiarioId != null && !this.historicoBeneficiarioId.equals(other.historicoBeneficiarioId))) {
             return false;
         }
         return true;
@@ -280,7 +300,7 @@ public class PHistoricoAbonoClienteEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.com.tesla.administracion.entity.PHistoricoAbonoClienteEntity[ historicoAbonoClienteId=" + historicoAbonoClienteId + " ]";
+        return "bo.com.tesla.administracion.entity.PHistoricoAbonoClienteEntity[ historicoAbonoClienteId=" + historicoBeneficiarioId + " ]";
     }
     
 }

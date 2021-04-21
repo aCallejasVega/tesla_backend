@@ -29,7 +29,10 @@ public interface IHistoricoDeudaService {
 	public List<DeudasCobradasFacturaDto> findDeudasCobrasForFactura(List<Long> transaccionCobroIds);
 	
 	public ByteArrayInputStream load(Long archivoId);
+	
 	public ByteArrayInputStream writeDataToCsv(Long archivoId);
+	
+	public List<EstadoTablasDto> findEstadoHistoricoPagos();
 	
 	
 }

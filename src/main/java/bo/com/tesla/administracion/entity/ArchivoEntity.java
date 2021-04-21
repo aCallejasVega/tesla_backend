@@ -96,7 +96,7 @@ public class ArchivoEntity implements Serializable {
     private List<PBeneficiariosEntity> pAbonoClienteEntityList;
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "archivoId")
-    private List<PHistoricoAbonoClienteEntity> pHistoricoAbonoClienteEntityList;
+    private List<PHistoricoBeneficiariosEntity> pHistoricoAbonoClienteEntityList;
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "archivoId")
     private List<PPagoClienteEntity> pPagoClienteEntityList;
@@ -265,11 +265,11 @@ public class ArchivoEntity implements Serializable {
 		this.pAbonoClienteEntityList = pAbonoClienteEntityList;
 	}
 
-	public List<PHistoricoAbonoClienteEntity> getpHistoricoAbonoClienteEntityList() {
+	public List<PHistoricoBeneficiariosEntity> getpHistoricoAbonoClienteEntityList() {
 		return pHistoricoAbonoClienteEntityList;
 	}
 
-	public void setpHistoricoAbonoClienteEntityList(List<PHistoricoAbonoClienteEntity> pHistoricoAbonoClienteEntityList) {
+	public void setpHistoricoAbonoClienteEntityList(List<PHistoricoBeneficiariosEntity> pHistoricoAbonoClienteEntityList) {
 		this.pHistoricoAbonoClienteEntityList = pHistoricoAbonoClienteEntityList;
 	}
 

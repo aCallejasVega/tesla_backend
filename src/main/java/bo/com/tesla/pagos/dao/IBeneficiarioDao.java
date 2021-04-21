@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import bo.com.tesla.administracion.entity.PBeneficiariosEntity;
+import bo.com.tesla.administracion.entity.PPagoClienteEntity;
 import bo.com.tesla.pagos.dto.PBeneficiarioDto;
 
 @Repository
@@ -148,7 +149,20 @@ public interface IBeneficiarioDao extends JpaRepository<PBeneficiariosEntity, Lo
 			@Param("periodo") String periodo);
 	
 	
-	
+	@Query("Select b "
+			+ " from PBeneficiariosEntity b "
+			+ " where "
+			+ " b.archivoId.archivoId= :archivoId "
+			+ " and b.codigoCliente= :codigoCliente "
+			+ " and b.periodo != :periodo "			
+			+ " and b.nroRegistro< :nroRegistro ")
+	public List<PBeneficiariosEntity>  verificarPrelacion(
+			@Param("archivoId") Long archivoId,
+			@Param("codigoCliente") String codigoCliente,			
+			@Param("nroRegistro") Integer nroRegistro,
+			@Param("periodo") String periodo
+			
+			);
 	
 	
 }

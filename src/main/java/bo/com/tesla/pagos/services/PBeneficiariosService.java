@@ -17,10 +17,10 @@ import bo.com.tesla.pagos.dto.PBeneficiarioDto;
 import bo.com.tesla.recaudaciones.services.IRecaudadoraService;
 
 @Service
-public class PAbonoClienteService implements IPAbonoClienteService {
+public class PBeneficiariosService implements IPBeneficiariosService {
 
 	@Autowired
-	private IBeneficiarioDao abonoClienteDao;
+	private IBeneficiarioDao beneficiarioDao;
 	
 	@Autowired
 	private IEntidadDao  entidadDao;
@@ -30,12 +30,12 @@ public class PAbonoClienteService implements IPAbonoClienteService {
 	public Page<PBeneficiarioDto> groupByAbonosClientes(Long archivoId, String paramBusqueda, int page, int size) {
 		Page<PBeneficiarioDto> deudaClienteList;
 		Pageable paging = PageRequest.of(page, size);
-		deudaClienteList = this.abonoClienteDao.groupByAbonosClientes(archivoId, paramBusqueda, paging);
+		deudaClienteList = this.beneficiarioDao.groupByAbonosClientes(archivoId, paramBusqueda, paging);
 
 		for (PBeneficiarioDto pAbonoClienteDto : deudaClienteList) {
 			
 			
-			List<PBeneficiarioDto> abonoList = this.abonoClienteDao.findByCodigoAndArchivoId(archivoId,
+			List<PBeneficiarioDto> abonoList = this.beneficiarioDao.findByCodigoAndArchivoId(archivoId,
 					pAbonoClienteDto.codigoCliente,pAbonoClienteDto.periodo);
 			if (!abonoList.isEmpty()) {
 				pAbonoClienteDto.key = abonoList.get(0).nroRegistro;
@@ -61,7 +61,7 @@ public class PAbonoClienteService implements IPAbonoClienteService {
 
 	@Override
 	public void deletByArchivoId(Long archivoId) {
-		this.abonoClienteDao.deletByArchivoId(archivoId);		
+		this.beneficiarioDao.deletByArchivoId(archivoId);		
 	}
 
 	@Override
@@ -72,15 +72,15 @@ public class PAbonoClienteService implements IPAbonoClienteService {
 			entidadIdList.add(entidadEntity.getEntidadId());
 		}
 		
-		return this.abonoClienteDao.getAbonosParaPagar(servicioProductoId, entidadIdList,paramBusqueda);
+		return this.beneficiarioDao.getAbonosParaPagar(servicioProductoId, entidadIdList,paramBusqueda);
 	}
 
 	@Override
 	public List<PBeneficiarioDto> getBeneficiarioPagos(Long archivoId,String codigoCliente, String nroDocumentoCliente) {		
-		List<PBeneficiarioDto> abonadoList= this.abonoClienteDao.getBeneficiario(archivoId,codigoCliente, nroDocumentoCliente);
+		List<PBeneficiarioDto> abonadoList= this.beneficiarioDao.getBeneficiario(archivoId,codigoCliente, nroDocumentoCliente);
 		
 		for (PBeneficiarioDto pAbonoClienteDto : abonadoList) {
-			List<PBeneficiarioDto> abonadoDetalle=this.abonoClienteDao.getBeneficiarioDetalle(
+			List<PBeneficiarioDto> abonadoDetalle=this.beneficiarioDao.getBeneficiarioDetalle(
 					archivoId,pAbonoClienteDto.codigoCliente, pAbonoClienteDto.nroDocumentoCliente,pAbonoClienteDto.periodo);
 			if (!abonadoDetalle.isEmpty()) {
 				
@@ -106,6 +106,12 @@ public class PAbonoClienteService implements IPAbonoClienteService {
 		}
 				
 		return abonadoList;
+	}
+
+	@Override
+	public List<PBeneficiariosEntity> verificarPrelacion(Long archivoId, String codigoCliente, Integer nroRegistro,String periodo) {
+	
+		return this.beneficiarioDao.verificarPrelacion(archivoId, codigoCliente, nroRegistro,periodo);
 	}
 
 }

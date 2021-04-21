@@ -2,8 +2,12 @@ package bo.com.tesla.administracion.controllers;
 
 import bo.com.tesla.administracion.dto.RecaudadorAdmDto;
 import bo.com.tesla.administracion.entity.LogSistemaEntity;
+import bo.com.tesla.administracion.entity.PServicioProductoEntity;
+import bo.com.tesla.administracion.entity.RecaudadorEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.administracion.services.IRecaudadorService;
+import bo.com.tesla.pagos.services.IPServicioProductosService;
+import bo.com.tesla.recaudaciones.services.IRecaudadoraService;
 import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegUsuarioService;
 import bo.com.tesla.useful.config.Technicalexception;
@@ -11,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +38,12 @@ public class RecaudadoraController {
 
     @Autowired
     private IRecaudadorService recaudadorService;
+    
+    @Autowired
+    private IRecaudadoraService recaudadoraService;
+    
+    @Autowired
+    private IPServicioProductosService servicioProductosService;
 
     /*********************ABM RECAUDADORES**************************/
     @PostMapping("")
@@ -178,6 +189,45 @@ public class RecaudadoraController {
                 response.put("status", true);
                 response.put("message", "El listado fue encontrado.");
                 response.put("result", recaudadorAdmDtoList);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                response.put("status", false);
+                response.put("message", "El listado no fue encontrado.");
+                response.put("result", null);
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+        } catch (Technicalexception e) {
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("ADMINISTRACION.RECAUDADOR");
+            log.setController("GET: api/recaudadores");
+            log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
+            log.setMensaje(e.getMessage()+"");
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            logSistemaService.save(log);
+            this.logger.error("This is error", e.getMessage());
+            this.logger.error("This is cause", e.getCause() != null ? e.getCause().getCause()+"" : e.getCause());
+            response.put("status", false);
+            response.put("result", null);
+            response.put("message", "Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+            response.put("code", log.getLogSistemaId()+"");
+            return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+    @GetMapping(path="/findRecaudadoresByservicioProductoId/{servicioProductoId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<?> findRecaudadoresByservicioProductoId(@PathVariable("servicioProductoId")Long servicioProductoId, Authentication authentication) {
+        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
+        Map<String, Object> response = new HashMap<>();
+        try {
+        	
+        	PServicioProductoEntity servicioProducto=this.servicioProductosService.findById(servicioProductoId).get();
+        	
+            List<RecaudadorEntity> recaudadorAdmDtoList = this.recaudadoraService.findRecaudadoresByEntidadId(servicioProducto.getEntidadId().getEntidadId());
+            		
+            if(!recaudadorAdmDtoList.isEmpty()) {
+                response.put("status", true);
+                response.put("message", "El listado fue encontrado.");
+                response.put("data", recaudadorAdmDtoList);
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
                 response.put("status", false);

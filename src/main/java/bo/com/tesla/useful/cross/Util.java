@@ -231,6 +231,7 @@ public class Util {
 			case "msexcel": //formato en excel
 				filePath = filesReport +"/temp/"+ UUID.randomUUID().toString() + ".xlsx";
 				JRXlsxExporter exporterXls = new JRXlsxExporter();
+				
 				exporterXls.setExporterInput(new SimpleExporterInput(jasperPrint));
 				File outputFileXls = new File(filePath);
 				exporterXls.setExporterOutput(new SimpleOutputStreamExporterOutput(outputFileXls));
@@ -238,6 +239,9 @@ public class Util {
 				configuration.setDetectCellType(true);
 				configuration.setCollapseRowSpan(false);
 				configuration.setIgnoreGraphics(false);
+				configuration.setCellHidden(false);
+				configuration.setForcePageBreaks(false);
+				
 				exporterXls.setConfiguration(configuration);
 				exporterXls.exportReport();
 				byte[] xls = Files.readAllBytes(Paths.get(filePath));

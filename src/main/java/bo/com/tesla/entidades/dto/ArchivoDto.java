@@ -12,7 +12,7 @@ public class ArchivoDto {
 	    public Date inicioCargado;	 
 	    public Date finCargado;
 	    public String usuarioCreacion;
-	    @JsonFormat( pattern = "dd/MM/yyyy HH:mm:ss",timezone="America/La_Paz")
+	    @JsonFormat( pattern = "dd/MM/yyyy",timezone="America/La_Paz")
 	    public Date fechaCreacion;
 	    public Long nroRegistros;
 	    public String estado;

@@ -18,12 +18,13 @@ import bo.com.tesla.administracion.entity.RecaudadorComisionEntity;
 import bo.com.tesla.administracion.entity.RecaudadorEntity;
 import bo.com.tesla.entidades.dao.IArchivoDao;
 import bo.com.tesla.pagos.dao.IBeneficiarioDao;
-import bo.com.tesla.pagos.dao.IPHistoricoAbonoClienteDao;
+import bo.com.tesla.pagos.dao.IPHistoricoBeneficiariosDao;
 import bo.com.tesla.pagos.dao.IPTransaccionPagoDao;
 import bo.com.tesla.pagos.dao.PTitularPagoDao;
 import bo.com.tesla.pagos.dto.PBeneficiarioDto;
 import bo.com.tesla.recaudaciones.dao.IRecaudadorDao;
 import bo.com.tesla.useful.constant.TipoComisionConst;
+import net.bytebuddy.asm.Advice.OffsetMapping.ForOrigin.Renderer.ForReturnTypeName;
 
 @Service
 public class PTransaccionPagoService implements IPTransaccionPagoService {
@@ -36,13 +37,13 @@ public class PTransaccionPagoService implements IPTransaccionPagoService {
 
 	@Autowired
 	private IArchivoDao archivoDao;
-	
+
 	@Autowired
 	private IEntidadComisionesDao entiadComisionDao;
 
 	@Autowired
 	private IRecaudadorComisionDao recaudadorComision;
-	
+
 	@Autowired
 	private IRecaudadorDao recaudadorDao;
 
@@ -51,27 +52,23 @@ public class PTransaccionPagoService implements IPTransaccionPagoService {
 
 		return this.transaccionPagoDao.save(entity);
 	}
-	
+
 	@Autowired
 	private PTitularPagoDao titularPagoDao;
 
 	@Override
-	public PTransaccionPagoEntity saveForPagoAbonado(List<PBeneficiarioDto> beneficiarioList,Long usuarioId) {
+	public PTransaccionPagoEntity saveForPagoAbonado(PBeneficiarioDto beneficiario, Long usuarioId, Long secuencialTransaccion) {
 
 		EntidadComisionEntity entidadComision = new EntidadComisionEntity();
 		RecaudadorComisionEntity recaudadorComision = new RecaudadorComisionEntity();
 		PTransaccionPagoEntity transaccionPago = new PTransaccionPagoEntity();
-		PBeneficiarioDto beneficiario = new PBeneficiarioDto();
-		List<String> periodosList = new ArrayList<>();
-		
-		BigDecimal comisionEntidad;
-		BigDecimal comisionRecaudadora;	
-		
 
-		for (PBeneficiarioDto beneficiarioItem : beneficiarioList) {
-			periodosList.add(beneficiarioItem.periodo);
-			beneficiario = beneficiarioItem;
-		}
+		List<String> periodosList = new ArrayList<>();
+
+		BigDecimal comisionEntidad;
+		BigDecimal comisionRecaudadora;
+
+		periodosList.add(beneficiario.periodo);
 
 		PBeneficiarioDto abonosCliente = this.abonoClienteDao.getBeneficiarioAndMontoToal(beneficiario.archivoId,
 				beneficiario.codigoCliente, beneficiario.nroDocumentoCliente, periodosList);
@@ -100,27 +97,36 @@ public class PTransaccionPagoService implements IPTransaccionPagoService {
 					.divide(new BigDecimal(100));
 		}
 		transaccionPago.setComisionRecaudacion(comisionRecaudadora);
+		transaccionPago.setPeriodo(beneficiario.periodo);
 		transaccionPago.setEntidadId(archivo.getEntidadId());
 		transaccionPago.setRecaudadorId(recaudadora);
 		transaccionPago.setTotal(abonosCliente.totalPagar);
+		transaccionPago.setUsuarioModificacion(usuarioId);
+		transaccionPago.setFechaModificacion(new Date());
 		transaccionPago.setUsuarioCreacion(usuarioId);
 		transaccionPago.setFechaCreacion(new Date());
 		transaccionPago.setSubTotal(abonosCliente.totalPagar);
 		transaccionPago.setServicioProductoId(archivo.getServicioProductoId());
 		transaccionPago.setTransaccion("PAGAR");
-		transaccionPago = this.transaccionPagoDao.save(transaccionPago);
+		transaccionPago.setCodigoTransaccion(""+archivo.getEntidadId().getEntidadId()+"."+recaudadora.getRecaudadorId()+"."+beneficiario.codigoCliente+"."+ secuencialTransaccion);
 		
-		if(beneficiario.nombreTitular!=null && beneficiario.nombreTitular!="") {
-			PTitularPagoEntity titular=new PTitularPagoEntity();
+		transaccionPago = this.transaccionPagoDao.save(transaccionPago);
+
+		if (beneficiario.nombreTitular != null && beneficiario.nombreTitular != "") {
+			PTitularPagoEntity titular = new PTitularPagoEntity();
 			titular.setNombreCompleto(beneficiario.nombreTitular);
 			titular.setNroDocumento(beneficiario.documentoTitular);
 			titular.setTransaccionesPagoId(transaccionPago);
-			titularPagoDao.save(titular);	
+			titularPagoDao.save(titular);
 		}
-		
-		
-		
+
 		return transaccionPago;
 	}
+	
+	@Override
+	public Long getSecuencialTransaccion() {
+		return this.transaccionPagoDao.getSecuencialTransaccion();
+		
+	};
 
 }

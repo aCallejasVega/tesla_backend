@@ -29,7 +29,7 @@ public class DeudasClienteDto {
 	public BigDecimal total;
 	public Boolean esPostpago;
 	public String cajero;
-	@JsonFormat( pattern = "dd/MM/yyyy HH:mm:ss",timezone="America/La_Paz")
+	@JsonFormat( pattern = "dd/MM/yyyy",timezone="America/La_Paz")
 	public Date fechaCreacion;
 	public String estado;
 	public String nombreRecaudadora;
@@ -146,7 +146,7 @@ public class DeudasClienteDto {
 			String nombreRecaudadora,
 			BigDecimal comision
 			) {
-		System.out.println("nombreRecaudadora :" +nombreRecaudadora);
+		
 		
 		this.archivoId=archivoId;
 		this.codigoCliente=codigoCliente;

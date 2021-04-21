@@ -207,5 +207,92 @@ public class ServicioProductoController {
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		}
 	}
+	
+	@GetMapping("/findServiciosForRecaudadorId")
+	public ResponseEntity<?> findServiciosForRecaudadorId(Authentication authentication) {
+
+		SegUsuarioEntity usuario = new SegUsuarioEntity();		
+		RecaudadorEntity recaudador=new RecaudadorEntity();
+		Map<String, Object> response = new HashMap<>();
+		try {
+			usuario = this.segUsuarioService.findByLogin(authentication.getName());			
+			recaudador = this.recaudadoraService.findRecaudadorByUserId(usuario.getUsuarioId());			
+			List<PServicioProductoEntity> servicioProductosList = this.servicioProductosService
+					.findServiciosForRecaudadorId(recaudador.getRecaudadorId());
+			if (!servicioProductosList.isEmpty()) {
+				response.put("status", true);
+				response.put("message", "El listado fue encontrado.");
+				response.put("data", servicioProductosList);
+				return new ResponseEntity<>(response, HttpStatus.OK);
+			} else {
+				response.put("status", false);
+				response.put("message", "El listado no fue encontrado.");
+				response.put("data", null);
+				return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+			}
+		} catch (Technicalexception e) {
+			LogSistemaEntity log = new LogSistemaEntity();
+			log.setModulo("ADMINISTRACION");
+			log.setController("api/findByEntidadIdForSelect");
+			if(e.getCause()!=null) {
+				log.setCausa(e.getCause().getMessage() + "");	
+			}
+		
+			log.setMensaje(e.getMessage() + "");
+			log.setUsuarioCreacion(usuario.getUsuarioId());
+			log.setFechaCreacion(new Date());
+			logSistemaService.save(log);
+			this.logger.error("This is error", e.getMessage());
+			this.logger.error("This is cause", e.getCause());
+			response.put("status", false);
+			response.put("result", null);
+			response.put("message",
+					"Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			response.put("code", log.getLogSistemaId() + "");
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	@GetMapping("/findForSelect")
+	public ResponseEntity<?> findForSelect(Authentication authentication) {
+
+		SegUsuarioEntity usuario = new SegUsuarioEntity();
+		EntidadEntity entidad = new EntidadEntity();
+
+		Map<String, Object> response = new HashMap<>();
+		try {
+			
+			List<PServicioProductoEntity> servicioProductosList = this.servicioProductosService
+					.findForSelect();
+			if (!servicioProductosList.isEmpty()) {
+				response.put("status", true);
+				response.put("message", "El listado fue encontrado.");
+				response.put("data", servicioProductosList);
+				return new ResponseEntity<>(response, HttpStatus.OK);
+			} else {
+				response.put("status", false);
+				response.put("message", "El listado no fue encontrado.");
+				response.put("data", null);
+				return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+			}
+		} catch (Technicalexception e) {
+			LogSistemaEntity log = new LogSistemaEntity();
+			log.setModulo("ADMINISTRACION");
+			log.setController("api/findByEntidadIdForSelect");
+			log.setCausa(e.getCause() + "");
+			log.setMensaje(e.getMessage() + "");
+			log.setUsuarioCreacion(usuario.getUsuarioId());
+			log.setFechaCreacion(new Date());
+			logSistemaService.save(log);
+			this.logger.error("This is error", e.getMessage());
+			this.logger.error("This is cause", e.getCause());
+			response.put("status", false);
+			response.put("result", null);
+			response.put("message",
+					"Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			response.put("code", log.getLogSistemaId() + "");
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+		}
+	}
 
 }
