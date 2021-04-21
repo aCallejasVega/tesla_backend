@@ -81,6 +81,12 @@ public class DominioEntity implements Serializable {
     private List<EntidadEntity> entidadEntityTipoFacturaList;
 
 
+    @OneToMany(mappedBy = "departamentoId")
+    private List<SucursalEntidadEntity> sucursalEntidadEntityDptoList;
+    @OneToMany(mappedBy = "municipioId")
+    private List<SucursalEntidadEntity> sucursalEntidadEntityMunicipioList;
+
+
     public DominioEntity() {
     }
 
@@ -269,6 +275,22 @@ public class DominioEntity implements Serializable {
 
     public void setEntidadEntityTipoFacturaList(List<EntidadEntity> entidadEntityTipoFacturaList) {
         this.entidadEntityTipoFacturaList = entidadEntityTipoFacturaList;
+    }
+
+    public List<SucursalEntidadEntity> getSucursalEntidadEntityDptoList() {
+        return sucursalEntidadEntityDptoList;
+    }
+
+    public void setSucursalEntidadEntityDptoList(List<SucursalEntidadEntity> sucursalEntidadEntityDptoList) {
+        this.sucursalEntidadEntityDptoList = sucursalEntidadEntityDptoList;
+    }
+
+    public List<SucursalEntidadEntity> getSucursalEntidadEntityMunicipioList() {
+        return sucursalEntidadEntityMunicipioList;
+    }
+
+    public void setSucursalEntidadEntityMunicipioList(List<SucursalEntidadEntity> sucursalEntidadEntityMunicipioList) {
+        this.sucursalEntidadEntityMunicipioList = sucursalEntidadEntityMunicipioList;
     }
 
     @Override
