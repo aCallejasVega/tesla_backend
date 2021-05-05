@@ -1,9 +1,13 @@
 package bo.com.tesla.recaudaciones.services;
 
+import bo.com.tesla.administracion.dao.ISucursalEntidadDao;
 import bo.com.tesla.administracion.entity.*;
 import bo.com.tesla.administracion.services.IEntidadComisionService;
 import bo.com.tesla.administracion.services.IRecaudadorComisionService;
 import bo.com.tesla.entidades.dao.IArchivoDao;
+import bo.com.tesla.facturaciones.computarizada.dto.FacturaDto;
+import bo.com.tesla.facturaciones.computarizada.dto.ResponseDto;
+import bo.com.tesla.facturaciones.computarizada.services.IFacturaComputarizadaService;
 import bo.com.tesla.recaudaciones.dao.*;
 import bo.com.tesla.recaudaciones.dto.ClienteDto;
 import bo.com.tesla.recaudaciones.dto.DeudaClienteDto;
@@ -55,6 +59,15 @@ public class CobroClienteService implements ICobroClienteService {
 
     @Autowired
     private IArchivoDao iArchivoDao;
+
+    @Autowired
+    private IFacturaComputarizadaService facturacionComputarizadaService;
+
+    @Autowired
+    private ITransaccionCobroDao transaccionCobroDao;
+
+    @Autowired
+    private ISucursalEntidadDao sucursalEntidadDao;
 
     @Override
     public List<CobroClienteEntity> saveAllCobrosClientes(List<CobroClienteEntity> cobroClienteEntities) {
@@ -117,16 +130,23 @@ public class CobroClienteService implements ICobroClienteService {
         return  cobroClienteEntity;
     }
 
+    @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Technicalexception.class)
-    public List<TransaccionCobroEntity> postCobrarDeudas(ClienteDto clienteDto,
-                                  Long usuarioId,
-                                  Long metodoCobroId) throws Technicalexception {
-    	List<TransaccionCobroEntity> transaccionesCobroList=new ArrayList<>();
+    public String postCobrarDeudas(ClienteDto clienteDto,
+                                    Long usuarioId,
+                                    Long metodoCobroId) {
+        List<TransaccionCobroEntity> transaccionesCobroList=new ArrayList<>();
         try{
             //Obtencion Datos Entidad
             Optional<EntidadEntity> entidadEntityOptional = iEntidadRDao.findByEntidadIdAndEstado(clienteDto.servicioDeudaDtoList.get(0).entidadId, "ACTIVO");
             if(!entidadEntityOptional.isPresent()) {
                 throw new Technicalexception("No existe Entidad, por tanto no hay configuracion de comprobanteEnUno");
+            }
+
+            //Encontrar Sucursal que emite Factura
+            Optional<SucursalEntidadEntity> sucursalEntidadEntityOptional  = sucursalEntidadDao.findByEmiteFacturaTesla(clienteDto.servicioDeudaDtoList.get(0).entidadId);
+            if(!sucursalEntidadEntityOptional.isPresent()) {
+                throw new Technicalexception("No se encuentra registrada la sucursal que emitirá la(s) factura(s).");
             }
 
             //Obtencion de Archivo
@@ -154,12 +174,9 @@ public class CobroClienteService implements ICobroClienteService {
             }
 
             //Para emision de comprobante
-            boolean comprobanteEnUno = entidadEntityOptional.get().getComprobanteEnUno();
-            /******************************************************************************************/
-            //Lamar a Facturacion o Recibo
-            /******************************************************************************************/
+            Boolean comprobanteEnUno = entidadEntityOptional.get().getComprobanteEnUno();
 
-            
+
             //Recorrer las agrupaciones
             for(ServicioDeudaDto servicioDeudaDto : clienteDto.servicioDeudaDtoList){
                 //Recuperar Deudas Completas por agrupacion
@@ -174,7 +191,8 @@ public class CobroClienteService implements ICobroClienteService {
 
                 //Cargar transaccion las agrupaciones
                 TransaccionCobroEntity transaccionCobroEntity = iTransaccionCobroService.loadTransaccionCobro(servicioDeudaDto, entidadEntityOptional.get(), usuarioId, clienteDto.nombreCliente, clienteDto.nroDocumento,
-                        entidadComisionEntity, recaudadorEntityOptional.get(), recaudadorComisionEntity, archivoEntity, metodoCobroOptional.get());
+                        entidadComisionEntity, recaudadorEntityOptional.get(), recaudadorComisionEntity, archivoEntity, metodoCobroOptional.get(),
+                        entidadEntityOptional.get().getTipoFacturacion());
 
                 List<CobroClienteEntity> cobroClienteEntityList = new ArrayList<>();
                 //Recorrer cada deuda asociada a la agrupacion
@@ -187,7 +205,7 @@ public class CobroClienteService implements ICobroClienteService {
                 //Registrar transaccion  por agrupacion
                 transaccionCobroEntity.setCobroClienteEntityList(cobroClienteEntityList);
                 transaccionCobroEntity = iTransaccionCobroService.saveTransaccionCobro(transaccionCobroEntity);
-                
+
                 if(transaccionCobroEntity.getTransaccionCobroId() == null) {
                     throw new Technicalexception("No se ha registrado la transacción");
                 }
@@ -204,13 +222,30 @@ public class CobroClienteService implements ICobroClienteService {
                     throw new Technicalexception("Se produjo un problema al borrar la lista de DeudasClientes");
                 }
             }
-            
-           
-            
-            
+
+            /******************************************************************************************/
+            //Lamar a Facturacion o Recibo
+            /******************************************************************************************/
+
+            ResponseDto responseDto = facturacionComputarizadaService.postFacturas(sucursalEntidadEntityOptional.get(), transaccionesCobroList, comprobanteEnUno, clienteDto.montoTotalCobrado);
+            if(!responseDto.status) {
+                throw new Technicalexception(responseDto.message);
+            }
+            /*
+            List<FacturaDto> facturaDtoList = (List<FacturaDto>) responseDto.result;
+            facturaDtoList.forEach(f -> {
+                Integer updateCountFactura = transaccionCobroDao.updateFactura(f.keyTeslaTransaccion, f.facturaId);
+                if (updateCountFactura != 1) {
+                    throw new Technicalexception("No se ha actualizado la factura en la Transacción");
+                }
+            });*/
+            List<FacturaDto> facturaDtoList = (List<FacturaDto>) responseDto.result;
+            iTransaccionCobroService.updateFacturas(transaccionesCobroList, comprobanteEnUno, facturaDtoList);
+            //*****************************************************************************************
+
+            return responseDto.report;
         } catch (Exception e) {
             throw new Technicalexception(e.getMessage(), e.getCause());
         }
-        return transaccionesCobroList;
     }
 }

@@ -221,9 +221,15 @@ public interface IHistoricoDeudaDao extends JpaRepository<HistoricoDeudaEntity, 
 			+ " from HistoricoDeudaEntity hd "
 			+ " where hd.archivoId.archivoId= :archivoId ")	
 	public List<HistoricoDeudaEntity> findHistoricoDeudasByArchivoId(@Param("archivoId") Long archivoId);
-	
-	
-	
-	
-	
+
+
+	@Modifying
+	@Query("UPDATE HistoricoDeudaEntity h " +
+			"SET h.estado = :estado " +
+			"where h.historicoDeudaId IN (SELECT h.historicoDeudaId " +
+										"FROM HistoricoDeudaEntity " +
+										"JOIN CobroClienteEntity c on c.historicoDeuda = h " +
+										"WHERE c.transaccionCobro.facturaId in :facturaIdLst)")
+	Integer updateLstEstadoByFacturas(@Param("facturaIdLst") List<Long> facturaIdLst, @Param("estado") String estado);
+
 }

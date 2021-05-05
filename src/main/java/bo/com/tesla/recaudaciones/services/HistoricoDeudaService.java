@@ -147,4 +147,9 @@ public class HistoricoDeudaService implements IHistoricoDeudaService {
 		return this.iHistoricoDeudaDao.findEstadoHistoricoPagos();
 	}
 
+	@Override
+	public Integer updateHistoricoDeudaLstByFacturas(List<Long> facturaIdLst, String estado) {
+		return iHistoricoDeudaDao.updateLstEstadoByFacturas(facturaIdLst, estado);
+	}
+
 }

@@ -2,6 +2,7 @@ package bo.com.tesla.administracion.services;
 
 import bo.com.tesla.administracion.dto.RecaudadorAdmDto;
 import bo.com.tesla.administracion.dto.SucursalAdmDto;
+import bo.com.tesla.administracion.dto.SucursalEntidadAdmDto;
 import bo.com.tesla.administracion.entity.DominioEntity;
 import bo.com.tesla.administracion.entity.SucursalEntity;
 import bo.com.tesla.useful.config.Technicalexception;
@@ -19,4 +20,5 @@ public interface ISucursalService {
     public SucursalAdmDto getSucursalById(Long sucursalId);
     public List<SucursalAdmDto> getAllSucursales();
     public List<SucursalAdmDto> getListSucursalesByRecaudadora(Long recaudadorId);
+
 }

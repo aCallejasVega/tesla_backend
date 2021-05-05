@@ -93,7 +93,11 @@ public class CobroClienteEntity implements Serializable {
     @JoinColumn(name = "archivo_id", referencedColumnName = "archivo_id", nullable = false)
     @ManyToOne(optional = false)
     private ArchivoEntity archivoId;
-
+    @Column(name = "fecha_modificacion")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaModificacion;
+    @Column(name = "usuario_modificacion")
+    private Long usuarioModificacion;
 
     @JoinColumn(name = "transaccion_cobro_id", referencedColumnName = "transaccion_cobro_id")
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = TransaccionCobroEntity.class)
@@ -351,6 +355,23 @@ public class CobroClienteEntity implements Serializable {
 
     public void setMontoModificado(boolean montoModificado) {
         this.montoModificado = montoModificado;
+    }
+
+
+    public Date getFechaModificacion() {
+        return fechaModificacion;
+    }
+
+    public void setFechaModificacion(Date fechaModificacion) {
+        this.fechaModificacion = fechaModificacion;
+    }
+
+    public Long getUsuarioModificacion() {
+        return usuarioModificacion;
+    }
+
+    public void setUsuarioModificacion(Long usuarioModificacion) {
+        this.usuarioModificacion = usuarioModificacion;
     }
 
     @Override

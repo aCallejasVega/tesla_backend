@@ -1,12 +1,15 @@
 package bo.com.tesla.administracion.services;
 
 import bo.com.tesla.administracion.dao.ISucursalEntidadDao;
+import bo.com.tesla.administracion.dto.CredencialFacturacionDto;
 import bo.com.tesla.administracion.dto.SucursalEntidadAdmDto;
 import bo.com.tesla.administracion.entity.DominioEntity;
 import bo.com.tesla.administracion.entity.EntidadEntity;
+import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.administracion.entity.SucursalEntidadEntity;
 import bo.com.tesla.recaudaciones.dao.IDominioDao;
 import bo.com.tesla.recaudaciones.dao.IEntidadRDao;
+import bo.com.tesla.useful.config.BusinesException;
 import bo.com.tesla.useful.config.Technicalexception;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +34,15 @@ public class SucursalEntidadService implements ISucursalEntidadService {
     /*********************ABM**************************/
 
     @Override
-    public SucursalEntidadAdmDto addUpdateSucursalEntidad(SucursalEntidadAdmDto sucursalEntidadAdmDto, Long usuarioId) throws Technicalexception {
+    public SucursalEntidadAdmDto addUpdateSucursalEntidad(SucursalEntidadAdmDto sucursalEntidadAdmDto, Long usuarioId) throws BusinesException {
+        sucursalEntidadAdmDto.emiteFacturaTesla = sucursalEntidadAdmDto.emiteFacturaTesla != null ? sucursalEntidadAdmDto.emiteFacturaTesla : false;
+        if(sucursalEntidadAdmDto.emiteFacturaTesla) {
+            Long countEmiteFacturaTesla = iSucursalEntidadDao.countEmiteFacturaTesla(sucursalEntidadAdmDto.entidadId, sucursalEntidadAdmDto.sucursalEntidadId);
+            if (countEmiteFacturaTesla > 0) {
+                throw new BusinesException("Ya existe una sucursal que emite Facturas.");
+            }
+        }
+
         try {
             if (sucursalEntidadAdmDto.sucursalEntidadId != null) {
                 /***Modificacion***/
@@ -60,7 +71,8 @@ public class SucursalEntidadService implements ISucursalEntidadService {
         }
     }
 
-    private SucursalEntidadAdmDto saveSucursalEntidad(SucursalEntidadAdmDto sucursalEntidadAdmDto, SucursalEntidadEntity sucursalEntidadEntity) {
+    private SucursalEntidadAdmDto saveSucursalEntidad(SucursalEntidadAdmDto sucursalEntidadAdmDto, SucursalEntidadEntity sucursalEntidadEntity) throws BusinesException {
+
 
         Optional<EntidadEntity> entidadEntityOptional = iEntidadRDao.findById(sucursalEntidadAdmDto.entidadId);
         if(!entidadEntityOptional.isPresent()) {
@@ -85,7 +97,7 @@ public class SucursalEntidadService implements ISucursalEntidadService {
         sucursalEntidadEntity.setCodigoActividadEconomica(sucursalEntidadAdmDto.codigoActividadEconomica);
         sucursalEntidadEntity.setActividadEconomica(sucursalEntidadAdmDto.actividadEconomica);
         sucursalEntidadEntity.setNumeroSucursalSin(sucursalEntidadAdmDto.numeroSucursalSin);
-        sucursalEntidadEntity.setEmiteFacturaTesla(sucursalEntidadAdmDto.emiteFacturaTesla != null ? sucursalEntidadAdmDto.emiteFacturaTesla : false);
+        sucursalEntidadEntity.setEmiteFacturaTesla(sucursalEntidadAdmDto.emiteFacturaTesla);
         sucursalEntidadEntity.setDepartamentoId(departamentoOptional.get());
         sucursalEntidadEntity.setMunicipioId(municipioOptional.get());
 
@@ -141,4 +153,26 @@ public class SucursalEntidadService implements ISucursalEntidadService {
     public List<SucursalEntidadAdmDto> getLisSucursalEntidadesByEntidadId(Long entidadId) {
         return iSucursalEntidadDao.findSucursalesEntidadesDtoByEntidadId(entidadId);
     }
+
+    @Override
+    public List<SucursalEntidadAdmDto> getLisSucursalEntidadesByEntidadIdActivos(Long entidadId) {
+        return iSucursalEntidadDao.findSucursalesEntidadesDtoByEntidadIdActivos(entidadId);
+    }
+
+    @Override
+    public Optional<SucursalEntidadAdmDto> findsucursalEmtidadEmiteFacturaTesla(Long entidadId) {
+        return iSucursalEntidadDao.findDtoByEmiteFacturaTesla(entidadId);
+    }
+
+    @Transactional
+    @Override
+    public void updateCredencialesFacturacion(CredencialFacturacionDto credencialFacturacionDto, SegUsuarioEntity usuarioEntity) {
+      iSucursalEntidadDao.updateCredencialesFacturacion(credencialFacturacionDto.sucursalEntidadId, credencialFacturacionDto.login, credencialFacturacionDto.password, usuarioEntity.getUsuarioId());
+    }
+
+    @Override
+    public Optional<CredencialFacturacionDto> findCredencialFacturacion(Long sucursalEntidadId) {
+        return iSucursalEntidadDao.findCredencialFacturacion(sucursalEntidadId);
+    }
+
 }

@@ -18,4 +18,6 @@ public interface IDeudaClienteRService {
                                                           String periodo,
                                                           String codigoCliente);
     public Long deleteDeudasClientes(List<DeudaClienteEntity> deudaClienteEntities);
+    void recoverDeudasByFacturas(List<Long> facturaIdLst);
+    void recoverDeudasByFactura(Long facturaIdLst);
 }

@@ -8,7 +8,6 @@ import bo.com.tesla.recaudaciones.dto.DominioDto;
 import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegUsuarioService;
 import bo.com.tesla.useful.config.Technicalexception;
-import org.bouncycastle.asn1.dvcs.TargetEtcChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +38,8 @@ public class DominioController {
 
     @Autowired
     private IDominioService iDominioService;
+
+
 
     @GetMapping("/{dominio}")
     public ResponseEntity<?> getListSucursalesEntidades(@PathVariable String dominio,

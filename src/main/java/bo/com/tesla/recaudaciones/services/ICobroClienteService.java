@@ -7,6 +7,8 @@ import bo.com.tesla.recaudaciones.dto.ClienteDto;
 import bo.com.tesla.recaudaciones.dto.DeudaClienteDto;
 import bo.com.tesla.recaudaciones.dto.ServicioDeudaDto;
 import bo.com.tesla.useful.config.BusinesException;
+import bo.com.tesla.useful.config.Technicalexception;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -19,11 +21,8 @@ public interface ICobroClienteService {
                                                      Long metodoPagoId,
                                                      TransaccionCobroEntity transaccionCobroEntity);
 
-    public  List<TransaccionCobroEntity> postCobrarDeudas(ClienteDto clienteDto,
-                                 Long usuarioId,
-                                 Long metodoPagoId); //throws Exception;
 
-
-
-
-}
+    public String postCobrarDeudas(ClienteDto clienteDto,
+                                    Long usuarioId,
+                                    Long metodoCobroId);
+    }

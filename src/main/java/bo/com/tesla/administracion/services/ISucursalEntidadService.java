@@ -1,16 +1,23 @@
 package bo.com.tesla.administracion.services;
 
+import bo.com.tesla.administracion.dto.CredencialFacturacionDto;
 import bo.com.tesla.administracion.dto.SucursalEntidadAdmDto;
-import bo.com.tesla.useful.config.Technicalexception;
+import bo.com.tesla.administracion.entity.SegUsuarioEntity;
+import bo.com.tesla.useful.config.BusinesException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ISucursalEntidadService {
-    public SucursalEntidadAdmDto addUpdateSucursalEntidad(SucursalEntidadAdmDto sucursalEntidadAdmDto, Long usuarioId);
+    public SucursalEntidadAdmDto addUpdateSucursalEntidad(SucursalEntidadAdmDto sucursalEntidadAdmDto, Long usuarioId) throws BusinesException;
     public void setTransaccionSucursalEntidad(Long sucursalEntidadId, String transaccion, Long usuarioId);
     public void setLstTransaccion(List<Long> sucursalEntidadIdLst, String transaccion, Long usuarioId);
     public SucursalEntidadAdmDto getSucursalEntidadById(Long sucursalEntidadId);
     public List<SucursalEntidadAdmDto> getAllSucursalEntidades();
     public List<SucursalEntidadAdmDto> getLisSucursalEntidadesByEntidadId(Long entidadId);
+    List<SucursalEntidadAdmDto> getLisSucursalEntidadesByEntidadIdActivos(Long entidadId);
+    Optional<SucursalEntidadAdmDto> findsucursalEmtidadEmiteFacturaTesla(Long entidadId);
+    void updateCredencialesFacturacion(CredencialFacturacionDto credencialFacturacionDto, SegUsuarioEntity usuarioEntity);
+    Optional<CredencialFacturacionDto> findCredencialFacturacion(Long sucursalEntidadId);
 }
 

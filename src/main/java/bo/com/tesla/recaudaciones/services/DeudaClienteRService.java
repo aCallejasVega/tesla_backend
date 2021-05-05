@@ -91,4 +91,14 @@ public class DeudaClienteRService implements IDeudaClienteRService {
         return iDeudaClienteRDao.deleteByDeudaClienteIdIn(deudaClienteIdLst);
     }
 
+    @Override
+    public void recoverDeudasByFacturas(List<Long> facturaIdLst) {
+        iDeudaClienteRDao.recoverDeudasByFacturas(facturaIdLst);
+    }
+
+    @Override
+    public void recoverDeudasByFactura(Long facturaIdLst) {
+        iDeudaClienteRDao.recoverDeudasByFactura(facturaIdLst);
+    }
+
 }
