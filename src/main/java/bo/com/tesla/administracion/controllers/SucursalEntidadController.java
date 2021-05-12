@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -167,7 +168,7 @@ public class SucursalEntidadController {
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
 
-        } catch (Exception e) {
+        } catch (Technicalexception e) {
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.SUCURSALENDTIDAD");
             log.setController("api/sucursalesentidades/" + sucursalEntidadId);
@@ -203,7 +204,7 @@ public class SucursalEntidadController {
                 response.put("result", null);
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
-        } catch (Exception e) {
+        } catch (Technicalexception e) {
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.SUCURSALENTIDAD");
             log.setController("api/sucursalentidades");
@@ -240,7 +241,7 @@ public class SucursalEntidadController {
                 response.put("result", null);
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
-        } catch (Exception e) {
+        } catch (Technicalexception e) {
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.SUCURSALENTIDAD");
             log.setController("api/sucursalentidades");
@@ -259,13 +260,24 @@ public class SucursalEntidadController {
         }
     }
 
-    @GetMapping("/entidades/{entidadId}/activos")
-    public ResponseEntity<?> getListSucursalesEntidadesActivos(@PathVariable Long entidadId,
-                                                            Authentication authentication) {
+
+    @GetMapping(path = {"/entidades/{entidadId}", "/entidades"}, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<?> getListSucursalesEntidades(@PathVariable(name = "entidadId", required = false) Optional<Long> entidadId,
+                                                        Authentication authentication) {
         SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         Map<String, Object> response = new HashMap<>();
         try {
-            List<SucursalEntidadAdmDto> sucursalEntidadAdmDtos = iSucursalEntidadService.getLisSucursalEntidadesByEntidadIdActivos(entidadId);
+            List<SucursalEntidadAdmDto> sucursalEntidadAdmDtos = new ArrayList<>();
+            if(!entidadId.isPresent()) {
+                EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
+                if(entidad == null) {
+                    throw new BusinesException("El usuario debe pertenecer a una Entidad.");
+                }
+                sucursalEntidadAdmDtos = iSucursalEntidadService.getLisSucursalEntidadesByEntidadId(entidad.getEntidadId());
+
+            } else {
+                sucursalEntidadAdmDtos = iSucursalEntidadService.getLisSucursalEntidadesByEntidadId(entidadId.get());
+            }
             if(!sucursalEntidadAdmDtos.isEmpty()) {
                 response.put("status", true);
                 response.put("message", "El listado fue encontrado.");
@@ -277,10 +289,10 @@ public class SucursalEntidadController {
                 response.put("result", null);
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
-        } catch (Exception e) {
+        } catch (Technicalexception e) {
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.SUCURSALENTIDAD");
-            log.setController("api/sucursalentidades/entidaes/" + entidadId + "/activos");
+            log.setController("api/sucursalentidades");
             log.setCausa(e.getCause()+"");
             log.setMensaje(e.getMessage()+"");
             log.setUsuarioCreacion(usuario.getUsuarioId());
@@ -293,6 +305,19 @@ public class SucursalEntidadController {
             response.put("message", "Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
             response.put("code", log.getLogSistemaId()+"");
             return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        } catch (BusinesException e) {
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("FACTURAS");
+            log.setController("api/facturas/filters");
+            log.setMensaje(e.getMessage());
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            this.logSistemaService.save(log);
+            this.logger.error("This is cause", e.getMessage());
+            response.put("status", false);
+            response.put("message", e.getMessage());
+            response.put("code", log.getLogSistemaId()+"");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 

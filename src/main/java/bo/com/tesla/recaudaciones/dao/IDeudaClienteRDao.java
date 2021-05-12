@@ -38,7 +38,7 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
 
     @Query("select new  bo.com.tesla.recaudaciones.dto.DeudaClienteDto( "
             + " d.deudaClienteId, d.archivoId.archivoId, d.cantidad, d.concepto, d.montoUnitario, d.subTotal, "
-            + " d.tipoComprobante, d.periodoCabecera, d.codigoCliente, d.nroDocumento, d.nombreCliente, d.esPostpago, CASE WHEN d.esPostpago = false AND d.subTotal = 0 AND d.tipo = 'D' THEN true ELSE false END) "
+            + " d.tipoComprobante, d.periodoCabecera, d.codigoCliente, d.nombreCliente, d.nroDocumento, d.esPostpago, CASE WHEN d.esPostpago = false AND d.subTotal = 0 AND d.tipo = 'D' THEN true ELSE false END) "
             + " from DeudaClienteEntity d "
             + " where d.archivoId.entidadId.entidadId = :entidadId "
             + " and d.archivoId.estado = 'ACTIVO' "
@@ -90,7 +90,7 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
             "inner join tesla.cobros_clientes c on h.historico_deuda_id = c.historico_deuda_id " +
             "inner join tesla.transacciones_cobros t on t.transaccion_cobro_id = c.transaccion_cobro_id " +
             "where t.factura_id in :facturaIdLst", nativeQuery = true)
-    void recoverDeudasByFacturas(@Param("facturaIdLst") List<Long> facturaIdLst);
+    Integer recoverDeudasByFacturas(@Param("facturaIdLst") List<Long> facturaIdLst);
 
     @Modifying
     @Query(value = "INSERT INTO tesla.deudas_clientes (archivo_id, nro_registro, codigo_cliente, nombre_cliente, nro_documento, direccion, nit, telefono, servicio, tipo_servicio, periodo, tipo, concepto, cantidad, monto_unitario, sub_total, dato_extras, tipo_comprobante, periodo_cabecera, es_postpago) " +
@@ -99,5 +99,5 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
             "inner join tesla.cobros_clientes c on h.historico_deuda_id = c.historico_deuda_id " +
             "inner join tesla.transacciones_cobros t on t.transaccion_cobro_id = c.transaccion_cobro_id " +
             "where t.factura_id = :facturaId", nativeQuery = true)
-    void recoverDeudasByFactura(@Param("facturaId") Long facturaId);
+    Integer recoverDeudasByFactura(@Param("facturaId") Long facturaId);
 }

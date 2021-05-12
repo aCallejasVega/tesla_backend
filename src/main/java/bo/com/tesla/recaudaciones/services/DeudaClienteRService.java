@@ -30,42 +30,39 @@ public class DeudaClienteRService implements IDeudaClienteRService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ServicioDeudaDto> getDeudasByCliente(Long entidadId, String codigoCliente) throws Technicalexception{
-        List<ServicioDeudaDto> servicioDeudaDtos = iDeudaClienteRDao.groupByDeudasClientes(entidadId, codigoCliente);
-        if(servicioDeudaDtos.isEmpty()) {
-            return new ArrayList<ServicioDeudaDto>();//el controller procedera con l captura del mensaje
-        }
-        Long key = 0L;
-        for (ServicioDeudaDto servicioDeuda : servicioDeudaDtos) {
-            servicioDeuda.key = key;
-            List<DeudaClienteDto> deudaClienteDtosDeudas = iDeudaClienteRDao.findByEntidadByServiciosDeudas(servicioDeuda.entidadId,
-                                                                            servicioDeuda.tipoServicio,
-                                                                            servicioDeuda.servicio,
-                                                                            servicioDeuda.periodo,
-                                                                            codigoCliente);
-            /*if(deudaClienteDtos.isEmpty()){
-                throw new Technicalexception("No existen registros en deudas para agrupación");
+    public List<ServicioDeudaDto> getDeudasByCliente(Long entidadId, String codigoCliente) {
+        try {
+            List<ServicioDeudaDto> servicioDeudaDtos = iDeudaClienteRDao.groupByDeudasClientes(entidadId, codigoCliente);
+            if (servicioDeudaDtos.isEmpty()) {
+                return new ArrayList<ServicioDeudaDto>();//el controller procedera con la captura del mensaje
             }
-            List<DeudaClienteDto> deudaClienteDtosDeudas =  deudaClienteDtos.stream()
-                                                                .filter(d -> d.tipo == 'D')
-                                                                .collect(Collectors
-                                                                .toList());*/
-            if(deudaClienteDtosDeudas.isEmpty()) {
-                throw new Technicalexception("No existen DEUDAS para EntidadId=" + entidadId + " y CodigoCliente=" + codigoCliente);
+            Long key = 0L;
+            for (ServicioDeudaDto servicioDeuda : servicioDeudaDtos) {
+                servicioDeuda.key = key;
+                List<DeudaClienteDto> deudaClienteDtosDeudas = iDeudaClienteRDao.findByEntidadByServiciosDeudas(servicioDeuda.entidadId,
+                        servicioDeuda.tipoServicio,
+                        servicioDeuda.servicio,
+                        servicioDeuda.periodo,
+                        codigoCliente);
+
+                if (deudaClienteDtosDeudas.isEmpty()) {
+                    throw new Technicalexception("No existen DEUDAS para EntidadId=" + entidadId + " y CodigoCliente=" + codigoCliente);
+                }
+                servicioDeuda.deudaClienteDtos = deudaClienteDtosDeudas;
+                servicioDeuda.nombreCliente = deudaClienteDtosDeudas.get(0).nombreCliente;
+                servicioDeuda.codigoCliente = deudaClienteDtosDeudas.get(0).codigoCliente;
+                servicioDeuda.nroDocumento = deudaClienteDtosDeudas.get(0).nroDocumento;
+                //Para la edición verificar
+                Boolean esEditable = deudaClienteDtosDeudas.stream().anyMatch(d -> !d.esPostpago && d.subTotal.compareTo(BigDecimal.ZERO) == 0);
+                servicioDeuda.editable = esEditable;
+                servicioDeuda.editando = false;
+                servicioDeuda.plantilla = deudaClienteDtosDeudas.get(0).tipoComprobante ? "FACTURA" : "RECIBO";
+                key++;
             }
-            servicioDeuda.deudaClienteDtos = deudaClienteDtosDeudas;
-            servicioDeuda.nombreCliente = deudaClienteDtosDeudas.get(0).nombreCliente;
-            servicioDeuda.codigoCliente = deudaClienteDtosDeudas.get(0).codigoCliente;
-            servicioDeuda.nroDocumento = deudaClienteDtosDeudas.get(0).nroDocumento;
-            //servicioDeuda.archivoId = deudaClienteDtosDeudas.get(0).archivoId;
-            //Para la edición verificar
-            Boolean esEditable = deudaClienteDtosDeudas.stream().anyMatch(d -> !d.esPostpago && d.subTotal.compareTo(BigDecimal.ZERO) == 0);
-            servicioDeuda.editable = esEditable;
-            servicioDeuda.editando = false;
-            servicioDeuda.plantilla = deudaClienteDtosDeudas.get(0).tipoComprobante ? "FACTURA" : "RECIBO";
-            key++;
+            return servicioDeudaDtos;
+        } catch (Exception e) {
+            throw new Technicalexception(e.getMessage(), e.getCause());
         }
-        return servicioDeudaDtos;
     }
 
     @Transactional(readOnly = true)
@@ -82,6 +79,8 @@ public class DeudaClienteRService implements IDeudaClienteRService {
                                                         codigoCliente);
     }
 
+
+
     @Override
     public Long deleteDeudasClientes(List<DeudaClienteEntity> deudaClienteEntities) {
         List<Long> deudaClienteIdLst = deudaClienteEntities.stream()
@@ -92,13 +91,26 @@ public class DeudaClienteRService implements IDeudaClienteRService {
     }
 
     @Override
-    public void recoverDeudasByFacturas(List<Long> facturaIdLst) {
-        iDeudaClienteRDao.recoverDeudasByFacturas(facturaIdLst);
+    public Integer recoverDeudasByFacturas(List<Long> facturaIdLst) {
+        return iDeudaClienteRDao.recoverDeudasByFacturas(facturaIdLst);
     }
 
     @Override
-    public void recoverDeudasByFactura(Long facturaIdLst) {
-        iDeudaClienteRDao.recoverDeudasByFactura(facturaIdLst);
+    public Integer recoverDeudasByFactura(Long facturaIdLst) {
+        return iDeudaClienteRDao.recoverDeudasByFactura(facturaIdLst);
     }
 
+    @Override
+    public List<String> getCodigosActividadUnicos(List<DeudaClienteEntity> deudaClienteEntityList) {
+        List<String> codActEcoList = deudaClienteEntityList.stream().map(d -> d.getCodigoActividadEconomica())
+                .collect(Collectors.toList());
+        return codActEcoList.stream().distinct().collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Boolean> getTipoComprobanteUnicos(List<DeudaClienteEntity> deudaClienteEntityList) {
+        List<Boolean> tipoComprobantes = deudaClienteEntityList.stream().map(d -> d.getTipoComprobante())
+                .collect(Collectors.toList());
+        return tipoComprobantes.stream().distinct().collect(Collectors.toList());
+    }
 }

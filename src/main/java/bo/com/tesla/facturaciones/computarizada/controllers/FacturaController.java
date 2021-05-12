@@ -77,25 +77,33 @@ public class FacturaController {
         }
     }
 
-    @PostMapping("/filters/{page}")
+    @PostMapping(path = {"/entidades/{entidadId}/filters/{page}", "/filters/{page}" }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> postListFacturaFilter(@RequestBody FacturaDto facturaDto,
-                                                   @PathVariable int page,
-                                                   Authentication authentication)  {
+                                                          @PathVariable(name = "entidadId", required = false) Optional<Long> entidadId,
+                                                          @PathVariable int page,
+                                                          Authentication authentication)  {
 
         SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
-
         Map<String, Object> response = new HashMap<>();
         try {
-            EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
-            if(entidad == null) {
-                throw new BusinesException("El usuario debe pertenecer a una Entidad.");
+            ResponseDto responseDto = new ResponseDto();
+            if(!entidadId.isPresent()) {
+                EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
+                if(entidad == null) {
+                    throw new BusinesException("El usuario debe pertenecer a una Entidad.");
+                }
+                responseDto = facturacionComputarizadaService.postFacturaLstFilter(entidad.getEntidadId(), page, facturaDto);
+            } else {
+                responseDto = facturacionComputarizadaService.postFacturaLstFilter(entidadId.get(), page, facturaDto);
             }
+            if(responseDto != null) {
 
-            ResponseDto responseDto = facturacionComputarizadaService.postFacturaLstFilter(entidad.getEntidadId(), page, facturaDto);
-            response.put("status", true);
-            response.put("message", responseDto.message);
-            response.put("result", responseDto.result);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+                response.put("status", true);
+                response.put("message", responseDto.message);
+                response.put("result", responseDto.result);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
         } catch (Technicalexception e) {
             LogSistemaEntity log = new LogSistemaEntity();
@@ -125,44 +133,6 @@ public class FacturaController {
             response.put("status", false);
             response.put("message", e.getMessage());
             response.put("code", log.getLogSistemaId()+"");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @PostMapping("/entidades/{entidadId}/filters/{page}")
-    public ResponseEntity<?> postListFacturaFilterEntidad(@RequestBody FacturaDto facturaDto,
-                                    @PathVariable Long entidadId,
-                                    @PathVariable int page,
-                                    Authentication authentication)  {
-
-        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
-        Map<String, Object> response = new HashMap<>();
-        try {
-            ResponseDto responseDto = facturacionComputarizadaService.postFacturaLstFilter(entidadId, page, facturaDto);
-            if(responseDto != null) {
-
-                response.put("status", true);
-                response.put("message", responseDto.message);
-                response.put("result", responseDto.result);
-                return new ResponseEntity<>(response, HttpStatus.OK);
-            }
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-        } catch (Technicalexception e) {
-            LogSistemaEntity log = new LogSistemaEntity();
-            log.setModulo("FACTURAS");
-            log.setController("api/facturas/filters");
-            log.setCausa(e.getCause() + "");
-            log.setMensaje(e.getMessage() + "");
-            log.setUsuarioCreacion(usuario.getUsuarioId());
-            log.setFechaCreacion(new Date());
-            logSistemaService.save(log);
-            this.logger.error("This is error", e.getMessage());
-            this.logger.error("This is cause", e.getCause());
-            response.put("status", false);
-            response.put("result", null);
-            response.put("message", "Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
-            response.put("code", log.getLogSistemaId() + "");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
@@ -212,7 +182,7 @@ public class FacturaController {
         SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         Map<String, Object> response = new HashMap<>();
         try {
-            Boolean respuesta  = transaccionCobroService.AnularTransaccion(entidadId, anulacionFacturaLstDto, usuario);
+            Boolean respuesta  = transaccionCobroService.anularTransaccion(entidadId, anulacionFacturaLstDto, usuario);
             response.put("message", "Se ha realizado la Anulación de la factura.");
             response.put("result", respuesta);
             return new ResponseEntity<>(response, HttpStatus.OK);

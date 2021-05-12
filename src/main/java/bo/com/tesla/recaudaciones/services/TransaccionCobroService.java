@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -48,7 +49,6 @@ public class TransaccionCobroService implements ITransaccionCobroService {
 
     @Override
     public TransaccionCobroEntity saveTransaccionCobro(TransaccionCobroEntity transaccionCobroEntity) {
-        //return iTransaccionCobroDao.save(transaccionCobroEntity);
         return iTransaccionCobroDao.saveAndFlush(transaccionCobroEntity);
     }
 
@@ -62,7 +62,8 @@ public class TransaccionCobroService implements ITransaccionCobroService {
     public TransaccionCobroEntity loadTransaccionCobro(ServicioDeudaDto servicioDeudaDto, EntidadEntity entidadEntity, Long usuarioId, String nombreCientePago, String nroDocumentoClientePago,
                                                        EntidadComisionEntity entidadComisionEntity, RecaudadorEntity recaudadorEntity, RecaudadorComisionEntity recaudadorComisionEntity,
                                                        ArchivoEntity archivoEntity, DominioEntity metodoCobro,
-                                                       DominioEntity modalidadFacturacion) {
+                                                       DominioEntity modalidadFacturacion,
+                                                       String codigoActividadEconomica) {
 
         TransaccionCobroEntity transaccionCobroEntity = new TransaccionCobroEntity();
         transaccionCobroEntity.setTipoServicio(servicioDeudaDto.tipoServicio);
@@ -71,7 +72,6 @@ public class TransaccionCobroService implements ITransaccionCobroService {
         transaccionCobroEntity.setUsuarioCreacion(usuarioId);
         transaccionCobroEntity.setFechaCreacion(new Date());
         transaccionCobroEntity.setEntidadId(entidadEntity);
-        //transaccionCobroEntity.setTransaccion("COBRAR");
         transaccionCobroEntity.setTransaccion("CREAR");
         transaccionCobroEntity.setArchivoId(archivoEntity);
         transaccionCobroEntity.setCodigoCliente(servicioDeudaDto.codigoCliente);
@@ -87,12 +87,13 @@ public class TransaccionCobroService implements ITransaccionCobroService {
         transaccionCobroEntity.setRecaudadorComision(recaudadorComisionEntity);
         transaccionCobroEntity.setMetodoCobro(metodoCobro);
         transaccionCobroEntity.setModalidadFacturacion(modalidadFacturacion);
+        transaccionCobroEntity.setCodigoActividadEconomica(codigoActividadEconomica);
         return  transaccionCobroEntity;
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Technicalexception.class)
-    public Boolean AnularTransaccion(Long entidadId,
+    public Boolean anularTransaccion(Long entidadId,
                                      AnulacionFacturaLstDto anulacionFacturaLstDto,
                                      SegUsuarioEntity usuarioEntity) {
         try {
@@ -114,7 +115,10 @@ public class TransaccionCobroService implements ITransaccionCobroService {
             }
 
             //Recuperar las deudas
-            deudaClienteRService.recoverDeudasByFacturas(anulacionFacturaLstDto.facturaIdLst);
+            Integer countRecovery = deudaClienteRService.recoverDeudasByFacturas(anulacionFacturaLstDto.facturaIdLst);
+            if(countRecovery < 1) {
+                throw new Technicalexception("No se ha recuperado ninguna deuda");
+            }
 
             /***********************************************************************/
             //Anulación de Facturas
@@ -141,7 +145,11 @@ public class TransaccionCobroService implements ITransaccionCobroService {
                     throw new Technicalexception("No se ha actualizado la factura en la Transacción");
                 }
             } else {
-                transaccionCobroEntityList.forEach(t -> {
+                List<TransaccionCobroEntity> transaccionesCobroPorActividad = transaccionCobroEntityList.stream()
+                        .filter(t -> t.getCodigoActividadEconomica().equals(f.codigoActividadEconomica))
+                        .collect(Collectors.toList());
+
+                transaccionesCobroPorActividad.forEach(t -> {
                     Integer update = iTransaccionCobroDao.updateFactura(t.getTransaccionCobroId(), f.facturaId);
                     if (update != 1) {
                         throw new Technicalexception("No se ha actualizado la factura en la Transacción");
@@ -149,6 +157,13 @@ public class TransaccionCobroService implements ITransaccionCobroService {
                 });
             }
         });
+    }
+
+    @Override
+    public List<String> getCodigosActividadUnicos(List<TransaccionCobroEntity> transaccionCobroEntityList) {
+        List<String> codActEcoList = transaccionCobroEntityList.stream().map(t -> t.getCodigoActividadEconomica())
+                .collect(Collectors.toList());
+        return codActEcoList.stream().distinct().collect(Collectors.toList());
     }
 
 }

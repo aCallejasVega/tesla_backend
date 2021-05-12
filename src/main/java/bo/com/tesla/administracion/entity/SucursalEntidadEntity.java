@@ -57,12 +57,8 @@ public class SucursalEntidadEntity implements Serializable {
     @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id", nullable = false)
     @ManyToOne(optional = false)
     private EntidadEntity entidad;
-
+    @Column(length = 50)
     private String email;
-    @Column(name = "codigo_actividad_economica", length = 10)
-    private String codigoActividadEconomica;
-    @Column(name = "actividad_economica", length = 255)
-    private String actividadEconomica;
     @Column(name = "numero_sucursal_sin")
     private Short numeroSucursalSin;
     @Column(name = "usuario_facturacion", length = 30)
@@ -189,22 +185,6 @@ public class SucursalEntidadEntity implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getCodigoActividadEconomica() {
-        return codigoActividadEconomica;
-    }
-
-    public void setCodigoActividadEconomica(String codigoActividadEconomica) {
-        this.codigoActividadEconomica = codigoActividadEconomica;
-    }
-
-    public String getActividadEconomica() {
-        return actividadEconomica;
-    }
-
-    public void setActividadEconomica(String actividadEconomica) {
-        this.actividadEconomica = actividadEconomica;
     }
 
     public Short getNumeroSucursalSin() {

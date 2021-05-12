@@ -5,6 +5,7 @@ import bo.com.tesla.administracion.entity.SucursalEntidadEntity;
 
 import bo.com.tesla.administracion.entity.TransaccionCobroEntity;
 import bo.com.tesla.facturaciones.computarizada.dto.*;
+import bo.com.tesla.recaudaciones.services.ITransaccionCobroService;
 import bo.com.tesla.useful.config.Technicalexception;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,6 +27,9 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
 
     @Autowired
     private IConexionService conexionService;
+
+    @Autowired
+    private ITransaccionCobroService transaccionCobroService;
 
     @Override
     public ResponseDto postCodigoControl(CodigoControlDto codigoControlDto)  {
@@ -51,6 +55,7 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
             facturaDto.numeroDocumento = transaccionCobroEntity.getNroDocumentoClientePago();
             facturaDto.montoDescuento = new BigDecimal(0);
             facturaDto.keyTeslaTransaccion = transaccionCobroEntity.getTransaccionCobroId();
+            facturaDto.codigoActividadEconomica = transaccionCobroEntity.getCodigoActividadEconomica();
 
             //Cargar DetalleFacturas
             facturaDto.detalleFacturaDtoList = loadDetallesFacturas(transaccionCobroEntity);
@@ -58,6 +63,25 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
             facturaDtoList.add(facturaDto);
         }
 
+        return facturaDtoList;
+    }
+
+    private List<FacturaDto> loadFacturaGlobalXActividad(List<TransaccionCobroEntity> transaccionCobroEntityList) {
+
+        List<String> codActEcoListUnique = transaccionCobroService.getCodigosActividadUnicos(transaccionCobroEntityList);
+
+        List<FacturaDto> facturaDtoList = new ArrayList<>();
+        for(String codActEconomica : codActEcoListUnique) {
+            List<TransaccionCobroEntity> transaccionesPorCodActEconomicaLst = transaccionCobroEntityList.stream()
+                    .filter(t -> t.getCodigoActividadEconomica().equals(codActEconomica)).collect(Collectors.toList());
+
+            BigDecimal montoTotPorActEco = transaccionesPorCodActEconomicaLst.stream()
+                    .map(TransaccionCobroEntity::getTotalDeuda)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            List<FacturaDto> facturaDtoLstPorCodActEco = loadFacturaGlobal(transaccionesPorCodActEconomicaLst, montoTotPorActEco);
+            facturaDtoList.addAll(facturaDtoLstPorCodActEco);
+        }
         return facturaDtoList;
     }
 
@@ -71,6 +95,8 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
         facturaDto.numeroDocumento = transaccionCobroEntityList.get(0).getNroDocumentoClientePago();
         facturaDto.montoDescuento = new BigDecimal(0);
         facturaDto.keyTeslaTransaccion = transaccionCobroEntityList.get(0).getTransaccionCobroId();
+
+        facturaDto.codigoActividadEconomica = transaccionCobroEntityList.get(0).getCodigoActividadEconomica();
 
         //Cargar Detalle deFactura
         List<DetalleFacturaDto> detalleFacturaDtoList = new ArrayList<>();
@@ -113,17 +139,12 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
     public ResponseDto postFacturas(SucursalEntidadEntity sucursalEntidadEntity, List<TransaccionCobroEntity> transaccionCobroEntityList, Boolean comprobanteEnUno, BigDecimal montoTotal) {
         try {
 
-            //Cargar actividad que permite reconocer doficiacion
-            if(sucursalEntidadEntity.getCodigoActividadEconomica() == null) {
-                throw new Technicalexception("La sucursal no ha registrado el código de actividad económica");
-            }
             FacturasLstDto facturasLstDto = new FacturasLstDto();
-            facturasLstDto.codigoActividadEconomica = sucursalEntidadEntity.getCodigoActividadEconomica();
-
 
             //Cargar Facturas
-            List<FacturaDto> facturaDtoList = comprobanteEnUno ? loadFacturaGlobal(transaccionCobroEntityList, montoTotal ) : loadFacturasPorTransaccion(transaccionCobroEntityList);
+            List<FacturaDto> facturaDtoList = comprobanteEnUno ? loadFacturaGlobalXActividad(transaccionCobroEntityList) : loadFacturasPorTransaccion(transaccionCobroEntityList);
             facturasLstDto.facturaDtoList = facturaDtoList;
+            facturasLstDto.montoTotalCobrado = montoTotal;
 
             //api factura
             String url = this.host + "/api/facturas/listas";

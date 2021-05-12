@@ -18,6 +18,8 @@ public interface IDeudaClienteRService {
                                                           String periodo,
                                                           String codigoCliente);
     public Long deleteDeudasClientes(List<DeudaClienteEntity> deudaClienteEntities);
-    void recoverDeudasByFacturas(List<Long> facturaIdLst);
-    void recoverDeudasByFactura(Long facturaIdLst);
+    Integer recoverDeudasByFacturas(List<Long> facturaIdLst);
+    Integer recoverDeudasByFactura(Long facturaIdLst);
+    List<String> getCodigosActividadUnicos(List<DeudaClienteEntity> deudaClienteEntityList);
+    List<Boolean> getTipoComprobanteUnicos(List<DeudaClienteEntity> deudaClienteEntityList);
 }

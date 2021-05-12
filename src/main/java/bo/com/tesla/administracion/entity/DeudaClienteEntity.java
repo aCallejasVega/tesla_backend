@@ -118,6 +118,9 @@ public class DeudaClienteEntity implements Serializable {
 	@Column(name = "es_postpago")
 	private Boolean esPostpago;
 
+	@Column(name = "codigo_actividad_economica", length = 10)
+	private String codigoActividadEconomica;
+
 	public DeudaClienteEntity() {
 	}
 
@@ -410,7 +413,13 @@ public class DeudaClienteEntity implements Serializable {
 		this.periodoCabecera = periodoCabecera;
 	}
 
+	public String getCodigoActividadEconomica() {
+		return codigoActividadEconomica;
+	}
 
+	public void setCodigoActividadEconomica(String codigoActividadEconomica) {
+		this.codigoActividadEconomica = codigoActividadEconomica;
+	}
 
 	@Override
 	public String toString() {

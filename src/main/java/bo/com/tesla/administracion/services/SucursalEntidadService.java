@@ -94,8 +94,6 @@ public class SucursalEntidadService implements ISucursalEntidadService {
         sucursalEntidadEntity.setDireccion(sucursalEntidadAdmDto.direccion.toUpperCase().trim());
         sucursalEntidadEntity.setTelefono(sucursalEntidadAdmDto.telefono);
         sucursalEntidadEntity.setEmail(sucursalEntidadAdmDto.email);
-        sucursalEntidadEntity.setCodigoActividadEconomica(sucursalEntidadAdmDto.codigoActividadEconomica);
-        sucursalEntidadEntity.setActividadEconomica(sucursalEntidadAdmDto.actividadEconomica);
         sucursalEntidadEntity.setNumeroSucursalSin(sucursalEntidadAdmDto.numeroSucursalSin);
         sucursalEntidadEntity.setEmiteFacturaTesla(sucursalEntidadAdmDto.emiteFacturaTesla);
         sucursalEntidadEntity.setDepartamentoId(departamentoOptional.get());

@@ -20,10 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("api/recaudadores")
@@ -253,4 +250,5 @@ public class RecaudadoraController {
             return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
+
 }
