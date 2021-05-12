@@ -101,9 +101,9 @@ public class ServicioProductoController {
 
 		SegUsuarioEntity usuario = new SegUsuarioEntity();
 		EntidadEntity entidad = new EntidadEntity();
-
 		Map<String, Object> response = new HashMap<>();
 		try {
+			
 			usuario = this.segUsuarioService.findByLogin(authentication.getName());
 			entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
 			List<PServicioProductoEntity> servicioProductosList = this.servicioProductosService

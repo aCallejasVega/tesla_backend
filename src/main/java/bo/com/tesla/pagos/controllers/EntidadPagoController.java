@@ -41,7 +41,7 @@ import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.administracion.entity.PServicioProductoEntity;
 import bo.com.tesla.entidades.services.IArchivoService;
 import bo.com.tesla.entidades.services.IEntidadService;
-import bo.com.tesla.pagos.dto.PBeneficiarioDto;
+import bo.com.tesla.pagos.dto.PPagosDto;
 import bo.com.tesla.pagos.services.IPBeneficiariosService;
 import bo.com.tesla.pagos.services.IPServicioProductosService;
 import bo.com.tesla.security.services.ILogSistemaService;
@@ -84,7 +84,7 @@ public class EntidadPagoController {
 	
 	@PostMapping(path = "/upload/{servicioProductosId}")
 	public ResponseEntity<?> upload(@PathVariable("servicioProductosId") Long servicioProductosId,
-			@RequestParam("file") MultipartFile file, Authentication authentication) throws Exception {
+			@RequestParam("file") MultipartFile file, Authentication authentication)  {
 
 		Map<String, Object> response = new HashMap<>();
 		ArchivoEntity archivo = new ArchivoEntity();
@@ -154,12 +154,32 @@ public class EntidadPagoController {
 			response.put("codigo", log.getLogSistemaId() + "");
 			response.put("status", false);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}catch (Exception e) {
+			e.printStackTrace();
+			LogSistemaEntity log = new LogSistemaEntity();
+			log.setModulo("ENTIDADES PAGOS");
+			log.setController("api/pagoCliente/upload/" + servicioProductosId);
+			if(e.getCause()!=null) {
+				log.setCausa(e.getCause().getMessage() + "");	
+			}	
+			
+			log.setMensaje(e.getMessage() + "");
+			log.setUsuarioCreacion(usuario.getUsuarioId());
+			log.setFechaCreacion(new Date());
+			this.logSistemaService.save(log);
+			this.logger.error("This is error", e.getMessage());
+			this.logger.error("This is cause", e.getCause());
+			response.put("mensaje",
+					"Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			response.put("codigo", log.getLogSistemaId() + "");
+			response.put("status", false);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@PostMapping(path = "/processFile/{archivoId}")
 	public ResponseEntity<?> processFile(@PathVariable("archivoId") Long archivoId, Authentication authentication)
-			throws Exception {
+			 {
 		Map<String, Object> response = new HashMap<>();
 		SegUsuarioEntity usuario = new SegUsuarioEntity();
 		ArchivoEntity archivo = new ArchivoEntity();
@@ -278,7 +298,7 @@ public class EntidadPagoController {
 			@PathVariable("paginacion") int paginacion, @PathVariable("paramBusqueda") Optional<String> paramBusqueda,
 			Authentication authentication) {
 		Map<String, Object> response = new HashMap<>();
-		Page<PBeneficiarioDto> beneficiarioList;
+		Page<PPagosDto> beneficiarioList;
 		String newParamBusqueda = "";
 		SegUsuarioEntity usuario = new SegUsuarioEntity();
 

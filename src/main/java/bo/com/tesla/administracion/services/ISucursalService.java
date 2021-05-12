@@ -5,6 +5,8 @@ import bo.com.tesla.administracion.dto.SucursalAdmDto;
 import bo.com.tesla.administracion.entity.DominioEntity;
 import bo.com.tesla.administracion.entity.SucursalEntity;
 import bo.com.tesla.useful.config.Technicalexception;
+
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
@@ -19,4 +21,10 @@ public interface ISucursalService {
     public SucursalAdmDto getSucursalById(Long sucursalId);
     public List<SucursalAdmDto> getAllSucursales();
     public List<SucursalAdmDto> getListSucursalesByRecaudadora(Long recaudadorId);
+    
+    public Optional<SucursalEntity> findById(@Param("sucursalId") Long sucursalId);
+    
+    public List<SucursalEntity> findByRecaudadoraId(Long recaudadorId);
 }
+
+

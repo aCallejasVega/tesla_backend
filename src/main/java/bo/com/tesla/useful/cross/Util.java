@@ -157,7 +157,7 @@ public class Util {
 							+ ", por favor verifique el archivo y vulva a cargarlo.");
 
 				}
-				if (rowString.length != 19) {
+				if (rowString.length != 21) {
 
 					throw new BusinesException(
 							"Falta columna(s) en la línea " + rowInt + " verifique el archivo y vuelva a cargarlo.");

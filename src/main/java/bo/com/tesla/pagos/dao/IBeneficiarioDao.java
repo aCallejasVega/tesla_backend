@@ -13,12 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import bo.com.tesla.administracion.entity.PBeneficiariosEntity;
 import bo.com.tesla.administracion.entity.PPagoClienteEntity;
-import bo.com.tesla.pagos.dto.PBeneficiarioDto;
+import bo.com.tesla.pagos.dto.PPagosDto;
 
 @Repository
 public interface IBeneficiarioDao extends JpaRepository<PBeneficiariosEntity, Long> {
 	
-	@Query(" Select new bo.com.tesla.pagos.dto.PBeneficiarioDto(ac.codigoCliente,ac.periodo,sum(ac.montoUnitario * ac.cantidad)) "
+	@Query(" Select new bo.com.tesla.pagos.dto.PPagosDto(ac.codigoCliente,ac.periodo,sum(ac.montoUnitario * ac.cantidad)) "
 			+ " from PBeneficiariosEntity ac "
 			+ " Where ac.archivoId.archivoId= :archivoId "
 			+ " and ( "
@@ -29,14 +29,14 @@ public interface IBeneficiarioDao extends JpaRepository<PBeneficiariosEntity, Lo
 			+ " GROUP BY ac.codigoCliente,ac.periodo "
 			+ " Order by ac.codigoCliente asc "
 			)
-	public Page<PBeneficiarioDto>  groupByAbonosClientes(
+	public Page<PPagosDto>  groupByAbonosClientes(
 			@Param("archivoId") Long archivoId, 
 			@Param("paramBusqueda") String paramBusqueda,
 			Pageable pageable			
 			);
 	
 	
-	@Query(" Select new bo.com.tesla.pagos.dto.PBeneficiarioDto(ac.archivoId.archivoId,ac.nroRegistro, ac.codigoCliente, ac.nombreCliente, ac.fechaNacimientoCliente, "
+	@Query(" Select new bo.com.tesla.pagos.dto.PPagosDto(ac.archivoId.archivoId,ac.nroRegistro, ac.codigoCliente, ac.nombreCliente, ac.fechaNacimientoCliente, "
 			+ "			ac.genero, ac.nroDocumentoCliente, ac.extencionDocumentoId, ac.tipoDocumentoId, ac.cantidad, "
 			+ "			ac.montoUnitario, ac.periodo,ac.concepto) "
 			+ " from PBeneficiariosEntity ac "
@@ -45,7 +45,7 @@ public interface IBeneficiarioDao extends JpaRepository<PBeneficiariosEntity, Lo
 			+ " and ac.periodo= :periodo "		
 			+ " Order by ac.nroRegistro asc "
 			)
-	public List<PBeneficiarioDto>  findByCodigoAndArchivoId(
+	public List<PPagosDto>  findByCodigoAndArchivoId(
 			@Param("archivoId") Long archivoId, 
 			@Param("codigoCliente") String codigoCliente,
 			@Param("periodo") String periodo		
@@ -62,7 +62,7 @@ public interface IBeneficiarioDao extends JpaRepository<PBeneficiariosEntity, Lo
 	
 	
 	
-	@Query(" Select new bo.com.tesla.pagos.dto.PBeneficiarioDto(ac.archivoId.archivoId, ac.codigoCliente, ac.nroDocumentoCliente, ac.nombreCliente) "
+	@Query(" Select new bo.com.tesla.pagos.dto.PPagosDto(ac.archivoId.archivoId, ac.codigoCliente, ac.nroDocumentoCliente, ac.nombreCliente) "
 			
 			+ " from ArchivoEntity a "
 			+ " inner join EntidadEntity e on e.entidadId=a.entidadId.entidadId "
@@ -77,7 +77,7 @@ public interface IBeneficiarioDao extends JpaRepository<PBeneficiariosEntity, Lo
 			+ "     )"
 			+ " GROUP BY ac.archivoId.archivoId, ac.codigoCliente, ac.nombreCliente, ac.nroDocumentoCliente "
 			+ "")
-	public List<PBeneficiarioDto>  getAbonosParaPagar(
+	public List<PPagosDto>  getAbonosParaPagar(
 			@Param("servicioProductoId") Long servicioProductoId, 
 			@Param("entidadIdList") List<Long> 	entidadIdList,
 			@Param("paramBusqueda") String 	paramBusqueda	
@@ -86,30 +86,30 @@ public interface IBeneficiarioDao extends JpaRepository<PBeneficiariosEntity, Lo
 	
 	
 	
-	@Query(" Select new bo.com.tesla.pagos.dto.PBeneficiarioDto(ac.codigoCliente, ac.nroDocumentoCliente, ac.nombreCliente,ac.periodo, sum(ac.montoUnitario * ac.cantidad)) "
+	@Query(" Select new bo.com.tesla.pagos.dto.PPagosDto(ac.codigoCliente, ac.nroDocumentoCliente, ac.nombreCliente,ac.periodo, sum(ac.montoUnitario * ac.cantidad)) "
 			+ " From  PBeneficiariosEntity   ac "
 			+ " Where "
 			+ " ac.archivoId.archivoId= :archivoId"
 			+ "	and ac.codigoCliente = :codigoCliente "
 			+ " and ac.nroDocumentoCliente= :nroDocumentoCliente " 
 			+ " GROUP BY ac.codigoCliente, ac.nroDocumentoCliente, ac.nombreCliente,ac.periodo ")
-	public List<PBeneficiarioDto>  getBeneficiario(
+	public List<PPagosDto>  getBeneficiario(
 			@Param("archivoId") Long archivoId, 
 			@Param("codigoCliente") String codigoCliente, 			
 			@Param("nroDocumentoCliente") String nroDocumentoCliente	
 			
 			);
 	
-	@Query(" Select new bo.com.tesla.pagos.dto.PBeneficiarioDto(ac.archivoId.archivoId,ac.nroRegistro, ac.codigoCliente, ac.nombreCliente, ac.fechaNacimientoCliente, "
+	@Query(" Select new bo.com.tesla.pagos.dto.PPagosDto(ac.archivoId.archivoId,ac.nroRegistro, ac.codigoCliente, ac.nombreCliente, ac.fechaNacimientoCliente, "
 			+ "					ac.genero, ac.nroDocumentoCliente, ac.extencionDocumentoId, ac.tipoDocumentoId, ac.cantidad, "
 			+ "					ac.montoUnitario, ac.periodo,ac.concepto) "
 			+ " From  PBeneficiariosEntity   ac "
 			+ " Where  ac.archivoId.archivoId= :archivoId "
 			+ "      and  ac.codigoCliente = :codigoCliente "
 			+ "      and  ac.nroDocumentoCliente= :nroDocumentoCliente "
-			+ "		 and  ac.periodo= :periodo" 
-			+ " ")
-	public List<PBeneficiarioDto>  getBeneficiarioDetalle(
+			+ "		 and  ac.periodo= :periodo " 
+			+ " Order by ac.nroRegistro,ac.beneficiarioId asc ")
+	public List<PPagosDto>  getBeneficiarioDetalle(
 			@Param("archivoId") Long archivoId,
 			@Param("codigoCliente") String codigoCliente, 			
 			@Param("nroDocumentoCliente") String nroDocumentoCliente,
@@ -118,7 +118,7 @@ public interface IBeneficiarioDao extends JpaRepository<PBeneficiariosEntity, Lo
 	
 	
 	
-	@Query(" Select new bo.com.tesla.pagos.dto.PBeneficiarioDto(ac.codigoCliente, ac.nroDocumentoCliente, ac.nombreCliente,sum(ac.montoUnitario * ac.cantidad)) "
+	@Query(" Select new bo.com.tesla.pagos.dto.PPagosDto(ac.codigoCliente, ac.nroDocumentoCliente, ac.nombreCliente,sum(ac.montoUnitario * ac.cantidad)) "
 			+ " From  PBeneficiariosEntity   ac "
 			+ " Where  ac.archivoId.archivoId= :archivoId "
 			+ "      and  ac.codigoCliente = :codigoCliente "
@@ -126,7 +126,7 @@ public interface IBeneficiarioDao extends JpaRepository<PBeneficiariosEntity, Lo
 			+ "		 and  ac.periodo in :periodoList "
 			+ " GROUP BY ac.archivoId.archivoId, ac.codigoCliente, ac.nroDocumentoCliente, ac.nombreCliente " 
 			+ " ")
-	public PBeneficiarioDto  getBeneficiarioAndMontoToal(
+	public PPagosDto  getBeneficiarioAndMontoToal(
 			@Param("archivoId") Long archivoId,
 			@Param("codigoCliente") String codigoCliente, 			
 			@Param("nroDocumentoCliente") String nroDocumentoCliente,
@@ -149,19 +149,22 @@ public interface IBeneficiarioDao extends JpaRepository<PBeneficiariosEntity, Lo
 			@Param("periodo") String periodo);
 	
 	
-	@Query("Select b "
+	@Query(" Select  b "
 			+ " from PBeneficiariosEntity b "
 			+ " where "
 			+ " b.archivoId.archivoId= :archivoId "
-			+ " and b.codigoCliente= :codigoCliente "
-			+ " and b.periodo != :periodo "			
-			+ " and b.nroRegistro< :nroRegistro ")
+			+ " and b.codigoCliente= :codigoCliente "						
+			+ " and b.nroRegistro not in :nroRegistro "
+			+ " and b.nroRegistro < ( Select max( b.nroRegistro) "
+			+ " 						from PBeneficiariosEntity b "
+			+ " 						where "
+			+ " 						b.archivoId.archivoId= :archivoId "
+			+ " 						and b.codigoCliente= :codigoCliente "						
+			+ " 						and b.nroRegistro in :nroRegistro )")
 	public List<PBeneficiariosEntity>  verificarPrelacion(
 			@Param("archivoId") Long archivoId,
 			@Param("codigoCliente") String codigoCliente,			
-			@Param("nroRegistro") Integer nroRegistro,
-			@Param("periodo") String periodo
-			
+			@Param("nroRegistro") List<Integer> nroRegistro			
 			);
 	
 	

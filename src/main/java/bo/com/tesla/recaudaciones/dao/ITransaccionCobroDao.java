@@ -38,7 +38,7 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 			+ " and (CAST(e.entidadId as string ) in :entidadId and r.recaudadorId = :recaudadorId or r.recaudadorId is null)  "
 			+ " and (  date(tc.fechaCreacion) BETWEEN   date(:fechaInicio) and date(:fechaFin) "
 			+ "         or tc.fechaCreacion is null) "
-			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.servicio,hd.tipoServicio,hd.periodo,hd.nombreCliente,hd.estado, "
+			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.tipoServicio,hd.servicio,hd.periodo,hd.nombreCliente,hd.estado, "
 			+ " tc.totalDeuda,tc.fechaCreacion,tc.comision,r.nombre,p.nombres ||' '||p.paterno||' '||p.materno,e.nombreComercial "
 			+ " ORDER BY hd.estado,e.nombreComercial,tc.fechaCreacion ASC"
 			)
@@ -70,7 +70,7 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 			+ " and (CAST(e.entidadId as string ) in :entidadId and r.recaudadorId = :recaudadorId or r.recaudadorId is null)  "
 			+ " and (  date(tc.fechaCreacion) BETWEEN   date(:fechaInicio) and date(:fechaFin) "
 			+ "         or tc.fechaCreacion is null) "
-			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.servicio,hd.tipoServicio,hd.periodo,hd.nombreCliente,hd.estado, "
+			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.tipoServicio,hd.servicio,hd.periodo,hd.nombreCliente,hd.estado, "
 			+ " tc.totalDeuda,tc.fechaCreacion,tc.comision,r.nombre,p.nombres ||' '||p.paterno||' '||p.materno,e.nombreComercial "
 			+ " ORDER BY hd.estado,e.nombreComercial,tc.fechaCreacion ASC"
 			)
@@ -101,7 +101,7 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 			+ " and hd.estado in :estado"
 			+ " and (  date(tc.fechaCreacion) BETWEEN   date(:fechaInicio) and date(:fechaFin) "
 			+ "         or tc.fechaCreacion is null) "
-			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.servicio,hd.tipoServicio,hd.periodo,hd.nombreCliente,hd.estado, "
+			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.tipoServicio,hd.servicio,hd.periodo,hd.nombreCliente,hd.estado, "
 			+ " tc.totalDeuda,tc.fechaCreacion,tc.comision,r.nombre "
 			+ " ORDER BY hd.estado,r.nombre,tc.fechaCreacion ASC "
 			)
@@ -132,7 +132,7 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 			+ " and hd.estado in :estado"
 			+ " and (  date(tc.fechaCreacion) BETWEEN   date(:fechaInicio) and date(:fechaFin) "
 			+ "         or tc.fechaCreacion is null) "
-			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.servicio,hd.tipoServicio,hd.periodo,hd.nombreCliente,hd.estado, "
+			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.tipoServicio,hd.servicio,hd.periodo,hd.nombreCliente,hd.estado, "
 			+ " tc.totalDeuda,tc.fechaCreacion,tc.comision,r.nombre "
 			+ " ORDER BY hd.estado,r.nombre,tc.fechaCreacion ASC "
 			)
@@ -189,7 +189,7 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 			+ " and hd.estado like :estado"
 			+ " and (  date(tc.fechaCreacion) BETWEEN   date(:fechaInicio) and date(:fechaFin) "
 			+ "         or tc.fechaCreacion is null) "
-			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.servicio,hd.tipoServicio,hd.periodo,hd.nombreCliente,hd.estado, "
+			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.tipoServicio,hd.servicio,hd.periodo,hd.nombreCliente,hd.estado, "
 			+ " tc.totalDeuda,tc.fechaCreacion,tc.comision,r.nombre,p.nombres ||' '||p.paterno||' '||p.materno,e.nombreComercial "
 			+ " ORDER BY tc.fechaCreacion ASC"
 			)
@@ -223,7 +223,7 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 			+ " and hd.estado like :estado "
 			+ " and (  date(tc.fechaCreacion) BETWEEN   date(:fechaInicio) and date(:fechaFin) "
 			+ "         or tc.fechaCreacion is null) "
-			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.servicio,hd.tipoServicio,hd.periodo,hd.nombreCliente,hd.estado, "
+			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.tipoServicio,hd.servicio,hd.periodo,hd.nombreCliente,hd.estado, "
 			+ " tc.totalDeuda,tc.fechaCreacion,tc.comision,r.nombre,p.nombres ||' '||p.paterno||' '||p.materno,e.nombreComercial "
 			+ " ORDER BY hd.estado,e.nombreComercial,r.nombre, tc.fechaCreacion ASC"
 			)
@@ -236,6 +236,17 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 			);
 	
 	
-	
+	@Query("Select tc "
+			+ " from TransaccionCobroEntity tc "
+			+ " where date(tc.fechaCreacion) = date(:fechaSeleccionada) "
+			+ " and tc.usuarioCreacion= :usuarioCreacion "
+			+ " and tc.estado='COBRADO' "
+			+ " and tc.entidadId.entidadId= :entidadId "			
+			)
+	public List<TransaccionCobroEntity>  findDeudasCobradasByUsuarioCreacionForGrid(			
+			@Param("usuarioCreacion") Long usuarioCreacion,
+			@Param("fechaSeleccionada") Date fechaSeleccionada,
+			@Param("entidadId") Long entidadId
+			);
 	
 }

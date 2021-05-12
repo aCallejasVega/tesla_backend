@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -233,6 +234,45 @@ public class RecaudadoraController {
                 response.put("status", false);
                 response.put("message", "El listado no fue encontrado.");
                 response.put("result", null);
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+        } catch (Technicalexception e) {
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("ADMINISTRACION.RECAUDADOR");
+            log.setController("GET: api/recaudadores");
+            log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
+            log.setMensaje(e.getMessage()+"");
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            logSistemaService.save(log);
+            this.logger.error("This is error", e.getMessage());
+            this.logger.error("This is cause", e.getCause() != null ? e.getCause().getCause()+"" : e.getCause());
+            response.put("status", false);
+            response.put("result", null);
+            response.put("message", "Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+            response.put("code", log.getLogSistemaId()+"");
+            return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+    
+    
+    
+    @GetMapping("/findAllRecaudadoras")
+    public ResponseEntity<?> findAll(Authentication authentication) {
+    	SegUsuarioEntity usuario =new SegUsuarioEntity();
+        Map<String, Object> response = new HashMap<>();
+        try {
+        	usuario = this.segUsuarioService.findByLogin(authentication.getName());
+            List<RecaudadorEntity> recaudadorAdmDtoList = recaudadorService.findAll();
+            if(!recaudadorAdmDtoList.isEmpty()) {
+                response.put("status", true);
+                response.put("message", "El listado fue encontrado.");
+                response.put("data", recaudadorAdmDtoList);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                response.put("status", false);
+                response.put("message", "El listado no fue encontrado.");
+                response.put("data", null);
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
         } catch (Technicalexception e) {

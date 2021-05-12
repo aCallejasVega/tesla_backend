@@ -2,6 +2,7 @@ package bo.com.tesla.security.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -40,22 +41,31 @@ public class SegUsuarioService implements ISegUsuarioService,UserDetailsService 
 	
 	
 	@Override
-	public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-		List<GrantedAuthority> authorities = new ArrayList<>();
-		SegUsuarioEntity usuarios = segUsuarioDao.findByLogin(login);
-		if (usuarios == null) {	
-			logger.error("Error en el login: no existe el usuario " + login + " en el sistema");
-			throw new UsernameNotFoundException("Error en el Login: no existe el usuario");
+	public UserDetails loadUserByUsername(String login)  {
+		try {
+			List<GrantedAuthority> authorities = new ArrayList<>();
+			SegUsuarioEntity usuarios = this.segUsuarioDao.findByLogin(login);
+			if (usuarios == null) {	
+				logger.error("Error en el login: no existe el usuario " + login + " en el sistema");
+				throw new UsernameNotFoundException("Error en el Login: no existe el usuario");
+			}
+			List<SegRolEntity> segRoles=segRolDao.findRolesByUsuarioLogin(login);
+			
+			if(!segRoles.isEmpty()) {			
+				authorities=segRoles.stream().map(role -> new SimpleGrantedAuthority(role.getRol()))
+						.peek(authority -> logger.info("Role :" + authority.getAuthority())).collect(Collectors.toList());
+			}
+			
+			return new User(usuarios.getLogin(), usuarios.getPassword(), usuarios.getEstado().equals("ACTIVO") ? true : false,
+					true, true, true, authorities);
+		} catch ( UsernameNotFoundException e ) {
+			e.printStackTrace();
 		}
-		List<SegRolEntity> segRoles=segRolDao.findRolesByUsuarioLogin(login);
-		
-		if(!segRoles.isEmpty()) {			
-			authorities=segRoles.stream().map(role -> new SimpleGrantedAuthority(role.getRol()))
-					.peek(authority -> logger.info("Role :" + authority.getAuthority())).collect(Collectors.toList());
+		catch ( Exception e ) {
+			e.printStackTrace();
 		}
+		return null;
 		
-		return new User(usuarios.getLogin(), usuarios.getPassword(), usuarios.getEstado().equals("ACTIVO") ? true : false,
-				true, true, true, authorities);
 		
 	}
 
@@ -63,6 +73,13 @@ public class SegUsuarioService implements ISegUsuarioService,UserDetailsService 
 	@Transactional(readOnly = true)
 	public SegUsuarioEntity findByLogin(String login) {		
 		return this.segUsuarioDao.findByLogin(login);
+	}
+
+
+	@Override
+	public Optional<SegUsuarioEntity> findByPersonaIdAndEstado(Long personaId) {
+		
+		return this.segUsuarioDao.findByPersonaIdAndEstado(personaId);
 	}
 
 	

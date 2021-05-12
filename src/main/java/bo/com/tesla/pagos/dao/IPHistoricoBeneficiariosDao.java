@@ -126,7 +126,7 @@ public interface IPHistoricoBeneficiariosDao extends JpaRepository<PHistoricoBen
 			+ " WHERE "
 			+ " 	hb.estado in :estadoList "
 			+ " 	and (CAST(tp.fechaModificacion AS date) between CAST(:fechaIni AS date) and CAST(:fechaFin AS date) or tp.fechaModificacion is null)"			
-			+ " 	and tp.recaudadorId.recaudadorId= :recaudadorId "			
+			+ " 	and (tp.recaudadorId.recaudadorId= :recaudadorId or tp.recaudadorId.recaudadorId is null )"			
 			+ "     and a.servicioProductoId.servicioProductoId= :servicioProductoId "
 			+ " GROUP BY "
 			+ " 	hb.codigoCliente,hb.nombreCliente,hb.fechaNacimientoCliente,hb.nroDocumentoCliente,hb.extencionDocumentoId,"
@@ -142,6 +142,8 @@ public interface IPHistoricoBeneficiariosDao extends JpaRepository<PHistoricoBen
 			@Param("servicioProductoId") Long servicioProductoId,
 			Pageable pageable	
 			);
+	
+	
 	@Query(" Select new bo.com.tesla.pagos.dto.PBeneficiarioReporteDto(hb.codigoCliente, hb.nombreCliente, hb.fechaNacimientoCliente, "
 			+ "			hb.nroDocumentoCliente, hb.extencionDocumentoId,  tp.total, "
 			+ "			hb.periodo, hb.genero, tp.comisionRecaudacion, tp.comisionExacta, tp.fechaModificacion, "
@@ -158,7 +160,7 @@ public interface IPHistoricoBeneficiariosDao extends JpaRepository<PHistoricoBen
 			+ " WHERE "
 			+ " 	hb.estado in :estadoList "
 			+ " 	and (CAST(tp.fechaModificacion AS date) between CAST(:fechaIni AS date) and CAST(:fechaFin AS date) or tp.fechaModificacion is null)"			
-			+ " 	and tp.recaudadorId.recaudadorId= :recaudadorId "			
+			+ " 	and (tp.recaudadorId.recaudadorId= :recaudadorId or tp.recaudadorId.recaudadorId is null )"					
 			+ "     and a.servicioProductoId.servicioProductoId= :servicioProductoId "
 			+ " GROUP BY "
 			+ " 	hb.codigoCliente,hb.nombreCliente,hb.fechaNacimientoCliente,hb.nroDocumentoCliente,hb.extencionDocumentoId,"

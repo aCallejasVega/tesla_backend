@@ -74,4 +74,11 @@ public class TransaccionCobroService implements ITransaccionCobroService {
         return  transaccionCobroEntity;
     }
 
+	@Override
+	public List<TransaccionCobroEntity> findDeudasCobradasByUsuarioCreacionForGrid(Long usuarioCreacion,
+			Date fechaSeleccionada,Long entidadId) {
+	
+		return this.iTransaccionCobroDao.findDeudasCobradasByUsuarioCreacionForGrid(usuarioCreacion, fechaSeleccionada, entidadId);
+	}
+
 }

@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import bo.com.tesla.pagos.dao.IPHistoricoBeneficiariosDao;
-import bo.com.tesla.pagos.dto.PBeneficiarioDto;
+import bo.com.tesla.pagos.dto.PPagosDto;
 import bo.com.tesla.pagos.dto.PBeneficiarioReporteDto;
 
 @Service
@@ -52,6 +52,7 @@ public class ReportesPagoService implements IReportesPagoService {
 			Long recaudadorId, Long servicioProductoId, int page,int size) {
 		Pageable paging = PageRequest.of(page, size);
 		return this.historicoBeneficiariosDao.listForGridRecaudacion(fechaIni, fechaFin, estadoList, recaudadorId, servicioProductoId, paging);
+		
 	}
 
 	@Override

@@ -25,11 +25,13 @@ import org.springframework.web.bind.annotation.RestController;
 import bo.com.tesla.administracion.entity.LogSistemaEntity;
 import bo.com.tesla.administracion.entity.RecaudadorEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
+import bo.com.tesla.administracion.entity.TransaccionCobroEntity;
 import bo.com.tesla.entidades.dto.DeudasClienteDto;
 import bo.com.tesla.recaudaciones.dto.BusquedaReportesRecaudacionDto;
 import bo.com.tesla.recaudaciones.dto.DeudasClienteRecaudacionDto;
 import bo.com.tesla.recaudaciones.services.IRecaudadoraService;
 import bo.com.tesla.recaudaciones.services.IReporteRecaudacionService;
+import bo.com.tesla.recaudaciones.services.ITransaccionCobroService;
 import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegUsuarioService;
 import bo.com.tesla.useful.cross.Util;
@@ -55,6 +57,9 @@ public class ReportRecaudacionController {
 	
 	@Autowired
 	private ILogSistemaService logSistemaService;
+	
+	@Autowired
+	private ITransaccionCobroService transaccionCobroService;
 
 	@Value("${tesla.path.files-report}")
 	private String filesReport;
@@ -90,7 +95,9 @@ public class ReportRecaudacionController {
 			log.setModulo("ENTIDADES");
 			log.setController("api/ReportRecaudacion/findDeudasByParameter");
 			log.setMensaje(e.getMessage());
-			log.setCausa(e.getCause().toString());
+			if(e.getCause()!=null) {
+				log.setCausa(e.getCause().getMessage());
+			}			
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());
 			this.logSistemaService.save(log);
@@ -174,12 +181,92 @@ public class ReportRecaudacionController {
 			log.setModulo("ENTIDADES");
 			log.setController("api/ReportRecaudacion/findDeudasByParameterForReport");
 			log.setMensaje(e.getMessage());
-			log.setCausa(e.getCause().toString());
+			if(e.getCause()!=null) {
+				log.setCausa(e.getCause().getMessage());
+			}
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());
 			this.logSistemaService.save(log);
 			this.logger.error("This is mesasage", e.getMessage());
 			this.logger.error("This is cause", e.getCause().toString());
+
+			response.put("mensaje",
+					"Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			response.put("codigo", log.getLogSistemaId() + "");
+			response.put("status", false);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+		}
+
+	}
+	
+	
+	@PostMapping(path = "/findDeudasCobradasByUsuarioCreacionForGrid")
+	public ResponseEntity<?> findDeudasCobradasByUsuarioCreacionForGrid(
+			@RequestBody BusquedaReportesRecaudacionDto busquedaReportesDto, Authentication authentication)
+			throws Exception {
+		SegUsuarioEntity usuario = new SegUsuarioEntity();
+	
+		Map<String, Object> parameters = new HashMap<>();
+		Map<String, Object> response = new HashMap<>();
+		try {
+			usuario = this.segUsuarioService.findByLogin(authentication.getName());
+			
+
+			String nombreCompleto="";
+			if(usuario.getPersonaId().getMaterno()!=null) {
+				nombreCompleto=usuario.getPersonaId().getPaterno()+" "+ usuario.getPersonaId().getMaterno()+" "+usuario.getPersonaId().getNombres();
+			}
+			else {
+				nombreCompleto=usuario.getPersonaId().getPaterno()+" "+usuario.getPersonaId().getNombres();
+			}
+			
+			parameters.put("nombreCajero",nombreCompleto);
+			parameters.put("fechaSelecionada",Util.dateToStringFormat(busquedaReportesDto.fechaSeleccionada)  );
+			parameters.put("logoTesla", filesReport + "/img/teslapng.png");
+
+			
+		
+			List<TransaccionCobroEntity> transaccioneList= 
+					this.transaccionCobroService.findDeudasCobradasByUsuarioCreacionForGrid(
+							usuario.getUsuarioId(), 
+							busquedaReportesDto.fechaSeleccionada, 
+							busquedaReportesDto.idEntidad);
+
+			if (transaccioneList.isEmpty()) {
+				System.out.println("no tiene registro");
+				return new ResponseEntity<Map<String, Object>>(HttpStatus.NO_CONTENT);
+			}
+
+			File file = ResourceUtils
+					.getFile(filesReport + "/report_jrxml/reportes/recaudador/cajas.jrxml");
+			JasperReport jasper = JasperCompileManager.compileReport(file.getAbsolutePath());
+			JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(transaccioneList);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasper, parameters, ds);
+
+			byte[] report = Util.jasperExportFormat(jasperPrint, "pdf", filesReport);
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentLength(report.length);
+			headers.setContentType(MediaType.parseMediaType("application/pdf" ));
+			headers.set("Content-Disposition", "inline; filename=report.pdf" );
+			headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+			return new ResponseEntity<byte[]>(report, headers, HttpStatus.OK);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			LogSistemaEntity log = new LogSistemaEntity();
+			log.setModulo("ENTIDADES");
+			log.setController("api/ReportRecaudacion/findDeudasByParameterForReport");
+			log.setMensaje(e.getMessage());
+			if(e.getCause()!=null) {
+				log.setCausa(e.getCause().getMessage());	
+			}
+			
+			log.setUsuarioCreacion(usuario.getUsuarioId());
+			log.setFechaCreacion(new Date());
+			this.logSistemaService.save(log);
+			this.logger.error("This is mesasage", e.getMessage());
+			this.logger.error("This is cause", e.getCause());
 
 			response.put("mensaje",
 					"Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");

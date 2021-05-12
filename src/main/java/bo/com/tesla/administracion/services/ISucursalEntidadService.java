@@ -1,9 +1,9 @@
 package bo.com.tesla.administracion.services;
 
-import bo.com.tesla.administracion.dto.SucursalEntidadAdmDto;
-import bo.com.tesla.useful.config.Technicalexception;
-
 import java.util.List;
+
+import bo.com.tesla.administracion.dto.SucursalEntidadAdmDto;
+import bo.com.tesla.administracion.entity.SucursalEntidadEntity;
 
 public interface ISucursalEntidadService {
     public SucursalEntidadAdmDto addUpdateSucursalEntidad(SucursalEntidadAdmDto sucursalEntidadAdmDto, Long usuarioId);
@@ -12,5 +12,7 @@ public interface ISucursalEntidadService {
     public SucursalEntidadAdmDto getSucursalEntidadById(Long sucursalEntidadId);
     public List<SucursalEntidadAdmDto> getAllSucursalEntidades();
     public List<SucursalEntidadAdmDto> getLisSucursalEntidadesByEntidadId(Long entidadId);
+    
+    public List<SucursalEntidadEntity> findSucursalByEntidadId(Long entidadId);
 }
 

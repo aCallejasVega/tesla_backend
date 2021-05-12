@@ -91,5 +91,25 @@ public class HandlingFiles {
 		}
 		return null;
 	}
+	
+	
+	public static String createFile(String path, String entidadName)  {
+
+		String fileName =  UUID.randomUUID().toString() + "_" +entidadName;	
+		try {
+			 
+			 path = getDirectory(entidadName, path) + File.separator + fileName+"csv";
+			
+			String ruta=path;
+			File file = new File(ruta);
+			file.createNewFile();
+			return ruta;
+
+		} catch (Exception e) {
+			// todo manejo de excepciones
+			e.printStackTrace();
+		} 
+		return null;
+	}
 
 }

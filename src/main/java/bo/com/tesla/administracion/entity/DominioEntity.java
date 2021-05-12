@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
@@ -45,44 +47,64 @@ public class DominioEntity implements Serializable {
     private Date fechaModificacion;
     @Column(length = 10)
     private String estado;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "metodoCobro")
     private List<TransaccionCobroEntity> transaccionCobroEntityList;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "motivoCancelacionId")
     private List<CancelacionEntity> cancelacionEntityList;
+    @JsonIgnore
     @OneToMany(mappedBy = "tipoCancelacionId")
     private List<CancelacionEntity> cancelacionEntityList1;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoDocumentoCobroId")
     private List<DosificacionEntity> dosificacionEntityList;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciudadId")
     private List<PersonaEntity> personaEntityList;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoDocumentoId")
     private List<PersonaEntity> personaEntityList1;
+    @JsonIgnore
     @OneToMany(mappedBy = "departamento")
     private List<SucursalEntity> sucursalEntitDepartamentoList;
+    @JsonIgnore
     @OneToMany(mappedBy = "localidad")
     private List<SucursalEntity> sucursalEntityList1;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoEntidad")
     private List<EntidadEntity> entidadEntityList;
+    @JsonIgnore
     @OneToMany(mappedBy = "actividadEconomica")
     private List<EntidadEntity> entidadEntityActividadEconomicaList;
+    @JsonIgnore
     @OneToMany(mappedBy = "municipio")
     private List<EntidadEntity> entidadEntityMunicipioList;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoRecaudador")
     private List<RecaudadorEntity> recaudadorEntityList;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoComision")
     private List<EntidadComisionEntity> entidadComisionEntityList;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "dominio")
     private List<AgrupadorDominioEntity> agrupadorDominioEntityList;
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "dominioAgrupador")
     private AgrupadorDominioEntity agrupadorDominioEntity;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoComision")
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoComision")    
     private List<RecaudadorComisionEntity> recaudadorComisionEntityLst;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoFacturacion")
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoFacturacion")    
     private List<EntidadEntity> entidadEntityTipoFacturaList;
-
-
+    @JsonIgnore
+    @OneToMany(mappedBy = "extensionDocumentoId")
+    private List<PersonaEntity> estensionDocumentosList;
+    @JsonIgnore
     @OneToMany(mappedBy = "departamentoId")
     private List<SucursalEntidadEntity> sucursalEntidadEntityDptoList;
+    @JsonIgnore
     @OneToMany(mappedBy = "municipioId")
     private List<SucursalEntidadEntity> sucursalEntidadEntityMunicipioList;
 

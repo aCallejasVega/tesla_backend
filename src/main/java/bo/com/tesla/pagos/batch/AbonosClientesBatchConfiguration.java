@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 
 
-import bo.com.tesla.pagos.dto.PBeneficiarioDto;
+import bo.com.tesla.pagos.dto.PPagosDto;
 
 @Configuration
 @EnableBatchProcessing
@@ -51,10 +51,10 @@ public class AbonosClientesBatchConfiguration {
 	
 	@Bean
 	@JobScope
-	public FlatFileItemReader<PBeneficiarioDto> abonoClienteItemReader(
+	public FlatFileItemReader<PPagosDto> abonoClienteItemReader(
 				@Value("#{jobParameters[pathToFile]}") String pathToFile
 			) {
-		return new FlatFileItemReaderBuilder<PBeneficiarioDto>()
+		return new FlatFileItemReaderBuilder<PPagosDto>()
 				.name("abonoClienteItemReader")
 				.resource(new FileSystemResource(pathToFile))
 				.delimited()
@@ -62,9 +62,9 @@ public class AbonosClientesBatchConfiguration {
 				.names(new String[] { "nroRegistro", "codigoCliente", "nombreCliente", "fechaNacimientoCliente","genero",
 						"nroDocumentoCliente",	"tipoDocumentoId", "extencionDocumento","concepto",
 						"cantidad", "montoUnitario","periodo" })
-				.fieldSetMapper(new BeanWrapperFieldSetMapper<PBeneficiarioDto>() {
+				.fieldSetMapper(new BeanWrapperFieldSetMapper<PPagosDto>() {
 					{
-						setTargetType(PBeneficiarioDto.class);
+						setTargetType(PPagosDto.class);
 					}
 				})
 				.build();
@@ -73,10 +73,10 @@ public class AbonosClientesBatchConfiguration {
 
 	@Bean
 	@JobScope
-	public JdbcBatchItemWriter<PBeneficiarioDto> pagosWriter(
+	public JdbcBatchItemWriter<PPagosDto> pagosWriter(
 			DataSource dataSource,
 			@Value("#{jobParameters[archivoId]}") Long archivoId ) {
-		return new JdbcBatchItemWriterBuilder<PBeneficiarioDto>()
+		return new JdbcBatchItemWriterBuilder<PPagosDto>()
 				.itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
 				.sql(" INSERT INTO tesla.p_beneficiarios "
 						+ " (nro_registro, codigo_cliente, nombre_cliente, fecha_nacimiento_cliente,genero, nro_documento_cliente, extencion_documento_id, tipo_documento_id,concepto, cantidad, monto_unitario, periodo, archivo_id) "
@@ -88,11 +88,11 @@ public class AbonosClientesBatchConfiguration {
 	
 	@Bean
 	public Step pagoClienteStep(
-			JdbcBatchItemWriter<PBeneficiarioDto> pagosWriter,
+			JdbcBatchItemWriter<PPagosDto> pagosWriter,
 			StepPagosItemReadListener stepPagosItemReadListener,
 			StepPagosItemWriteListener stePagospItemWriteListener) {
 		return stepBuilderFactory.get("pagoClienteStep")
-				.<PBeneficiarioDto, PBeneficiarioDto>chunk(1000)
+				.<PPagosDto, PPagosDto>chunk(1000)
 				.reader(abonoClienteItemReader(OVERRIDDEN_BY_EXPRESSION))
 				.listener(stepPagosItemReadListener)	
 				.writer(pagosWriter)		

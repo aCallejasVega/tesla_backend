@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import bo.com.tesla.administracion.entity.DeudaClienteEntity;
 import bo.com.tesla.entidades.services.IDeudaClienteService;
-import bo.com.tesla.pagos.dto.PBeneficiarioDto;
+import bo.com.tesla.pagos.dto.PPagosDto;
 
-public class StepPagosItemWriteListener implements ItemWriteListener<PBeneficiarioDto>{
+public class StepPagosItemWriteListener implements ItemWriteListener<PPagosDto>{
 	
 	
 	public StepPagosItemWriteListener() {
@@ -17,19 +17,19 @@ public class StepPagosItemWriteListener implements ItemWriteListener<PBeneficiar
 	}
 
 	@Override
-	public void beforeWrite(List<? extends PBeneficiarioDto> items) {
+	public void beforeWrite(List<? extends PPagosDto> items) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void afterWrite(List<? extends PBeneficiarioDto> items) {
+	public void afterWrite(List<? extends PPagosDto> items) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onWriteError(Exception exception, List<? extends PBeneficiarioDto> items) {
+	public void onWriteError(Exception exception, List<? extends PPagosDto> items) {
 		// TODO Auto-generated method stub
 		
 	}

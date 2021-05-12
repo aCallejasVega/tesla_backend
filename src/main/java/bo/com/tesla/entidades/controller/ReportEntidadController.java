@@ -98,7 +98,9 @@ public class ReportEntidadController {
 			}
 			parameters.put("fechaInicio", Util.dateToStringFormat(busquedaReportesDto.fechaInicio));
 			parameters.put("fechaFin", Util.dateToStringFormat(busquedaReportesDto.fechaFin));
-
+			if (busquedaReportesDto.export.equals("msexcel")) {
+				parameters.put("IS_IGNORE_PAGINATION", true);
+			}
 			List<DeudasClienteDto> linealChart = this.reporteEntidadesService.findDeudasPagadasByParameter(
 					entidad.getEntidadId(), busquedaReportesDto.recaudadorId, busquedaReportesDto.estado,
 					busquedaReportesDto.fechaInicio, busquedaReportesDto.fechaFin);
@@ -141,8 +143,8 @@ public class ReportEntidadController {
 			LogSistemaEntity log = new LogSistemaEntity();
 			log.setModulo("ENTIDADES");
 			log.setController("api/ReportEntidad/deudasPagadas");
-			if(e.getCause()!=null) {
-				log.setCausa(e.getCause().getMessage() + "");	
+			if (e.getCause() != null) {
+				log.setCausa(e.getCause().getMessage() + "");
 			}
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
@@ -161,11 +163,11 @@ public class ReportEntidadController {
 
 	@PostMapping(path = "/findDeudasByParameter")
 	public ResponseEntity<?> findDeudasByParameter(@RequestBody BusquedaReportesDto busquedaReportesDto,
-			Authentication authentication) throws Exception {
+			Authentication authentication) {
 		SegUsuarioEntity usuario = new SegUsuarioEntity();
 		Map<String, Object> response = new HashMap<>();
 		try {
-			
+
 			if (busquedaReportesDto.fechaInicio == null) {
 				busquedaReportesDto.fechaInicio = Util.stringToDate("01/01/2021");
 			}
@@ -186,12 +188,32 @@ public class ReportEntidadController {
 			}
 			response.put("data", deudasClienteDtoList);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		} catch (Technicalexception e) {
+
+			LogSistemaEntity log = new LogSistemaEntity();
+			log.setModulo("ENTIDADES");
+			log.setController("api/ReportEntidad/findDeudasByParameter");
+			if (e.getCause() != null) {
+				log.setCausa(e.getCause().getMessage() + "");
+			}
+			log.setMensaje(e.getMessage());
+			log.setUsuarioCreacion(usuario.getUsuarioId());
+			log.setFechaCreacion(new Date());
+			this.logSistemaService.save(log);
+			this.logger.error("This is cause", e.getMessage());
+
+			response.put("mensaje",
+					"Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			response.put("codigo", log.getLogSistemaId() + "");
+			response.put("status", false);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+
 		} catch (Exception e) {
 			LogSistemaEntity log = new LogSistemaEntity();
 			log.setModulo("ENTIDADES");
 			log.setController("api/ReportEntidad/findDeudasByParameter");
-			if(e.getCause()!=null) {
-				log.setCausa(e.getCause().getMessage() + "");	
+			if (e.getCause() != null) {
+				log.setCausa(e.getCause().getMessage() + "");
 			}
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
@@ -210,12 +232,13 @@ public class ReportEntidadController {
 
 	@PostMapping(path = "/findDeudasByParameterForReport")
 	public ResponseEntity<?> findDeudasByParameterForReport(@RequestBody BusquedaReportesDto busquedaReportesDto,
-			Authentication authentication) throws Exception {
+			Authentication authentication) {
 
 		Map<String, Object> parameters = new HashMap<>();
 		Map<String, Object> response = new HashMap<>();
 		SegUsuarioEntity usuario = new SegUsuarioEntity();
 		try {
+			
 			usuario = this.segUsuarioService.findByLogin(authentication.getName());
 			EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
 
@@ -244,7 +267,7 @@ public class ReportEntidadController {
 			parameters.put("tituloEntidad", entidad.getNombreComercial().toUpperCase());
 			parameters.put("tituloReporte", "INFORMACIÓN DE DEUDAS GENERALES");
 			parameters.put("logoTesla", filesReport + "/img/teslapng.png");
-			if( busquedaReportesDto.export.equals("msexcel")) {			
+			if (busquedaReportesDto.export.equals("msexcel")) {
 				parameters.put("IS_IGNORE_PAGINATION", true);
 			}
 
@@ -261,7 +284,6 @@ public class ReportEntidadController {
 			JasperReport jasper = JasperCompileManager.compileReport(file.getAbsolutePath());
 			JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(deudasClienteDtoList);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasper, parameters, ds);
-			
 
 			byte[] report = Util.jasperExportFormat(jasperPrint, busquedaReportesDto.export, filesReport);
 
@@ -294,8 +316,8 @@ public class ReportEntidadController {
 			LogSistemaEntity log = new LogSistemaEntity();
 			log.setModulo("ENTIDADES");
 			log.setController("api/ReportEntidad/findDeudasByParameterForReport");
-			if(e.getCause()!=null) {
-				log.setCausa(e.getCause().getMessage() + "");	
+			if (e.getCause() != null) {
+				log.setCausa(e.getCause().getMessage() + "");
 			}
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
@@ -350,8 +372,26 @@ public class ReportEntidadController {
 			response.put("data", archivosList);
 
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-		} catch (Exception e) {
-
+		} catch(Technicalexception e) {
+			LogSistemaEntity log = new LogSistemaEntity();
+			log.setModulo("ENTIDADES");
+			log.setController("api/ReportEntidad/findArchivos/" + entidad.getEntidadId() + "/" + paginacion + "/"
+					+ dateFechaIni + "/" + dateFechaFin + "");
+			if(e.getCause()!=null) {
+				log.setCausa(e.getCause().getMessage() + "");	
+			}
+			log.setMensaje(e.getMessage());
+			log.setUsuarioCreacion(usuario.getUsuarioId());
+			log.setFechaCreacion(new Date());
+			logSistemaService.save(log);
+			this.logger.error("This is error", e.getMessage());
+			this.logger.error("This is cause", e.getCause());
+			response.put("mensaje",
+					"Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
 			LogSistemaEntity log = new LogSistemaEntity();
 			log.setModulo("ENTIDADES");
 			log.setController("api/ReportEntidad/findArchivos/" + entidad.getEntidadId() + "/" + paginacion + "/"
@@ -394,7 +434,7 @@ public class ReportEntidadController {
 			}
 
 			parameters.put("logoTesla", filesReport + "/img/teslapng.png");
-			if( export.equals("msexcel")) {				
+			if (export.equals("msexcel")) {
 				parameters.put("IS_IGNORE_PAGINATION", true);
 			}
 			File file = ResourceUtils.getFile(filesReport + "/report_jrxml/reportes/entidades/PorArchivos.jrxml");
@@ -408,13 +448,30 @@ public class ReportEntidadController {
 			headers.set("Content-Disposition", "inline; filename=report." + export);
 			headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 			return new ResponseEntity<byte[]>(report, headers, HttpStatus.OK);
-		} catch (Exception e) {
+		}catch(Technicalexception e) {
 			LogSistemaEntity log = new LogSistemaEntity();
 			log.setModulo("ENTIDADES");
-			log.setController("api/ReportEntidad/findDeudasByArchivoIdAndEstado/"+archivoId+"/"+export);
-			if(e.getCause()!=null) {
-				log.setCausa(e.getCause().getMessage() + "");	
-			}			
+			log.setController("api/ReportEntidad/findDeudasByArchivoIdAndEstado/" + archivoId + "/" + export);
+			if (e.getCause() != null) {
+				log.setCausa(e.getCause().getMessage() + "");
+			}
+			log.setMensaje(e.getMessage());
+			log.setUsuarioCreacion(usuario.getUsuarioId());
+			log.setFechaCreacion(new Date());
+			logSistemaService.save(log);
+			this.logger.error("This is error", e.getMessage());
+			this.logger.error("This is cause", e.getCause());
+			response.put("mensaje",
+					"Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+		}
+		catch (Exception e) {
+			LogSistemaEntity log = new LogSistemaEntity();
+			log.setModulo("ENTIDADES");
+			log.setController("api/ReportEntidad/findDeudasByArchivoIdAndEstado/" + archivoId + "/" + export);
+			if (e.getCause() != null) {
+				log.setCausa(e.getCause().getMessage() + "");
+			}
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());

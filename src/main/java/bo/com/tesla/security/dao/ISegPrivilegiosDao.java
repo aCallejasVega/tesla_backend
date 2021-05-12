@@ -12,15 +12,41 @@ import bo.com.tesla.administracion.entity.SegPrivilegioEntity;
 
 @Repository
 public interface ISegPrivilegiosDao extends JpaRepository<SegPrivilegioEntity, Long>{
-	@Query("Select pr.privilegioId"
-			+ " From SegUsuarioRolEntity ur "
-			+ " left join SegPrivilegioRolEntity pr on pr.rolId.rolId=ur.rolId.rolId "
-			+ " Where pr.privilegioId.estado='ACTIVO' "
-			+ " and pr.estado='ACTIVO'"
-			+ " and ur.usuarioId.usuarioId=:usuarioId"
-			+ " and pr.privilegioId.privilegioPadreId is null"
+	
+	@Query("Select p "
+			+ " From SegPrivilegioEntity p "
+			+ " 	left join SegPrivilegioRolEntity pr on pr.privilegioId.privilegiosId=p.privilegiosId "
+			+ " 	left join SegRolEntity r on r.rolId= pr.rolId.rolId "
+			+ " 	left join SegUsuarioRolEntity ur on ur.rolId.rolId=r.rolId "
+			+ " 	left join SegPrivilegioEntity pp on pp.privilegiosId=p.privilegioPadreId.privilegiosId "
+			+ " where "
+			+ "  	ur.usuarioId.usuarioId= :usuarioId "
+			+ "		and pp.privilegioPadreId is null "
+			+ "		and ur.estado='ACTIVO'"
+			+ "		and r.estado='ACTIVO'"
+			+ "		and p.estado='ACTIVO'"
+			+ " order by p.orden asc "
 			+ " ")
 	public List<SegPrivilegioEntity> getMenuByUserId(@Param("usuarioId") Long usuarioId);
+	
+	
+	@Query("Select distinct  pp "
+			+ " From SegPrivilegioEntity p "
+			+ " 	left join SegPrivilegioRolEntity pr on pr.privilegioId.privilegiosId=p.privilegiosId "
+			+ " 	left join SegRolEntity r on r.rolId= pr.rolId.rolId "
+			+ " 	left join SegUsuarioRolEntity ur on ur.rolId.rolId=r.rolId "
+			+ " 	left join SegPrivilegioEntity pp on pp.privilegiosId=p.privilegioPadreId.privilegiosId "
+			+ " where "
+			+ "  	ur.usuarioId.usuarioId= :usuarioId "
+			+ "		and pp.privilegioPadreId is not null "
+			+ "		and ur.estado='ACTIVO'"
+			+ "		and r.estado='ACTIVO'"
+			+ "		and p.estado='ACTIVO'"
+		
+			+ " ")
+	public List<SegPrivilegioEntity> getSubMenuByUserId(@Param("usuarioId") Long usuarioId);
+	
+	
 	
 	@Query(value=" select pr.estado from "
 			+ " tesla.seg_privilegios_roles pr "
@@ -31,7 +57,8 @@ public interface ISegPrivilegiosDao extends JpaRepository<SegPrivilegioEntity, L
 			+ " where u.usuario_id= :usuarioId "
 			+ " and privilegio_id= :privilegioId "
 			+ " and p.estado='ACTIVO' "
-			+ " and pr.estado='ACTIVO'", nativeQuery = true)
+			+ " and pr.estado='ACTIVO' "
+			+ " and ur.estado='ACTIVO'", nativeQuery = true)
 	public  String getEstadoPrivilegios(@Param("usuarioId") Long usuarioId,@Param("privilegioId") Long privilegioId);
 	
 	
@@ -52,7 +79,7 @@ public interface ISegPrivilegiosDao extends JpaRepository<SegPrivilegioEntity, L
 	public  List<Object[]> getOperaciones(@Param("login") String login,@Param("tabla") String tabla);
 
 
-	@Query(value="SELECT distinct t.transaccion_id,t.etiqueta,t.imagen,t.orden "
+	@Query(value="SELECT distinct t.transaccion_id,t.etiqueta,t.imagen,t.orden,t.estado "
 			+ " FROM tesla.seg_transiciones t "
 			+ " left join tesla.seg_privilegios_roles_transiciones prt on (prt.tabla_id=t.tabla_id and prt.estado_inicial_id=t.estado_inicial and  prt.transaccion_id=t.transaccion_id) "
 			+ " left join tesla.seg_privilegios_roles pr on pr.privilegio_rol_id=prt.privilegio_rol_id "

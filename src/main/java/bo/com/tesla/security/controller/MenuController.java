@@ -60,7 +60,10 @@ public class MenuController {
 
 			for (SegPrivilegioEntity segPrivilegio : privilegioList) {
 				if (segPrivilegio.getSegPrivilegioEntityList().isEmpty()) {
-					privilegioMenu.add(segPrivilegio);
+					if (segPrivilegio.getEstado().equals("ACTIVO")) {
+						privilegioMenu.add(segPrivilegio);
+					}
+
 				}
 			}
 
@@ -88,7 +91,7 @@ public class MenuController {
 		try {
 			SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
 
-			privilegioList = segPrivilegiosService.getMenuByUserId(usuario.getUsuarioId());
+			privilegioList = segPrivilegiosService.getSubMenuByUserId(usuario.getUsuarioId());
 			if (privilegioList.isEmpty()) {
 				response.put("mensaje",
 						"No se encontraron ningún privilegio para el usuario: " + usuario.getLogin() + ".");
@@ -96,13 +99,9 @@ public class MenuController {
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
 			}
 
-			for (SegPrivilegioEntity segPrivilegio : privilegioList) {
-				if (!segPrivilegio.getSegPrivilegioEntityList().isEmpty()) {
-					privilegioMenu.add(segPrivilegio);
-				}
-			}
+		
 
-			response.put("data", privilegioMenu);
+			response.put("data", privilegioList);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 
 		} catch (Exception e) {

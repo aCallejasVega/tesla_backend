@@ -29,4 +29,11 @@ public class DominioService implements IDominioService {
         return iDominioDao.findLstByAgrupador(agrupadorId);
     }
 
+	@Override
+	public DominioEntity findById(Long dominioId) {	
+		return this.iDominioDao.findById(dominioId).get();
+	}
+    
+    
+
 }

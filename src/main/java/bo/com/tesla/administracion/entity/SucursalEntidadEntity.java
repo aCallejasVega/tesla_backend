@@ -12,6 +12,8 @@ import java.math.BigInteger;
 import java.util.Date;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author eCamargo
@@ -54,6 +56,7 @@ public class SucursalEntidadEntity implements Serializable {
     @Basic(optional = false)
     @Column(nullable = false, length = 15)
     private String transaccion;
+    @JsonIgnore
     @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id", nullable = false)
     @ManyToOne(optional = false)
     private EntidadEntity entidad;
@@ -71,9 +74,11 @@ public class SucursalEntidadEntity implements Serializable {
     private String passwordFacturacion;
     @Column(name = "emite_factura_tesla")
     private Boolean emiteFacturaTesla;
+    @JsonIgnore
     @JoinColumn(name = "departamento_id", referencedColumnName = "dominio_id")
     @ManyToOne
     private DominioEntity departamentoId;
+    @JsonIgnore
     @JoinColumn(name = "municipio_id", referencedColumnName = "dominio_id")
     @ManyToOne
     private DominioEntity municipioId;

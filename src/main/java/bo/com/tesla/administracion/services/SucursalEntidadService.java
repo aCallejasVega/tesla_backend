@@ -141,4 +141,10 @@ public class SucursalEntidadService implements ISucursalEntidadService {
     public List<SucursalEntidadAdmDto> getLisSucursalEntidadesByEntidadId(Long entidadId) {
         return iSucursalEntidadDao.findSucursalesEntidadesDtoByEntidadId(entidadId);
     }
+
+	@Override
+	public List<SucursalEntidadEntity> findSucursalByEntidadId(Long entidadId) {
+	
+		return this.iSucursalEntidadDao.findSucursalByEntidadId(entidadId);
+	}
 }

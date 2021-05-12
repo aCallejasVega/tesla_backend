@@ -34,7 +34,7 @@ import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.administracion.services.IRecaudadorService;
 import bo.com.tesla.entidades.services.IEntidadService;
 import bo.com.tesla.pagos.dao.IPServicioProductosDao;
-import bo.com.tesla.pagos.dto.PBeneficiarioDto;
+import bo.com.tesla.pagos.dto.PPagosDto;
 import bo.com.tesla.pagos.dto.PBeneficiarioReporteDto;
 import bo.com.tesla.pagos.services.IPServicioProductosService;
 import bo.com.tesla.pagos.services.IReportesPagoService;
@@ -110,7 +110,9 @@ public class ReportesPagoController {
 			
 			parameters.put("tituloEntidad", entidad.getNombre());
 			parameters.put("logoTesla", filesReport + "/img/teslapng.png");
-			
+			if (abonoCliente.export.equals("msexcel")) {
+				parameters.put("IS_IGNORE_PAGINATION", true);
+			}
 			
 			beneficiarioList=	this.reportesPagoService.
 					listForReportEntidad(
@@ -228,7 +230,8 @@ public class ReportesPagoController {
 				abonoCliente.fechaFin = Util.stringToDate("01/01/2100");
 			}
 			usuario = this.segUsuarioService.findByLogin(authentication.getName());
-			RecaudadorEntity recaudador= this.recaudadorService.findRecaudadorByUserId(usuario.getUsuarioId());			
+			RecaudadorEntity recaudador= this.recaudadorService.findRecaudadorByUserId(usuario.getUsuarioId());	
+					
 			beneficiarioReporteDto=	this.reportesPagoService.
 					listForGridRecaudacion(
 							abonoCliente.fechaIni, 
@@ -304,8 +307,9 @@ public class ReportesPagoController {
 			
 			parameters.put("tituloEntidad", recaudador.getNombre());
 			parameters.put("logoTesla", filesReport + "/img/teslapng.png");
-			
-			
+			if (abonoCliente.export.equals("msexcel")) {
+				parameters.put("IS_IGNORE_PAGINATION", true);
+			}	
 			beneficiarioList=	this.reportesPagoService.listForReportRecaudacion(
 					abonoCliente.fechaIni, 
 					abonoCliente.fechaFin, 
@@ -383,13 +387,13 @@ public class ReportesPagoController {
 			}
 			usuario = this.segUsuarioService.findByLogin(authentication.getName());
 			EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
-			PServicioProductoEntity servicio= this.servicioProductosService.findById(abonoCliente.servicioProductoId).get();
-			
-			parameters.put("tituloReporte", "REPORTE "+servicio.getDescripcion().toUpperCase());
-			
+			PServicioProductoEntity servicio= this.servicioProductosService.findById(abonoCliente.servicioProductoId).get();			
+			parameters.put("tituloReporte", "REPORTE "+servicio.getDescripcion().toUpperCase());			
 			parameters.put("tituloEntidad", "EXACTA");
 			parameters.put("logoTesla", filesReport + "/img/teslapng.png");
-			
+			if (abonoCliente.export.equals("msexcel")) {
+				parameters.put("IS_IGNORE_PAGINATION", true);
+			}
 			
 			beneficiarioList=	this.reportesPagoService.
 					listForReportAdministracion(

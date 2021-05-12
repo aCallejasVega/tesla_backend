@@ -64,5 +64,15 @@ public interface IArchivoDao extends JpaRepository<ArchivoEntity, Long> {
 			@Param("fechaFin") Date fechaFin, 
 			@Param("estado") String estado,
 			Pageable pageable);
+	
+	
+	
+	@Query(" Select a from ArchivoEntity a "
+			+ " Where a.estado= :estado  "
+			+ " and a.entidadId.entidadId= :entidadId ")
+	public ArchivoEntity findByEstadoAndEntidad(
+			@Param("estado") String estado, 
+			@Param("entidadId") Long entidadId			
+			);
 
 }

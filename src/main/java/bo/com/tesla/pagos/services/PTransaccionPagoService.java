@@ -6,6 +6,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import bo.com.tesla.administracion.dao.IEntidadComisionesDao;
@@ -21,7 +24,7 @@ import bo.com.tesla.pagos.dao.IBeneficiarioDao;
 import bo.com.tesla.pagos.dao.IPHistoricoBeneficiariosDao;
 import bo.com.tesla.pagos.dao.IPTransaccionPagoDao;
 import bo.com.tesla.pagos.dao.PTitularPagoDao;
-import bo.com.tesla.pagos.dto.PBeneficiarioDto;
+import bo.com.tesla.pagos.dto.PPagosDto;
 import bo.com.tesla.recaudaciones.dao.IRecaudadorDao;
 import bo.com.tesla.useful.constant.TipoComisionConst;
 import net.bytebuddy.asm.Advice.OffsetMapping.ForOrigin.Renderer.ForReturnTypeName;
@@ -57,7 +60,7 @@ public class PTransaccionPagoService implements IPTransaccionPagoService {
 	private PTitularPagoDao titularPagoDao;
 
 	@Override
-	public PTransaccionPagoEntity saveForPagoAbonado(PBeneficiarioDto beneficiario, Long usuarioId, Long secuencialTransaccion) {
+	public PTransaccionPagoEntity saveForPagoAbonado(PPagosDto beneficiario, Long usuarioId, Long secuencialTransaccion,Date fechaTransaccion) {
 
 		EntidadComisionEntity entidadComision = new EntidadComisionEntity();
 		RecaudadorComisionEntity recaudadorComision = new RecaudadorComisionEntity();
@@ -70,7 +73,7 @@ public class PTransaccionPagoService implements IPTransaccionPagoService {
 
 		periodosList.add(beneficiario.periodo);
 
-		PBeneficiarioDto abonosCliente = this.abonoClienteDao.getBeneficiarioAndMontoToal(beneficiario.archivoId,
+		PPagosDto abonosCliente = this.abonoClienteDao.getBeneficiarioAndMontoToal(beneficiario.archivoId,
 				beneficiario.codigoCliente, beneficiario.nroDocumentoCliente, periodosList);
 		ArchivoEntity archivo = this.archivoDao.findById(beneficiario.archivoId).get();
 		RecaudadorEntity recaudadora = this.recaudadorDao.findRecaudadorByUserId(usuarioId).get();
@@ -102,9 +105,9 @@ public class PTransaccionPagoService implements IPTransaccionPagoService {
 		transaccionPago.setRecaudadorId(recaudadora);
 		transaccionPago.setTotal(abonosCliente.totalPagar);
 		transaccionPago.setUsuarioModificacion(usuarioId);
-		transaccionPago.setFechaModificacion(new Date());
+		transaccionPago.setFechaModificacion(fechaTransaccion);
 		transaccionPago.setUsuarioCreacion(usuarioId);
-		transaccionPago.setFechaCreacion(new Date());
+		transaccionPago.setFechaCreacion(fechaTransaccion);
 		transaccionPago.setSubTotal(abonosCliente.totalPagar);
 		transaccionPago.setServicioProductoId(archivo.getServicioProductoId());
 		transaccionPago.setTransaccion("PAGAR");
@@ -127,6 +130,24 @@ public class PTransaccionPagoService implements IPTransaccionPagoService {
 	public Long getSecuencialTransaccion() {
 		return this.transaccionPagoDao.getSecuencialTransaccion();
 		
+	}
+
+	@Override
+	public Page<PPagosDto> findTransaccionsByUsuario(Date fechaIni, 
+															Date fechaFin, 
+															Long usuarioId,
+															String param,
+															Long servicioProductoId,
+															int page, int size) {	
+		
+		Pageable paging = PageRequest.of(page, size);
+		return this.transaccionPagoDao.findTransaccionsByUsuario(fechaIni, fechaFin, usuarioId, param,servicioProductoId,paging);
+	}
+
+	@Override
+	public List<PTransaccionPagoEntity> transaccionessByCodigoTransacciones(String codigoTransaccion) {
+	
+		return this.transaccionPagoDao.transaccionessByCodigoTransacciones(codigoTransaccion);
 	};
 
 }

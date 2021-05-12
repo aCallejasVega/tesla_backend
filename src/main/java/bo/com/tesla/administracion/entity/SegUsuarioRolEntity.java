@@ -37,6 +37,8 @@ public class SegUsuarioRolEntity implements Serializable {
     @JoinColumn(name = "usuario_id", referencedColumnName = "usuario_id")
     @ManyToOne
     private SegUsuarioEntity usuarioId;
+    @Column(name = "estado")    
+    private String estado;
 
     public SegUsuarioRolEntity() {
     }
@@ -68,8 +70,16 @@ public class SegUsuarioRolEntity implements Serializable {
     public void setUsuarioId(SegUsuarioEntity usuarioId) {
         this.usuarioId = usuarioId;
     }
+    
+    public String getEstado() {
+		return estado;
+	}
 
-    @Override
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
+
+	@Override
     public int hashCode() {
         int hash = 0;
         hash += (usuarioRolesId != null ? usuarioRolesId.hashCode() : 0);

@@ -36,7 +36,7 @@ public class RecaudadoresController {
 
 	@GetMapping(path = "/findRecaudadoresByEntidadId")
 	public ResponseEntity<?> findRecaudadoresByEntidadId(			
-			Authentication authentication) throws Exception {
+			Authentication authentication) {
 
 		Map<String, Object> response = new HashMap<>();
 		SegUsuarioEntity usuario=new SegUsuarioEntity();
