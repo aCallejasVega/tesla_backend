@@ -112,9 +112,9 @@ public class EntidadEntity implements Serializable {
     @Column(name = "es_pagadora")
     private Boolean esPagadora;
     @JsonIgnore
-    @JoinColumn(name = "tipo_facturacion_id", referencedColumnName = "dominio_id", nullable = false)
+    @JoinColumn(name = "modalidad_facturacion_id", referencedColumnName = "dominio_id", nullable = false)
     @ManyToOne(optional = false)
-    private DominioEntity tipoFacturacion;
+    private DominioEntity modalidadFacturacion;
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
     private List<PServicioProductoEntity> servicioProductoEntityList;
@@ -399,12 +399,12 @@ public class EntidadEntity implements Serializable {
         this.esPagadora = esPagadora;
     }
 
-    public DominioEntity getTipoFacturacion() {
-        return tipoFacturacion;
+    public DominioEntity getModalidadFacturacion() {
+        return modalidadFacturacion;
     }
 
-    public void setTipoFacturacion(DominioEntity tipoFacturacion) {
-        this.tipoFacturacion = tipoFacturacion;
+    public void setModalidadFacturacion(DominioEntity modalidadFacturacion) {
+        this.modalidadFacturacion = modalidadFacturacion;
     }
     
     

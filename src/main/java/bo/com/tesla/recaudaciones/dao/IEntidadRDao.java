@@ -41,7 +41,7 @@ public interface IEntidadRDao extends JpaRepository<EntidadEntity, Long> {
             "e.entidadId, e.nombre, e.nombreComercial, e.direccion, e.telefono, e.nit, " +
             "e.pathLogo, e.comprobanteEnUno, e.actividadEconomica.dominioId, e.actividadEconomica.descripcion, " +
             "e.municipio.dominioId, e.municipio.descripcion, e.tipoEntidad.dominioId, e.tipoEntidad.descripcion, " +
-            "e.tipoFacturacion.dominioId, e.tipoFacturacion.descripcion, e.esCobradora, e.esPagadora, " +
+            "e.modalidadFacturacion.dominioId, e.modalidadFacturacion.descripcion, e.esCobradora, e.esPagadora, " +
             "e.fechaCreacion, s.login, e.estado) " +
             "FROM EntidadEntity e " +
             "INNER JOIN SegUsuarioEntity s ON s.usuarioId = e.usuarioCreacion " +
@@ -52,7 +52,7 @@ public interface IEntidadRDao extends JpaRepository<EntidadEntity, Long> {
             "e.entidadId, e.nombre, e.nombreComercial, e.direccion, e.telefono, e.nit, " +
             "e.pathLogo, e.comprobanteEnUno, e.actividadEconomica.dominioId, e.actividadEconomica.descripcion, " +
             "e.municipio.dominioId, e.municipio.descripcion, e.tipoEntidad.dominioId, e.tipoEntidad.descripcion, " +
-            "e.tipoFacturacion.dominioId, e.tipoFacturacion.descripcion, e.esCobradora, e.esPagadora, " +
+            "e.modalidadFacturacion.dominioId, e.modalidadFacturacion.descripcion, e.esCobradora, e.esPagadora, " +
             "e.fechaCreacion, s.login, e.estado) " +
             "FROM EntidadEntity e " +
             "INNER JOIN SegUsuarioEntity s ON s.usuarioId = e.usuarioCreacion " +
@@ -64,7 +64,7 @@ public interface IEntidadRDao extends JpaRepository<EntidadEntity, Long> {
             "er.entidad.entidadId, er.entidad.nombre, er.entidad.nombreComercial, er.entidad.direccion, er.entidad.telefono, er.entidad.nit, " +
             "er.entidad.pathLogo, er.entidad.comprobanteEnUno, er.entidad.actividadEconomica.dominioId, er.entidad.actividadEconomica.descripcion, " +
             "er.entidad.municipio.dominioId, er.entidad.municipio.descripcion, er.entidad.tipoEntidad.dominioId, er.entidad.tipoEntidad.descripcion, " +
-            "er.entidad.tipoFacturacion.dominioId, er.entidad.tipoFacturacion.descripcion, er.entidad.esCobradora, er.entidad.esPagadora, " +
+            "er.entidad.modalidadFacturacion.dominioId, er.entidad.modalidadFacturacion.descripcion, er.entidad.esCobradora, er.entidad.esPagadora, " +
             "er.entidad.fechaCreacion, s.login, er.entidad.estado) " +
             "FROM EntidadRecaudadorEntity er " +
             "INNER JOIN SegUsuarioEntity s ON s.usuarioId = er.entidad.usuarioCreacion " +

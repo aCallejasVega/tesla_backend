@@ -128,6 +128,8 @@ public class DeudaClienteEntity implements Serializable {
 	@Column(name="correo_cliente",length = 50)
 	private String correoCliente;
 
+
+
 	public DeudaClienteEntity() {
 	}
 
@@ -422,7 +424,7 @@ public class DeudaClienteEntity implements Serializable {
 		this.periodoCabecera = periodoCabecera;
 	}
 
-
+	
 
 	@Override
 	public String toString() {

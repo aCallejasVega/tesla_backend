@@ -95,12 +95,16 @@ public class DominioEntity implements Serializable {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoComision")    
     private List<RecaudadorComisionEntity> recaudadorComisionEntityLst;
+
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoFacturacion")    
     private List<EntidadEntity> entidadEntityTipoFacturaList;
     @JsonIgnore
     @OneToMany(mappedBy = "extensionDocumentoId")
     private List<PersonaEntity> estensionDocumentosList;
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modalidadFacturacion")
+    private List<EntidadEntity> entidadEntityModalidadFacturaList;
     @JsonIgnore
     @OneToMany(mappedBy = "departamentoId")
     private List<SucursalEntidadEntity> sucursalEntidadEntityDptoList;
@@ -291,12 +295,12 @@ public class DominioEntity implements Serializable {
         this.recaudadorComisionEntityLst = recaudadorComisionEntityLst;
     }
 
-    public List<EntidadEntity> getEntidadEntityTipoFacturaList() {
-        return entidadEntityTipoFacturaList;
+    public List<EntidadEntity> getEntidadEntityModalidadFacturaList() {
+        return entidadEntityModalidadFacturaList;
     }
 
-    public void setEntidadEntityTipoFacturaList(List<EntidadEntity> entidadEntityTipoFacturaList) {
-        this.entidadEntityTipoFacturaList = entidadEntityTipoFacturaList;
+    public void setEntidadEntityModalidadFacturaList(List<EntidadEntity> entidadEntityModalidadFacturaList) {
+        this.entidadEntityModalidadFacturaList = entidadEntityModalidadFacturaList;
     }
 
     public List<SucursalEntidadEntity> getSucursalEntidadEntityDptoList() {
@@ -314,8 +318,51 @@ public class DominioEntity implements Serializable {
     public void setSucursalEntidadEntityMunicipioList(List<SucursalEntidadEntity> sucursalEntidadEntityMunicipioList) {
         this.sucursalEntidadEntityMunicipioList = sucursalEntidadEntityMunicipioList;
     }
+    
+    
+    
 
-    @Override
+    public List<EntidadComisionEntity> getEntidadComisionEntityList() {
+		return entidadComisionEntityList;
+	}
+
+	public void setEntidadComisionEntityList(List<EntidadComisionEntity> entidadComisionEntityList) {
+		this.entidadComisionEntityList = entidadComisionEntityList;
+	}
+
+	public List<AgrupadorDominioEntity> getAgrupadorDominioEntityList() {
+		return agrupadorDominioEntityList;
+	}
+
+	public void setAgrupadorDominioEntityList(List<AgrupadorDominioEntity> agrupadorDominioEntityList) {
+		this.agrupadorDominioEntityList = agrupadorDominioEntityList;
+	}
+
+	public AgrupadorDominioEntity getAgrupadorDominioEntity() {
+		return agrupadorDominioEntity;
+	}
+
+	public void setAgrupadorDominioEntity(AgrupadorDominioEntity agrupadorDominioEntity) {
+		this.agrupadorDominioEntity = agrupadorDominioEntity;
+	}
+
+	public List<EntidadEntity> getEntidadEntityTipoFacturaList() {
+		return entidadEntityTipoFacturaList;
+	}
+
+	public void setEntidadEntityTipoFacturaList(List<EntidadEntity> entidadEntityTipoFacturaList) {
+		this.entidadEntityTipoFacturaList = entidadEntityTipoFacturaList;
+	}
+
+	public List<PersonaEntity> getEstensionDocumentosList() {
+		return estensionDocumentosList;
+	}
+
+	public void setEstensionDocumentosList(List<PersonaEntity> estensionDocumentosList) {
+		this.estensionDocumentosList = estensionDocumentosList;
+	}
+
+	@Override
     public int hashCode() {
         int hash = 0;
         hash += (dominioId != null ? dominioId.hashCode() : 0);

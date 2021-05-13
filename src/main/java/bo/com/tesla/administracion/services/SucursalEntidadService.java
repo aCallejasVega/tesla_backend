@@ -1,12 +1,15 @@
 package bo.com.tesla.administracion.services;
 
 import bo.com.tesla.administracion.dao.ISucursalEntidadDao;
+import bo.com.tesla.administracion.dto.CredencialFacturacionDto;
 import bo.com.tesla.administracion.dto.SucursalEntidadAdmDto;
 import bo.com.tesla.administracion.entity.DominioEntity;
 import bo.com.tesla.administracion.entity.EntidadEntity;
+import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.administracion.entity.SucursalEntidadEntity;
 import bo.com.tesla.recaudaciones.dao.IDominioDao;
 import bo.com.tesla.recaudaciones.dao.IEntidadRDao;
+import bo.com.tesla.useful.config.BusinesException;
 import bo.com.tesla.useful.config.Technicalexception;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,132 +22,176 @@ import java.util.Optional;
 @Service
 public class SucursalEntidadService implements ISucursalEntidadService {
 
-    @Autowired
-    private ISucursalEntidadDao iSucursalEntidadDao;
+	@Autowired
+	private ISucursalEntidadDao iSucursalEntidadDao;
 
-    @Autowired
-    private IEntidadRDao iEntidadRDao;
+	@Autowired
+	private IEntidadRDao iEntidadRDao;
 
-    @Autowired
-    private IDominioDao iDominioDao;
+	@Autowired
+	private IDominioDao iDominioDao;
 
-    /*********************ABM**************************/
+	/********************* ABM **************************/
 
-    @Override
-    public SucursalEntidadAdmDto addUpdateSucursalEntidad(SucursalEntidadAdmDto sucursalEntidadAdmDto, Long usuarioId) throws Technicalexception {
-        try {
-            if (sucursalEntidadAdmDto.sucursalEntidadId != null) {
-                /***Modificacion***/
+	@Override
+	public SucursalEntidadAdmDto addUpdateSucursalEntidad(SucursalEntidadAdmDto sucursalEntidadAdmDto, Long usuarioId)
+			throws BusinesException {
+		sucursalEntidadAdmDto.emiteFacturaTesla = sucursalEntidadAdmDto.emiteFacturaTesla != null
+				? sucursalEntidadAdmDto.emiteFacturaTesla
+				: false;
+		if (sucursalEntidadAdmDto.emiteFacturaTesla) {
+			Long countEmiteFacturaTesla = iSucursalEntidadDao.countEmiteFacturaTesla(sucursalEntidadAdmDto.entidadId,
+					sucursalEntidadAdmDto.sucursalEntidadId);
+			if (countEmiteFacturaTesla > 0) {
+				throw new BusinesException("Ya existe una sucursal que emite Facturas.");
+			}
+		}
 
-                Optional<SucursalEntidadEntity> sucursalEntidadEntityOptional = iSucursalEntidadDao.findById(sucursalEntidadAdmDto.sucursalEntidadId);
-                if(!sucursalEntidadEntityOptional.isPresent()) {
-                    throw new Technicalexception("No existe sucursalEntidadId=" + sucursalEntidadAdmDto.sucursalEntidadId);
-                }
-                SucursalEntidadEntity sucursalEntidadEntityOriginal = sucursalEntidadEntityOptional.get();
-                sucursalEntidadEntityOriginal.setFechaModificacion(new Timestamp(System.currentTimeMillis()));
-                sucursalEntidadEntityOriginal.setUsuarioModificacion(usuarioId);
-                sucursalEntidadEntityOriginal.setTransaccion("MODIFICAR");
+		try {
+			if (sucursalEntidadAdmDto.sucursalEntidadId != null) {
+				/*** Modificacion ***/
 
-                return saveSucursalEntidad(sucursalEntidadAdmDto, sucursalEntidadEntityOriginal);
-            } else {
-                /***Creación***/
-                SucursalEntidadEntity sucursalEntidadEntity = new SucursalEntidadEntity();
-                sucursalEntidadEntity.setFechaCreacion(new Timestamp(System.currentTimeMillis()));
-                sucursalEntidadEntity.setUsuarioCreacion(usuarioId);
-                sucursalEntidadEntity.setTransaccion("CREAR");
+				Optional<SucursalEntidadEntity> sucursalEntidadEntityOptional = iSucursalEntidadDao
+						.findById(sucursalEntidadAdmDto.sucursalEntidadId);
+				if (!sucursalEntidadEntityOptional.isPresent()) {
+					throw new Technicalexception(
+							"No existe sucursalEntidadId=" + sucursalEntidadAdmDto.sucursalEntidadId);
+				}
+				SucursalEntidadEntity sucursalEntidadEntityOriginal = sucursalEntidadEntityOptional.get();
+				sucursalEntidadEntityOriginal.setFechaModificacion(new Timestamp(System.currentTimeMillis()));
+				sucursalEntidadEntityOriginal.setUsuarioModificacion(usuarioId);
+				sucursalEntidadEntityOriginal.setTransaccion("MODIFICAR");
 
-                return saveSucursalEntidad(sucursalEntidadAdmDto, sucursalEntidadEntity);
-            }
-        } catch (Exception e) {
-            throw new Technicalexception(e.getMessage(), e.getCause());
-        }
-    }
+				return saveSucursalEntidad(sucursalEntidadAdmDto, sucursalEntidadEntityOriginal);
+			} else {
+				/*** Creación ***/
+				SucursalEntidadEntity sucursalEntidadEntity = new SucursalEntidadEntity();
+				sucursalEntidadEntity.setFechaCreacion(new Timestamp(System.currentTimeMillis()));
+				sucursalEntidadEntity.setUsuarioCreacion(usuarioId);
+				sucursalEntidadEntity.setTransaccion("CREAR");
 
-    private SucursalEntidadAdmDto saveSucursalEntidad(SucursalEntidadAdmDto sucursalEntidadAdmDto, SucursalEntidadEntity sucursalEntidadEntity) {
+				return saveSucursalEntidad(sucursalEntidadAdmDto, sucursalEntidadEntity);
+			}
+		} catch (Exception e) {
+			throw new Technicalexception(e.getMessage(), e.getCause());
+		}
+	}
 
-        Optional<EntidadEntity> entidadEntityOptional = iEntidadRDao.findById(sucursalEntidadAdmDto.entidadId);
-        if(!entidadEntityOptional.isPresent()) {
-            throw new Technicalexception("No existe ENTIDAD EntidadId=" + sucursalEntidadAdmDto.entidadId);
-        }
+	private SucursalEntidadAdmDto saveSucursalEntidad(SucursalEntidadAdmDto sucursalEntidadAdmDto,
+			SucursalEntidadEntity sucursalEntidadEntity) throws BusinesException {
 
-        Optional<DominioEntity> departamentoOptional = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(sucursalEntidadAdmDto.departamentoId, "departamento_id","ACTIVO");
-        if (!departamentoOptional.isPresent()) {
-            throw new Technicalexception("No existe Dominio departamento_id=" + sucursalEntidadAdmDto.departamentoId);
-        }
+		Optional<EntidadEntity> entidadEntityOptional = iEntidadRDao.findById(sucursalEntidadAdmDto.entidadId);
+		if (!entidadEntityOptional.isPresent()) {
+			throw new Technicalexception("No existe ENTIDAD EntidadId=" + sucursalEntidadAdmDto.entidadId);
+		}
 
-        Optional<DominioEntity> municipioOptional = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(sucursalEntidadAdmDto.municipioId, "municipio_id","ACTIVO");
-        if (!municipioOptional.isPresent()) {
-            throw new Technicalexception("No existe Dominio municipio_id=" + sucursalEntidadAdmDto.departamentoId);
-        }
+		Optional<DominioEntity> departamentoOptional = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(
+				sucursalEntidadAdmDto.departamentoId, "departamento_id", "ACTIVO");
+		if (!departamentoOptional.isPresent()) {
+			throw new Technicalexception("No existe Dominio departamento_id=" + sucursalEntidadAdmDto.departamentoId);
+		}
 
-        sucursalEntidadEntity.setEntidad(entidadEntityOptional.get());
-        sucursalEntidadEntity.setNombreSucursal(sucursalEntidadAdmDto.nombreSucursal.toUpperCase().trim());
-        sucursalEntidadEntity.setDireccion(sucursalEntidadAdmDto.direccion.toUpperCase().trim());
-        sucursalEntidadEntity.setTelefono(sucursalEntidadAdmDto.telefono);
-        sucursalEntidadEntity.setEmail(sucursalEntidadAdmDto.email);
-        sucursalEntidadEntity.setCodigoActividadEconomica(sucursalEntidadAdmDto.codigoActividadEconomica);
-        sucursalEntidadEntity.setActividadEconomica(sucursalEntidadAdmDto.actividadEconomica);
-        sucursalEntidadEntity.setNumeroSucursalSin(sucursalEntidadAdmDto.numeroSucursalSin);
-        sucursalEntidadEntity.setEmiteFacturaTesla(sucursalEntidadAdmDto.emiteFacturaTesla != null ? sucursalEntidadAdmDto.emiteFacturaTesla : false);
-        sucursalEntidadEntity.setDepartamentoId(departamentoOptional.get());
-        sucursalEntidadEntity.setMunicipioId(municipioOptional.get());
+		Optional<DominioEntity> municipioOptional = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(
+				sucursalEntidadAdmDto.municipioId, "municipio_id", "ACTIVO");
+		if (!municipioOptional.isPresent()) {
+			throw new Technicalexception("No existe Dominio municipio_id=" + sucursalEntidadAdmDto.departamentoId);
+		}
 
-        sucursalEntidadEntity = iSucursalEntidadDao.save(sucursalEntidadEntity);
-        sucursalEntidadAdmDto.sucursalEntidadId = sucursalEntidadEntity.getSucursalEntidadId();
+		sucursalEntidadEntity.setEntidad(entidadEntityOptional.get());
+		sucursalEntidadEntity.setNombreSucursal(sucursalEntidadAdmDto.nombreSucursal.toUpperCase().trim());
+		sucursalEntidadEntity.setDireccion(sucursalEntidadAdmDto.direccion.toUpperCase().trim());
+		sucursalEntidadEntity.setTelefono(sucursalEntidadAdmDto.telefono);
+		sucursalEntidadEntity.setEmail(sucursalEntidadAdmDto.email);
+		sucursalEntidadEntity.setNumeroSucursalSin(sucursalEntidadAdmDto.numeroSucursalSin);
+		sucursalEntidadEntity.setEmiteFacturaTesla(sucursalEntidadAdmDto.emiteFacturaTesla);
+		sucursalEntidadEntity.setDepartamentoId(departamentoOptional.get());
+		sucursalEntidadEntity.setMunicipioId(municipioOptional.get());
 
-        return sucursalEntidadAdmDto;
-    }
+		sucursalEntidadEntity = iSucursalEntidadDao.save(sucursalEntidadEntity);
+		sucursalEntidadAdmDto.sucursalEntidadId = sucursalEntidadEntity.getSucursalEntidadId();
 
-    @Override
-    public void setTransaccionSucursalEntidad(Long sucursalEntidadId, String transaccion, Long usuarioId) {
-        try {
-            if(!iSucursalEntidadDao.existsById(sucursalEntidadId)) {
-                throw new Technicalexception("No existe registro SucursalEntidadId=" + sucursalEntidadId);
-            }
-            Integer countUpdate = iSucursalEntidadDao.updateTransaccionSucursalEntidad(sucursalEntidadId, transaccion, usuarioId);
-            if(countUpdate != 1) {
-                throw new Technicalexception("No se actualizó el estado de sucursalEntidadId=" + sucursalEntidadId);
-            }
-        } catch (Exception e) {
-            throw new Technicalexception(e.getMessage(), e.getCause());
-        }
-    }
+		return sucursalEntidadAdmDto;
+	}
 
-    @Transactional
-    @Override
-    public void setLstTransaccion(List<Long> sucursalEntidadIdLst, String transaccion, Long usuarioId) throws Technicalexception{
-        try {
-            Integer countUpdate = iSucursalEntidadDao.updateLstTransaccionSucursalEntidad(sucursalEntidadIdLst, transaccion, usuarioId);
-            if(countUpdate != sucursalEntidadIdLst.size()) {
-                throw new Technicalexception("No se actualizaron todos los registros o no se encuentran algunos registros.");
-            }
-        } catch (Exception e) {
-            throw new Technicalexception(e.getMessage(), e.getCause());
-        }
-    }
+	@Override
+	public void setTransaccionSucursalEntidad(Long sucursalEntidadId, String transaccion, Long usuarioId) {
+		try {
+			if (!iSucursalEntidadDao.existsById(sucursalEntidadId)) {
+				throw new Technicalexception("No existe registro SucursalEntidadId=" + sucursalEntidadId);
+			}
+			Integer countUpdate = iSucursalEntidadDao.updateTransaccionSucursalEntidad(sucursalEntidadId, transaccion,
+					usuarioId);
+			if (countUpdate != 1) {
+				throw new Technicalexception("No se actualizó el estado de sucursalEntidadId=" + sucursalEntidadId);
+			}
+		} catch (Exception e) {
+			throw new Technicalexception(e.getMessage(), e.getCause());
+		}
+	}
 
-    @Override
-    public SucursalEntidadAdmDto getSucursalEntidadById(Long sucursalEntidadId) {
-        Optional<SucursalEntidadAdmDto> sucursalEntidadAdmDtoOptional = iSucursalEntidadDao.findSucursalEntidadDtoById(sucursalEntidadId);
-        if(!sucursalEntidadAdmDtoOptional.isPresent()){
-            return null;//Se controlará el status 204 en controllee
-        }
-        return sucursalEntidadAdmDtoOptional.get();
-    }
+	@Transactional
+	@Override
+	public void setLstTransaccion(List<Long> sucursalEntidadIdLst, String transaccion, Long usuarioId)
+			throws Technicalexception {
+		try {
+			Integer countUpdate = iSucursalEntidadDao.updateLstTransaccionSucursalEntidad(sucursalEntidadIdLst,
+					transaccion, usuarioId);
+			if (countUpdate != sucursalEntidadIdLst.size()) {
+				throw new Technicalexception(
+						"No se actualizaron todos los registros o no se encuentran algunos registros.");
+			}
+		} catch (Exception e) {
+			throw new Technicalexception(e.getMessage(), e.getCause());
+		}
+	}
 
-    @Override
-    public List<SucursalEntidadAdmDto> getAllSucursalEntidades() {
-        return iSucursalEntidadDao.findSucursalesEntidadesDtoAll();
-    }
+	@Override
+	public SucursalEntidadAdmDto getSucursalEntidadById(Long sucursalEntidadId) {
+		Optional<SucursalEntidadAdmDto> sucursalEntidadAdmDtoOptional = iSucursalEntidadDao
+				.findSucursalEntidadDtoById(sucursalEntidadId);
+		if (!sucursalEntidadAdmDtoOptional.isPresent()) {
+			return null;// Se controlará el status 204 en controllee
+		}
+		return sucursalEntidadAdmDtoOptional.get();
+	}
 
-    @Override
-    public List<SucursalEntidadAdmDto> getLisSucursalEntidadesByEntidadId(Long entidadId) {
-        return iSucursalEntidadDao.findSucursalesEntidadesDtoByEntidadId(entidadId);
-    }
+	@Override
+	public List<SucursalEntidadAdmDto> getAllSucursalEntidades() {
+		return iSucursalEntidadDao.findSucursalesEntidadesDtoAll();
+	}
+
+	@Override
+	public List<SucursalEntidadAdmDto> getLisSucursalEntidadesByEntidadId(Long entidadId) {
+		return iSucursalEntidadDao.findSucursalesEntidadesDtoByEntidadId(entidadId);
+	}
 
 	@Override
 	public List<SucursalEntidadEntity> findSucursalByEntidadId(Long entidadId) {
-	
+
 		return this.iSucursalEntidadDao.findSucursalByEntidadId(entidadId);
 	}
+
+	@Override
+	public List<SucursalEntidadAdmDto> getLisSucursalEntidadesByEntidadIdActivos(Long entidadId) {
+		return iSucursalEntidadDao.findSucursalesEntidadesDtoByEntidadIdActivos(entidadId);
+	}
+
+	@Override
+	public Optional<SucursalEntidadAdmDto> findsucursalEmtidadEmiteFacturaTesla(Long entidadId) {
+		return iSucursalEntidadDao.findDtoByEmiteFacturaTesla(entidadId);
+	}
+
+	@Transactional
+	@Override
+	public void updateCredencialesFacturacion(CredencialFacturacionDto credencialFacturacionDto,
+			SegUsuarioEntity usuarioEntity) {
+		iSucursalEntidadDao.updateCredencialesFacturacion(credencialFacturacionDto.sucursalEntidadId,
+				credencialFacturacionDto.login, credencialFacturacionDto.password, usuarioEntity.getUsuarioId());
+	}
+
+	@Override
+	public Optional<CredencialFacturacionDto> findCredencialFacturacion(Long sucursalEntidadId) {
+		return iSucursalEntidadDao.findCredencialFacturacion(sucursalEntidadId);
+	}
+
 }

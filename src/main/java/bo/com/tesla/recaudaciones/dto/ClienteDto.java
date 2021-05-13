@@ -12,6 +12,8 @@ public class ClienteDto {
     public String nombreCliente;
     @NotBlank(message = "El 'Nro. Documento Cliente' es obligatorio.")
     public String nroDocumento;
+    @NotBlank(message = "El monto total cobrado debe ser enviado")
+    public BigDecimal montoTotalCobrado;
     public List<ServicioDeudaDto> servicioDeudaDtoList;
 
     public ClienteDto() {
@@ -22,33 +24,5 @@ public class ClienteDto {
         this.nombreCliente = nombreCliente;
         this.nroDocumento = nroDocumento;
     }
-/*
-    public String getCodigoCliente() {
-        return codigoCliente;
-    }
 
-    public void setCodigoCliente(String codigoCliente) {
-        this.codigoCliente = codigoCliente;
-    }
-
-    public String getNombreCliente() {
-        return nombreCliente;
-    }
-
-    public void setNombreCliente(String nombreCliente) {
-        this.nombreCliente = nombreCliente;
-    }
-
-    public String getNroDocumento() {
-        return nroDocumento;
-    }
-
-    public List<ServicioDeudaDto> getServicioDeudaDtoList() {
-        return servicioDeudaDtoList;
-    }
-
-    public void setServicioDeudaDtoList(List<ServicioDeudaDto> servicioDeudaDtoList) {
-        this.servicioDeudaDtoList = servicioDeudaDtoList;
-    }
-*/
 }

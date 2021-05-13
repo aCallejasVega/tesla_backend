@@ -184,11 +184,12 @@ public class MenuController {
 			entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
 			recaudador = this.recaudadoraService.findRecaudadorByUserId(usuario.getUsuarioId());
 			DatosLoginDto datos = new DatosLoginDto();
-			datos.nombreUsuario = usuario.getPersonaId().getPaterno() + " " + usuario.getPersonaId().getMaterno() + " "
-					+ usuario.getPersonaId().getNombres();
-			datos.nombreUsuario = datos.nombreUsuario.toUpperCase();
-			datos.correo = usuario.getPersonaId().getCorreoElectronico();
-
+			if(usuario.getPersonaId()!=null) {
+				datos.nombreUsuario = usuario.getPersonaId().getPaterno() + " " + usuario.getPersonaId().getMaterno() + " "
+						+ usuario.getPersonaId().getNombres();
+				datos.nombreUsuario = datos.nombreUsuario.toUpperCase();
+				datos.correo = usuario.getPersonaId().getCorreoElectronico();
+			}
 			if (entidad != null) {
 				datos.nombreEntidad = entidad.getNombreComercial();
 			} else if (recaudador != null) {

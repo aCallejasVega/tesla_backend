@@ -3,17 +3,24 @@ package bo.com.tesla.recaudaciones.services;
 import bo.com.tesla.administracion.entity.*;
 import bo.com.tesla.administracion.services.IEntidadComisionService;
 import bo.com.tesla.administracion.services.IRecaudadorComisionService;
-import bo.com.tesla.entidades.dao.IArchivoDao;
-import bo.com.tesla.recaudaciones.dao.IEntidadRDao;
-import bo.com.tesla.recaudaciones.dao.IRecaudadorDao;
+import bo.com.tesla.facturaciones.computarizada.dto.AnulacionFacturaLstDto;
+import bo.com.tesla.facturaciones.computarizada.dto.FacturaDto;
+import bo.com.tesla.facturaciones.computarizada.dto.ResponseDto;
+import bo.com.tesla.facturaciones.computarizada.services.FacturaComputarizadaService;
+import bo.com.tesla.facturaciones.computarizada.services.IAnulacionFacturaService;
+import bo.com.tesla.facturaciones.computarizada.services.IFacturaComputarizadaService;
+import bo.com.tesla.recaudaciones.dao.ICobroClienteDao;
+import bo.com.tesla.recaudaciones.dao.IHistoricoDeudaDao;
 import bo.com.tesla.recaudaciones.dao.ITransaccionCobroDao;
 import bo.com.tesla.recaudaciones.dto.ServicioDeudaDto;
 import bo.com.tesla.useful.config.Technicalexception;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -23,20 +30,26 @@ public class TransaccionCobroService implements ITransaccionCobroService {
     private ITransaccionCobroDao iTransaccionCobroDao;
 
     @Autowired
-    private IEntidadRDao iEntidadRDao;
-
-    @Autowired
-    private IArchivoDao iArchivoDao;
-
-    @Autowired
     private IEntidadComisionService iEntidadComisionService;
 
     @Autowired
     private IRecaudadorComisionService iRecaudadorComisionService;
 
+    @Autowired
+    private ICobroClienteDao iCobroClienteDao;
+
+    @Autowired
+    private IAnulacionFacturaService anulacionFacturaService;
+
+    @Autowired
+    private IDeudaClienteRService deudaClienteRService;
+
+    @Autowired
+    private IHistoricoDeudaService historicoDeudaService;
+
     @Override
     public TransaccionCobroEntity saveTransaccionCobro(TransaccionCobroEntity transaccionCobroEntity) {
-        return iTransaccionCobroDao.save(transaccionCobroEntity);
+        return iTransaccionCobroDao.saveAndFlush(transaccionCobroEntity);
     }
 
     @Override
@@ -48,7 +61,9 @@ public class TransaccionCobroService implements ITransaccionCobroService {
     @Override
     public TransaccionCobroEntity loadTransaccionCobro(ServicioDeudaDto servicioDeudaDto, EntidadEntity entidadEntity, Long usuarioId, String nombreCientePago, String nroDocumentoClientePago,
                                                        EntidadComisionEntity entidadComisionEntity, RecaudadorEntity recaudadorEntity, RecaudadorComisionEntity recaudadorComisionEntity,
-                                                       ArchivoEntity archivoEntity, DominioEntity metodoCobro) {
+                                                       ArchivoEntity archivoEntity, DominioEntity metodoCobro,
+                                                       DominioEntity modalidadFacturacion,
+                                                       String codigoActividadEconomica) {
 
         TransaccionCobroEntity transaccionCobroEntity = new TransaccionCobroEntity();
         transaccionCobroEntity.setTipoServicio(servicioDeudaDto.tipoServicio);
@@ -57,7 +72,7 @@ public class TransaccionCobroService implements ITransaccionCobroService {
         transaccionCobroEntity.setUsuarioCreacion(usuarioId);
         transaccionCobroEntity.setFechaCreacion(new Date());
         transaccionCobroEntity.setEntidadId(entidadEntity);
-        transaccionCobroEntity.setTransaccion("COBRAR");
+        transaccionCobroEntity.setTransaccion("CREAR");
         transaccionCobroEntity.setArchivoId(archivoEntity);
         transaccionCobroEntity.setCodigoCliente(servicioDeudaDto.codigoCliente);
         transaccionCobroEntity.setNombreClientePago(nombreCientePago);
@@ -71,8 +86,11 @@ public class TransaccionCobroService implements ITransaccionCobroService {
         transaccionCobroEntity.setComisionRecaudacion(iRecaudadorComisionService.calcularComision(recaudadorComisionEntity, servicioDeudaDto.subTotal));
         transaccionCobroEntity.setRecaudadorComision(recaudadorComisionEntity);
         transaccionCobroEntity.setMetodoCobro(metodoCobro);
+        transaccionCobroEntity.setModalidadFacturacion(modalidadFacturacion);
+        transaccionCobroEntity.setCodigoActividadEconomica(codigoActividadEconomica);
         return  transaccionCobroEntity;
     }
+
 
 	@Override
 	public List<TransaccionCobroEntity> findDeudasCobradasByUsuarioCreacionForGrid(Long usuarioCreacion,
@@ -80,5 +98,90 @@ public class TransaccionCobroService implements ITransaccionCobroService {
 	
 		return this.iTransaccionCobroDao.findDeudasCobradasByUsuarioCreacionForGrid(usuarioCreacion, fechaSeleccionada, entidadId);
 	}
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Technicalexception.class)
+    public Boolean anularTransaccion(Long entidadId,
+                                     AnulacionFacturaLstDto anulacionFacturaLstDto,
+                                     SegUsuarioEntity usuarioEntity) {
+        try {
+            //Anular Transacciones
+            Integer countupdate = iTransaccionCobroDao.updateLstTransaccionByFacturas(anulacionFacturaLstDto.facturaIdLst, "ANULAR", usuarioEntity.getUsuarioId());
+            if (countupdate == 0) {
+                throw new Technicalexception("La Anulación ha producido un inconveniente o se ha producido un nuevo cargado de archivo");
+            }
+
+            //Anular Cobros
+            Integer countUpdateCobros = iCobroClienteDao.updateLstTransaccionByFacturas(anulacionFacturaLstDto.facturaIdLst, "ANULAR", usuarioEntity.getUsuarioId());
+            if (countUpdateCobros == 0) {
+                throw new Technicalexception("La Anulación ha producido un inconveniente");
+            }
+
+            Integer countHistoricos = historicoDeudaService.updateHistoricoDeudaLstByFacturas(anulacionFacturaLstDto.facturaIdLst, "ANULADO");
+            if(countHistoricos == 0) {
+                throw new Technicalexception("No se ha logrado actualizar el estado de los registros históricos de deudas");
+            }
+
+            //Recuperar las deudas
+            Integer countRecovery = deudaClienteRService.recoverDeudasByFacturas(anulacionFacturaLstDto.facturaIdLst);
+            if(countRecovery < 1) {
+                throw new Technicalexception("No se ha recuperado ninguna deuda");
+            }
+
+            /***********************************************************************/
+            //Anulación de Facturas
+            ResponseDto responseDto = anulacionFacturaService.postAnulacionLst(entidadId, anulacionFacturaLstDto);
+            if(!responseDto.status) {
+                throw new Technicalexception(responseDto.message);
+            }
+            /***********************************************************************/
+
+            return true;
+        } catch (Exception e) {
+            throw new Technicalexception(e.getMessage(), e.getCause());
+        }
+    }
+
+    @Override
+    public void updateFacturas(List<TransaccionCobroEntity> transaccionCobroEntityList,
+                               boolean comprobanteEnUno,
+                               List<FacturaDto> facturaDtoList) {
+        facturaDtoList.forEach(f -> {
+            if(!comprobanteEnUno) {
+                Integer updateCountFactura = iTransaccionCobroDao.updateFactura(f.keyTeslaTransaccion, f.facturaId);
+                if (updateCountFactura != 1) {
+                    throw new Technicalexception("No se ha actualizado la factura en la Transacción");
+                }
+            } else {
+                List<TransaccionCobroEntity> transaccionesCobroPorActividad = transaccionCobroEntityList.stream()
+                        .filter(t -> t.getCodigoActividadEconomica().equals(f.codigoActividadEconomica))
+                        .collect(Collectors.toList());
+
+                transaccionesCobroPorActividad.forEach(t -> {
+                    Integer update = iTransaccionCobroDao.updateFactura(t.getTransaccionCobroId(), f.facturaId);
+                    if (update != 1) {
+                        throw new Technicalexception("No se ha actualizado la factura en la Transacción");
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
+    public List<String> getCodigosActividadUnicos(List<TransaccionCobroEntity> transaccionCobroEntityList) {
+        List<String> codActEcoList = transaccionCobroEntityList.stream().map(t -> t.getCodigoActividadEconomica())
+                .collect(Collectors.toList());
+        return codActEcoList.stream().distinct().collect(Collectors.toList());
+    }
+
+	@Override
+	public TransaccionCobroEntity loadTransaccionCobro(ServicioDeudaDto servicioDeudaDto, EntidadEntity entidadEntity,
+			Long usuarioId, String nombreCientePago, String nroDocumentoClientePago,
+			EntidadComisionEntity entidadComisionEntity, RecaudadorEntity recaudadorEntity,
+			RecaudadorComisionEntity recaudadorComisionEntity, ArchivoEntity archivoEntity, DominioEntity metodoCobro) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

@@ -22,8 +22,8 @@ public class EntidadAdmDto {
     public String municipioDescripcion;
     public Long tipoEntidadId;
     public String tipoEntidadDescripcion;
-    public Long tipoFacturacionId;
-    public String tipoFacturacionDescripcion;
+    public Long modalidadFacturacionId;
+    public String modalidadFacturacionDescripcion;
     public Boolean esCobradora;
     public Boolean esPagadora;
     public Date fechaCreacion;
@@ -36,7 +36,7 @@ public class EntidadAdmDto {
 
     public EntidadAdmDto() {}
 
-    public EntidadAdmDto(Long entidadId, @NotBlank(message = "El NOMBRE es obligatorio.") String nombre, String nombreComercial, @NotBlank(message = "La DIRECCION es obligatoria.") String direccion, String telefono, String nit, String pathLogo, Boolean comprobanteEnUno, Long actividadEconomicaId, String actividadEconomicaDescripcion, Long municipioId, String municipioDescripcion, Long tipoEntidadId, String tipoEntidadDescripcion, Long tipoFacturacionId, String tipoFacturacionDescripcion, Boolean esCobradora, Boolean esPagadora, Date fechaCreacion, String usuarioCreacionLogin, String estado) {
+    public EntidadAdmDto(Long entidadId, @NotBlank(message = "El NOMBRE es obligatorio.") String nombre, String nombreComercial, @NotBlank(message = "La DIRECCION es obligatoria.") String direccion, String telefono, String nit, String pathLogo, Boolean comprobanteEnUno, Long actividadEconomicaId, String actividadEconomicaDescripcion, Long municipioId, String municipioDescripcion, Long tipoEntidadId, String tipoEntidadDescripcion, Long modalidadFacturacionId, String modalidadFacturacionDescripcion, Boolean esCobradora, Boolean esPagadora, Date fechaCreacion, String usuarioCreacionLogin, String estado) {
         this.entidadId = entidadId;
         this.nombre = nombre;
         this.nombreComercial = nombreComercial;
@@ -51,8 +51,8 @@ public class EntidadAdmDto {
         this.municipioDescripcion = municipioDescripcion;
         this.tipoEntidadId = tipoEntidadId;
         this.tipoEntidadDescripcion = tipoEntidadDescripcion;
-        this.tipoFacturacionId = tipoFacturacionId;
-        this.tipoFacturacionDescripcion = tipoFacturacionDescripcion;
+        this.modalidadFacturacionId = modalidadFacturacionId;
+        this.modalidadFacturacionDescripcion = modalidadFacturacionDescripcion;
         this.esCobradora = esCobradora;
         this.esPagadora = esPagadora;
         this.fechaCreacion = fechaCreacion;

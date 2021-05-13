@@ -14,14 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("api/sucursales")
@@ -39,6 +37,9 @@ public class SucursalController {
     
     @Autowired
     private IRecaudadoraService recaudadorService;
+
+    @Autowired
+    private IRecaudadoraService recaudadoraService;
 
     /*********************ABM**************************/
 
@@ -211,13 +212,20 @@ public class SucursalController {
         }
     }
 
-    @GetMapping("/recaudadores/{recaudadorId}")
-    public ResponseEntity<?> getListSucursalesByRecaudadorId(@PathVariable Long recaudadorId,
+    @GetMapping(path = {"/recaudadores/{recaudadorId}", "/recaudadores" }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<?> getListSucursalesByRecaudadorId(@PathVariable(name = "recaudadorId", required = false) Optional<Long> recaudadorId,
                                                                 Authentication authentication) {
         SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         Map<String, Object> response = new HashMap<>();
         try {
-            List<SucursalAdmDto> sucursalAdmDtoList = iSucursalService.getListSucursalesByRecaudadora(recaudadorId);
+            List<SucursalAdmDto> sucursalAdmDtoList = new ArrayList<>();
+            if(!recaudadorId.isPresent()) {
+                RecaudadorEntity recaudadorEntity = recaudadoraService.findRecaudadorByUserId(usuario.getUsuarioId());
+                sucursalAdmDtoList = iSucursalService.getListSucursalesByRecaudadora(recaudadorEntity.getRecaudadorId());
+            } else {
+                sucursalAdmDtoList = iSucursalService.getListSucursalesByRecaudadora(recaudadorId.get());
+            }
+
             if(!sucursalAdmDtoList.isEmpty()) {
                 response.put("status", true);
                 response.put("message", "El listado fue encontrado.");

@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.util.List;
 
+import bo.com.tesla.administracion.entity.CobroClienteEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
 
@@ -33,6 +34,8 @@ public interface IHistoricoDeudaService {
 	public ByteArrayInputStream writeDataToCsv(Long archivoId);
 	
 	public List<EstadoTablasDto> findEstadoHistoricoPagos();
-	
-	
+
+	public Integer updateHistoricoDeudaLstByFacturas(List<Long> facturaIdLst, String estado);
+
+
 }

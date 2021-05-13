@@ -1,9 +1,13 @@
 package bo.com.tesla.recaudaciones.services;
 
+import bo.com.tesla.administracion.dao.ISucursalEntidadDao;
 import bo.com.tesla.administracion.entity.*;
 import bo.com.tesla.administracion.services.IEntidadComisionService;
 import bo.com.tesla.administracion.services.IRecaudadorComisionService;
 import bo.com.tesla.entidades.dao.IArchivoDao;
+import bo.com.tesla.facturaciones.computarizada.dto.FacturaDto;
+import bo.com.tesla.facturaciones.computarizada.dto.ResponseDto;
+import bo.com.tesla.facturaciones.computarizada.services.IFacturaComputarizadaService;
 import bo.com.tesla.recaudaciones.dao.*;
 import bo.com.tesla.recaudaciones.dto.ClienteDto;
 import bo.com.tesla.recaudaciones.dto.DeudaClienteDto;
@@ -55,6 +59,15 @@ public class CobroClienteService implements ICobroClienteService {
 
     @Autowired
     private IArchivoDao iArchivoDao;
+
+    @Autowired
+    private IFacturaComputarizadaService facturacionComputarizadaService;
+
+    @Autowired
+    private ITransaccionCobroDao transaccionCobroDao;
+
+    @Autowired
+    private ISucursalEntidadDao sucursalEntidadDao;
 
     @Override
     public List<CobroClienteEntity> saveAllCobrosClientes(List<CobroClienteEntity> cobroClienteEntities) {
@@ -117,11 +130,12 @@ public class CobroClienteService implements ICobroClienteService {
         return  cobroClienteEntity;
     }
 
+    @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Technicalexception.class)
-    public List<TransaccionCobroEntity> postCobrarDeudas(ClienteDto clienteDto,
-                                  Long usuarioId,
-                                  Long metodoCobroId) throws Technicalexception {
-    	List<TransaccionCobroEntity> transaccionesCobroList=new ArrayList<>();
+    public String postCobrarDeudas(ClienteDto clienteDto,
+                                    Long usuarioId,
+                                    Long metodoCobroId) {
+        List<TransaccionCobroEntity> transaccionesCobroList=new ArrayList<>();
         try{
             //Obtencion Datos Entidad
             Optional<EntidadEntity> entidadEntityOptional = iEntidadRDao.findByEntidadIdAndEstado(clienteDto.servicioDeudaDtoList.get(0).entidadId, "ACTIVO");
@@ -129,10 +143,16 @@ public class CobroClienteService implements ICobroClienteService {
                 throw new Technicalexception("No existe Entidad, por tanto no hay configuracion de comprobanteEnUno");
             }
 
+            //Encontrar Sucursal que emite Factura
+            Optional<SucursalEntidadEntity> sucursalEntidadEntityOptional  = sucursalEntidadDao.findByEmiteFacturaTesla(clienteDto.servicioDeudaDtoList.get(0).entidadId);
+            if(!sucursalEntidadEntityOptional.isPresent()) {
+                throw new Technicalexception("No se encuentra registrada la sucursal que emitirá la(s) factura(s).");
+            }
+
             //Obtencion de Archivo
             ArchivoEntity archivoEntity = iArchivoDao.findByEstado("ACTIVO", clienteDto.servicioDeudaDtoList.get(0).entidadId);
             if(archivoEntity == null) {
-                throw new Technicalexception("No se encontró la archivoId" + entidadEntityOptional.get().getEntidadId());
+                throw new Technicalexception("No existe un archivo activo o no se encontra el archivoId" + entidadEntityOptional.get().getEntidadId());
             }
 
             //Obtencon Datos de Recaudador
@@ -147,7 +167,7 @@ public class CobroClienteService implements ICobroClienteService {
             //Obtencion de comisión recaudadora
             RecaudadorComisionEntity recaudadorComisionEntity = iRecaudadorComisionService.getRecaudadorComisionActual(recaudadorEntityOptional.get());
 
-            //Verificar el dominio metodoPagoId
+            //Verificar el dominio metodoCobro
             Optional<DominioEntity> metodoCobroOptional = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(metodoCobroId, "metodo_cobro_id", "ACTIVO");
             if(!metodoCobroOptional.isPresent()) {
                 throw new Technicalexception("No existe el dominio='metodo_cobro_id' para dominioId=" + metodoCobroId );
@@ -155,11 +175,7 @@ public class CobroClienteService implements ICobroClienteService {
 
             //Para emision de comprobante
             boolean comprobanteEnUno = entidadEntityOptional.get().getComprobanteEnUno();
-            /******************************************************************************************/
-            //Lamar a Facturacion o Recibo
-            /******************************************************************************************/
 
-            
             //Recorrer las agrupaciones
             for(ServicioDeudaDto servicioDeudaDto : clienteDto.servicioDeudaDtoList){
                 //Recuperar Deudas Completas por agrupacion
@@ -172,9 +188,35 @@ public class CobroClienteService implements ICobroClienteService {
                     throw new Technicalexception("No se ha encontrado el Listado de Todas las Deudas del cliente: " + servicioDeudaDto.codigoCliente);
                 }
 
+                /*
+                //Verificar un solo Tipo de Comprobante por Transacción
+                List<Boolean> tipoComprobanteLst = iDeudaClienteRService.getTipoComprobanteUnicos(deudaClienteEntityList);
+                if(tipoComprobanteLst.size() > 1) {
+                    throw new Technicalexception("Se ha identificado en el cargado de deudas, diferentes Tipos de Comprobante para la agrupacipon: " +
+                             " ArchivoId=" + archivoEntity.getArchivoId() +
+                            ", TipoServicio=" + servicioDeudaDto.tipoServicio +
+                            ", Servicio= " + servicioDeudaDto.servicio +
+                            ", Periodo=" + servicioDeudaDto.periodo +
+                            ", Codigo   Cliente=" + servicioDeudaDto.codigoCliente);
+                }
+                */
+
+                //Verificar un solo Código Actividad Económica por Transacción
+                List<String> codActEcoList = iDeudaClienteRService.getCodigosActividadUnicos(deudaClienteEntityList);
+                if(codActEcoList.size() > 1) {
+                    throw new Technicalexception("Se ha identificado en el cargado de deudas, diferentes Códigos de Actividad Económica para la agrupacipon: " +
+                            " ArchivoId=" + archivoEntity.getArchivoId() +
+                            ", TipoServicio=" + servicioDeudaDto.tipoServicio +
+                            ", Servicio= " + servicioDeudaDto.servicio +
+                            ", Periodo=" + servicioDeudaDto.periodo +
+                            ", CodigoCliente=" + servicioDeudaDto.codigoCliente);
+                }
+
                 //Cargar transaccion las agrupaciones
                 TransaccionCobroEntity transaccionCobroEntity = iTransaccionCobroService.loadTransaccionCobro(servicioDeudaDto, entidadEntityOptional.get(), usuarioId, clienteDto.nombreCliente, clienteDto.nroDocumento,
-                        entidadComisionEntity, recaudadorEntityOptional.get(), recaudadorComisionEntity, archivoEntity, metodoCobroOptional.get());
+                        entidadComisionEntity, recaudadorEntityOptional.get(), recaudadorComisionEntity, archivoEntity, metodoCobroOptional.get(),
+                        entidadEntityOptional.get().getModalidadFacturacion(),
+                        deudaClienteEntityList.get(0).getCodigoActividadEconomica());//Habiendo validado unico por transaccion
 
                 List<CobroClienteEntity> cobroClienteEntityList = new ArrayList<>();
                 //Recorrer cada deuda asociada a la agrupacion
@@ -187,7 +229,7 @@ public class CobroClienteService implements ICobroClienteService {
                 //Registrar transaccion  por agrupacion
                 transaccionCobroEntity.setCobroClienteEntityList(cobroClienteEntityList);
                 transaccionCobroEntity = iTransaccionCobroService.saveTransaccionCobro(transaccionCobroEntity);
-                
+
                 if(transaccionCobroEntity.getTransaccionCobroId() == null) {
                     throw new Technicalexception("No se ha registrado la transacción");
                 }
@@ -204,13 +246,62 @@ public class CobroClienteService implements ICobroClienteService {
                     throw new Technicalexception("Se produjo un problema al borrar la lista de DeudasClientes");
                 }
             }
-            
-           
-            
-            
+
+            /******************************************************************************************/
+            //Lamar a Facturacion
+            /******************************************************************************************/
+
+            ResponseDto responseDto = generarFactura(entidadEntityOptional.get(),
+                    sucursalEntidadEntityOptional.get(),
+                    transaccionesCobroList,
+                    comprobanteEnUno,
+                    clienteDto.montoTotalCobrado);
+
+            //*****************************************************************************************
+
+            return responseDto.report;
         } catch (Exception e) {
             throw new Technicalexception(e.getMessage(), e.getCause());
         }
-        return transaccionesCobroList;
     }
+
+    public ResponseDto generarFactura(EntidadEntity entidadEntity,
+                                      SucursalEntidadEntity sucursalEntidadEntity,
+                                      List<TransaccionCobroEntity> transaccionCobroEntityList,
+                                      boolean comprobanteEnUno,
+                                      BigDecimal montoTotalCobrado) {
+
+        //Controlar la parametrización de las Modalidades de Facturacion
+        Optional<Long> modFactCompuOptional = iDominioDao.getDominioIdByDominioAndAbreviatura("modalidad_facturacion_id", "FC");
+        if(!modFactCompuOptional.isPresent()) {
+            throw new Technicalexception("No existe el dominio='modalidad_facturacion_id, abreviatura='FC' para la facturación computarizada");
+        }
+/*Habilitar cuando se incluya demás modalidades
+        Optional<Long> modFactCompuELOptional = iDominioDao.getDominioIdByDominioAndAbreviatura("modalidad_facturacion_id", "FCEL");
+        if(!modFactCompuOptional.isPresent()) {
+            throw new Technicalexception("No existe el dominio='modalidad_facturacion_id, abreviatura='FCEL' para la facturación computarizada en línea");
+        }
+
+        Optional<Long> modFactElectOptional = iDominioDao.getDominioIdByDominioAndAbreviatura("modalidad_facturacion_id", "FEEL");
+        if(!modFactCompuOptional.isPresent()) {
+            throw new Technicalexception("No existe el dominio='modalidad_facturacion_id, abreviatura='FEEL' para la facturación electrónica en línea");
+        }
+*/
+        //Facturación computarizada
+        if(entidadEntity.getModalidadFacturacion().getDominioId() == modFactCompuOptional.get()) {
+            ResponseDto responseDto = facturacionComputarizadaService.postFacturas(sucursalEntidadEntity, transaccionCobroEntityList, comprobanteEnUno, montoTotalCobrado);
+            if (!responseDto.status) {
+                throw new Technicalexception(responseDto.message);
+            }
+
+            List<FacturaDto> facturaDtoList = (List<FacturaDto>) responseDto.result;
+            iTransaccionCobroService.updateFacturas(transaccionCobroEntityList, comprobanteEnUno, facturaDtoList);
+
+            return responseDto;
+        } else { //Otra Modalidad
+            throw new Technicalexception("Solo esta habilitada la Modalidad de Facturación Computarizada, verifique configuración en la tabla Entidad.");
+        }
+    }
+
+
 }

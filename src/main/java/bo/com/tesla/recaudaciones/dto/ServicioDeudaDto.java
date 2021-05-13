@@ -10,13 +10,9 @@ public class ServicioDeudaDto {
 
     public Long key;
     public Long entidadId;
-    //public Long archivoId;
     public String codigoCliente;
     public String nombreCliente;
     public String nroDocumento;
-    //public String direccion;
-    //public String telefono;
-    //public String nit;
     public String tipoServicio;
     public String servicio;
     public String periodo;
@@ -25,11 +21,9 @@ public class ServicioDeudaDto {
     public Boolean editable;
     public Boolean editando;
     public List<DeudaClienteDto> deudaClienteDtos;
-    /*@JsonIgnore
-    public List<DeudaClienteEntity> deudaClientesTodoEntity;*/
+    //public String codigoActividadEconomica;
 
-    public ServicioDeudaDto(Long entidadId, /*Long archivoId,*/ String tipoServicio, String servicio, String periodo, BigDecimal subTotal) {
-        //this.archivoId = archivoId;
+    public ServicioDeudaDto(Long entidadId, String tipoServicio, String servicio, String periodo, BigDecimal subTotal) {
         this.entidadId = entidadId;
         this.tipoServicio = tipoServicio;
         this.servicio = servicio;

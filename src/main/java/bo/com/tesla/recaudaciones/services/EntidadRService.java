@@ -117,9 +117,9 @@ public class EntidadRService implements IEntidadRService {
             throw new Technicalexception("No existe Dominio tipo_entidad_id=" + entidadAdmDto.tipoEntidadId);
         }
 
-        Optional<DominioEntity> tipoFacturacionOptional = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(entidadAdmDto.tipoFacturacionId, "tipo_facturacion_id", "ACTIVO");
-        if (!tipoFacturacionOptional.isPresent()) {
-            throw new Technicalexception("No existe Dominio tipo_facturacion_id=" + entidadAdmDto.tipoFacturacionId);
+        Optional<DominioEntity> modalidadFacturacionOptional = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(entidadAdmDto.modalidadFacturacionId, "modalidad_facturacion_id", "ACTIVO");
+        if (!modalidadFacturacionOptional.isPresent()) {
+            throw new Technicalexception("No existe Dominio modalidad_facturacion_id=" + entidadAdmDto.modalidadFacturacionId);
         }
 
 
@@ -135,7 +135,7 @@ public class EntidadRService implements IEntidadRService {
         entidadEntity.setComprobanteEnUno(entidadAdmDto.comprobanteEnUno != null ? entidadAdmDto.comprobanteEnUno : false);
         entidadEntity.setEsCobradora(entidadAdmDto.esCobradora != null ? entidadAdmDto.esCobradora : false);
         entidadEntity.setEsPagadora(entidadAdmDto.esPagadora != null ? entidadAdmDto.esPagadora : false);
-        entidadEntity.setTipoFacturacion(tipoFacturacionOptional.get());
+        entidadEntity.setModalidadFacturacion(modalidadFacturacionOptional.get());
 
         entidadEntity = iEntidadRDao.save(entidadEntity);
         entidadAdmDto.entidadId = entidadEntity.getEntidadId();

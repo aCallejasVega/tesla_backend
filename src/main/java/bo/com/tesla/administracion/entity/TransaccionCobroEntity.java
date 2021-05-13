@@ -104,6 +104,15 @@ public class TransaccionCobroEntity implements Serializable {
     @ManyToOne(optional = false)
     private DominioEntity metodoCobro;
 
+    @JoinColumn(name = "modalidad_facturacion_id", referencedColumnName = "dominio_id")
+    @ManyToOne
+    private DominioEntity modalidadFacturacion;
+    @Column(name = "factura_id")
+    private Long facturaId;
+
+    @Column(name = "codigo_actividad_economica", length = 10)
+    private String codigoActividadEconomica;
+
     public TransaccionCobroEntity() {
     }
 
@@ -340,6 +349,30 @@ public class TransaccionCobroEntity implements Serializable {
 
     public void setMetodoCobro(DominioEntity metodoCobroId) {
         this.metodoCobro = metodoCobroId;
+    }
+
+    public DominioEntity getModalidadFacturacion() {
+        return modalidadFacturacion;
+    }
+
+    public void setModalidadFacturacion(DominioEntity modalidadFacturacion) {
+        this.modalidadFacturacion = modalidadFacturacion;
+    }
+
+    public Long getFacturaId() {
+        return facturaId;
+    }
+
+    public void setFacturaId(Long facturaId) {
+        this.facturaId = facturaId;
+    }
+
+    public String getCodigoActividadEconomica() {
+        return codigoActividadEconomica;
+    }
+
+    public void setCodigoActividadEconomica(String codigoActividadEconomica) {
+        this.codigoActividadEconomica = codigoActividadEconomica;
     }
 
     @Override

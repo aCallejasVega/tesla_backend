@@ -2,11 +2,7 @@ package bo.com.tesla.recaudaciones.controllers;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,11 +58,12 @@ public class CobroClienteController {
 	@Value("${tesla.path.files-report}")
 	private String filesReport;
 
+
     @PostMapping("/{metodoPagoId}")
     public ResponseEntity<?> postCobrarDeudas(@RequestBody ClienteDto clienteDto,
                                               @PathVariable Long metodoPagoId,
                                               Authentication authentication)  throws Exception {
-    	System.out.println("****************postCobrarDeudas*******************");
+        System.out.println("****************postCobrarDeudas*******************");
         Map<String, Object> response = new HashMap<>();
         if(clienteDto == null || clienteDto.nombreCliente == null || clienteDto.nroDocumento == null || clienteDto.codigoCliente == null) {
             response.put("status", false);
@@ -82,46 +79,18 @@ public class CobroClienteController {
         }
 
         SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
-        List<TransaccionCobroEntity> transaccionesCobroList=new ArrayList<>();
-        List<Long> transaccionesCobrosIds=new ArrayList<>();
-        Map<String, Object> parameters = new HashMap<>();
-        BigDecimal montoTotal=new BigDecimal(0);
-        
-        try {
-        	transaccionesCobroList=  iCobroClienteService.postCobrarDeudas(clienteDto, usuario.getUsuarioId(), metodoPagoId);
-            for (TransaccionCobroEntity transaccionCobroEntity : transaccionesCobroList) {
-            	transaccionesCobrosIds.add(transaccionCobroEntity.getTransaccionCobroId());
-            	montoTotal=montoTotal.add(transaccionCobroEntity.getTotalDeuda());
-            	
-            		
-			}
-            
-            List<DeudasCobradasFacturaDto> deudasCobradasList= historicoDeudaService.findDeudasCobrasForFactura(transaccionesCobrosIds);
-            
-            
-            parameters.put("logoTesla",filesReport+"/img/teslablanco.png" );
-            parameters.put("montoLiteral",Util.translate(montoTotal+"") ); 
-            parameters.put("montoTotal",montoTotal);
-            
-            File file = ResourceUtils.getFile(filesReport+"/report_jrxml/reportes/recaudador/factura.jrxml");
-			JasperReport jasper = JasperCompileManager.compileReport(file.getAbsolutePath());
-			JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(deudasCobradasList);
-			
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasper, parameters, ds);
 
-			byte[] report = Util.jasperExportFormat(jasperPrint, "pdf", filesReport);
-			
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentLength(report.length);
-			headers.setContentType(MediaType.parseMediaType("application/pdf" ));
-			headers.set("Content-Disposition", "inline; filename=report.pdf" );
-			headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-			return new ResponseEntity<byte[]>(report, headers, HttpStatus.OK);
-            
-           /* response.put("status", true);
-            response.put("message", "Se realizó el cobro de las deudas correctamente.");
-            response.put("result", true);
-            return new ResponseEntity<>(response, HttpStatus.OK);*/
+        try {
+            String facturaBase64 = iCobroClienteService.postCobrarDeudas(clienteDto, usuario.getUsuarioId(), metodoPagoId);
+
+            byte[] facturaByteArray = Base64.getDecoder().decode(facturaBase64);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentLength(facturaByteArray.length);
+            headers.setContentType(MediaType.parseMediaType("application/pdf" ));
+            headers.set("Content-Disposition", "inline; filename=report.pdf" );
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+            return new ResponseEntity<>(facturaByteArray, headers, HttpStatus.OK);
+
         } catch (Technicalexception e) {
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("RECAUDACION.COBROS");
@@ -133,12 +102,8 @@ public class CobroClienteController {
             logSistemaService.save(log);
             this.logger.error("This is error", e.getMessage());
             this.logger.error("This is cause", e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
-        	e.printStackTrace();
-            response.put("status", false);
-            response.put("result", null);
-            response.put("message", "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
-            response.put("code", log.getLogSistemaId()+"");
-            return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+
+            return new ResponseEntity<>("Error " + log.getLogSistemaId() + ": Ocurrio un error en el servidor, por favor intente la operacion mas tarde o consulte con su administrador." , HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
