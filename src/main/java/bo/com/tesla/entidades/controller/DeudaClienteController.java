@@ -67,6 +67,7 @@ import bo.com.tesla.useful.cross.Util;
 public class DeudaClienteController {
 	private Logger logger = LoggerFactory.getLogger(DeudaClienteController.class);
 
+	
 	@Autowired
 	private IArchivoService archivoService;
 
