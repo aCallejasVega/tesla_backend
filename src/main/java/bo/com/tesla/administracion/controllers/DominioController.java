@@ -64,7 +64,9 @@ public class DominioController {
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.DOMINIOS");
             log.setController("api/dominios/" + dominio);
-            log.setCausa(e.getCause() + "");
+            if(e.getCause()!=null) {
+				log.setCausa(e.getCause().getMessage());
+			}
             log.setMensaje(e.getMessage() + "");
             log.setUsuarioCreacion(usuario.getUsuarioId());
             log.setFechaCreacion(new Date());
@@ -102,7 +104,9 @@ public class DominioController {
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.DOMINIOS");
             log.setController("api/dominios/agrupadores/" + agrupadorId);
-            log.setCausa(e.getCause() + "");
+            if(e.getCause()!=null) {
+				log.setCausa(e.getCause().getMessage());
+			}
             log.setMensaje(e.getMessage() + "");
             log.setUsuarioCreacion(usuario.getUsuarioId());
             log.setFechaCreacion(new Date());

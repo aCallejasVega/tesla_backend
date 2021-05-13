@@ -36,14 +36,14 @@ public interface IDeudaClienteDao extends JpaRepository<DeudaClienteEntity, Long
 			+ "  or upper(d.periodo) LIKE  upper(concat('%', :paramBusqueda,'%')) "
 			+ "  or upper(d.nombreCliente) LIKE upper(concat('%', :paramBusqueda,'%')) "
 			+ "  or upper(d.nroDocumento) LIKE upper(concat('%', :paramBusqueda,'%')))"
-			+ " GROUP BY d.archivoId, d.servicio, d.tipoServicio, d.periodo, d.codigoCliente "
-			+ " ORDER BY d.codigoCliente, d.servicio, d.tipoServicio, d.periodo  ASC")
+			+ " GROUP BY d.archivoId, d.tipoServicio, d.servicio, d.periodo, d.codigoCliente "
+			+ " ORDER BY d.codigoCliente,  d.tipoServicio,d.servicio, d.periodo  ASC")
 	public Page<DeudasClienteDto> groupByDeudasClientes(@Param("archivoId") Long archivoId ,@Param("paramBusqueda") String paramBusqueda,Pageable pageable );
 	
 	
 	@Query("SELECT new  bo.com.tesla.entidades.dto.ConceptoDto(d.nroRegistro, d.nombreCliente, d.nroDocumento, d.direccion, "
 			+ "	d.telefono, d.nit, d.tipo, d.concepto, d.montoUnitario, d.cantidad, "
-			+ "	d.subTotal, d.datoExtras, d.tipoComprobante, d.periodoCabecera,d.esPostpago) "
+			+ "	d.subTotal, d.datoExtras, d.tipoComprobante, d.periodoCabecera,d.esPostpago, d.correoCliente) "
 			+ " FROM DeudaClienteEntity d "
 			+ " WHERE d.archivoId.archivoId= :archivoId "
 			+ " and d.servicio= :servicio "

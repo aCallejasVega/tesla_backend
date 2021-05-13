@@ -26,8 +26,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	public void configure(HttpSecurity http) throws Exception {
 		
 		http.headers().disable()
-		.authorizeRequests()
-		.antMatchers(HttpMethod.GET,"/api/ReportEntidad/findDeudasByArchivoIdAndEstado/{archivoId}/{export}").permitAll()
+		.authorizeRequests()		
 		.antMatchers("/", "/resources/**","/resources/public/**","/resources/templates/**","/resources/templates/css/**","/static/js/**","/static/css/**","/public/css/**")
         .permitAll()
         .antMatchers("/js/**").permitAll()

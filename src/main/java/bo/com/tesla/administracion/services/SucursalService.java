@@ -11,6 +11,7 @@ import bo.com.tesla.recaudaciones.dao.ISucursalDao;
 import bo.com.tesla.recaudaciones.services.IRecaudadoraService;
 import bo.com.tesla.useful.config.Technicalexception;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -146,5 +147,20 @@ public class SucursalService implements ISucursalService{
     public List<SucursalAdmDto> getListSucursalesByRecaudadora(Long recaudadorId) throws Technicalexception{
         return iSucursalDao.findLstSucursalesDtoByRecaudadorId(recaudadorId);
     }
+
+	@Override
+	public Optional<SucursalEntity> findById(Long sucursalId) {
+	
+		return this.iSucursalDao.findById(sucursalId);
+	}
+
+	@Override
+	public List<SucursalEntity> findByRecaudadoraId(Long recaudadorId) {
+		
+		return this.iSucursalDao.findByRecaudadoraId(recaudadorId);
+	}
+    
+    
+    
 
 }

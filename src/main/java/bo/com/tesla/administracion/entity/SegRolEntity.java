@@ -46,6 +46,10 @@ public class SegRolEntity implements Serializable {
     private String fechaModificacion;
     @Column(length = 15)
     private String estado;
+    @Column(length = 100)
+    private String modulo;
+    @Column(name = "sub_modulo", length = 100)
+    private String subModulo;
     @OneToMany(mappedBy = "rolId")
     private List<SegPrivilegioRolEntity> segPrivilegioRolEntityList;
     @OneToMany(mappedBy = "rolId")

@@ -22,9 +22,7 @@ public class RecaudadoraService implements IRecaudadoraService {
 			return this.recaudadorDao.findRecaudadorByUserId(usuarioId).get();	
 		}else {
 			return null;
-		}
-	
-		
+		}	
 	}
 
 	@Override

@@ -5,12 +5,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import bo.com.tesla.useful.config.BusinesException;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PBeneficiarioDto implements Serializable {
+public class PPagosDto implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -60,13 +61,26 @@ public class PBeneficiarioDto implements Serializable {
 
 	public String documentoTitular;
 
-	public List<PBeneficiarioDto> abonosClientesList;
+	public String codigoTransaccion;
+	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss", timezone = "America/La_Paz")
+	public Date fechaModificacion;
+
+	public String estado;	
+	public Date fechaInicio;
+	public Date fechaFin;	
+	public Long usuarioId;
+	public String parameter;
+	public String nombreServicioProducto;
+	public int paginacion;
+	
+
+	public List<PPagosDto> abonosClientesList;
 
 	/*
 	 * Contructor para pagos IPAbonoClienteDao.groupByAbonosClientes
 	 */
 
-	public PBeneficiarioDto(String codigoCliente, String periodo, BigDecimal totalPagar) {
+	public PPagosDto(String codigoCliente, String periodo, BigDecimal totalPagar) {
 		this.codigoCliente = codigoCliente;
 		this.totalPagar = totalPagar;
 		this.periodo = periodo;
@@ -76,7 +90,7 @@ public class PBeneficiarioDto implements Serializable {
 	 * Contructor para pagos IPAbonoClienteDao.findByCodigoAndArchivoId
 	 */
 
-	public PBeneficiarioDto(Long archivoId, int nroRegistro, String codigoCliente, String nombreCliente,
+	public PPagosDto(Long archivoId, int nroRegistro, String codigoCliente, String nombreCliente,
 			Date fechaNacimientoCliente, String genero, String nroDocumentoCliente, String extencionDocumento,
 			String tipoDocumentoId, int cantidad, BigDecimal montoUnitario, String periodo, String concepto) {
 
@@ -101,7 +115,7 @@ public class PBeneficiarioDto implements Serializable {
 	 * Contructor para pagos IPAbonoClienteDao.getAbonosParaPagar
 	 */
 
-	public PBeneficiarioDto(String codigoCliente, String nroDocumentoCliente, String nombreCliente) {
+	public PPagosDto(String codigoCliente, String nroDocumentoCliente, String nombreCliente) {
 		this.key = new Integer(codigoCliente);
 		this.codigoCliente = codigoCliente;
 		this.nroDocumentoCliente = nroDocumentoCliente;
@@ -112,7 +126,7 @@ public class PBeneficiarioDto implements Serializable {
 	 * Contructor para pagos IPAbonoClienteDao.getAbonosParaPagar
 	 */
 
-	public PBeneficiarioDto(Long archivoId, String codigoCliente, String nroDocumentoCliente, String nombreCliente) {
+	public PPagosDto(Long archivoId, String codigoCliente, String nroDocumentoCliente, String nombreCliente) {
 		this.key = new Integer(codigoCliente);
 		this.archivoId = archivoId;
 		this.codigoCliente = codigoCliente;
@@ -124,7 +138,7 @@ public class PBeneficiarioDto implements Serializable {
 	 * Contructor para pagos IPAbonoClienteDao.getBeneficiario
 	 */
 
-	public PBeneficiarioDto(String codigoCliente, String nroDocumentoCliente, String nombreCliente, String periodo,
+	public PPagosDto(String codigoCliente, String nroDocumentoCliente, String nombreCliente, String periodo,
 			BigDecimal totalPagar) {
 		this.key = new Integer(codigoCliente);
 		this.codigoCliente = codigoCliente;
@@ -138,7 +152,7 @@ public class PBeneficiarioDto implements Serializable {
 	 * Contructor para pagos IPAbonoClienteDao.getBeneficiarioAndMontoToal
 	 */
 
-	public PBeneficiarioDto(String codigoCliente, String nroDocumentoCliente, String nombreCliente,
+	public PPagosDto(String codigoCliente, String nroDocumentoCliente, String nombreCliente,
 			BigDecimal totalPagar) {
 		this.key = new Integer(codigoCliente);
 		this.codigoCliente = codigoCliente;
@@ -148,7 +162,27 @@ public class PBeneficiarioDto implements Serializable {
 		this.totalPagar = totalPagar;
 	}
 
-	public PBeneficiarioDto() {
+	/*
+	 * findTransaccionsByUsuario
+	 * */
+	public PPagosDto(Long key,String codigoTransaccion, Date fechaModificacion, String estado, String codigoCliente,
+			String nombreCliente, String nroDocumentoCliente, String extencionDocumentoId,String nombreServicioProducto, BigDecimal totalPagar) {
+		
+		this.key= key.intValue();
+		
+		this.codigoTransaccion = codigoTransaccion;
+		this.fechaModificacion = fechaModificacion;
+		this.estado = estado;
+		this.codigoCliente = codigoCliente;
+		this.nombreCliente = nombreCliente;
+		this.nroDocumentoCliente = nroDocumentoCliente;
+		this.extencionDocumento = extencionDocumentoId;
+		this.totalPagar = totalPagar;
+		this.nombreServicioProducto=nombreServicioProducto;
+		
+		}
+
+	public PPagosDto() {
 
 	}
 
@@ -352,11 +386,11 @@ public class PBeneficiarioDto implements Serializable {
 		this.subTotal = subTotal;
 	}
 
-	public List<PBeneficiarioDto> getAbonosClientesList() {
+	public List<PPagosDto> getAbonosClientesList() {
 		return abonosClientesList;
 	}
 
-	public void setAbonosClientesList(List<PBeneficiarioDto> abonosClientesList) {
+	public void setAbonosClientesList(List<PPagosDto> abonosClientesList) {
 		this.abonosClientesList = abonosClientesList;
 	}
 
@@ -423,5 +457,86 @@ public class PBeneficiarioDto implements Serializable {
 	public void setDocumentoTitular(String documentoTitular) {
 		this.documentoTitular = documentoTitular;
 	}
+
+	public String getCodigoTransaccion() {
+		return codigoTransaccion;
+	}
+
+	public void setCodigoTransaccion(String codigoTransaccion) {
+		this.codigoTransaccion = codigoTransaccion;
+	}
+
+	public Date getFechaModificacion() {
+		return fechaModificacion;
+	}
+
+	public void setFechaModificacion(Date fechaModificacion) {
+		this.fechaModificacion = fechaModificacion;
+	}
+
+	public String getEstado() {
+		return estado;
+	}
+
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
+
+	public Date getFechaInicio() {
+		return fechaInicio;
+	}
+
+	public void setFechaInicio(Date fechaInicio) {
+		this.fechaInicio = fechaInicio;
+	}
+
+	public Date getFechaFin() {
+		return fechaFin;
+	}
+
+	public void setFechaFin(Date fechaFin) {
+		this.fechaFin = fechaFin;
+	}
+
+	public Long getUsuarioId() {
+		return usuarioId;
+	}
+
+	public void setUsuarioId(Long usuarioId) {
+		this.usuarioId = usuarioId;
+	}
+
+	public String getParameter() {
+		return parameter;
+	}
+
+	public void setParameter(String parameter) {
+		this.parameter = parameter;
+	}
+
+	public String getNombreServicioProducto() {
+		return nombreServicioProducto;
+	}
+
+	public void setNombreServicioProducto(String nombreServicioProducto) {
+		this.nombreServicioProducto = nombreServicioProducto;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public int getPaginacion() {
+		return paginacion;
+	}
+
+	public void setPaginacion(int paginacion) {
+		this.paginacion = paginacion;
+	}
+	
+	
+	
+	
+	
 
 }

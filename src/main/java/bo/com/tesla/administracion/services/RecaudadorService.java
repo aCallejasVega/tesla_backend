@@ -156,4 +156,10 @@ public class RecaudadorService implements IRecaudadorService{
         return iRecaudadorDao.findRecaudadorDtoAll();
     }
 
+	@Override
+	public List<RecaudadorEntity> findAll() {
+		
+		return this.iRecaudadorDao.findAll();
+	}
+
 }

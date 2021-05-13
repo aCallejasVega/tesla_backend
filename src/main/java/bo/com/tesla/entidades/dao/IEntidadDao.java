@@ -1,6 +1,7 @@
 package bo.com.tesla.entidades.dao;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -33,5 +34,15 @@ public interface IEntidadDao extends JpaRepository<EntidadEntity, Long>  {
 			+ " from EntidadEntity e "
 			+ " Where e.estado='ACTIVO'")
 	public List<EntidadEntity> findAllEntidades();
+	
+	@Query("select e "
+			+ " from EntidadEntity e "
+			+ " Where e.estado='ACTIVO' "
+			+ " and e.entidadId= :entidadId")
+	public Optional<EntidadEntity> findEntidadById(@Param("entidadId") Long entidadId);
+	
+	
+	
+	
 	
 }

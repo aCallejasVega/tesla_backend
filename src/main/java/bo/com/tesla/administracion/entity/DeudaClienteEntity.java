@@ -117,9 +117,18 @@ public class DeudaClienteEntity implements Serializable {
 
 	@Column(name = "es_postpago")
 	private Boolean esPostpago;
-
-	@Column(name = "codigo_actividad_economica", length = 10)
+	
+	
+	@Basic(optional = false)
+	@Column(name = "codigo_actividad_economica", nullable = false, length = 10)	
 	private String codigoActividadEconomica;
+	
+	
+
+	@Column(name="correo_cliente",length = 50)
+	private String correoCliente;
+
+
 
 	public DeudaClienteEntity() {
 	}
@@ -127,6 +136,8 @@ public class DeudaClienteEntity implements Serializable {
 	public DeudaClienteEntity(Long deudaClienteId) {
 		this.deudaClienteId = deudaClienteId;
 	}
+	
+	
 
 	public DeudaClienteEntity(Long deudaClienteId, int nroRegistro, String codigoCliente, String tipoServicio,
 			String periodo, Character tipo, String concepto, BigDecimal cantidad) {
@@ -148,7 +159,7 @@ public class DeudaClienteEntity implements Serializable {
 		return esPostpago;
 	}
 
-	public void setEsPostpago(Boolean esPostpago)throws Exception {
+	public void setEsPostpago(Boolean esPostpago)throws BusinesException {
 		
 		if (/*esPostpago.toString().isBlank() ||*/ esPostpago.toString().isEmpty()) {
 			this.esPostpago = null;
@@ -184,7 +195,7 @@ public class DeudaClienteEntity implements Serializable {
 		return nroRegistro;
 	}
 
-	public void setNroRegistro(Integer nroRegistro) throws Exception {
+	public void setNroRegistro(Integer nroRegistro) throws BusinesException {
 		if (/*nroRegistro.toString().isBlank() ||*/ nroRegistro.toString().isEmpty()) {
 			this.nroRegistro = null;
 			throw new BusinesException(
@@ -200,7 +211,7 @@ public class DeudaClienteEntity implements Serializable {
 		return codigoCliente;
 	}
 
-	public void setCodigoCliente(String codigoCliente) throws Exception {
+	public void setCodigoCliente(String codigoCliente) throws BusinesException {
 		if (/*codigoCliente.isBlank() ||*/ codigoCliente.isEmpty()) {
 			this.codigoCliente = null;
 			throw new BusinesException(
@@ -257,7 +268,7 @@ public class DeudaClienteEntity implements Serializable {
 		return servicio;
 	}
 
-	public void setServicio(String servicio) throws Exception {
+	public void setServicio(String servicio) throws BusinesException {
 		if (/*servicio.isBlank() || */servicio.isEmpty()) {
 			this.servicio = null;
 			throw new BusinesException(
@@ -274,7 +285,7 @@ public class DeudaClienteEntity implements Serializable {
 		return tipoServicio;
 	}
 
-	public void setTipoServicio(String tipoServicio) throws Exception {
+	public void setTipoServicio(String tipoServicio) throws BusinesException {
 		if (/*tipoServicio.isBlank() ||*/ tipoServicio.isEmpty()) {
 			this.tipoServicio = null;
 			throw new BusinesException(
@@ -291,7 +302,7 @@ public class DeudaClienteEntity implements Serializable {
 		return periodo;
 	}
 
-	public void setPeriodo(String periodo) throws Exception {
+	public void setPeriodo(String periodo) throws BusinesException {
 		if (/*periodo.isBlank() ||*/ periodo.isEmpty()) {
 			this.periodo = null;
 			throw new BusinesException(
@@ -308,15 +319,14 @@ public class DeudaClienteEntity implements Serializable {
 		return tipo;
 	}
 
-	public void setTipo(Character tipo) throws Exception {
-		if (/*tipo.toString().isBlank() ||*/ tipo.toString().isEmpty()) {
+	public void setTipo(Character tipo) throws BusinesException {
+		if (tipo.toString().isEmpty() || tipo==null) {
 			this.tipo = null;
 			throw new BusinesException(
-					"El campo Tipo Secciòn no puede ser nulo");
+					"El campo Tipo Secciòn no puede ser nulo");			
 			
-			//throw new Exception("El campo Tipo Secciòn no puede ser nulo");
 		} else {
-			this.tipo = tipo;
+			this.tipo = tipo.toString().toUpperCase().charAt(0);
 		}
 
 	}
@@ -325,15 +335,16 @@ public class DeudaClienteEntity implements Serializable {
 		return concepto;
 	}
 
-	public void setConcepto(String concepto) throws Exception {
-		if (/*concepto.isBlank() ||*/ concepto.isEmpty()) {
+	public void setConcepto(String concepto) throws BusinesException {
+		
+		if ( concepto.isEmpty() || concepto==null) {
+			
 			this.concepto = null;
 			throw new BusinesException(
-					"El campo conceto no puede ser nulo");
-			
-			//throw new Exception("El campo conceto no puede ser nulo");
+					"El campo conceto no puede ser nulo");		
+		
 
-		} else {
+		} else {		
 			this.concepto = concepto;
 		}
 
@@ -343,7 +354,7 @@ public class DeudaClienteEntity implements Serializable {
 		return cantidad;
 	}
 
-	public void setCantidad(BigDecimal cantidad) throws Exception {
+	public void setCantidad(BigDecimal cantidad) throws BusinesException {
 		if (/*cantidad.toString().isBlank() || */cantidad.toString().isEmpty()) {
 			this.cantidad = null;			
 			throw new BusinesException("El campo cantidad no puede ser nulo");
@@ -357,10 +368,10 @@ public class DeudaClienteEntity implements Serializable {
 		return montoUnitario;
 	}
 
-	public void setMontoUnitario(BigDecimal montoUnitario) throws Exception {
-		if (/*montoUnitario.toString().isBlank() ||*/ montoUnitario.toString().isEmpty()) {
+	public void setMontoUnitario(BigDecimal montoUnitario) throws BusinesException {
+		if ( montoUnitario.toString().isEmpty()) {
 			this.montoUnitario = null;
-			throw new Exception("El campo monto unitario no puede ser nulo");
+			throw new BusinesException("El campo monto unitario no puede ser nulo");
 		} else {
 			this.montoUnitario = montoUnitario;
 		}
@@ -371,8 +382,8 @@ public class DeudaClienteEntity implements Serializable {
 		return subTotal;
 	}
 
-	public void setSubTotal(BigDecimal subTotal) throws Exception {
-		if (/*subTotal.toString().isBlank() || */subTotal.toString().isEmpty()) {
+	public void setSubTotal(BigDecimal subTotal) throws BusinesException {
+		if (subTotal==null || subTotal.toString().isEmpty()) {
 			this.subTotal = null;
 			throw new BusinesException("El campo sub-total no puede ser nulo");
 		} else {
@@ -393,8 +404,8 @@ public class DeudaClienteEntity implements Serializable {
 		return tipoComprobante;
 	}
 
-	public void setTipoComprobante(Boolean tipoComprobante) throws Exception {
-		if (/*tipoComprobante.toString().isBlank() || */subTotal.toString().isEmpty()) {
+	public void setTipoComprobante(Boolean tipoComprobante) throws BusinesException {
+		if (tipoComprobante.toString().isEmpty()) {
 			this.tipoComprobante = null;
 			throw new BusinesException("El campo Tipo Comprobante no puede ser nulo");
 		} else {
@@ -413,17 +424,39 @@ public class DeudaClienteEntity implements Serializable {
 		this.periodoCabecera = periodoCabecera;
 	}
 
-	public String getCodigoActividadEconomica() {
-		return codigoActividadEconomica;
-	}
-
-	public void setCodigoActividadEconomica(String codigoActividadEconomica) {
-		this.codigoActividadEconomica = codigoActividadEconomica;
-	}
+	
 
 	@Override
 	public String toString() {
 		return "bo.com.tesla.administracion.entity.DeudaClienteEntity[ deudaClienteId=" + deudaClienteId + " ]";
 	}
+
+	public String getCodigoActividadEconomica() {
+		return codigoActividadEconomica;
+	}
+
+	public void setCodigoActividadEconomica(String codigoActividadEconomica) throws BusinesException {
+		if ( codigoActividadEconomica.isEmpty() || codigoActividadEconomica==null ) {
+			this.codigoActividadEconomica = null;
+			throw new BusinesException(
+					"El campo 'Código Actividad Economica' no puede ser nulo");			
+		
+		} else {
+			this.codigoActividadEconomica = codigoActividadEconomica;
+		}
+		
+	}
+
+	public String getCorreoCliente() {
+		return correoCliente;
+	}
+
+	public void setCorreoCliente(String correoCliente) {
+		this.correoCliente = correoCliente;
+	}
+	
+	
+	
+	
 
 }

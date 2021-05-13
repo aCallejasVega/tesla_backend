@@ -11,5 +11,7 @@ public interface IDominioService {
     public List<DominioEntity> findByDominio(String dominio);
 
     public List<DominioDto> getLstDominiosByAgrupador(Long agrupadorId);
+    
+    public DominioEntity findById(Long dominioId);
 
 }

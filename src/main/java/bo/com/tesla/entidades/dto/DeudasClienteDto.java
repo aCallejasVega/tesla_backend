@@ -4,12 +4,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.validation.constraints.Digits;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
-import bo.com.tesla.recaudaciones.dto.RecaudadoraDto;
 
 @JsonInclude(JsonInclude.Include.NON_NULL) 
 public class DeudasClienteDto {
@@ -28,12 +24,20 @@ public class DeudasClienteDto {
 	//@Digits(integer=17, fraction=2)
 	public BigDecimal total;
 	public Boolean esPostpago;
+	public String codigoActividadEconomica;
 	public String cajero;
 	@JsonFormat( pattern = "dd/MM/yyyy",timezone="America/La_Paz")
 	public Date fechaCreacion;
 	public String estado;
 	public String nombreRecaudadora;
 	public BigDecimal comision;
+	public BigDecimal cantidad;
+	public BigDecimal montoUnitario;
+	public Integer nroRegistro;
+	public BigDecimal subTotal;
+	public Character tipo;
+	public Boolean tipoComprobante;
+	public String correoCliente;
 	
 
 	public List<ConceptoDto> conceptoLisit;
@@ -314,6 +318,62 @@ public class DeudasClienteDto {
 
 	public void setComision(BigDecimal comision) {
 		this.comision = comision;
+	}
+
+	public BigDecimal getCantidad() {
+		return cantidad;
+	}
+
+	public void setCantidad(BigDecimal cantidad) {
+		this.cantidad = cantidad;
+	}
+
+	public String getCodigoActividadEconomica() {
+		return codigoActividadEconomica;
+	}
+
+	public void setCodigoActividadEconomica(String codigoActividadEconomica) {
+		this.codigoActividadEconomica = codigoActividadEconomica;
+	}
+
+	public BigDecimal getMontoUnitario() {
+		return montoUnitario;
+	}
+
+	public void setMontoUnitario(BigDecimal montoUnitario) {
+		this.montoUnitario = montoUnitario;
+	}
+
+	public Integer getNroRegistro() {
+		return nroRegistro;
+	}
+
+	public void setNroRegistro(Integer nroRegistro) {
+		this.nroRegistro = nroRegistro;
+	}
+
+	public BigDecimal getSubTotal() {
+		return subTotal;
+	}
+
+	public void setSubTotal(BigDecimal subTotal) {
+		this.subTotal = subTotal;
+	}
+
+	public Character getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(Character tipo) {
+		this.tipo = tipo;
+	}
+
+	public Boolean getTipoComprobante() {
+		return tipoComprobante;
+	}
+
+	public void setTipoComprobante(Boolean tipoComprobante) {
+		this.tipoComprobante = tipoComprobante;
 	}
 	
 	

@@ -120,7 +120,15 @@ public class HistoricoDeudaEntity implements Serializable {
     
     @Column(nullable = false, length = 15)
     private String estado;
+    
+    @Basic(optional = false)
+	@Column(name = "codigo_actividad_economica", nullable = false, length = 10)	
+	private String codigoActividadEconomica;
 
+
+	@Column(name="correo_cliente",length = 50)
+	private String correoCliente;
+	
     public HistoricoDeudaEntity() {
     }
 
@@ -366,7 +374,25 @@ public class HistoricoDeudaEntity implements Serializable {
         return hash;
     }
 
-    @Override
+	
+		
+    public String getCorreoCliente() {
+		return correoCliente;
+	}
+
+	public void setCorreoCliente(String correoCliente) {
+		this.correoCliente = correoCliente;
+	}
+
+	public String getCodigoActividadEconomica() {
+		return codigoActividadEconomica;
+	}
+
+	public void setCodigoActividadEconomica(String codigoActividadEconomica) {
+		this.codigoActividadEconomica = codigoActividadEconomica;
+	}
+
+	@Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof HistoricoDeudaEntity)) {

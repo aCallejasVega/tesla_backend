@@ -24,8 +24,8 @@ public class TeslaApplication implements CommandLineRunner {
 		String union = "union";
 		String recaudador = "recaudador";
 		String entidad = "entidad";
-		System.out.println("union  "+passwordEncoder.encode(union));
-		System.out.println("recaudador  "+passwordEncoder.encode(recaudador));
+		System.out.println("ACallejas42  "+passwordEncoder.encode("ACallejas42"));
+		System.out.println("ecamargo  "+passwordEncoder.encode("ecamargo"));
 		System.out.println("entidad  "+passwordEncoder.encode(entidad));
 
 	}

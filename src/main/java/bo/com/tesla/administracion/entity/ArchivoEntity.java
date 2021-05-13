@@ -47,7 +47,7 @@ public class ArchivoEntity implements Serializable {
     private Long archivoId;
     @Column(length = 150)
     private String nombre;
-    @Column(length = 150)
+    @Column(length = 300)
     private String path;
     @Column(name = "inicio_cargado")
     @Temporal(TemporalType.TIMESTAMP)

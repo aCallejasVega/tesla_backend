@@ -18,6 +18,9 @@ public class BusquedaReportesRecaudacionDto {
 	public List<String> entidadArray=new ArrayList<>();
 	public List<String> estadoArray=new ArrayList<>();
 	
+	public Date fechaSeleccionada;
+	public Long idEntidad;
+	
 	
 	
 	public BusquedaReportesRecaudacionDto() {

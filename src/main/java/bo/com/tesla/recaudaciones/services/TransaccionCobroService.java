@@ -91,6 +91,14 @@ public class TransaccionCobroService implements ITransaccionCobroService {
         return  transaccionCobroEntity;
     }
 
+
+	@Override
+	public List<TransaccionCobroEntity> findDeudasCobradasByUsuarioCreacionForGrid(Long usuarioCreacion,
+			Date fechaSeleccionada,Long entidadId) {
+	
+		return this.iTransaccionCobroDao.findDeudasCobradasByUsuarioCreacionForGrid(usuarioCreacion, fechaSeleccionada, entidadId);
+	}
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Technicalexception.class)
     public Boolean anularTransaccion(Long entidadId,
@@ -165,5 +173,15 @@ public class TransaccionCobroService implements ITransaccionCobroService {
                 .collect(Collectors.toList());
         return codActEcoList.stream().distinct().collect(Collectors.toList());
     }
+
+	@Override
+	public TransaccionCobroEntity loadTransaccionCobro(ServicioDeudaDto servicioDeudaDto, EntidadEntity entidadEntity,
+			Long usuarioId, String nombreCientePago, String nroDocumentoClientePago,
+			EntidadComisionEntity entidadComisionEntity, RecaudadorEntity recaudadorEntity,
+			RecaudadorComisionEntity recaudadorComisionEntity, ArchivoEntity archivoEntity, DominioEntity metodoCobro) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

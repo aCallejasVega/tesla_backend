@@ -36,7 +36,6 @@ import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegUsuarioService;
 import bo.com.tesla.useful.config.Technicalexception;
 
-
 @RestController
 @RequestMapping("api/historicoDeuda")
 public class HistoricoDeudaController {
@@ -64,8 +63,7 @@ public class HistoricoDeudaController {
 			@PathVariable("paginacion") int paginacion,
 			@PathVariable(name = "fechaInicio", required = false) Optional<Date> fechaInicio,
 			@PathVariable(name = "fechaFin", required = false) Optional<Date> fechaFin,
-			@PathVariable(name = "estado", required = false) Optional<String> estado, Authentication authentication)
-			throws Exception {
+			@PathVariable(name = "estado", required = false) Optional<String> estado, Authentication authentication) {
 		System.out.println("Ingreso a controlador " + paginacion);
 		Map<String, Object> response = new HashMap<>();
 		Page<ArchivoDto> archivosList;
@@ -101,7 +99,9 @@ public class HistoricoDeudaController {
 			log.setModulo("ENTIDADES");
 			log.setController("api/historicoDeuda/getOperaciones/" + entidad.getEntidadId() + "/" + paginacion + "/"
 					+ dateFechaIni + "/" + dateFechaFin + "");
-			log.setCausa(e.getCause().getMessage() + "");
+			if(e.getCause()!=null) {
+				log.setCausa(e.getCause().getMessage());
+			}
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());
@@ -120,7 +120,7 @@ public class HistoricoDeudaController {
 	public ResponseEntity<?> groupByDeudasClientes(@PathVariable("archivoId") Long archivoId,
 			@PathVariable("paginacion") int paginacion,
 			@PathVariable(name = "paramBusqueda", required = false) Optional<String> paramBusqueda,
-			Authentication authentication) throws Exception {
+			Authentication authentication) {
 		Map<String, Object> response = new HashMap<>();
 		Page<DeudasClienteDto> historicoDeudaList;
 		String newParamBusqueda = "";
@@ -149,7 +149,9 @@ public class HistoricoDeudaController {
 			log.setModulo("ENTIDADES");
 			log.setController("api/historicoDeuda/groupByDeudasClientes/" + archivoId + "/" + paginacion + "/"
 					+ newParamBusqueda + "");
-			log.setCausa(e.getCause().getMessage() + "");
+			if(e.getCause()!=null) {
+				log.setCausa(e.getCause().getMessage());
+			}
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());
@@ -164,7 +166,7 @@ public class HistoricoDeudaController {
 	}
 
 	@GetMapping(path = "/findEstadoHistorico")
-	public ResponseEntity<?> findEstadoHistorico(Authentication authentication) throws Exception {
+	public ResponseEntity<?> findEstadoHistorico(Authentication authentication)  {
 
 		Map<String, Object> response = new HashMap<>();
 		List<EstadoTablasDto> estadosList = new ArrayList<>();
@@ -191,24 +193,23 @@ public class HistoricoDeudaController {
 	}
 
 	@GetMapping("/getCsv/{archivoId}")
-	public ResponseEntity<?> getCsv(@PathVariable("archivoId") Long archivoId,Authentication authentication	) {
-		
-		
+	public ResponseEntity<?> getCsv(@PathVariable("archivoId") Long archivoId, Authentication authentication) {
+
 		final InputStreamResource resource = new InputStreamResource(historicoDeudaService.load(archivoId));
-		
+
 		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "archivo.csv")
 				.contentType(MediaType.parseMediaType("text/csv")).body(resource);
 	}
-	
+
 	@GetMapping(path = "/findEstadoHistoricoPagos")
-	public ResponseEntity<?> findEstadoHistoricoPagos(Authentication authentication) throws Exception {
+	public ResponseEntity<?> findEstadoHistoricoPagos(Authentication authentication) {
 
 		Map<String, Object> response = new HashMap<>();
 		List<EstadoTablasDto> estadosList = new ArrayList<>();
 		List<SelectDto> selectDtoList = new ArrayList<>();
 
 		try {
-			
+
 			estadosList = this.historicoDeudaService.findEstadoHistoricoPagos();
 			if (estadosList.isEmpty()) {
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
@@ -227,6 +228,5 @@ public class HistoricoDeudaController {
 		}
 
 	}
-
 
 }

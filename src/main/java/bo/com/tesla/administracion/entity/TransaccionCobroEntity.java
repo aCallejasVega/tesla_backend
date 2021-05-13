@@ -40,7 +40,7 @@ public class TransaccionCobroEntity implements Serializable {
     private String codigoCliente;
     @Basic(optional = false)
     @Column(name = "usuario_creacion", nullable = false)
-    private long usuarioCreacion;
+    private Long usuarioCreacion;
     @Basic(optional = false)
     @Column(name = "fecha_creacion", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

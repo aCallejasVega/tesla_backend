@@ -25,6 +25,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
@@ -58,29 +60,39 @@ public class PersonaEntity implements Serializable {
     @Column(name = "nro_documento", nullable = false, length = 10)
     private String nroDocumento;
     @Column(name = "usuario_creacion")
-    private BigInteger usuarioCreacion;
+    private Long usuarioCreacion;
     @Column(name = "fecha_creacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
-    @Column(name = "usuario_modificacion", length = 255)
-    private String usuarioModificacion;
+    @Column(name = "usuario_modificacion")
+    private Long usuarioModificacion;
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
+    @Column(name = "admin")
+    private Boolean admin;
     @Column(length = 15)
     private String estado;
     @Column(length = 15)
-    private String transaccion;  
+    private String transaccion; 
+    @JsonIgnore
     @OneToMany(mappedBy = "personaId")
     private List<EmpleadoEntity> empleadoEntityList;
-    @JoinColumn(name = "ciudad_id", referencedColumnName = "dominio_id", nullable = false)
+    @JsonIgnore
+    @JoinColumn(name = "ciudad_id", referencedColumnName = "dominio_id")
     @ManyToOne(optional = false)
     private DominioEntity ciudadId;
-    @JoinColumn(name = "tipo_documento_id", referencedColumnName = "dominio_id", nullable = false)
+    @JsonIgnore
+    @JoinColumn(name = "tipo_documento_id", referencedColumnName = "dominio_id")
     @ManyToOne(optional = false)
     private DominioEntity tipoDocumentoId;
+    @JsonIgnore
     @OneToMany(mappedBy = "personaId")
     private List<SegUsuarioEntity> segUsuarioEntityList;
+    @JsonIgnore
+    @JoinColumn(name = "extension_documento_id", referencedColumnName = "dominio_id")
+    @ManyToOne
+    private DominioEntity extensionDocumentoId;
 
     public PersonaEntity() {
     }
@@ -160,11 +172,11 @@ public class PersonaEntity implements Serializable {
         this.nroDocumento = nroDocumento;
     }
 
-    public BigInteger getUsuarioCreacion() {
+    public Long getUsuarioCreacion() {
         return usuarioCreacion;
     }
 
-    public void setUsuarioCreacion(BigInteger usuarioCreacion) {
+    public void setUsuarioCreacion(Long usuarioCreacion) {
         this.usuarioCreacion = usuarioCreacion;
     }
 
@@ -176,11 +188,11 @@ public class PersonaEntity implements Serializable {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public String getUsuarioModificacion() {
+    public Long getUsuarioModificacion() {
         return usuarioModificacion;
     }
 
-    public void setUsuarioModificacion(String usuarioModificacion) {
+    public void setUsuarioModificacion(Long usuarioModificacion) {
         this.usuarioModificacion = usuarioModificacion;
     }
 
@@ -240,7 +252,25 @@ public class PersonaEntity implements Serializable {
         this.segUsuarioEntityList = segUsuarioEntityList;
     }
     
-    
+        
+	public DominioEntity getExtensionDocumentoId() {
+		return extensionDocumentoId;
+	}
+
+	public void setExtensionDocumentoId(DominioEntity extensionDocumentoId) {
+		this.extensionDocumentoId = extensionDocumentoId;
+	}
+	
+	
+
+	public Boolean getAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(Boolean admin) {
+		this.admin = admin;
+	}
+
 	@Override
     public int hashCode() {
         int hash = 0;

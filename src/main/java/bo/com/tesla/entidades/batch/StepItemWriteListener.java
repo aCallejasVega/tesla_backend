@@ -10,14 +10,11 @@ import bo.com.tesla.entidades.services.IDeudaClienteService;
 
 public class StepItemWriteListener implements ItemWriteListener<DeudaClienteEntity>{
 	
-	private Long archivoId;
 	
-	@Autowired
-	private IDeudaClienteService deudaClienteService;
 	
 
 	public StepItemWriteListener(Long archivoId) {	
-		this.archivoId = archivoId;
+	
 	}
 
 	@Override
@@ -28,7 +25,7 @@ public class StepItemWriteListener implements ItemWriteListener<DeudaClienteEnti
 
 	@Override
 	public void afterWrite(List<? extends DeudaClienteEntity> items) {
-		// TODO Auto-generated method stub
+
 		
 	}
 

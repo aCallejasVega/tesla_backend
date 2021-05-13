@@ -9,6 +9,8 @@ public interface ISegPrivilegiosService {
 	
 	public List<SegPrivilegioEntity> getMenuByUserId(Long usuarioId);
 	
+	public List<SegPrivilegioEntity> getSubMenuByUserId(Long usuarioId);
+	
 	public  List<OperacionesDto> getOperaciones(String login, String tabla);
 
 	public List<OperacionesDto> getOperacionesByEstadoInicial(String login, String tabla, String estadoInicial);

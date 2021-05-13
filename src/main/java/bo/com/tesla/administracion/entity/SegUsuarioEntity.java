@@ -46,20 +46,14 @@ public class SegUsuarioEntity implements Serializable {
     private String login;
     @Basic(optional = false)
     @Column(nullable = false, length = 255)
-    private String password;
-    @Basic(optional = false)
-    @Column(name = "fecha_inicio", nullable = false, length = 255)
-    private String fechaInicio;
-    @Basic(optional = false)
-    @Column(name = "fecha_fin", nullable = false, length = 255)
-    private String fechaFin;    
+    private String password;       
     @Column(name = "usuario_creacion")
-    private BigInteger usuarioCreacion;    
+    private Long usuarioCreacion;    
     @Column(name = "fecha_creacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
     @Column(name = "usuario_modificacion")
-    private BigInteger usuarioModificacion;
+    private Long usuarioModificacion;
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
@@ -82,12 +76,11 @@ public class SegUsuarioEntity implements Serializable {
         this.usuarioId = usuarioId;
     }
 
-    public SegUsuarioEntity(Long usuarioId, String login, String password, String fechaInicio, String fechaFin, BigInteger usuarioCreacion, Date fechaCreacion, String estado) {
+    public SegUsuarioEntity(Long usuarioId, String login, String password,  Long usuarioCreacion, Date fechaCreacion, String estado) {
         this.usuarioId = usuarioId;
         this.login = login;
         this.password = password;
-        this.fechaInicio = fechaInicio;
-        this.fechaFin = fechaFin;
+       
         this.usuarioCreacion = usuarioCreacion;
         this.fechaCreacion = fechaCreacion;
         this.estado = estado;
@@ -117,27 +110,13 @@ public class SegUsuarioEntity implements Serializable {
         this.password = password;
     }
 
-    public String getFechaInicio() {
-        return fechaInicio;
-    }
+  
 
-    public void setFechaInicio(String fechaInicio) {
-        this.fechaInicio = fechaInicio;
-    }
-
-    public String getFechaFin() {
-        return fechaFin;
-    }
-
-    public void setFechaFin(String fechaFin) {
-        this.fechaFin = fechaFin;
-    }
-
-    public BigInteger getUsuarioCreacion() {
+    public Long getUsuarioCreacion() {
         return usuarioCreacion;
     }
 
-    public void setUsuarioCreacion(BigInteger usuarioCreacion) {
+    public void setUsuarioCreacion(Long usuarioCreacion) {
         this.usuarioCreacion = usuarioCreacion;
     }
 
@@ -149,11 +128,11 @@ public class SegUsuarioEntity implements Serializable {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public BigInteger getUsuarioModificacion() {
+    public Long getUsuarioModificacion() {
         return usuarioModificacion;
     }
 
-    public void setUsuarioModificacion(BigInteger usuarioModificacion) {
+    public void setUsuarioModificacion(Long usuarioModificacion) {
         this.usuarioModificacion = usuarioModificacion;
     }
 

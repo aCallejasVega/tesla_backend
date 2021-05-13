@@ -38,7 +38,7 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
 
     @Query("select new  bo.com.tesla.recaudaciones.dto.DeudaClienteDto( "
             + " d.deudaClienteId, d.archivoId.archivoId, d.cantidad, d.concepto, d.montoUnitario, d.subTotal, "
-            + " d.tipoComprobante, d.periodoCabecera, d.codigoCliente, d.nombreCliente, d.nroDocumento, d.esPostpago, CASE WHEN d.esPostpago = false AND d.subTotal = 0 AND d.tipo = 'D' THEN true ELSE false END) "
+            + " d.tipoComprobante, d.periodoCabecera, d.codigoCliente,d.nombreCliente,d.nroDocumento,  d.esPostpago, CASE WHEN d.esPostpago = false AND d.subTotal = 0 AND d.tipo = 'D' THEN true ELSE false END) "
             + " from DeudaClienteEntity d "
             + " where d.archivoId.entidadId.entidadId = :entidadId "
             + " and d.archivoId.estado = 'ACTIVO' "

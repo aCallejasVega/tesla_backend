@@ -21,5 +21,7 @@ public interface IArchivoService {
 
 	public Page<ArchivoDto> findByEntidadIdAndFechaIniAndFechaFin(Long entidadId, Date fechaIni, Date fechaFin,
 			String estado, int page, int size);
+	
+	public ArchivoEntity findByEstadoAndEntidadId(String estado, Long entidadId);
 
 }

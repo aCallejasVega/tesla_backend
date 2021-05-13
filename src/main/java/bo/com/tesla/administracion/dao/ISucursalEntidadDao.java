@@ -64,6 +64,14 @@ public interface ISucursalEntidadDao extends JpaRepository<SucursalEntidadEntity
             "WHERE se.entidad.entidadId = :entidadId " +
             "AND se.estado <> 'ELIMINADO'")
     List<SucursalEntidadAdmDto> findSucursalesEntidadesDtoByEntidadId(@Param("entidadId") Long entidadId);
+    
+    
+    
+    @Query(value = "Select se "
+    		+ " from SucursalEntidadEntity se "
+    		+ " where se.entidad.entidadId= :entidadId"
+    		+ " and se.estado= 'ACTIVO'")
+    public List<SucursalEntidadEntity> findSucursalByEntidadId(@Param("entidadId") Long entidadId);
 
     @Query("SELECT new bo.com.tesla.administracion.dto.SucursalEntidadAdmDto( " +
             "se.sucursalEntidadId, se.entidad.entidadId, se.nombreSucursal,se.direccion, se.telefono, u.login, se.fechaCreacion, se.estado, " +

@@ -22,14 +22,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
  */
 @Entity
 @Table(name = "sucursales", catalog = "exacta", schema = "tesla")
-@NamedQueries({
-    @NamedQuery(name = "SucursalEntity.findAll", query = "SELECT s FROM SucursalEntity s")})
 public class SucursalEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -64,15 +64,19 @@ public class SucursalEntity implements Serializable {
     @Basic(optional = false)
     @Column(nullable = false, length = 250)
     private String nombre;
+    @JsonIgnore
     @JoinColumn(name = "departamento_id", referencedColumnName = "dominio_id", nullable = false)
     @ManyToOne(optional = false)
     private DominioEntity departamento;
+    @JsonIgnore
     @JoinColumn(name = "localidad_id", referencedColumnName = "dominio_id", nullable = false)
     @ManyToOne(optional = false)
     private DominioEntity localidad;
+    @JsonIgnore
     @JoinColumn(name = "recaudador_id", referencedColumnName = "recaudador_id", nullable = false)
     @ManyToOne(optional = false)
     private RecaudadorEntity recaudador;
+   
 
     public SucursalEntity() {
     }

@@ -63,6 +63,12 @@ public class ArchivoService implements IArchivoService{
 		return this.archivoDao.findByEstadoAndEntidadAndServicio(estado, entidadId, servicioProductoId);
 	}
 
+	@Override
+	public ArchivoEntity findByEstadoAndEntidadId(String estado, Long entidadId) {
+	
+		return this.archivoDao.findByEstadoAndEntidad(estado, entidadId);
+	}
+
 	
 	
 	
