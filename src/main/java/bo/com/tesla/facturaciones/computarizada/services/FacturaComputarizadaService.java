@@ -54,7 +54,9 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
             facturaDto.nombreRazonSocial = transaccionCobroEntity.getNombreClientePago();
             facturaDto.numeroDocumento = transaccionCobroEntity.getNroDocumentoClientePago();
             facturaDto.montoDescuento = new BigDecimal(0);
-            facturaDto.keyTeslaTransaccion = transaccionCobroEntity.getTransaccionCobroId();
+            List<Long> transaccionIdLst = new ArrayList<>();
+            transaccionIdLst.add(transaccionCobroEntity.getTransaccionCobroId());
+            facturaDto.transaccionIdLst = transaccionIdLst;
             facturaDto.codigoActividadEconomica = transaccionCobroEntity.getCodigoActividadEconomica();
 
             //Cargar DetalleFacturas
@@ -98,16 +100,16 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
         facturaDto.nombreRazonSocial = transaccionCobroEntityList.get(0).getNombreClientePago();
         facturaDto.numeroDocumento = transaccionCobroEntityList.get(0).getNroDocumentoClientePago();
         facturaDto.montoDescuento = new BigDecimal(0);
-        facturaDto.keyTeslaTransaccion = transaccionCobroEntityList.get(0).getTransaccionCobroId();
-
         facturaDto.codigoActividadEconomica = transaccionCobroEntityList.get(0).getCodigoActividadEconomica();
-
+        List<Long> transaccionIdList = new ArrayList<>();
         //Cargar Detalle deFactura
         List<DetalleFacturaDto> detalleFacturaDtoList = new ArrayList<>();
         for(TransaccionCobroEntity transaccionCobroEntity : transaccionCobroEntityList) {
             detalleFacturaDtoList.addAll(loadDetallesFacturas(transaccionCobroEntity));
+            transaccionIdList.add(transaccionCobroEntity.getTransaccionCobroId());
         }
         facturaDto.detalleFacturaDtoList = detalleFacturaDtoList;
+        facturaDto.transaccionIdLst = transaccionIdList;
 
         //Cargar Unica Factura
         List<FacturaDto> facturaDtoList = new ArrayList<>();

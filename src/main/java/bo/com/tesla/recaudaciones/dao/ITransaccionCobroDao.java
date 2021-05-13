@@ -268,11 +268,9 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 	@Modifying
 	@Query("UPDATE TransaccionCobroEntity t " +
 			"SET t.facturaId = :facturaId, t.transaccion = 'COBRAR' " +
-			"WHERE t.transaccionCobroId = :transaccionCobroId ")
-	Integer updateFactura(@Param("transaccionCobroId") Long transaccionCobroId,
+			"WHERE t.transaccionCobroId in :transaccionCobroIdLst ")
+	Integer updateFacturaTransaccion(@Param("transaccionCobroIdLst") List<Long> transaccionCobroIdLst,
 						  @Param("facturaId") Long facturaId);
-
-
 
 	List<TransaccionCobroEntity> findByFacturaIdAndEstado(Long facturaId, String estado);
 

@@ -143,26 +143,11 @@ public class TransaccionCobroService implements ITransaccionCobroService {
     }
 
     @Override
-    public void updateFacturas(List<TransaccionCobroEntity> transaccionCobroEntityList,
-                               boolean comprobanteEnUno,
-                               List<FacturaDto> facturaDtoList) {
+    public void updateFacturasTransaccion(List<FacturaDto> facturaDtoList) {
         facturaDtoList.forEach(f -> {
-            if(!comprobanteEnUno) {
-                Integer updateCountFactura = iTransaccionCobroDao.updateFactura(f.keyTeslaTransaccion, f.facturaId);
-                if (updateCountFactura != 1) {
-                    throw new Technicalexception("No se ha actualizado la factura en la Transacción");
-                }
-            } else {
-                List<TransaccionCobroEntity> transaccionesCobroPorActividad = transaccionCobroEntityList.stream()
-                        .filter(t -> t.getCodigoActividadEconomica().equals(f.codigoActividadEconomica))
-                        .collect(Collectors.toList());
-
-                transaccionesCobroPorActividad.forEach(t -> {
-                    Integer update = iTransaccionCobroDao.updateFactura(t.getTransaccionCobroId(), f.facturaId);
-                    if (update != 1) {
-                        throw new Technicalexception("No se ha actualizado la factura en la Transacción");
-                    }
-                });
+            Integer countUpdate = iTransaccionCobroDao.updateFacturaTransaccion(f.transaccionIdLst, f.facturaId);
+            if(f.transaccionIdLst.size() != countUpdate) {
+                throw new Technicalexception("No se actualizado correctamente las facturas");
             }
         });
     }

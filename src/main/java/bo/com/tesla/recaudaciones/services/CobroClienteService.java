@@ -188,8 +188,8 @@ public class CobroClienteService implements ICobroClienteService {
                     throw new Technicalexception("No se ha encontrado el Listado de Todas las Deudas del cliente: " + servicioDeudaDto.codigoCliente);
                 }
 
-                /*
-                //Verificar un solo Tipo de Comprobante por Transacción
+
+                //Verificar un solo Tipo de Comprobante por Transacción, en este caso solo Facturas.
                 List<Boolean> tipoComprobanteLst = iDeudaClienteRService.getTipoComprobanteUnicos(deudaClienteEntityList);
                 if(tipoComprobanteLst.size() > 1) {
                     throw new Technicalexception("Se ha identificado en el cargado de deudas, diferentes Tipos de Comprobante para la agrupacipon: " +
@@ -199,7 +199,9 @@ public class CobroClienteService implements ICobroClienteService {
                             ", Periodo=" + servicioDeudaDto.periodo +
                             ", Codigo   Cliente=" + servicioDeudaDto.codigoCliente);
                 }
-                */
+                if(tipoComprobanteLst.contains(false)) {
+                    throw new Technicalexception("Se ha detectado un tipo de comprobante diferente a Factura");
+                }
 
                 //Verificar un solo Código Actividad Económica por Transacción,
                 //caso nulo sigue adelante(puede ser para recibo)
@@ -279,7 +281,7 @@ public class CobroClienteService implements ICobroClienteService {
         if(!modFactCompuOptional.isPresent()) {
             throw new Technicalexception("No existe el dominio='modalidad_facturacion_id, abreviatura='FC' para la facturación computarizada");
         }
-/*Habilitar cuando se incluya demás modalidades
+        /*Habilitar cuando se incluya demás modalidades
         Optional<Long> modFactCompuELOptional = iDominioDao.getDominioIdByDominioAndAbreviatura("modalidad_facturacion_id", "FCEL");
         if(!modFactCompuOptional.isPresent()) {
             throw new Technicalexception("No existe el dominio='modalidad_facturacion_id, abreviatura='FCEL' para la facturación computarizada en línea");
@@ -298,7 +300,7 @@ public class CobroClienteService implements ICobroClienteService {
             }
 
             List<FacturaDto> facturaDtoList = (List<FacturaDto>) responseDto.result;
-            iTransaccionCobroService.updateFacturas(transaccionCobroEntityList, comprobanteEnUno, facturaDtoList);
+            iTransaccionCobroService.updateFacturasTransaccion(facturaDtoList);
 
             return responseDto;
         } else { //Otra Modalidad

@@ -28,7 +28,7 @@ public class FacturaDto {
     public Date fechaInicioFactura;
     public Date fechaFinFactura;
 
-    public Long keyTeslaTransaccion;
+    public List<Long> transaccionIdLst;
     public String formatFile;
 
     public FacturaDto() {

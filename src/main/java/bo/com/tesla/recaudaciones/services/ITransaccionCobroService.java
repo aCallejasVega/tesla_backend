@@ -39,8 +39,7 @@ public interface ITransaccionCobroService {
 	Boolean anularTransaccion(Long entidadId, AnulacionFacturaLstDto anulacionFacturaLstDto,
 			SegUsuarioEntity usuarioEntity);
 
-	void updateFacturas(List<TransaccionCobroEntity> transaccionCobroEntityList, boolean comprobanteEnUno,
-			List<FacturaDto> facturaDtoList);
+	void updateFacturasTransaccion(List<FacturaDto> facturaDtoList);
 
 	List<String> getCodigosActividadUnicos(List<TransaccionCobroEntity> transaccionCobroEntityList);
 
