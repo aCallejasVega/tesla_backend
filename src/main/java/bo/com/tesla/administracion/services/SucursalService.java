@@ -8,6 +8,7 @@ import bo.com.tesla.administracion.entity.SucursalEntity;
 import bo.com.tesla.recaudaciones.dao.IDominioDao;
 import bo.com.tesla.recaudaciones.dao.IRecaudadorDao;
 import bo.com.tesla.recaudaciones.dao.ISucursalDao;
+import bo.com.tesla.recaudaciones.services.IRecaudadoraService;
 import bo.com.tesla.useful.config.Technicalexception;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,11 +29,21 @@ public class SucursalService implements ISucursalService{
 
     @Autowired
     private IRecaudadorDao iRecaudadorDao;
+
+    @Autowired
+    private IRecaudadoraService recaudadoraService;
     /*********************ABM**************************/
 
     @Override
     public SucursalAdmDto addUpdateSucursal(SucursalAdmDto sucursalAdmDto, Long usuarioId) throws Technicalexception {
         try {
+            //Al ser invocado desde REcaudadores
+            if(sucursalAdmDto.recaudadorId == null) {
+                RecaudadorEntity recaudadorEntity = recaudadoraService.findRecaudadorByUserId(usuarioId);
+                sucursalAdmDto.recaudadorId = recaudadorEntity.getRecaudadorId();
+            }
+
+
             if (sucursalAdmDto.sucursalId != null) {
                 /***Modificación***/
                 Optional<SucursalEntity> sucursalEntityOptional = iSucursalDao.findById(sucursalAdmDto.sucursalId);

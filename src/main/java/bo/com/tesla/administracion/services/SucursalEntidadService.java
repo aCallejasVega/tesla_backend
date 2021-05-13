@@ -7,6 +7,7 @@ import bo.com.tesla.administracion.entity.DominioEntity;
 import bo.com.tesla.administracion.entity.EntidadEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.administracion.entity.SucursalEntidadEntity;
+import bo.com.tesla.entidades.services.IEntidadService;
 import bo.com.tesla.recaudaciones.dao.IDominioDao;
 import bo.com.tesla.recaudaciones.dao.IEntidadRDao;
 import bo.com.tesla.useful.config.BusinesException;
@@ -31,10 +32,23 @@ public class SucursalEntidadService implements ISucursalEntidadService {
     @Autowired
     private IDominioDao iDominioDao;
 
+    @Autowired
+    private IEntidadService entidadService;
+
     /*********************ABM**************************/
 
     @Override
     public SucursalEntidadAdmDto addUpdateSucursalEntidad(SucursalEntidadAdmDto sucursalEntidadAdmDto, Long usuarioId) throws BusinesException {
+
+        //Caso en el que se ingresa desde Entidades
+        if(sucursalEntidadAdmDto.entidadId == null) {
+            EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuarioId);
+            if(entidad == null) {
+                throw new BusinesException("El usuario debe pertenecer a una Entidad.");
+            }
+            sucursalEntidadAdmDto.entidadId = entidad.getEntidadId();
+        }
+
         sucursalEntidadAdmDto.emiteFacturaTesla = sucursalEntidadAdmDto.emiteFacturaTesla != null ? sucursalEntidadAdmDto.emiteFacturaTesla : false;
         if(sucursalEntidadAdmDto.emiteFacturaTesla) {
             Long countEmiteFacturaTesla = iSucursalEntidadDao.countEmiteFacturaTesla(sucursalEntidadAdmDto.entidadId, sucursalEntidadAdmDto.sucursalEntidadId);
