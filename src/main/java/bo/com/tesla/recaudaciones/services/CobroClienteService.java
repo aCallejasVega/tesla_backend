@@ -201,7 +201,8 @@ public class CobroClienteService implements ICobroClienteService {
                 }
                 */
 
-                //Verificar un solo Código Actividad Económica por Transacción
+                //Verificar un solo Código Actividad Económica por Transacción,
+                //caso nulo sigue adelante(puede ser para recibo)
                 List<String> codActEcoList = iDeudaClienteRService.getCodigosActividadUnicos(deudaClienteEntityList);
                 if(codActEcoList.size() > 1) {
                     throw new Technicalexception("Se ha identificado en el cargado de deudas, diferentes Códigos de Actividad Económica para la agrupacipon: " +
@@ -270,6 +271,8 @@ public class CobroClienteService implements ICobroClienteService {
                                       List<TransaccionCobroEntity> transaccionCobroEntityList,
                                       boolean comprobanteEnUno,
                                       BigDecimal montoTotalCobrado) {
+
+        //Caso facturas se debe revisar que los códigos
 
         //Controlar la parametrización de las Modalidades de Facturacion
         Optional<Long> modFactCompuOptional = iDominioDao.getDominioIdByDominioAndAbreviatura("modalidad_facturacion_id", "FC");

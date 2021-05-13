@@ -72,6 +72,10 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
 
         List<FacturaDto> facturaDtoList = new ArrayList<>();
         for(String codActEconomica : codActEcoListUnique) {
+            if(codActEconomica == null) {
+                throw new Technicalexception("Uno o varias deudas fueron cargadas sin Código de Actividad Económica, siendo obligatorio para Facturacion.");
+            }
+
             List<TransaccionCobroEntity> transaccionesPorCodActEconomicaLst = transaccionCobroEntityList.stream()
                     .filter(t -> t.getCodigoActividadEconomica().equals(codActEconomica)).collect(Collectors.toList());
 
