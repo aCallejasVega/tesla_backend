@@ -36,7 +36,7 @@ public interface ITransaccionCobroService {
 	public List<TransaccionCobroEntity> saveAllTransaccionesCobros(
 			List<TransaccionCobroEntity> transaccionCobroEntities);
 
-	Boolean anularTransaccion(Long entidadId, AnulacionFacturaLstDto anulacionFacturaLstDto,
+	Boolean anularTransaccion(Long entidadId, AnulacionFacturaLstDto anulacionFacturaLstDto, Long modalidadFacturacionId,
 			SegUsuarioEntity usuarioEntity);
 
 	void updateFacturasTransaccion(List<FacturaDto> facturaDtoList);

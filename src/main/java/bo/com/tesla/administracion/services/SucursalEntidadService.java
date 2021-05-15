@@ -179,7 +179,7 @@ public class SucursalEntidadService implements ISucursalEntidadService {
     @Transactional
     @Override
     public void updateCredencialesFacturacion(CredencialFacturacionDto credencialFacturacionDto, SegUsuarioEntity usuarioEntity) {
-        iSucursalEntidadDao.updateCredencialesFacturacion(credencialFacturacionDto.sucursalEntidadId, credencialFacturacionDto.login, credencialFacturacionDto.password, usuarioEntity.getUsuarioId());
+        iSucursalEntidadDao.updateCredencialesFacturacion(credencialFacturacionDto.sucursalEntidadId, credencialFacturacionDto.login.trim(), credencialFacturacionDto.password.trim(), usuarioEntity.getUsuarioId());
     }
 
     @Override
