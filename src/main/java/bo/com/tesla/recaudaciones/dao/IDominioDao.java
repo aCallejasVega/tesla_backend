@@ -63,4 +63,5 @@ public interface IDominioDao extends JpaRepository<DominioEntity, Long> {
             "AND d.estado = 'ACTIVO'")
     Optional<Long> getDominioIdByDominioAndAbreviatura(@Param("dominio") String dominio, @Param("abreviatura") String abreviatura);
 
+
 }
