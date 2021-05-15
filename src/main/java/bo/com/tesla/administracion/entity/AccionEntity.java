@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author aCallejas
  */
 @Entity
-@Table(name = "acciones", catalog = "exacta", schema = "tesla")
+@Table(name = "acciones", catalog = "exacta_tesla", schema = "tesla")
 @NamedQueries({
     @NamedQuery(name = "AccionEntity.findAll", query = "SELECT a FROM AccionEntity a")})
 public class AccionEntity implements Serializable {

@@ -32,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author aCallejas
  */
 @Entity
-@Table(name = "historicos_deudas", catalog = "exacta", schema = "tesla")
+@Table(name = "historicos_deudas", catalog = "exacta_tesla", schema = "tesla")
 
 public class HistoricoDeudaEntity implements Serializable {
 

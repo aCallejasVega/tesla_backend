@@ -23,9 +23,8 @@ import javax.persistence.Table;
  * @author aCallejas
  */
 @Entity
-@Table(name = "seg_transacciones", catalog = "exacta", schema = "tesla")
-@NamedQueries({
-    @NamedQuery(name = "SegTransaccionEntity.findAll", query = "SELECT s FROM SegTransaccionEntity s")})
+@Table(name = "seg_transacciones", catalog = "exacta_tesla", schema = "tesla")
+
 public class SegTransaccionEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

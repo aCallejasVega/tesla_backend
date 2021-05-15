@@ -14,10 +14,11 @@ public interface ISegUsuarioDao extends JpaRepository<SegUsuarioEntity, Long> {
 	
 	
 	@Query("Select u  "
-			+ " from SegUsuarioEntity u "			
+			+ " from SegUsuarioEntity u "
+			+ " inner join PersonaEntity p on p.personaId=u.personaId.personaId "			
 			+ " where u.estado ='ACTIVO' "
-			+ " and u.personaId.estado='ACTIVO' "
-			+ " and u.login=:login ")
+			+ " and p.estado='ACTIVO' "
+			+ " and u.login= :login ")
 	public SegUsuarioEntity findByLogin(@Param("login") String login);
 	
 	@Query(" Select u  "

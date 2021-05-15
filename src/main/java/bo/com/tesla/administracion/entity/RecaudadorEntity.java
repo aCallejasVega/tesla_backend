@@ -33,7 +33,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author aCallejas
  */
 @Entity
-@Table(name = "recaudadores", catalog = "exacta", schema = "tesla")
+@Table(name = "recaudadores", catalog = "exacta_tesla", schema = "tesla")
 public class RecaudadorEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;

@@ -20,7 +20,7 @@ import javax.persistence.TemporalType;
  * @author Carmin
  */
 @Entity
-@Table(name = "agrupadores_dominios", catalog = "exacta", schema = "tesla")
+@Table(name = "agrupadores_dominios", catalog = "exacta_tesla", schema = "tesla")
 public class AgrupadorDominioEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

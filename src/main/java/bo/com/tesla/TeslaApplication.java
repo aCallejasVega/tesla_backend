@@ -21,10 +21,10 @@ public class TeslaApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		String union = "union";
+		String union = "COTEOR";
 		String recaudador = "recaudador";
 		String entidad = "entidad";
-		System.out.println("ACallejas42  "+passwordEncoder.encode("ACallejas42"));
+		System.out.println("COTEOR  "+passwordEncoder.encode("COTEOR"));
 		System.out.println("ecamargo  "+passwordEncoder.encode("ecamargo"));
 		System.out.println("entidad  "+passwordEncoder.encode(entidad));
 

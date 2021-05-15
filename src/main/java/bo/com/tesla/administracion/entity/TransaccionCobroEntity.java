@@ -16,7 +16,7 @@ import javax.persistence.*;
  * @author aCallejas
  */
 @Entity
-@Table(name = "transacciones_cobros", catalog = "exacta", schema = "tesla")
+@Table(name = "transacciones_cobros", catalog = "exacta_tesla", schema = "tesla")
 
 public class TransaccionCobroEntity implements Serializable {
 

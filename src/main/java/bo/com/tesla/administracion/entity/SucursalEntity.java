@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author aCallejas
  */
 @Entity
-@Table(name = "sucursales", catalog = "exacta", schema = "tesla")
+@Table(name = "sucursales", catalog = "exacta_tesla", schema = "tesla")
 public class SucursalEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

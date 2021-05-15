@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author aCallejas
  */
 @Entity
-@Table(name = "seg_transiciones", catalog = "exacta", schema = "tesla")
+@Table(name = "seg_transiciones", catalog = "exacta_tesla", schema = "tesla")
 
 public class SegTransicionEntity implements Serializable {
 

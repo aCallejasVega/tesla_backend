@@ -31,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author aCallejas
  */
 @Entity
-@Table(name = "seg_usuarios", catalog = "exacta", schema = "tesla")
+@Table(name = "seg_usuarios", catalog = "exacta_tesla", schema = "tesla")
 
 public class SegUsuarioEntity implements Serializable {
 
@@ -169,7 +169,6 @@ public class SegUsuarioEntity implements Serializable {
     }
 
    
-
 	@Override
     public int hashCode() {
         int hash = 0;

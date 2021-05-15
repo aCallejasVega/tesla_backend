@@ -27,9 +27,8 @@ import javax.persistence.TemporalType;
  * @author aCallejas
  */
 @Entity
-@Table(name = "plantillas", catalog = "exacta", schema = "tesla")
-@NamedQueries({
-    @NamedQuery(name = "PlantillaEntity.findAll", query = "SELECT p FROM PlantillaEntity p")})
+@Table(name = "plantillas", catalog = "exacta_tesla", schema = "tesla")
+
 public class PlantillaEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

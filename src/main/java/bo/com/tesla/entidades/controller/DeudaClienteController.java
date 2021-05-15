@@ -106,6 +106,7 @@ public class DeudaClienteController {
 		String path = null;
 		SegUsuarioEntity usuario =new SegUsuarioEntity();
 		try {
+		
 			usuario = this.segUsuarioService.findByLogin(authentication.getName());
 			EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
 			path = HandlingFiles.saveFileToDisc(file, entidad.getNombre(), filesBets);

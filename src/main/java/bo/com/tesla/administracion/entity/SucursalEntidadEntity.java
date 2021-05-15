@@ -19,9 +19,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author eCamargo
  */
 @Entity
-@Table(name = "sucursales_entidades", catalog = "exacta", schema = "tesla")
-@NamedQueries({
-    @NamedQuery(name = "SucursalEntidadEntity.findAll", query = "SELECT s FROM SucursalEntidadEntity s")})
+@Table(name = "sucursales_entidades", catalog = "exacta_tesla", schema = "tesla")
+
 public class SucursalEntidadEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

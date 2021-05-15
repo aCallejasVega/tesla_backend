@@ -15,9 +15,8 @@ import javax.persistence.*;
  * @author aCallejas
  */
 @Entity
-@Table(name = "cobros_clientes", catalog = "exacta", schema = "tesla")
-@NamedQueries({
-    @NamedQuery(name = "CobroClienteEntity.findAll", query = "SELECT c FROM CobroClienteEntity c")})
+@Table(name = "cobros_clientes", catalog = "exacta_tesla", schema = "tesla")
+
 public class CobroClienteEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
