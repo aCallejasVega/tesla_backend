@@ -107,13 +107,8 @@ public class EntidadRService implements IEntidadRService {
             throw new Technicalexception("No existe Dominio actividad_economica_id=" + entidadAdmDto.actividadEconomicaId);
         }
 
-        Optional<DominioEntity> municipioOptional = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(entidadAdmDto.municipioId, "municipio_id", "ACTIVO");
-        if (!municipioOptional.isPresent()) {
-            throw new Technicalexception("No existe Dominio municipio_id=" + entidadAdmDto.municipioId);
-        }
-
         Optional<DominioEntity> tipoEntidadOptional = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(entidadAdmDto.tipoEntidadId, "tipo_entidad_id", "ACTIVO");
-        if (!municipioOptional.isPresent()) {
+        if (!tipoEntidadOptional.isPresent()) {
             throw new Technicalexception("No existe Dominio tipo_entidad_id=" + entidadAdmDto.tipoEntidadId);
         }
 
@@ -124,7 +119,6 @@ public class EntidadRService implements IEntidadRService {
 
 
         entidadEntity.setActividadEconomica(actividadEconomicaOptional.get());
-        entidadEntity.setMunicipio(municipioOptional.get());
         entidadEntity.setTipoEntidad(tipoEntidadOptional.get());
         entidadEntity.setNombre(entidadAdmDto.nombre.toUpperCase().trim());
         entidadEntity.setNombreComercial(entidadAdmDto.nombreComercial != null ? entidadAdmDto.nombreComercial.toUpperCase().trim() : null);
