@@ -5,6 +5,7 @@ import bo.com.tesla.administracion.entity.LogSistemaEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.entidades.services.IEntidadService;
 import bo.com.tesla.facturaciones.computarizada.dto.*;
+import bo.com.tesla.facturaciones.computarizada.services.IAnulacionFacturaService;
 import bo.com.tesla.facturaciones.computarizada.services.IFacturaComputarizadaService;
 import bo.com.tesla.recaudaciones.services.ITransaccionCobroService;
 import bo.com.tesla.security.services.ILogSistemaService;
@@ -43,6 +44,9 @@ public class FacturaController {
 
     @Autowired
     private IEntidadService entidadService;
+
+    @Autowired
+    private IAnulacionFacturaService anulacionFacturaService;
 
     @PostMapping("/codigoscontroles")
     public ResponseEntity<?> getCodigoControl(@RequestBody CodigoControlDto codigoControlDto,
@@ -158,6 +162,7 @@ public class FacturaController {
         } catch (Technicalexception e) {
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("FACTURAS");
+            log.setModulo("FACTURAS");
             log.setController("api/facturas/filters");
             log.setCausa(e.getCause() + "");
             log.setMensaje(e.getMessage() + "");
@@ -182,7 +187,7 @@ public class FacturaController {
         SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         Map<String, Object> response = new HashMap<>();
         try {
-            Boolean respuesta  = transaccionCobroService.anularTransaccion(entidadId, anulacionFacturaLstDto, usuario);
+            Boolean respuesta  = anulacionFacturaService.anularTransaccion(entidadId, anulacionFacturaLstDto, usuario);
             response.put("message", "Se ha realizado la Anulación de la factura.");
             response.put("result", respuesta);
             return new ResponseEntity<>(response, HttpStatus.OK);

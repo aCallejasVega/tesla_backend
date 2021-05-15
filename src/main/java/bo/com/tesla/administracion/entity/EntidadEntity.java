@@ -34,8 +34,7 @@ public class EntidadEntity implements Serializable {
     @Basic(optional = false)
     @Column(nullable = false, length = 10)
     private String telefono;
-    @Basic(optional = false)
-    @Column(nullable = false, length = 10)
+    @Column(length = 13)
     private String nit;
     @Column(name = "llave_dosificacion", length = 255)
     private String llaveDosificacion;
@@ -100,10 +99,6 @@ public class EntidadEntity implements Serializable {
     @JoinColumn(name = "actividad_economica_id", referencedColumnName = "dominio_id")
     @ManyToOne
     private DominioEntity actividadEconomica;
-    @JsonIgnore
-    @JoinColumn(name = "municipio_id", referencedColumnName = "dominio_id")
-    @ManyToOne
-    private DominioEntity municipio;
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidad")
     private List<EntidadComisionEntity> entidadComisionEntityList;
@@ -365,14 +360,6 @@ public class EntidadEntity implements Serializable {
 
     public void setActividadEconomica(DominioEntity actividadEconomicaId) {
         this.actividadEconomica = actividadEconomicaId;
-    }
-
-    public DominioEntity getMunicipio() {
-        return municipio;
-    }
-
-    public void setMunicipio(DominioEntity municipioId) {
-        this.municipio = municipioId;
     }
 
     public List<EntidadComisionEntity> getEntidadComisionEntityList() {

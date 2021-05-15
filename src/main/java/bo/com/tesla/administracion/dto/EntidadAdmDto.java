@@ -18,8 +18,6 @@ public class EntidadAdmDto {
     public Boolean comprobanteEnUno;
     public Long actividadEconomicaId;
     public String actividadEconomicaDescripcion;
-    public Long municipioId;
-    public String municipioDescripcion;
     public Long tipoEntidadId;
     public String tipoEntidadDescripcion;
     public Long modalidadFacturacionId;
@@ -36,7 +34,7 @@ public class EntidadAdmDto {
 
     public EntidadAdmDto() {}
 
-    public EntidadAdmDto(Long entidadId, @NotBlank(message = "El NOMBRE es obligatorio.") String nombre, String nombreComercial, @NotBlank(message = "La DIRECCION es obligatoria.") String direccion, String telefono, String nit, String pathLogo, Boolean comprobanteEnUno, Long actividadEconomicaId, String actividadEconomicaDescripcion, Long municipioId, String municipioDescripcion, Long tipoEntidadId, String tipoEntidadDescripcion, Long modalidadFacturacionId, String modalidadFacturacionDescripcion, Boolean esCobradora, Boolean esPagadora, Date fechaCreacion, String usuarioCreacionLogin, String estado) {
+    public EntidadAdmDto(Long entidadId, @NotBlank(message = "El NOMBRE es obligatorio.") String nombre, String nombreComercial, @NotBlank(message = "La DIRECCION es obligatoria.") String direccion, String telefono, String nit, String pathLogo, Boolean comprobanteEnUno, Long actividadEconomicaId, String actividadEconomicaDescripcion, Long tipoEntidadId, String tipoEntidadDescripcion, Long modalidadFacturacionId, String modalidadFacturacionDescripcion, Boolean esCobradora, Boolean esPagadora, Date fechaCreacion, String usuarioCreacionLogin, String estado) {
         this.entidadId = entidadId;
         this.nombre = nombre;
         this.nombreComercial = nombreComercial;
@@ -47,8 +45,6 @@ public class EntidadAdmDto {
         this.comprobanteEnUno = comprobanteEnUno;
         this.actividadEconomicaId = actividadEconomicaId;
         this.actividadEconomicaDescripcion = actividadEconomicaDescripcion;
-        this.municipioId = municipioId;
-        this.municipioDescripcion = municipioDescripcion;
         this.tipoEntidadId = tipoEntidadId;
         this.tipoEntidadDescripcion = tipoEntidadDescripcion;
         this.modalidadFacturacionId = modalidadFacturacionId;

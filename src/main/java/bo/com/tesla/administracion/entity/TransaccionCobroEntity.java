@@ -86,16 +86,27 @@ public class TransaccionCobroEntity implements Serializable {
     @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id", nullable = false)
     @ManyToOne(optional = false)
     private EntidadEntity entidadId;
-    @JoinColumn(name = "entidad_comision_id", referencedColumnName = "entidad_comision_id", nullable = false)
-    @ManyToOne(optional = false)
-    private EntidadComisionEntity entidadComision;
+
     @JoinColumn(name = "recaudador_id", referencedColumnName = "recaudador_id", nullable = false)
     @ManyToOne(optional = false)
     private RecaudadorEntity recaudador;
+    /****************************************************
+    14/05/2021 - Segun reunión.
+    Habilitar obligoriedad una vez implementado las comisiones
+    *****************************************************
+    @JoinColumn(name = "entidad_comision_id", referencedColumnName = "entidad_comision_id", nullable = false)
+    @ManyToOne(optional = false)
+    private EntidadComisionEntity entidadComision;
     @JoinColumn(name = "recaudador_comision_id", referencedColumnName = "recaudador_comision_id", nullable = false)
     @ManyToOne(optional = false)
     private RecaudadorComisionEntity recaudadorComision;
-
+    *****************************************************/
+    @JoinColumn(name = "entidad_comision_id", referencedColumnName = "entidad_comision_id")
+    @ManyToOne
+    private EntidadComisionEntity entidadComision;
+    @JoinColumn(name = "recaudador_comision_id", referencedColumnName = "recaudador_comision_id")
+    @ManyToOne
+    private RecaudadorComisionEntity recaudadorComision;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "transaccionCobroId")
     private List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList;

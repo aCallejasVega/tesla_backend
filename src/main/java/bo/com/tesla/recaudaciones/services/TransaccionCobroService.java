@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -78,16 +79,23 @@ public class TransaccionCobroService implements ITransaccionCobroService {
         transaccionCobroEntity.setNombreClientePago(nombreCientePago);
         transaccionCobroEntity.setTotalDeuda(servicioDeudaDto.subTotal);
         transaccionCobroEntity.setNroDocumentoClientePago(nroDocumentoClientePago);
-        transaccionCobroEntity.setComision(iEntidadComisionService.calcularComision(entidadComisionEntity, servicioDeudaDto.subTotal));
         transaccionCobroEntity.setRecaudador(recaudadorEntity);
         transaccionCobroEntity.setNombreClienteArchivo(servicioDeudaDto.nombreCliente);
         transaccionCobroEntity.setNroDocumentoClienteArchivo(servicioDeudaDto.nroDocumento);
         transaccionCobroEntity.setEntidadComision(entidadComisionEntity);
-        transaccionCobroEntity.setComisionRecaudacion(iRecaudadorComisionService.calcularComision(recaudadorComisionEntity, servicioDeudaDto.subTotal));
         transaccionCobroEntity.setRecaudadorComision(recaudadorComisionEntity);
         transaccionCobroEntity.setMetodoCobro(metodoCobro);
         transaccionCobroEntity.setModalidadFacturacion(modalidadFacturacion);
         transaccionCobroEntity.setCodigoActividadEconomica(codigoActividadEconomica);
+        /*************************************************
+        14/05/2021 - Segun reunión.
+        Se comentas hasta incluir la comision de acuerdo a requerimiento, se asigna 1
+        **************************************************
+        transaccionCobroEntity.setComision(iEntidadComisionService.calcularComision(entidadComisionEntity, servicioDeudaDto.subTotal));
+        transaccionCobroEntity.setComisionRecaudacion(iRecaudadorComisionService.calcularComision(recaudadorComisionEntity, servicioDeudaDto.subTotal));
+        *************************************************/
+        transaccionCobroEntity.setComision(new BigDecimal(1));
+        transaccionCobroEntity.setComisionRecaudacion(new BigDecimal(1));
         return  transaccionCobroEntity;
     }
 
@@ -103,10 +111,11 @@ public class TransaccionCobroService implements ITransaccionCobroService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Technicalexception.class)
     public Boolean anularTransaccion(Long entidadId,
                                      AnulacionFacturaLstDto anulacionFacturaLstDto,
+                                     Long modalidadFacturacionId,
                                      SegUsuarioEntity usuarioEntity) {
         try {
             //Anular Transacciones
-            Integer countupdate = iTransaccionCobroDao.updateLstTransaccionByFacturas(anulacionFacturaLstDto.facturaIdLst, "ANULAR", usuarioEntity.getUsuarioId());
+            Integer countupdate = iTransaccionCobroDao.updateLstTransaccionByFacturas(anulacionFacturaLstDto.facturaIdLst, modalidadFacturacionId, "ANULAR", usuarioEntity.getUsuarioId());
             if (countupdate == 0) {
                 throw new Technicalexception("La Anulación ha producido un inconveniente o se ha producido un nuevo cargado de archivo");
             }

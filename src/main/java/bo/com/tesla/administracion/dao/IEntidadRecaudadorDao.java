@@ -28,7 +28,9 @@ public interface IEntidadRecaudadorDao extends JpaRepository<EntidadRecaudadorEn
     @Query(value = "SELECT er.entidad.entidadId " +
             "FROM EntidadRecaudadorEntity er " +
             "WHERE er.recaudador.recaudadorId = :recaudadorId " +
-            "AND er.estado = 'ACTIVO'")
+            "AND er.estado = 'ACTIVO' " +
+            "AND er.recaudador.estado in ('ACTIVO', 'CREADO') " +
+            "AND er.entidad.estado in ('ACTIVO', 'CREADO')")
     List<Long> getLstByRecaudadorIdActivo(@Param("recaudadorId") Long recaudadorId);
 
     @Modifying
@@ -49,7 +51,9 @@ public interface IEntidadRecaudadorDao extends JpaRepository<EntidadRecaudadorEn
     @Query(value = "SELECT er.recaudador.recaudadorId " +
             "FROM EntidadRecaudadorEntity er " +
             "WHERE er.entidad.entidadId = :entidadId " +
-            "AND er.estado = 'ACTIVO'")
+            "AND er.estado = 'ACTIVO' " +
+            "AND er.recaudador.estado in ('ACTIVO', 'CREADO') " +
+            "AND er.entidad.estado in ('ACTIVO', 'CREADO')")
     List<Long> getLstByEntidadIdActivo(@Param("entidadId") Long entidadId);
 
 

@@ -258,10 +258,12 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 	@Query(value = "UPDATE TransaccionCobroEntity t " +
 			"SET t.transaccion = :transaccion, t.usuarioModificacion = :usuarioModificacionId, t.fechaModificacion = CURRENT_TIMESTAMP " +
 			"WHERE t.facturaId in :facturaIdLst " +
+			"AND t.modalidadFacturacion.dominioId = :modalidadFacturacionId " +
 			"AND (SELECT a.estado " +
 				"FROM ArchivoEntity a " +
 				"WHERE a.archivoId = t.archivoId.archivoId) = 'ACTIVO'")//Permite controlar que no se actualice con un cargado nuevo
 	Integer updateLstTransaccionByFacturas(@Param("facturaIdLst") List<Long> facturaIdLst,
+												@Param("modalidadFacturacionId") Long modalidadFacturacionId,
 												@Param("transaccion") String transaccion,
 												@Param("usuarioModificacionId") Long usuarioModificacionId);
 
