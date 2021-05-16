@@ -438,4 +438,5 @@ public class EntidadEntity implements Serializable {
         return "bo.com.tesla.administracion.entity.EntidadEntity[ entidadId=" + entidadId + " ]";
     }
 
+
 }
