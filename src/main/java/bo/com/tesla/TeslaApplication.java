@@ -12,8 +12,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SpringBootApplication
 public class TeslaApplication implements CommandLineRunner {
 
-	@Autowired
-	private BCryptPasswordEncoder passwordEncoder;
+	/*@Autowired
+	private BCryptPasswordEncoder passwordEncoder;*/
 
 	public static void main(String[] args) {
 		SpringApplication.run(TeslaApplication.class, args);
@@ -21,12 +21,12 @@ public class TeslaApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		String union = "COTEOR";
+		/*String union = "COTEOR";
 		String recaudador = "recaudador";
 		String entidad = "entidad";
 		System.out.println("COTEOR  "+passwordEncoder.encode("COTEOR"));
 		System.out.println("ecamargo  "+passwordEncoder.encode("ecamargo"));
-		System.out.println("entidad  "+passwordEncoder.encode(entidad));
+		System.out.println("entidad  "+passwordEncoder.encode(entidad));*/
 
 	}
 	/*@Bean

@@ -1,6 +1,7 @@
 package bo.com.tesla.security.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,9 @@ import bo.com.tesla.administracion.entity.SegRolEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.security.dao.ISegRolDao;
 import bo.com.tesla.security.dao.ISegUsuarioDao;
+import bo.com.tesla.security.dto.CambiarPasswordDto;
+import bo.com.tesla.useful.config.BusinesException;
+import bo.com.tesla.useful.config.Technicalexception;
 
 @Service
 public class SegUsuarioService implements ISegUsuarioService,UserDetailsService {
@@ -32,6 +37,9 @@ public class SegUsuarioService implements ISegUsuarioService,UserDetailsService 
 	private ISegUsuarioDao segUsuarioDao;
 	@Autowired
 	private ISegRolDao segRolDao;
+	
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 	
 	
 	@Override
@@ -81,7 +89,35 @@ public class SegUsuarioService implements ISegUsuarioService,UserDetailsService 
 		
 		return this.segUsuarioDao.findByPersonaIdAndEstado(personaId);
 	}
+	
 
+	@Override
+	public void  cambiarPassword(CambiarPasswordDto passwords, SegUsuarioEntity usuario) throws BusinesException {
+		
+		BCryptPasswordEncoder bCrypt = new BCryptPasswordEncoder();
+		
+			
+		
+		
+		if(!bCrypt.matches(passwords.passwordActual, usuario.getPassword())) {
+			throw new BusinesException(
+					"La contraseña actual no coincide, por favor verifique e intente nuevamente. ");		
+		}
+		
+		if(!passwords.passwordNew1.equals(passwords.passwordNew2)) {
+			throw new BusinesException(
+					"Las nuevas contraseñas nuevas no coinciden, por favor verifique e intente nuevamente.");
+		}
+		
+		try {
+			usuario.setPassword(bCrypt.encode(passwords.passwordNew1));
+			usuario.setFechaModificacion(new Date());
+			usuario.setUsuarioModificacion(usuario.getUsuarioId());		
+			this.segUsuarioDao.save(usuario);	
+		} catch (Exception e) {
+			throw new Technicalexception("Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.", e.getCause());
+		}
+	}
 	
 
 }

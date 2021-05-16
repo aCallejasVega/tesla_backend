@@ -182,9 +182,10 @@ public class Util {
 		try {
 			return new SimpleDateFormat("dd/MM/yyyy").parse(fecha);
 		} catch (Exception e) {
-			new Technicalexception(e.getMessage(), e.getCause());
-			return null;
+			throw new Technicalexception(e.getMessage(), e.getCause());
+		
 		}
+		
 	}
 
 	public static Date formatDate(Date date) {
@@ -193,8 +194,8 @@ public class Util {
 			Date todayWithZeroTime = formatter.parse(formatter.format(date));
 			return todayWithZeroTime;
 		} catch (Exception e) {
-			new Technicalexception(e.getMessage(), e.getCause());
-			return null;
+			throw new Technicalexception(e.getMessage(), e.getCause());
+			
 		}
 	}
 
@@ -203,8 +204,8 @@ public class Util {
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 			return formatter.format(date);
 		} catch (Exception e) {
-			new Technicalexception(e.getMessage(), e.getCause());
-			return null;
+			throw new Technicalexception(e.getMessage(), e.getCause());
+		
 		}
 	}
 
@@ -260,7 +261,7 @@ public class Util {
 
 			}
 		} catch (JRException | IOException e) {
-			new Technicalexception(e.getMessage(), e.getCause());
+			throw new Technicalexception(e.getMessage(), e.getCause());
 		}
 		return null;
 

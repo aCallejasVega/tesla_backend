@@ -11,19 +11,26 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import bo.com.tesla.administracion.entity.EntidadEntity;
+import bo.com.tesla.administracion.entity.LogSistemaEntity;
 import bo.com.tesla.administracion.entity.RecaudadorEntity;
 import bo.com.tesla.administracion.entity.SegPrivilegioEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.entidades.services.IEntidadService;
 import bo.com.tesla.recaudaciones.services.IRecaudadoraService;
+import bo.com.tesla.security.dto.CambiarPasswordDto;
 import bo.com.tesla.security.dto.DatosLoginDto;
 import bo.com.tesla.security.dto.OperacionesDto;
+import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegPrivilegiosService;
 import bo.com.tesla.security.services.ISegUsuarioService;
+import bo.com.tesla.useful.config.BusinesException;
+import bo.com.tesla.useful.config.Technicalexception;
 
 @RestController
 @RequestMapping("api/Menu")
@@ -41,6 +48,9 @@ public class MenuController {
 
 	@Autowired
 	private IRecaudadoraService recaudadoraService;
+	
+	@Autowired
+    private ILogSistemaService logSistemaService;
 
 	@GetMapping(path = "/menu", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> menu(Authentication authentication) {
@@ -209,5 +219,60 @@ public class MenuController {
 		}
 
 	}
+	
+	@PostMapping(path = "/cambiarPassword", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<?> cambiarPassword(@RequestBody CambiarPasswordDto passwords,Authentication authentication) {
+		Map<String, Object> response = new HashMap<>();
+		SegUsuarioEntity usuario = new SegUsuarioEntity();	
+		try {
+			usuario = this.segUsuarioService.findByLogin(authentication.getName());
+			
+			this.segUsuarioService.cambiarPassword(passwords, usuario);
+			response.put("message","Su contraseña fue modificada con éxito.");
+			response.put("status", false);			
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+
+		} catch (BusinesException e) {
+			e.printStackTrace();
+			 LogSistemaEntity log=new LogSistemaEntity();
+	            log.setModulo("Menu");
+	            log.setController("api/Menu/cambiarPassword");
+	            if(e.getCause()!=null) {
+	            	log.setCausa(e.getCause().getMessage());	
+	            }	            
+	            log.setMensaje(e.getMessage()+"");
+	            log.setUsuarioCreacion(usuario.getUsuarioId());
+	            log.setFechaCreacion(new Date());
+	            logSistemaService.save(log);
+	          
+	            response.put("status", false);
+	            response.put("result", null);
+	            response.put("message", e.getMessage());
+	            response.put("code", log.getLogSistemaId()+"");
+	            return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+		} catch (Technicalexception e) {
+			e.printStackTrace();
+			 LogSistemaEntity log=new LogSistemaEntity();
+	            log.setModulo("Menu");
+	            log.setController("api/Menu/cambiarPassword");
+	            if(e.getCause()!=null) {
+	            	log.setCausa(e.getCause().getMessage());	
+	            }	            
+	            log.setMensaje(e.getMessage()+"");
+	            log.setUsuarioCreacion(usuario.getUsuarioId());
+	            log.setFechaCreacion(new Date());
+	            logSistemaService.save(log);
+	          
+	            response.put("status", false);
+	            response.put("result", null);
+	            response.put("message", e.getMessage());
+	            response.put("code", log.getLogSistemaId()+"");
+	            return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+		}
+
+	}
+	
+	
+	
 
 }
