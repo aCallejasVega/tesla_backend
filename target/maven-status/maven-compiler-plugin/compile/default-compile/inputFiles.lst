@@ -170,6 +170,7 @@ C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesl
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\recaudaciones\dao\ISucursalDao.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\recaudaciones\dto\ServicioDeudaDto.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\controllers\SucursalController.java
+C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\security\dto\CambiarPasswordDto.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\entity\PersonaEntity.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\services\EntidadComisionService.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\entidades\services\ArchivoService.java
