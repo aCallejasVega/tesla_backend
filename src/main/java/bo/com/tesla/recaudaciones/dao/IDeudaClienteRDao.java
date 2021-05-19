@@ -33,6 +33,7 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
             + " and d.archivoId.entidadId.estado = 'ACTIVO' "
             + " and d.archivoId.estado = 'ACTIVO' "
             + " and d.codigoCliente = :codigoCliente "
+            + " and d.tipo = 'D' " //puede ser que en cargado envien un tipo diferente
             + " group by d.tipoServicio, d.servicio, d.periodo, d.archivoId.entidadId.entidadId")
     List<ServicioDeudaDto> groupByDeudasClientes(@Param("entidadId") Long entidadId , @Param("codigoCliente") String codigoCliente );
 
@@ -74,15 +75,6 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
     @Modifying
     Long deleteByDeudaClienteIdIn(List<Long> deudaClienteIdLst);
 
-    /*
-    @Query("SELECT d " +
-            "FROM DeudaClienteEntity d " +
-            "JOIN CobroClienteEntity c on c.historicoDeuda.deudaClienteId = d.deudaClienteId " +
-            "WHERE c.transaccionCobro.facturaId in :facturaIdLst ")
-    List<DeudaClienteEntity> findLstByFactura(@Param("facturaIdLst") List<Long> facturaIdLst);
-*/
-
-
     @Modifying
     @Query(value = "INSERT INTO tesla.deudas_clientes (archivo_id, nro_registro, codigo_cliente, nombre_cliente, nro_documento, direccion, nit, telefono, servicio, tipo_servicio, periodo, tipo, concepto, cantidad, monto_unitario, sub_total, dato_extras, tipo_comprobante, periodo_cabecera, es_postpago) " +
             "select h.archivo_id, h.nro_registro, h.codigo_cliente, h.nombre_cliente, h.nro_documento, h.direccion, h.nit, h.telefono, h.servicio, h.tipo_servicio, h.periodo, h.tipo, h.concepto, h.cantidad, h.monto_unitario, h.sub_total, h.dato_extra, h.tipo_comprobante, h.periodo_cabecera, h.es_postpago " +
@@ -100,4 +92,6 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
             "inner join tesla.transacciones_cobros t on t.transaccion_cobro_id = c.transaccion_cobro_id " +
             "where t.factura_id = :facturaId", nativeQuery = true)
     Integer recoverDeudasByFactura(@Param("facturaId") Long facturaId);
+
+
 }

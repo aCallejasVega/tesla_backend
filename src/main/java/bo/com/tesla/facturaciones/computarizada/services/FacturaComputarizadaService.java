@@ -1,6 +1,7 @@
 package bo.com.tesla.facturaciones.computarizada.services;
 
 import bo.com.tesla.administracion.entity.CobroClienteEntity;
+import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.administracion.entity.SucursalEntidadEntity;
 
 import bo.com.tesla.administracion.entity.TransaccionCobroEntity;
@@ -32,10 +33,10 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
     private ITransaccionCobroService transaccionCobroService;
 
     @Override
-    public ResponseDto postCodigoControl(CodigoControlDto codigoControlDto)  {
+    public ResponseDto postCodigoControl(CodigoControlDto codigoControlDto, Long entidadId)  {
         try {
             String url = this.host + "/api/facturas/codigoscontroles";
-            return conexionService.getResponseMethodPost(1L,codigoControlDto, url);
+            return conexionService.getResponseMethodPost(entidadId,codigoControlDto, url);
 
         } catch (Exception e) {
             throw new Technicalexception(e.getMessage(),e.getCause());
