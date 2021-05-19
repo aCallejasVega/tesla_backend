@@ -8,6 +8,8 @@ package bo.com.tesla.administracion.entity;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +20,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -76,7 +79,9 @@ public class SucursalEntity implements Serializable {
     @JoinColumn(name = "recaudador_id", referencedColumnName = "recaudador_id", nullable = false)
     @ManyToOne(optional = false)
     private RecaudadorEntity recaudador;
-   
+    @JsonIgnore
+    @OneToMany(mappedBy = "sucursalId")
+    private List<EmpleadoEntity> empleadoEntityList;
 
     public SucursalEntity() {
     }
@@ -198,8 +203,21 @@ public class SucursalEntity implements Serializable {
     public void setRecaudador(RecaudadorEntity recaudadorId) {
         this.recaudador = recaudadorId;
     }
+    
+    
 
-    @Override
+    public List<EmpleadoEntity> getEmpleadoEntityList() {
+		return empleadoEntityList;
+	}
+
+	public void setEmpleadoEntityList(List<EmpleadoEntity> empleadoEntityList) {
+		this.empleadoEntityList = empleadoEntityList;
+	}
+	
+	
+	
+
+	@Override
     public int hashCode() {
         int hash = 0;
         hash += (sucursalId != null ? sucursalId.hashCode() : 0);

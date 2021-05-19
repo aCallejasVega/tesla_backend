@@ -1,7 +1,5 @@
 package bo.com.tesla.administracion.dao;
 
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,12 +28,15 @@ public interface IPersonaDao extends JpaRepository<PersonaEntity, Long> {
 			+ "				p.fechaModificacion,"
 			+ "				u.login,"
 			+ "				u.estado,"
-			+ "				u.usuarioId) "
+			+ "				u.usuarioId,"
+			+ "				s.sucursalId, "
+			+ "				s.nombre ) "
 			+ " from PersonaEntity p "
 			+ " 	left join DominioEntity c on c.dominioId=p.ciudadId.dominioId "
 			+ " 	left join DominioEntity e on e.dominioId=p.extensionDocumentoId.dominioId "
 			+ "		left join EmpleadoEntity ep on ep.personaId.personaId=p.personaId "
 			+ "		left join SegUsuarioEntity u on u.personaId.personaId=p.personaId "
+			+ " 	left join SucursalEntity s on s.sucursalId=ep.sucursalId.sucursalId "			
 			+ " Where "
 			+ "  	p.estado !='ELIMINADO'  "
 			+ "		and ep.sucursalId.recaudador.recaudadorId= :sucursalId "

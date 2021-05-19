@@ -22,6 +22,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
@@ -49,12 +51,15 @@ public class EmpleadoEntity implements Serializable {
     private Date fechaModificacion;
     @Column(name = "estado")
     private String estado;
+    @JsonIgnore
     @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id")
     @ManyToOne
     private EntidadEntity entidadId;
+    @JsonIgnore
     @JoinColumn(name = "persona_id", referencedColumnName = "persona_id")
     @ManyToOne
     private PersonaEntity personaId;
+    @JsonIgnore
     @JoinColumn(name = "sucursal_id", referencedColumnName = "sucursal_id")
     @ManyToOne
     private SucursalEntity sucursalId;

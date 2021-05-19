@@ -27,10 +27,9 @@ public class PersonaDto implements Serializable{
     public String materno;
 	public String direccion;
 	@NotEmpty(message = "El campo no puede estar vacio")
-	@Email(message = "no es una direccion de correo bine formada")
+	@Email(message = "no es una dirección de correo valida")
 	public String correoElectronico;
-	public String telefono;
-	@NotEmpty(message = "El campo no puede estar vacio")
+	public String telefono;	
 	public String nroDocumento;
 	public BigInteger usuarioCreacion;
 	public Date fechaCreacion;
@@ -68,6 +67,7 @@ public class PersonaDto implements Serializable{
 	public String nombreRecaudadora;
 	public String nombreSucursal;
 	
+	
 	public List<Long> privilegiosKey=new ArrayList<>();
 	public List<RolTransferDto> rolTransferList=new ArrayList<>();
 	
@@ -79,6 +79,56 @@ public class PersonaDto implements Serializable{
 		
 	}
 
+	
+	public PersonaDto(
+			Long personaId, 
+			String nombres, 
+			String paterno,
+			String materno,
+			String direccion, 
+			String correoElectronico,
+			String telefono, 
+			String nroDocumento, 
+			String estado, 
+			Long ciudadId, 
+			String ciudad,
+			Long extensionDocumentoId,
+			String extensionDocumento,
+			Date fechaModificacion,
+			String login,
+			String estadoUsuario,
+			Long usuarioId,
+			Long sucursalId,
+			String nombreSucursal
+			) {
+	
+		this.personaId = personaId;
+		if(materno!=null) {
+			this.nombreCompleto = nombres+" "+paterno+" "+materno;	
+		}else {
+			this.nombreCompleto = nombres+" "+paterno;
+		}
+		this.nombres=nombres;
+		this.paterno=paterno;
+		this.materno=materno;
+		this.direccion = direccion;
+		this.correoElectronico = correoElectronico;
+		this.telefono = telefono;
+		this.nroDocumento = nroDocumento;
+		this.estado = estado;
+		this.ciudadId = ciudadId;
+		this.ciudad = ciudad;
+		this.extensionDocumento = extensionDocumento;
+		this.extensionDocumentoId = extensionDocumentoId;
+		this.fechaModificacion=fechaModificacion;
+		this.login=login;
+		this.estadoUsuario=estadoUsuario;
+		this.usuarioId=usuarioId;
+		this.sucursalId=sucursalId;
+		this.nombreSucursal=nombreSucursal;
+		
+	}
+	
 	public PersonaDto(
 			Long personaId, 
 			String nombres, 

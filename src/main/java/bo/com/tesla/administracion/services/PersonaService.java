@@ -58,8 +58,6 @@ public class PersonaService implements IPersonaService {
 
 	@Autowired
 	private IRecaudadoraService recaudadoraService;
-	
-	
 
 	@Autowired
 	private IEmpleadoDao empleadoDao;
@@ -71,22 +69,15 @@ public class PersonaService implements IPersonaService {
 	private String correoEnvio;
 
 	@Override
-	public Page<PersonaDto> findPersonasByRecaudadorGrid(String parametro,  Long sucursalId, int page, int size) {
+	public Page<PersonaDto> findPersonasByRecaudadorGrid(String parametro, Long sucursalId, int page, int size) {
 		Pageable paging = PageRequest.of(page, size);
-	
-		System.out.println("---------------------"+parametro);
-		
-		System.out.println("---------------------"+sucursalId);
-		return this.personaDao.findPersonasByRecaudadorGrid(parametro,  sucursalId, paging);
+		return this.personaDao.findPersonasByRecaudadorGrid(parametro, sucursalId, paging);
 	}
+
 	@Override
 	public Page<PersonaDto> findPersonasByEntidadesGrid(String parametro, Long entidadId, int page, int size) {
 		Pageable paging = PageRequest.of(page, size);
-	
-		System.out.println("---------------------"+parametro);
-		System.out.println("---------------------"+entidadId);
-		
-		return this.personaDao.findPersonasByEntidadesGrid(parametro, entidadId,  paging);
+		return this.personaDao.findPersonasByEntidadesGrid(parametro, entidadId, paging);
 	}
 
 	@Override
@@ -130,7 +121,7 @@ public class PersonaService implements IPersonaService {
 
 	@Transactional
 	@Override
-	public PersonaEntity save(PersonaDto personaDto, SegUsuarioEntity usuario) {
+	public PersonaEntity save(PersonaDto personaDto, SegUsuarioEntity usuario) throws BusinesException {
 
 		EntidadEntity entidad = new EntidadEntity();
 		SucursalEntity sucursal = new SucursalEntity();
@@ -139,7 +130,11 @@ public class PersonaService implements IPersonaService {
 
 		try {
 
-			DominioEntity extensionDocumento = this.dominioService.findById(personaDto.extensionDocumentoId);
+			if (personaDto.extensionDocumentoId != null) {
+				DominioEntity extensionDocumento = this.dominioService.findById(personaDto.extensionDocumentoId);
+				persona.setExtensionDocumentoId(extensionDocumento);
+			}
+
 			DominioEntity ciudad = this.dominioService.findById(2L);
 			DominioEntity tipoDocumento = this.dominioService.findById(1L);
 
@@ -150,7 +145,6 @@ public class PersonaService implements IPersonaService {
 			persona.setDireccion(personaDto.direccion);
 			persona.setTelefono(personaDto.telefono);
 			persona.setNroDocumento(personaDto.nroDocumento);
-			persona.setExtensionDocumentoId(extensionDocumento);
 			persona.setUsuarioCreacion(usuario.getUsuarioId());
 			persona.setFechaCreacion(new Date());
 			persona.setUsuarioModificacion(usuario.getUsuarioId());
@@ -158,17 +152,12 @@ public class PersonaService implements IPersonaService {
 			persona.setCiudadId(ciudad);
 			persona.setTipoDocumentoId(tipoDocumento);
 			persona.setTransaccion(personaDto.transaccion);
-			if (personaDto.esAdmin == null) {
-				personaDto.esAdmin = false;
-			}
-			persona.setAdmin(personaDto.esAdmin);
-			persona = this.personaDao.save(persona);
 
 			EmpleadoEntity empleado = new EmpleadoEntity();
 
 			switch (personaDto.subModulo) {
 			case "ADMIN":
-
+				persona.setAdmin(true);
 				if (personaDto.entidadId != null) {
 					entidad = this.entidadService.findEntidadById(personaDto.entidadId).get();
 					empleado.setEntidadId(entidad);
@@ -178,7 +167,7 @@ public class PersonaService implements IPersonaService {
 					List<SucursalEntity> sucursalList = this.sucursalService
 							.findByRecaudadoraId(recaudadora.getRecaudadorId());
 					if (sucursalList.isEmpty()) {
-						new BusinesException(
+						throw new BusinesException(
 								"No se ha podido encontrar ninguna sucursal registrada para la recaudadora seleccionada.");
 					}
 					empleado.setSucursalId(sucursalList.get(0));
@@ -186,16 +175,21 @@ public class PersonaService implements IPersonaService {
 
 				break;
 			case "ADM_ENTIDADES":
+				persona.setAdmin(false);
 				entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
 				empleado.setEntidadId(entidad);
 
 				break;
 			case "ADM_RECAUDACION":
+				persona.setAdmin(false);
 				sucursal = this.sucursalService.findById(personaDto.sucursalId).get();
 				empleado.setSucursalId(sucursal);
 
 				break;
 			}
+
+			persona = this.personaDao.save(persona);
+
 			empleado.setFechaCreacion(new Date());
 			empleado.setUsuarioCreacion(usuario.getUsuarioId());
 			empleado.setFechaCreacion(new Date());
@@ -206,7 +200,7 @@ public class PersonaService implements IPersonaService {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			new Technicalexception(e.getMessage(), e.getCause());
+			throw new Technicalexception(e.getMessage(), e.getCause());
 		}
 
 		return persona;
@@ -219,35 +213,51 @@ public class PersonaService implements IPersonaService {
 		EntidadEntity entidad = new EntidadEntity();
 		SucursalEntity sucursal = new SucursalEntity();
 		PersonaEntity persona = new PersonaEntity();
+		EmpleadoEntity empleado = new EmpleadoEntity();
 
 		try {
 
-			DominioEntity extensionDocumento = this.dominioService.findById(personaDto.extensionDocumentoId);
 			persona = this.personaDao.findById(personaDto.personaId).get();
+			if(personaDto.extensionDocumentoId!=null) {
+				DominioEntity extensionDocumento = this.dominioService.findById(personaDto.extensionDocumentoId);
+				persona.setExtensionDocumentoId(extensionDocumento);					
+			}
+			
 			persona.setNombres(personaDto.nombres);
 			persona.setPaterno(personaDto.paterno);
 			persona.setMaterno(personaDto.materno);
 			persona.setCorreoElectronico(personaDto.correoElectronico);
 			persona.setDireccion(personaDto.direccion);
 			persona.setTelefono(personaDto.telefono);
-			persona.setNroDocumento(personaDto.nroDocumento);
-			persona.setExtensionDocumentoId(extensionDocumento);
+			persona.setNroDocumento(personaDto.nroDocumento);			
 			persona.setUsuarioModificacion(usuario.getUsuarioId());
 			persona.setFechaModificacion(new Date());
 			persona.setTransaccion(personaDto.transaccion);
 			persona = this.personaDao.save(persona);
+			
+		
 
-			EmpleadoEntity empleado = this.empleadoDao
-					.findByPersonaIdAndSucursalIdSucursalId(personaDto.personaId, personaDto.sucursalId).get();
+			empleado = this.empleadoDao.findEmpleadosByPersonaId(persona.getPersonaId()).get();
+			if (personaDto.sucursalId != null) {
+				sucursal=this.sucursalService.findById(personaDto.sucursalId).get();
+				empleado.setSucursalId(sucursal);
+				empleado.setEntidadId(null);
+				this.empleadoDao.save(empleado);
+			} else if (personaDto.entidadId != null) {
+				entidad = this.entidadService.findEntidadById(personaDto.entidadId).get();
+				empleado.setEntidadId(entidad);
+				empleado.setSucursalId(null);
+			} else if (personaDto.recaudadorId != null) {
+				RecaudadorEntity recaudador = this.recaudadoraService.findByRecaudadorId(personaDto.recaudadorId);
+				empleado.setSucursalId(recaudador.getSucursalEntityList().get(0));
+				empleado.setEntidadId(null);
+			}
 
-			sucursal = this.sucursalService.findById(personaDto.sucursalId).get();
-
-			empleado.setSucursalId(sucursal);
-			empleado.setPersonaId(persona);
 			this.empleadoDao.save(empleado);
 
 		} catch (Exception e) {
-			new Technicalexception(e.getMessage(), e.getCause());
+			e.printStackTrace();
+			throw new Technicalexception(e.getMessage(), e.getCause());
 		}
 
 		return persona;
@@ -265,7 +275,7 @@ public class PersonaService implements IPersonaService {
 			persona = this.personaDao.save(persona);
 
 		} catch (Exception e) {
-			new Technicalexception(e.getMessage(), e.getCause());
+			throw new Technicalexception(e.getMessage(), e.getCause());
 		}
 
 		return persona;
@@ -274,57 +284,64 @@ public class PersonaService implements IPersonaService {
 	@Transactional
 	@Override
 	public SegUsuarioEntity generarCredenciales(Long personaId, SegUsuarioEntity usuarioSession) {
-		PersonaEntity persona = new PersonaEntity();
-		SegUsuarioEntity usuario = new SegUsuarioEntity();
-		Calendar calendario = new GregorianCalendar();
 
-		persona = this.personaDao.findById(personaId).get();
+		try {
+			PersonaEntity persona = new PersonaEntity();
+			SegUsuarioEntity usuario = new SegUsuarioEntity();
+			Calendar calendario = new GregorianCalendar();
 
-		if (this.usuarioService.findByPersonaIdAndEstado(personaId).isPresent()) {
-			new BusinesException("El usuario ya tiene asignada sus credenciales y están activas.");
+			persona = this.personaDao.findById(personaId).get();
+
+			if (this.usuarioService.findByPersonaIdAndEstado(personaId).isPresent()) {
+				throw new BusinesException("El usuario ya tiene asignada sus credenciales y están activas.");
+			}
+			String nombreCompleto = "";
+			Random r = new Random();
+			int valorDado = r.nextInt(98) + 1;
+			Integer minutos = calendario.get(Calendar.MINUTE);
+			String nombreUsuario = persona.getNombres().substring(0, 1) + persona.getPaterno() + minutos + ""
+					+ valorDado;
+
+			if (this.usuarioService.findByPersonaIdAndEstado(personaId).isPresent()) {
+				usuario = this.usuarioService.findByPersonaIdAndEstado(personaId).get();
+			}
+			usuario.setLogin(nombreUsuario);
+			usuario.setPassword(this.passwordEncoder.encode(nombreUsuario));
+			usuario.setPersonaId(persona);
+			usuario.setFechaCreacion(new Date());
+			usuario.setUsuarioCreacion(usuarioSession.getUsuarioId());
+			usuario.setFechaModificacion(new Date());
+			usuario.setUsuarioModificacion(usuarioSession.getUsuarioId());
+			usuario.setEstado("ACTIVO");
+			usuario = this.usuarioService.save(usuario);
+
+			if (persona.getMaterno() != null) {
+				nombreCompleto = persona.getPaterno() + " " + persona.getMaterno() + " " + persona.getNombres();
+			} else {
+				nombreCompleto = persona.getPaterno() + " " + persona.getNombres();
+			}
+
+			EmpleadoEntity empleado = this.empleadoDao.findEmpleadosByPersonaId(personaId).get();
+			String mensaje = "";
+			if (empleado.getEntidadId() != null) {
+				mensaje = "Sus credenciales para la administración de la Empresa " + empleado.getEntidadId().getNombre()
+						+ " son:";
+			} else {
+				mensaje = "Sus credenciales para la administración de la Empresa Recaudadora  "
+						+ empleado.getSucursalId().getRecaudador().getNombre() + " son:";
+			}
+
+			String plantillaCorreo = PlantillaEmail.plantillaCreacionUsuario(nombreCompleto, nombreUsuario,
+					nombreUsuario, mensaje);
+			this.sendEmail.sendHTML(correoEnvio, persona.getCorreoElectronico(), "Generación de credenciales TESLA.",
+					plantillaCorreo);
+
+			return usuario;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Technicalexception(e.getMessage(), e.getCause());
 		}
-		String nombreCompleto = "";
-		Random r = new Random();
-		int valorDado = r.nextInt(98)+1;
-		Integer minutos = calendario.get(Calendar.MINUTE);
-		String nombreUsuario = persona.getNombres().substring(0, 1) + persona.getPaterno() + minutos+""+valorDado;
-		
-		if(this.usuarioService.findByPersonaIdAndEstado(personaId).isPresent()) {
-			usuario=this.usuarioService.findByPersonaIdAndEstado(personaId).get();
-		}
-		usuario.setLogin(nombreUsuario);
-		usuario.setPassword(this.passwordEncoder.encode(nombreUsuario));
-		usuario.setPersonaId(persona);
-		usuario.setFechaCreacion(new Date());
-		usuario.setUsuarioCreacion(usuarioSession.getUsuarioId());
-		usuario.setFechaModificacion(new Date());
-		usuario.setUsuarioModificacion(usuarioSession.getUsuarioId());
-		usuario.setEstado("ACTIVO");
-		usuario = this.usuarioService.save(usuario);
 
-		
-		if (persona.getMaterno() != null) {
-			nombreCompleto = persona.getPaterno() + " " + persona.getMaterno() + " " + persona.getNombres();
-		} else {
-			nombreCompleto = persona.getPaterno() + " " + persona.getNombres();
-		}
-
-		EmpleadoEntity empleado = this.empleadoDao.findEmpleadosByPersonaId(personaId).get();
-		String mensaje = "";
-		if (empleado.getEntidadId() != null) {
-			mensaje = "Sus credenciales para la administración de la Empresa " + empleado.getEntidadId().getNombre()
-					+ " son:";
-		} else {
-			mensaje = "Sus credenciales para la administración de la Empresa Recaudadora  "
-					+ empleado.getSucursalId().getRecaudador().getNombre() + " son:";
-		}
-
-		String plantillaCorreo = PlantillaEmail.plantillaCreacionUsuario(nombreCompleto, nombreUsuario, nombreUsuario,
-				mensaje);
-		this.sendEmail.sendHTML(correoEnvio, persona.getCorreoElectronico(), "Generación de credenciales TESLA.",
-				plantillaCorreo);
-
-		return usuario;
 	}
 
 }

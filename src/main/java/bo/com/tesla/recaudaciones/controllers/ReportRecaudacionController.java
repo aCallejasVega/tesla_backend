@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import bo.com.tesla.administracion.entity.ArchivoEntity;
 import bo.com.tesla.administracion.entity.LogSistemaEntity;
 import bo.com.tesla.administracion.entity.RecaudadorEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
@@ -79,6 +80,14 @@ public class ReportRecaudacionController {
 			}
 			RecaudadorEntity recaudador = this.recaudadoraService.findRecaudadorByUserId(usuario.getUsuarioId());
 
+			
+			System.out.println("--------------- recaudador "+recaudador.getRecaudadorId());
+			for(String a:busquedaReportesDto.entidadArray) {
+				System.out.println("---------- entidad "+a);
+			}
+			
+		
+			
 			Page<DeudasClienteRecaudacionDto> deudasClienteDtoList = this.reporteRecaudacionService
 					.findDeudasByParameter(busquedaReportesDto.fechaInicio, busquedaReportesDto.fechaFin,
 							busquedaReportesDto.entidadArray, recaudador.getRecaudadorId(),
@@ -91,6 +100,7 @@ public class ReportRecaudacionController {
 			response.put("data", deudasClienteDtoList);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 		} catch (Exception e) {
+			e.printStackTrace();
 			LogSistemaEntity log = new LogSistemaEntity();
 			log.setModulo("ENTIDADES");
 			log.setController("api/ReportRecaudacion/findDeudasByParameter");
@@ -177,6 +187,7 @@ public class ReportRecaudacionController {
 			return new ResponseEntity<byte[]>(report, headers, HttpStatus.OK);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			LogSistemaEntity log = new LogSistemaEntity();
 			log.setModulo("ENTIDADES");
 			log.setController("api/ReportRecaudacion/findDeudasByParameterForReport");

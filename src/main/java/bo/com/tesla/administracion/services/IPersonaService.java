@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import bo.com.tesla.administracion.dto.PersonaDto;
 import bo.com.tesla.administracion.entity.PersonaEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
+import bo.com.tesla.useful.config.BusinesException;
 
 public interface IPersonaService {
 	
@@ -17,7 +18,7 @@ public interface IPersonaService {
 	
 	public Page<PersonaDto> findPersonasByAdminGrid(String parametro,int page,int size);
 	
-	public PersonaEntity save(PersonaDto entity,SegUsuarioEntity usuario);
+	public PersonaEntity save(PersonaDto entity,SegUsuarioEntity usuario) throws BusinesException;
 	
 	public PersonaEntity update(PersonaDto personaDto, SegUsuarioEntity usuario);
 	

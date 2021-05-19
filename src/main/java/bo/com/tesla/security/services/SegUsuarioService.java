@@ -96,9 +96,6 @@ public class SegUsuarioService implements ISegUsuarioService,UserDetailsService 
 		
 		BCryptPasswordEncoder bCrypt = new BCryptPasswordEncoder();
 		
-			
-		
-		
 		if(!bCrypt.matches(passwords.passwordActual, usuario.getPassword())) {
 			throw new BusinesException(
 					"La contraseña actual no coincide, por favor verifique e intente nuevamente. ");		

@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import bo.com.tesla.recaudaciones.dao.ITransaccionCobroDao;
 import bo.com.tesla.recaudaciones.dto.DeudasClienteRecaudacionDto;
+import bo.com.tesla.administracion.entity.ArchivoEntity;
+import bo.com.tesla.entidades.dao.IArchivoDao;
 import bo.com.tesla.entidades.dto.DeudasClienteDto;
 
 @Service
@@ -19,7 +21,8 @@ public class ReporteRecaudacionService implements IReporteRecaudacionService {
 	@Autowired
 	private ITransaccionCobroDao transaccionCobrosDao;
 
-	
+	@Autowired
+	private IArchivoDao archivoDao;
 	
 
 	@Override
@@ -32,6 +35,8 @@ public class ReporteRecaudacionService implements IReporteRecaudacionService {
 			int page,
 			int size
 			) {
+		
+		
 		
 		Pageable paging = PageRequest.of(page, size);
 		return this.transaccionCobrosDao.findDeudasByParameterForRecaudacion(fechaInicio,	fechaFin,entidadId,	recaudadorId,estado,paging);

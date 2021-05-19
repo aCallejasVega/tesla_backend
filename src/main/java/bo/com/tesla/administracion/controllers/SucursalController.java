@@ -256,7 +256,7 @@ public class SucursalController {
         }
     }
     
-    @GetMapping("/findByRecaudadoraId")
+    @GetMapping(path ="/findByRecaudadoraId", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> findByRecaudadoraId( Authentication authentication) {
     	SegUsuarioEntity usuario=new SegUsuarioEntity();
         Map<String, Object> response = new HashMap<>();
@@ -265,6 +265,7 @@ public class SucursalController {
         	RecaudadorEntity recaudador=	this.recaudadorService.findRecaudadorByUserId(usuario.getUsuarioId());        	
         	List<SucursalEntity> sucursalRecaudadoraList=this.iSucursalService.findByRecaudadoraId(recaudador.getRecaudadorId());
             
+        	System.out.println("-------------------- "+ sucursalRecaudadoraList.size());
             if(!sucursalRecaudadoraList.isEmpty()) {
                 response.put("status", true);
                 response.put("message", "El listado fue encontrado.");
@@ -277,6 +278,7 @@ public class SucursalController {
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
         } catch (Technicalexception e) {
+        	e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.SUCURSAL");
             log.setController("GET: api/sucursales/recaudadores/");

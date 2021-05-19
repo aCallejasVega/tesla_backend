@@ -56,8 +56,8 @@ public class PersonaEntity implements Serializable {
     private String correoElectronico;
     @Column(length = 10)
     private String telefono;
-    @Basic(optional = false)
-    @Column(name = "nro_documento", nullable = false, length = 10)
+    
+    @Column(name = "nro_documento", length = 10)
     private String nroDocumento;
     @Column(name = "usuario_creacion")
     private Long usuarioCreacion;

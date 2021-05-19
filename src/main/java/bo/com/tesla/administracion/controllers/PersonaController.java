@@ -73,7 +73,7 @@ public class PersonaController {
 
 	@Autowired
 	private ISegRolDao rolDao;
-	
+
 	@Autowired
 	private IEmpleadoService empleadoService;
 
@@ -94,7 +94,6 @@ public class PersonaController {
 				personaDto.parametro = "%";
 			}
 
-		
 			switch (personaDto.subModulo) {
 			case "ADMIN":
 				personaDtoList = this.personaService.findPersonasByAdminGrid(personaDto.parametro, personaDto.page - 1,
@@ -103,13 +102,14 @@ public class PersonaController {
 			case "ADM_ENTIDADES":
 				entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
 				entidadId = entidad.getEntidadId();
-				personaDtoList = this.personaService.findPersonasByEntidadesGrid(personaDto.parametro, entidadId, personaDto.page - 1, 10);
-			
+				personaDtoList = this.personaService.findPersonasByEntidadesGrid(personaDto.parametro, entidadId,
+						personaDto.page - 1, 10);
+
 				break;
 			case "ADM_RECAUDACION":
 				recaudador = this.recaudadorService.findRecaudadorByUserId(usuario.getUsuarioId());
 				recaudadorId = recaudador.getRecaudadorId();
-				personaDtoList = this.personaService.findPersonasByRecaudadorGrid(personaDto.parametro,  recaudadorId,
+				personaDtoList = this.personaService.findPersonasByRecaudadorGrid(personaDto.parametro, recaudadorId,
 						personaDto.page - 1, 10);
 				break;
 			}
@@ -117,15 +117,15 @@ public class PersonaController {
 			for (PersonaDto persona : personaDtoList) {
 				List<RolTransferDto> rolList = this.rolDao.findNombreRolesByUsuarioId(persona.usuarioId);
 				persona.rolTransferList = rolList;
-				
-				if(this.empleadoService.findEmpleadosByPersonaId(persona.personaId).isPresent()) {
-					EmpleadoEntity empleado= this.empleadoService.findEmpleadosByPersonaId(persona.personaId).get();
-					if(empleado.getSucursalId()!=null) {
-						persona.nombreSucursal=empleado.getSucursalId().getNombre();	
+
+				if (this.empleadoService.findEmpleadosByPersonaId(persona.personaId).isPresent()) {
+					EmpleadoEntity empleado = this.empleadoService.findEmpleadosByPersonaId(persona.personaId).get();
+					if (empleado.getSucursalId() != null) {
+						persona.nombreSucursal = empleado.getSucursalId().getNombre();
 					}
-						
+
 				}
-				
+
 			}
 
 			if (!personaDtoList.isEmpty()) {
@@ -150,13 +150,12 @@ public class PersonaController {
 			log.setMensaje(e.getMessage() + "");
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());
-			logSistemaService.save(log);
-			this.logger.error("This is error", e.getMessage());
-			this.logger.error("This is cause", e.getCause());
+			log = this.logSistemaService.save(log);
 			response.put("status", false);
 			response.put("result", null);
-			response.put("message",
-					"Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			response.put("message", " Código de  Error : " + log.getLogSistemaId()
+					+ " \n Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+
 			response.put("code", log.getLogSistemaId() + "");
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		}
@@ -178,8 +177,6 @@ public class PersonaController {
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
 		}
 
-		
-
 		try {
 			usuario = this.segUsuarioService.findByLogin(authentication.getName());
 			persona = personaService.save(personaDto, usuario);
@@ -188,7 +185,7 @@ public class PersonaController {
 			response.put("data", persona);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 
-		} catch (Technicalexception e) {
+		}catch (BusinesException e) {
 
 			e.printStackTrace();
 			LogSistemaEntity log = new LogSistemaEntity();
@@ -200,17 +197,37 @@ public class PersonaController {
 			log.setMensaje(e.getMessage() + "");
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());
-			logSistemaService.save(log);
-			this.logger.error("This is error", e.getMessage());
-			this.logger.error("This is cause", e.getCause());
+			log = this.logSistemaService.save(log);
+
 			response.put("status", false);
 			response.put("result", null);
-			response.put("message",
-					"Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
-			response.put("code", log.getLogSistemaId() + "");
+			response.put("message", "Código Error : " + log.getLogSistemaId()
+					+ " "+ e.getMessage() );
+
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+		} 
+		catch (Technicalexception e) {
+			
+			e.printStackTrace();
+			LogSistemaEntity log = new LogSistemaEntity();
+			log.setModulo("PERSONAS");
+			log.setController("api/personas/");
+			if (e.getCause() != null) {
+				log.setCausa(e.getCause() + "");
+			}
+			log.setMensaje(e.getMessage() + "");
+			log.setUsuarioCreacion(usuario.getUsuarioId());
+			log.setFechaCreacion(new Date());
+			log = this.logSistemaService.save(log);
+
+			response.put("status", false);
+			response.put("result", null);
+			response.put("message", "Código Error : " + log.getLogSistemaId()
+					+ " "+ e.getMessage());
+
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
-
+			
 			e.printStackTrace();
 			LogSistemaEntity log = new LogSistemaEntity();
 			log.setModulo("PERSONAS");
@@ -221,13 +238,12 @@ public class PersonaController {
 			log.setMensaje(e.getMessage() + "");
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());
-			logSistemaService.save(log);
-			this.logger.error("This is error", e.getMessage());
-			this.logger.error("This is cause", e.getCause());
+			log = this.logSistemaService.save(log);
 			response.put("status", false);
 			response.put("result", null);
-			response.put("message",
-					"Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			response.put("message", " Código de  Error : " + log.getLogSistemaId()
+					+ " \n Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+
 			response.put("code", log.getLogSistemaId() + "");
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		}
@@ -269,13 +285,12 @@ public class PersonaController {
 			log.setMensaje(e.getMessage() + "");
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());
-			logSistemaService.save(log);
-			this.logger.error("This is error", e.getMessage());
-			this.logger.error("This is cause", e.getCause());
+			log = this.logSistemaService.save(log);
 			response.put("status", false);
 			response.put("result", null);
-			response.put("message",
-					"Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			response.put("message", " Código de  Error : " + log.getLogSistemaId()
+					+ " \n Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+
 			response.put("code", log.getLogSistemaId() + "");
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
@@ -290,13 +305,13 @@ public class PersonaController {
 			log.setMensaje(e.getMessage() + "");
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());
-			logSistemaService.save(log);
-			this.logger.error("This is error", e.getMessage());
-			this.logger.error("This is cause", e.getCause());
+			log = this.logSistemaService.save(log);
+
 			response.put("status", false);
 			response.put("result", null);
-			response.put("message",
-					"Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			response.put("message", " Código de  Error : " + log.getLogSistemaId()
+					+ " \n Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+
 			response.put("code", log.getLogSistemaId() + "");
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		}
@@ -330,13 +345,13 @@ public class PersonaController {
 			log.setMensaje(e.getMessage() + "");
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());
-			logSistemaService.save(log);
-			this.logger.error("This is error", e.getMessage());
-			this.logger.error("This is cause", e.getCause());
+			log = this.logSistemaService.save(log);
+
 			response.put("status", false);
 			response.put("result", null);
-			response.put("message",
-					"Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			response.put("message", " Código de  Error : " + log.getLogSistemaId()
+					+ " \n Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+
 			response.put("code", log.getLogSistemaId() + "");
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
@@ -351,13 +366,13 @@ public class PersonaController {
 			log.setMensaje(e.getMessage() + "");
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());
-			logSistemaService.save(log);
+			log = this.logSistemaService.save(log);
 			this.logger.error("This is error", e.getMessage());
 			this.logger.error("This is cause", e.getCause());
 			response.put("status", false);
 			response.put("result", null);
-			response.put("message",
-					"Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			response.put("message", " Código de  Error : " + log.getLogSistemaId()
+					+ " \n Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
 			response.put("code", log.getLogSistemaId() + "");
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		}
@@ -373,11 +388,11 @@ public class PersonaController {
 			SegUsuarioEntity usuario = this.personaService.generarCredenciales(personaId, usuarioSession);
 			response.put("status", true);
 			response.put("data", usuario);
-			response.put("message", "El correo a sido enviado exitosamente con las credenciales generadas.");
+			response.put("message",
+					"Sus credenciales fueron enviadas al correo electrónico registrado en el formulario.");
 			return new ResponseEntity<>(response, HttpStatus.OK);
-			
-			
-		}catch (Technicalexception e) {
+
+		} catch (Technicalexception e) {
 
 			e.printStackTrace();
 			LogSistemaEntity log = new LogSistemaEntity();
@@ -389,17 +404,16 @@ public class PersonaController {
 			log.setMensaje(e.getMessage() + "");
 			log.setUsuarioCreacion(usuarioSession.getUsuarioId());
 			log.setFechaCreacion(new Date());
-			logSistemaService.save(log);
+			log = this.logSistemaService.save(log);
 			this.logger.error("This is error", e.getMessage());
 			this.logger.error("This is cause", e.getCause());
 			response.put("status", false);
 			response.put("result", null);
-			response.put("message",
-					"Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
-			response.put("code", log.getLogSistemaId() + "");
+			response.put("message", " Código de  Error : " + log.getLogSistemaId()
+					+ " \n Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-		} 
-		catch (Exception e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			LogSistemaEntity log = new LogSistemaEntity();
@@ -411,13 +425,13 @@ public class PersonaController {
 			log.setMensaje(e.getMessage() + "");
 			log.setUsuarioCreacion(usuarioSession.getUsuarioId());
 			log.setFechaCreacion(new Date());
-			logSistemaService.save(log);
-			this.logger.error("This is error", e.getMessage());
-			this.logger.error("This is cause", e.getCause());
+			log = this.logSistemaService.save(log);
+
 			response.put("status", false);
 			response.put("result", null);
-			response.put("message",
-					"Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			response.put("message", " Código de  Error : " + log.getLogSistemaId()
+					+ " \n Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+
 			response.put("code", log.getLogSistemaId() + "");
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		}
