@@ -85,7 +85,7 @@ public class FacturaController {
         } catch (BusinesException e) {
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("FACTURAS");
-            log.setController("api/facturas/filters");
+            log.setController("api/facturas/codigoscontroles");
             log.setMensaje(e.getMessage());
             log.setUsuarioCreacion(usuario.getUsuarioId());
             log.setFechaCreacion(new Date());

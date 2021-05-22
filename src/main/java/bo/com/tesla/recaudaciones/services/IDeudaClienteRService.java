@@ -4,6 +4,7 @@ import bo.com.tesla.administracion.entity.DeudaClienteEntity;
 import bo.com.tesla.recaudaciones.dto.ClienteDto;
 import bo.com.tesla.recaudaciones.dto.DeudaClienteDto;
 import bo.com.tesla.recaudaciones.dto.ServicioDeudaDto;
+import bo.com.tesla.useful.config.BusinesException;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +12,7 @@ import java.util.Optional;
 public interface IDeudaClienteRService {
 
     public List<ClienteDto> getByEntidadAndClienteLike(Long entidadId, String datoCliente);
-    public List<ServicioDeudaDto> getDeudasByCliente(Long entidadId, String codigoCliente);
+    public List<ServicioDeudaDto> getDeudasByCliente(Long entidadId, String codigoCliente) throws BusinesException;
     public List<DeudaClienteEntity> getAllDeudasByCliente(Long entidadId,
                                                           String tipoServicio,
                                                           String servicio,

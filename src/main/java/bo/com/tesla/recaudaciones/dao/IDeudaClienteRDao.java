@@ -93,5 +93,12 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
             "where t.factura_id = :facturaId", nativeQuery = true)
     Integer recoverDeudasByFactura(@Param("facturaId") Long facturaId);
 
+    @Query("select distinct new bo.com.tesla.recaudaciones.dto.ClienteDto(" +
+            "d.codigoCliente, d.nombreCliente, d.nroDocumento)" +
+            "from DeudaClienteEntity d " +
+            "where d.archivoId.entidadId.entidadId = :entidadId " +
+            "and d.archivoId.estado = 'ACTIVO' " +
+            "and d.codigoCliente = :codigoCliente")
+    List<ClienteDto> findCodigoClienteByEntidad(@Param("entidadId") Long entidadId, @Param("codigoCliente") String codigoCliente);
 
 }
