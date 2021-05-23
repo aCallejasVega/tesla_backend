@@ -82,7 +82,12 @@ public class SegUsuarioService implements ISegUsuarioService,UserDetailsService 
 	public SegUsuarioEntity findByLogin(String login) {		
 		return this.segUsuarioDao.findByLogin(login);
 	}
-
+	
+	@Override
+	@Transactional(readOnly = true)
+	public SegUsuarioEntity findById(Long usuarioId) {		
+		return this.segUsuarioDao.findById(usuarioId).get();
+	}
 
 	@Override
 	public Optional<SegUsuarioEntity> findByPersonaIdAndEstado(Long personaId) {

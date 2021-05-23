@@ -30,8 +30,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
  */
 @Entity
 @Table(name = "seg_privilegios_roles", catalog = "exacta_tesla", schema = "tesla")
-@NamedQueries({
-    @NamedQuery(name = "SegPrivilegioRolEntity.findAll", query = "SELECT s FROM SegPrivilegioRolEntity s")})
 public class SegPrivilegioRolEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

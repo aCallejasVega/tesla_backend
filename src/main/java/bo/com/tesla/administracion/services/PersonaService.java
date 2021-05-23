@@ -69,9 +69,9 @@ public class PersonaService implements IPersonaService {
 	private String correoEnvio;
 
 	@Override
-	public Page<PersonaDto> findPersonasByRecaudadorGrid(String parametro, Long sucursalId, int page, int size) {
+	public Page<PersonaDto> findPersonasByRecaudadorGrid(String parametro, Long recaudadorId, int page, int size) {
 		Pageable paging = PageRequest.of(page, size);
-		return this.personaDao.findPersonasByRecaudadorGrid(parametro, sucursalId, paging);
+		return this.personaDao.findPersonasByRecaudadorGrid(parametro, recaudadorId, paging);
 	}
 
 	@Override
@@ -98,8 +98,7 @@ public class PersonaService implements IPersonaService {
 						personaDto.nombreEntidad = entidad.getNombre();
 						personaDto.entidadId = entidad.getEntidadId();
 					} else if (empleado.get().getSucursalId() != null) {
-						SucursalEntity sucursal = this.sucursalService
-								.findById(empleado.get().getSucursalId().getSucursalId()).get();
+						SucursalEntity sucursal = this.sucursalService.findById(empleado.get().getSucursalId().getSucursalId()).get();
 						personaDto.nombreRecaudadora = sucursal.getRecaudador().getNombre();
 						personaDto.recaudadorId = sucursal.getRecaudador().getRecaudadorId();
 					}
@@ -218,28 +217,26 @@ public class PersonaService implements IPersonaService {
 		try {
 
 			persona = this.personaDao.findById(personaDto.personaId).get();
-			if(personaDto.extensionDocumentoId!=null) {
+			if (personaDto.extensionDocumentoId != null) {
 				DominioEntity extensionDocumento = this.dominioService.findById(personaDto.extensionDocumentoId);
-				persona.setExtensionDocumentoId(extensionDocumento);					
+				persona.setExtensionDocumentoId(extensionDocumento);
 			}
-			
+
 			persona.setNombres(personaDto.nombres);
 			persona.setPaterno(personaDto.paterno);
 			persona.setMaterno(personaDto.materno);
 			persona.setCorreoElectronico(personaDto.correoElectronico);
 			persona.setDireccion(personaDto.direccion);
 			persona.setTelefono(personaDto.telefono);
-			persona.setNroDocumento(personaDto.nroDocumento);			
+			persona.setNroDocumento(personaDto.nroDocumento);
 			persona.setUsuarioModificacion(usuario.getUsuarioId());
 			persona.setFechaModificacion(new Date());
 			persona.setTransaccion(personaDto.transaccion);
 			persona = this.personaDao.save(persona);
-			
-		
 
 			empleado = this.empleadoDao.findEmpleadosByPersonaId(persona.getPersonaId()).get();
 			if (personaDto.sucursalId != null) {
-				sucursal=this.sucursalService.findById(personaDto.sucursalId).get();
+				sucursal = this.sucursalService.findById(personaDto.sucursalId).get();
 				empleado.setSucursalId(sucursal);
 				empleado.setEntidadId(null);
 				this.empleadoDao.save(empleado);
@@ -291,27 +288,26 @@ public class PersonaService implements IPersonaService {
 			Calendar calendario = new GregorianCalendar();
 
 			persona = this.personaDao.findById(personaId).get();
-
-			if (this.usuarioService.findByPersonaIdAndEstado(personaId).isPresent()) {
-				throw new BusinesException("El usuario ya tiene asignada sus credenciales y están activas.");
-			}
+		
 			String nombreCompleto = "";
 			Random r = new Random();
 			int valorDado = r.nextInt(98) + 1;
 			Integer minutos = calendario.get(Calendar.MINUTE);
-			String nombreUsuario = persona.getNombres().substring(0, 1) + persona.getPaterno() + minutos + ""
+			String nombreUsuario = persona.getNombres().substring(0, 1) + persona.getPaterno().replace(" ","") + minutos + ""
 					+ valorDado;
 
 			if (this.usuarioService.findByPersonaIdAndEstado(personaId).isPresent()) {
 				usuario = this.usuarioService.findByPersonaIdAndEstado(personaId).get();
+				usuario.setFechaModificacion(new Date());
+				usuario.setUsuarioModificacion(usuarioSession.getUsuarioId());
+
+			} else {
+				usuario.setFechaCreacion(new Date());
+				usuario.setUsuarioCreacion(usuarioSession.getUsuarioId());
 			}
 			usuario.setLogin(nombreUsuario);
 			usuario.setPassword(this.passwordEncoder.encode(nombreUsuario));
 			usuario.setPersonaId(persona);
-			usuario.setFechaCreacion(new Date());
-			usuario.setUsuarioCreacion(usuarioSession.getUsuarioId());
-			usuario.setFechaModificacion(new Date());
-			usuario.setUsuarioModificacion(usuarioSession.getUsuarioId());
 			usuario.setEstado("ACTIVO");
 			usuario = this.usuarioService.save(usuario);
 
@@ -330,12 +326,10 @@ public class PersonaService implements IPersonaService {
 				mensaje = "Sus credenciales para la administración de la Empresa Recaudadora  "
 						+ empleado.getSucursalId().getRecaudador().getNombre() + " son:";
 			}
-
 			String plantillaCorreo = PlantillaEmail.plantillaCreacionUsuario(nombreCompleto, nombreUsuario,
 					nombreUsuario, mensaje);
 			this.sendEmail.sendHTML(correoEnvio, persona.getCorreoElectronico(), "Generación de credenciales TESLA.",
 					plantillaCorreo);
-
 			return usuario;
 		} catch (Exception e) {
 			e.printStackTrace();

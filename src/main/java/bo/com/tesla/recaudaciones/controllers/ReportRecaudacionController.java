@@ -79,14 +79,6 @@ public class ReportRecaudacionController {
 				busquedaReportesDto.fechaFin = Util.stringToDate("01/01/2100");
 			}
 			RecaudadorEntity recaudador = this.recaudadoraService.findRecaudadorByUserId(usuario.getUsuarioId());
-
-			
-			System.out.println("--------------- recaudador "+recaudador.getRecaudadorId());
-			for(String a:busquedaReportesDto.entidadArray) {
-				System.out.println("---------- entidad "+a);
-			}
-			
-		
 			
 			Page<DeudasClienteRecaudacionDto> deudasClienteDtoList = this.reporteRecaudacionService
 					.findDeudasByParameter(busquedaReportesDto.fechaInicio, busquedaReportesDto.fechaFin,
@@ -149,6 +141,9 @@ public class ReportRecaudacionController {
 								+ Util.dateToStringFormat(busquedaReportesDto.fechaInicio) + "-"
 								+ Util.dateToStringFormat(busquedaReportesDto.fechaFin));
 			}
+			if (busquedaReportesDto.export.equals("msexcel")) {
+				parameters.put("IS_IGNORE_PAGINATION", true);
+			}
 
 			if (busquedaReportesDto.fechaInicio == null) {
 				busquedaReportesDto.fechaInicio = Util.stringToDate("01/01/2021");
@@ -197,7 +192,7 @@ public class ReportRecaudacionController {
 			}
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());
-			this.logSistemaService.save(log);
+			log = this.logSistemaService.save(log);
 			this.logger.error("This is mesasage", e.getMessage());
 			this.logger.error("This is cause", e.getCause().toString());
 
@@ -214,7 +209,7 @@ public class ReportRecaudacionController {
 	@PostMapping(path = "/findDeudasCobradasByUsuarioCreacionForGrid")
 	public ResponseEntity<?> findDeudasCobradasByUsuarioCreacionForGrid(
 			@RequestBody BusquedaReportesRecaudacionDto busquedaReportesDto, Authentication authentication)
-			throws Exception {
+			 {
 		SegUsuarioEntity usuario = new SegUsuarioEntity();
 	
 		Map<String, Object> parameters = new HashMap<>();

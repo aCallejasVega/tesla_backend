@@ -39,7 +39,7 @@ public interface IPersonaDao extends JpaRepository<PersonaEntity, Long> {
 			+ " 	left join SucursalEntity s on s.sucursalId=ep.sucursalId.sucursalId "			
 			+ " Where "
 			+ "  	p.estado !='ELIMINADO'  "
-			+ "		and ep.sucursalId.recaudador.recaudadorId= :sucursalId "
+			+ "		and ep.sucursalId.recaudador.recaudadorId= :recaudadorId "
 			+ "		and p.admin=false "
 			+ "		and( p.nroDocumento like concat('%', :parametro,'%')  "
 			+ "			or upper(p.nombres) like upper(concat('%', :parametro,'%'))	"
@@ -49,7 +49,7 @@ public interface IPersonaDao extends JpaRepository<PersonaEntity, Long> {
 			+ " Order by p.fechaModificacion desc ")
 	public Page<PersonaDto>  findPersonasByRecaudadorGrid(
 			@Param("parametro") String parametro,			
-			@Param("sucursalId") Long sucursalId,
+			@Param("recaudadorId") Long recaudadorId,
 			Pageable pageable);
 	
 	@Query("Select new bo.com.tesla.administracion.dto.PersonaDto("

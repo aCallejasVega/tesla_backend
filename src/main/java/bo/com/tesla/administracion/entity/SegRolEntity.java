@@ -6,6 +6,7 @@
 package bo.com.tesla.administracion.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Basic;
@@ -14,8 +15,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -37,24 +42,29 @@ public class SegRolEntity implements Serializable {
     @Column(length = 255)
     private String descripcion;
     @Column(name = "usuario_creacion", length = 255)
-    private String usuarioCreacion;
+    private Long usuarioCreacion;
     @Column(name = "fecha_creacion", length = 255)
-    private String fechaCreacion;
+    private Date fechaCreacion;
     @Column(name = "usuario_modificacion", length = 255)
-    private String usuarioModificacion;
+    private Long usuarioModificacion;
     @Column(name = "fecha_modificacion", length = 255)
-    private String fechaModificacion;
+    private Date fechaModificacion;
     @Column(length = 15)
     private String estado;
     @Column(length = 100)
     private String modulo;
     @Column(name = "sub_modulo", length = 100)
     private String subModulo;
+    @JsonIgnore
     @OneToMany(mappedBy = "rolId")
     private List<SegPrivilegioRolEntity> segPrivilegioRolEntityList;
+    @JsonIgnore
     @OneToMany(mappedBy = "rolId")
     private List<SegUsuarioRolEntity> segUsuarioRolEntityList;
-
+    @JsonIgnore
+    @JoinColumn(name = "modulo_id", referencedColumnName = "modulo_id")
+    @ManyToOne
+    private SegModuloEntity moduloId;
     public SegRolEntity() {
     }
 
@@ -88,39 +98,57 @@ public class SegRolEntity implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public String getUsuarioCreacion() {
-        return usuarioCreacion;
-    }
+        
 
-    public void setUsuarioCreacion(String usuarioCreacion) {
-        this.usuarioCreacion = usuarioCreacion;
-    }
+    public Long getUsuarioCreacion() {
+		return usuarioCreacion;
+	}
 
-    public String getFechaCreacion() {
-        return fechaCreacion;
-    }
+	public void setUsuarioCreacion(Long usuarioCreacion) {
+		this.usuarioCreacion = usuarioCreacion;
+	}
 
-    public void setFechaCreacion(String fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
+	public Date getFechaCreacion() {
+		return fechaCreacion;
+	}
 
-    public String getUsuarioModificacion() {
-        return usuarioModificacion;
-    }
+	public void setFechaCreacion(Date fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
+	}
 
-    public void setUsuarioModificacion(String usuarioModificacion) {
-        this.usuarioModificacion = usuarioModificacion;
-    }
+	public Long getUsuarioModificacion() {
+		return usuarioModificacion;
+	}
 
-    public String getFechaModificacion() {
-        return fechaModificacion;
-    }
+	public void setUsuarioModificacion(Long usuarioModificacion) {
+		this.usuarioModificacion = usuarioModificacion;
+	}
 
-    public void setFechaModificacion(String fechaModificacion) {
-        this.fechaModificacion = fechaModificacion;
-    }
+	public Date getFechaModificacion() {
+		return fechaModificacion;
+	}
 
-    public String getEstado() {
+	public void setFechaModificacion(Date fechaModificacion) {
+		this.fechaModificacion = fechaModificacion;
+	}
+
+	public String getModulo() {
+		return modulo;
+	}
+
+	public void setModulo(String modulo) {
+		this.modulo = modulo;
+	}
+
+	public String getSubModulo() {
+		return subModulo;
+	}
+
+	public void setSubModulo(String subModulo) {
+		this.subModulo = subModulo;
+	}
+
+	public String getEstado() {
         return estado;
     }
 
@@ -143,8 +171,17 @@ public class SegRolEntity implements Serializable {
     public void setSegUsuarioRolEntityList(List<SegUsuarioRolEntity> segUsuarioRolEntityList) {
         this.segUsuarioRolEntityList = segUsuarioRolEntityList;
     }
+    
+    
+    public SegModuloEntity getModuloId() {
+		return moduloId;
+	}
 
-    @Override
+	public void setModuloId(SegModuloEntity moduloId) {
+		this.moduloId = moduloId;
+	}
+
+	@Override
     public int hashCode() {
         int hash = 0;
         hash += (rolId != null ? rolId.hashCode() : 0);

@@ -17,6 +17,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
@@ -31,9 +33,11 @@ public class SegUsuarioRolEntity implements Serializable {
     @Basic(optional = false)
     @Column(name = "usuario_roles_id", nullable = false)
     private Long usuarioRolesId;
+    @JsonIgnore
     @JoinColumn(name = "rol_id", referencedColumnName = "rol_id")
     @ManyToOne
     private SegRolEntity rolId;
+    @JsonIgnore
     @JoinColumn(name = "usuario_id", referencedColumnName = "usuario_id")
     @ManyToOne
     private SegUsuarioEntity usuarioId;

@@ -76,6 +76,10 @@ public class SegPrivilegioEntity implements Serializable {
     @JoinColumn(name = "privilegio_padre_id", referencedColumnName = "privilegios_id")
     @ManyToOne
     private SegPrivilegioEntity privilegioPadreId;
+    
+    @JoinColumn(name = "modulo_id", referencedColumnName = "modulo_id")
+    @ManyToOne
+    private SegModuloEntity moduloId;
 
     public SegPrivilegioEntity() {
     }
@@ -187,8 +191,19 @@ public class SegPrivilegioEntity implements Serializable {
     public void setPrivilegioPadreId(SegPrivilegioEntity privilegioPadreId) {
         this.privilegioPadreId = privilegioPadreId;
     }
+    
+    
+    
 
-    @Override
+    public SegModuloEntity getModuloId() {
+		return moduloId;
+	}
+
+	public void setModuloId(SegModuloEntity moduloId) {
+		this.moduloId = moduloId;
+	}
+
+	@Override
     public int hashCode() {
         int hash = 0;
         hash += (privilegiosId != null ? privilegiosId.hashCode() : 0);

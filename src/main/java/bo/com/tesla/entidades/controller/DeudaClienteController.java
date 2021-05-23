@@ -83,9 +83,6 @@ public class DeudaClienteController {
 	@Autowired
 	private ILogSistemaService logSistemaService;
 	
-	
-	
-
 	@Value("${tesla.path.files-debts}")
 	private String filesBets;
 
@@ -155,8 +152,8 @@ public class DeudaClienteController {
 			log.setMensaje(e.getMessage()+"");
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());			
-			this.logSistemaService.save(log);
-			response.put("mensaje", "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			log=this.logSistemaService.save(log);
+			response.put("mensaje", "Error: "+log.getLogSistemaId()+"\n  Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
 			response.put("codigo", log.getLogSistemaId()+"");
 			response.put("status", false);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -172,8 +169,8 @@ public class DeudaClienteController {
 			log.setMensaje(e.getMessage()+"");
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());			
-			this.logSistemaService.save(log);
-			response.put("mensaje", "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			log=this.logSistemaService.save(log);
+			response.put("mensaje", "Error : " +log.getLogSistemaId()+"Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
 			response.put("codigo", log.getLogSistemaId()+"");
 			response.put("status", false);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -260,16 +257,15 @@ public class DeudaClienteController {
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());			
-			this.logSistemaService.save(log);
+			log=this.logSistemaService.save(log);
 			
 			archivo.setTransaccion("FALLAR");
-			this.archivoService.save(archivo);
-			
+			this.archivoService.save(archivo);			
 			this.deudaClienteService.deletByArchivoId(archivoId);
 			
 			
 			response.put("mensaje",
-					"Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+					"Errro:" + log.getLogSistemaId()+"\n Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
 			response.put("estado", false);
 			response.put("causa", "O");
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
@@ -287,7 +283,7 @@ public class DeudaClienteController {
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());			
-			this.logSistemaService.save(log);
+			log=this.logSistemaService.save(log);
 			
 			archivo.setTransaccion("FALLAR");
 			this.archivoService.save(archivo);
@@ -295,7 +291,7 @@ public class DeudaClienteController {
 			this.deudaClienteService.deletByArchivoId(archivoId);
 	
 			response.put("mensaje",
-					"Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+					"Error: "+log.getLogSistemaId()+"\n Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
 			response.put("estado", false);
 			response.put("causa", "O");
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
@@ -350,18 +346,18 @@ public class DeudaClienteController {
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());			
-			logSistemaService.save(log);
+			log=this.logSistemaService.save(log);
 			
 			response.put("mensaje",
-					"Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+					"Error: "+log.getLogSistemaId()+"\n Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
 
 	}
 	
 	
-	
-	@PostMapping(path ="/saveCustomerDebt", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	 @CrossOrigin(origins = "*", allowedHeaders = "*")
+	@PostMapping(path ="/saveCustomerDebt", produces = MediaType.APPLICATION_JSON_UTF8_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> saveCustomerDebt(@Valid @RequestBody DeudasClienteRestDto deuda, BindingResult result,Authentication authentication) {
 		Map<String, Object> response = new HashMap<>();
 		SegUsuarioEntity usuario=new SegUsuarioEntity();
@@ -398,7 +394,7 @@ public class DeudaClienteController {
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());			
-			logSistemaService.save(log);
+			log=this.logSistemaService.save(log);
 			response.put("mensaje",e.getMessage());
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		} 
@@ -414,13 +410,15 @@ public class DeudaClienteController {
 			log.setMensaje(e.getMessage());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());			
-			logSistemaService.save(log);
+			log=this.logSistemaService.save(log);
 			response.put("mensaje",
-					"Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+					"Error : "+log.getLogSistemaId()+"\n Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
 
 	}
+	 
+	 
 	
 
 }

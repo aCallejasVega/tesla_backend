@@ -1,13 +1,17 @@
 package bo.com.tesla.security.dao;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import bo.com.tesla.administracion.dto.RolTransferDto;
+import bo.com.tesla.administracion.entity.SegModuloEntity;
 import bo.com.tesla.administracion.entity.SegPrivilegioEntity;
+import bo.com.tesla.administracion.entity.SegPrivilegioRolEntity;
 
 
 @Repository
@@ -95,4 +99,88 @@ public interface ISegPrivilegiosDao extends JpaRepository<SegPrivilegioEntity, L
 			+ " AND t.estado_inicial IN (:estadoInicial, 'INICIAL') "
 			+ " order by t.orden ASC ", nativeQuery = true)
 	public  List<Object[]> getOperacionesByEstadoInicial(@Param("login") String login, @Param("tabla") String tabla, @Param("estadoInicial") String estadoInicial);
+	
+	
+	
+	
+	@Query("Select m "
+			+ " from SegModuloEntity m "
+			+ " Where m.estado= 'ACTIVO' ")
+	public List<SegModuloEntity> findModulos();
+	
+	
+	
+	@Query("Select new bo.com.tesla.administracion.dto.RolTransferDto(p.privilegiosId, p.descripcion, p.descripcion)  "
+			+ " from SegPrivilegioEntity p "
+			+ " where p.moduloId.moduloId= :moduloId "
+			+ " and p.estado= 'ACTIVO' "
+			+ " and (p.link is not null or p.link !='')"
+			+ " ")
+	public List<RolTransferDto> findPrivilegiosByModuloId(@Param("moduloId") Long moduloId);
+	
+	
+	@Query("Select  p.privilegiosId "
+			+ " from SegPrivilegioRolEntity pr "
+			+ " inner join SegPrivilegioEntity p on p.privilegiosId= pr.privilegioId.privilegiosId "
+			+ " inner join SegRolEntity r on r.rolId=pr.rolId.rolId "
+			+ " inner join SegUsuarioRolEntity ur on ur.rolId.rolId=r.rolId "
+			+ " inner join SegUsuarioEntity u on u.usuarioId=ur.usuarioId.usuarioId "
+			+ " Where u.usuarioId= :usuarioId "
+			+ " and p.estado='ACTIVO' "
+			+ " and pr.estado='ACTIVO'"
+			+ " and ur.estado='ACTIVO'")
+	public List<String> findPrivilegiosByUsuario(@Param("usuarioId") Long usuarioId);
+	
+	@Query("Select DISTINCT p.moduloId "
+			+ " from SegPrivilegioRolEntity pr "
+			+ " inner join SegPrivilegioEntity p on p.privilegiosId= pr.privilegioId.privilegiosId "
+			+ " inner join SegRolEntity r on r.rolId=pr.rolId.rolId "
+			+ " inner join SegUsuarioRolEntity ur on ur.rolId.rolId=r.rolId "
+			+ " inner join SegUsuarioEntity u on u.usuarioId=ur.usuarioId.usuarioId "
+			+ " Where u.usuarioId= :usuarioId "
+			+ " ")
+	public SegModuloEntity findModuloByUsuarioId(@Param("usuarioId") Long usuarioId);
+	
+	
+	@Query("Select pr "
+			+ " from SegPrivilegioRolEntity pr "			
+			+ " where pr.rolId.rolId= :rolId "
+			+ " and pr.privilegioId.privilegiosId= :privilegioId "			
+			+ " and pr.privilegioId.estado='ACTIVO' ")
+	public Optional<SegPrivilegioRolEntity> findByPrivilegioIdAndRolId(@Param("privilegioId") Long privilegioId,@Param("rolId") Long rolId);
+	
+	
+	@Query("Select pr "
+			+ " from SegPrivilegioRolEntity pr "			
+			+ " where pr.rolId.rolId= :rolId "			
+			+ " and pr.estado='ACTIVO' "
+			+ " and pr.privilegioId.estado='ACTIVO' ")
+	public List<SegPrivilegioRolEntity> findByRolId(@Param("rolId") Long rolId);
+	
+	
+	@Query("Select  p "
+			+ " from SegPrivilegioRolEntity pr "
+			+ " inner join SegPrivilegioEntity p on p.privilegiosId= pr.privilegioId.privilegiosId "
+			+ " inner join SegRolEntity r on r.rolId=pr.rolId.rolId "
+			+ " inner join SegUsuarioRolEntity ur on ur.rolId.rolId=r.rolId "
+			+ " inner join SegUsuarioEntity u on u.usuarioId=ur.usuarioId.usuarioId "
+			+ " Where u.usuarioId= :usuarioId "
+			+ " and p.estado='ACTIVO' "
+			//+ " and pr.estado='ACTIVO' "
+			+ " and ur.estado='ACTIVO'")
+	public List<SegPrivilegioEntity> findPrivilegiosByUsuarioId(@Param("usuarioId") Long usuarioId);
+	
+	
+	
+	@Query("Select new bo.com.tesla.administracion.dto.RolTransferDto(p.privilegiosId, p.descripcion, p.descripcion)  "
+			+ " from SegPrivilegioRolEntity pr "
+			+ " inner join SegPrivilegioEntity p on p.privilegiosId= pr.privilegioId.privilegiosId "
+			+ " inner join SegRolEntity r on r.rolId=pr.rolId.rolId "
+			+ " inner join SegUsuarioRolEntity ur on ur.rolId.rolId=r.rolId "
+			+ " inner join SegUsuarioEntity u on u.usuarioId=ur.usuarioId.usuarioId "
+			+ " Where u.usuarioId= :usuarioId "
+			+ " and p.estado='ACTIVO' "
+			//+ " and pr.estado='ACTIVO' "
+			+ " and ur.estado='ACTIVO'")
+	public List<RolTransferDto> findPrivilegiosByUsuarioIdForTransfer(@Param("usuarioId") Long usuarioId);
 }

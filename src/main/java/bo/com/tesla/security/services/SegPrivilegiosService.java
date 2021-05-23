@@ -2,11 +2,15 @@ package bo.com.tesla.security.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import bo.com.tesla.administracion.dto.RolTransferDto;
+import bo.com.tesla.administracion.entity.SegModuloEntity;
 import bo.com.tesla.administracion.entity.SegPrivilegioEntity;
+import bo.com.tesla.administracion.entity.SegPrivilegioRolEntity;
 import bo.com.tesla.security.dao.ISegPrivilegiosDao;
 import bo.com.tesla.security.dto.OperacionesDto;
 
@@ -107,5 +111,49 @@ public class SegPrivilegiosService implements ISegPrivilegiosService {
 
 		return transicionEntities;
 	}
+
+	@Override
+	public List<SegModuloEntity> findModulos() {
+	
+		return this.segPrivilegiosDao.findModulos();
+	}
+
+	@Override
+	public List<RolTransferDto> findPrivilegiosByModuloId(Long moduloId) {
+	
+		return this.segPrivilegiosDao.findPrivilegiosByModuloId(moduloId);
+	}
+
+	@Override
+	public List<String> findPrivilegiosByUsuario(Long usuarioId) {
+	
+		return this.segPrivilegiosDao.findPrivilegiosByUsuario(usuarioId);
+	}
+
+	@Override
+	public SegModuloEntity findModuloByUsuarioId(Long usuarioId) {
+	
+		return this.segPrivilegiosDao.findModuloByUsuarioId(usuarioId);
+	}
+
+	@Override
+	public Optional<SegPrivilegioRolEntity> findByPrivilegioIdAndRolId(Long privilegioId, Long rolId) {
+		
+		return this.segPrivilegiosDao.findByPrivilegioIdAndRolId(privilegioId, rolId);
+	}
+
+	@Override
+	public List<SegPrivilegioEntity> findPrivilegiosByUsuarioId(Long usuarioId) {
+		
+		return this.segPrivilegiosDao.findPrivilegiosByUsuarioId(usuarioId);
+	}
+
+	@Override
+	public List<RolTransferDto> findPrivilegiosByUsuarioIdForTransfer(Long usuarioId) {
+	
+		return this.segPrivilegiosDao.findPrivilegiosByUsuarioIdForTransfer(usuarioId);
+	}
+	
+	
 
 }

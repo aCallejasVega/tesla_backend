@@ -153,6 +153,9 @@ public class ReportAdminController {
 				parameters.put("tituloReporte", "INFORMACIÓN DE LAS DEUDAS COBRADAS ");
 			}
 			parameters.put("logoTesla", filesReport + "/img/teslapng.png");
+			if (busquedaReportesDto.export.equals("msexcel")) {
+				parameters.put("IS_IGNORE_PAGINATION", true);
+			}
 
 			List<DeudasClienteAdmDto> deudasClienteDtoList = this.reporteAdminService.findDeudasByParameterForReport(
 					busquedaReportesDto.fechaInicio, busquedaReportesDto.fechaFin, busquedaReportesDto.entidadId,
@@ -178,6 +181,7 @@ public class ReportAdminController {
 			return new ResponseEntity<byte[]>(report, headers, HttpStatus.OK);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			LogSistemaEntity log = new LogSistemaEntity();
 			log.setModulo("ENTIDADES");
 			log.setController("api/ReportAdmin/findDeudasByParameterForReport");
@@ -185,7 +189,7 @@ public class ReportAdminController {
 			log.setCausa(e.getCause().toString());
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());
-			this.logSistemaService.save(log);
+			log=this.logSistemaService.save(log);
 			this.logger.error("This is cause", e.getMessage());
 
 			response.put("mensaje",

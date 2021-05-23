@@ -7,12 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import bo.com.tesla.administracion.dao.IEmpleadoDao;
 import bo.com.tesla.administracion.dao.IPersonaDao;
 import bo.com.tesla.administracion.dto.PersonaDto;
 import bo.com.tesla.administracion.entity.PersonaEntity;
+import bo.com.tesla.administracion.entity.SegPrivilegioEntity;
 import bo.com.tesla.administracion.entity.SegRolEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioRolEntity;
+import bo.com.tesla.security.dao.ISegPrivilegioRolesDao;
+import bo.com.tesla.security.dao.ISegPrivilegiosDao;
 import bo.com.tesla.security.dao.ISegRolDao;
 import bo.com.tesla.security.dao.ISegUsuarioDao;
 import bo.com.tesla.security.dao.ISegUsuarioRolDao;
@@ -33,52 +37,88 @@ public class SegUsuarioRolService implements ISegUsuarioRolService {
 	@Autowired
 	private IPersonaDao personaDao;
 
+	@Autowired
+	private IEmpleadoDao empleadoDao;
+
+	@Autowired
+	private ISegPrivilegiosDao privilegiosDao;
+
+	@Autowired
+	private ISegPrivilegioRolesDao privilegioRolesDao;
+
 	@Transactional
 	@Override
-	public void saveRolesByUsuarioId(PersonaDto personaDto) throws BusinesException{
+	public void saveRolesByUsuarioId(PersonaDto personaDto, SegUsuarioEntity usuarioSession) throws BusinesException   {
+		SegRolEntity rol = new SegRolEntity();
 
-		PersonaEntity persona = this.personaDao.findById(personaDto.personaId).get();
-		SegUsuarioEntity usuario =new SegUsuarioEntity();
-		if (!this.usuarioDao.findByPersonaIdAndEstado(persona.getPersonaId()).isPresent()) {
-			new BusinesException("Antes de registrar los roles debe registrar las credenciales del usuario.");
-		} else {
-			 usuario = this.usuarioDao.findByPersonaIdAndEstado(persona.getPersonaId()).get();
-		}
-
-		for (Long rodId : personaDto.privilegiosKey) {
-			SegUsuarioRolEntity usuarioRol = new SegUsuarioRolEntity();
-			Optional<SegUsuarioRolEntity> usuarioRolUpdate = this.usuarioRolDao
-					.findByRolIdAndUsuarioId(usuario.getUsuarioId(), rodId);
-			if (!usuarioRolUpdate.isPresent()) {
-
-				SegRolEntity rol = this.rolDao.findById(rodId).get();
-				usuarioRol.setRolId(rol);
-				usuarioRol.setUsuarioId(usuario);
-				usuarioRol.setEstado("ACTIVO");
-				this.usuarioRolDao.save(usuarioRol);
-			} else if (!usuarioRolUpdate.get().getEstado().equals("ACTIVO")) {
-				usuarioRol = usuarioRolUpdate.get();
-				usuarioRol.setEstado("ACTIVO");
-				this.usuarioRolDao.save(usuarioRol);
+		try {
+			
+		
+			PersonaEntity persona = this.personaDao.findById(personaDto.personaId).get();
+			SegUsuarioEntity usuario = new SegUsuarioEntity();
+			
+			
+			if (!this.usuarioDao.findByPersonaIdAndEstado(persona.getPersonaId()).isPresent()) {
+				throw new BusinesException("Antes de registrar los roles debe registrar las credenciales del usuario.");
+			} else {
+				usuario = this.usuarioDao.findByPersonaIdAndEstado(persona.getPersonaId()).get();
 			}
-		}
 
-		List<SegRolEntity> rolesUsuario = this.rolDao.findRolesByUsuarioLogin(usuario.getLogin());
+			for (Long privilegioId : personaDto.privilegiosKey) {
+				
+				rol = this.rolDao.findRolByPrivilegioIdAndModuloId(privilegioId, personaDto.moduloId).get();
 
-		for (SegRolEntity segRolEntity : rolesUsuario) {
-			Boolean bandera = true;
-			for (Long rodId : personaDto.privilegiosKey) {
-				if (segRolEntity.getRolId().equals(rodId)) {
-					bandera = false;
+				Optional<SegUsuarioRolEntity> usuarioRolOptional = this.usuarioRolDao
+						.findByRolIdAndUsuarioId(usuario.getUsuarioId(), rol.getRolId());
+
+				if (usuarioRolOptional.isPresent()) {
+					SegUsuarioRolEntity usuarioRol = usuarioRolOptional.get();
+					usuarioRol.setEstado("ACTIVO");
+					usuarioRol.setUsuarioId(usuario);
+					usuarioRol.setRolId(rol);
+					usuarioRol = this.usuarioRolDao.save(usuarioRol);
+
+				} else {
+					SegUsuarioRolEntity usuarioRol = new SegUsuarioRolEntity();
+					usuarioRol.setEstado("ACTIVO");
+					usuarioRol.setUsuarioId(usuario);
+					usuarioRol.setRolId(rol);
+					usuarioRol = this.usuarioRolDao.save(usuarioRol);
+
 				}
 			}
-			if (bandera) {
-				SegUsuarioRolEntity usuarioRolUpdate = this.usuarioRolDao
-						.findByRolIdAndUsuarioId(usuario.getUsuarioId(), segRolEntity.getRolId()).get();
-				usuarioRolUpdate.setEstado("INACTIVO");
-				this.usuarioRolDao.save(usuarioRolUpdate);
+
+			List<SegPrivilegioEntity> privilegioUsuarioList = this.privilegiosDao
+					.findPrivilegiosByUsuarioId(usuario.getUsuarioId());
+
+			for (SegPrivilegioEntity privilegio : privilegioUsuarioList) {
+				Boolean bandera = true;
+				for (Long privilegioId : personaDto.privilegiosKey) {
+
+					if (privilegio.getPrivilegiosId().equals(privilegioId)) {
+						bandera = false;
+					}
+				}
+				
+				if (bandera) {
+					
+					rol = this.rolDao.findRolByPrivilegioIdAndModuloId(privilegio.getPrivilegiosId(), personaDto.moduloId)
+							.get();
+					SegUsuarioRolEntity usuarioRolOptional = this.usuarioRolDao
+							.findByRolIdAndUsuarioId(usuario.getUsuarioId(), rol.getRolId()).get();
+
+					usuarioRolOptional.setEstado("INACTIVO");
+					this.usuarioRolDao.save(usuarioRolOptional);
+				}
 			}
+		} catch (BusinesException e) {
+			e.printStackTrace();
+			throw new BusinesException(e.getMessage());
+			
+		}catch (Exception e) {
+			throw new Technicalexception(e.getMessage(),e.getCause());
 		}
+		
 
 	}
 

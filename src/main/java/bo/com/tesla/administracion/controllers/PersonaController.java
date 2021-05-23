@@ -32,6 +32,7 @@ import bo.com.tesla.administracion.entity.EntidadEntity;
 import bo.com.tesla.administracion.entity.LogSistemaEntity;
 import bo.com.tesla.administracion.entity.PersonaEntity;
 import bo.com.tesla.administracion.entity.RecaudadorEntity;
+import bo.com.tesla.administracion.entity.SegPrivilegioEntity;
 import bo.com.tesla.administracion.entity.SegRolEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.administracion.entity.SucursalEntity;
@@ -46,6 +47,7 @@ import bo.com.tesla.recaudaciones.services.IEntidadRService;
 import bo.com.tesla.recaudaciones.services.IRecaudadoraService;
 import bo.com.tesla.security.dao.ISegRolDao;
 import bo.com.tesla.security.services.ILogSistemaService;
+import bo.com.tesla.security.services.ISegPrivilegiosService;
 import bo.com.tesla.security.services.ISegUsuarioService;
 import bo.com.tesla.useful.config.BusinesException;
 import bo.com.tesla.useful.config.Technicalexception;
@@ -76,6 +78,9 @@ public class PersonaController {
 
 	@Autowired
 	private IEmpleadoService empleadoService;
+	
+	@Autowired
+	private ISegPrivilegiosService privilegiosService;
 
 	@PostMapping("/findPersonas")
 	public ResponseEntity<?> findPersonas(@RequestBody PersonaDto personaDto, Authentication authentication) {
@@ -109,14 +114,18 @@ public class PersonaController {
 			case "ADM_RECAUDACION":
 				recaudador = this.recaudadorService.findRecaudadorByUserId(usuario.getUsuarioId());
 				recaudadorId = recaudador.getRecaudadorId();
+				System.out.println("-------------- recaudador Id : "+recaudadorId);
 				personaDtoList = this.personaService.findPersonasByRecaudadorGrid(personaDto.parametro, recaudadorId,
 						personaDto.page - 1, 10);
 				break;
 			}
 
 			for (PersonaDto persona : personaDtoList) {
-				List<RolTransferDto> rolList = this.rolDao.findNombreRolesByUsuarioId(persona.usuarioId);
-				persona.rolTransferList = rolList;
+				
+				
+				List<SegPrivilegioEntity> privilegiosList= this.privilegiosService.findPrivilegiosByUsuarioId(persona.usuarioId);
+				
+				persona.privilegioEntities = privilegiosList;
 
 				if (this.empleadoService.findEmpleadosByPersonaId(persona.personaId).isPresent()) {
 					EmpleadoEntity empleado = this.empleadoService.findEmpleadosByPersonaId(persona.personaId).get();

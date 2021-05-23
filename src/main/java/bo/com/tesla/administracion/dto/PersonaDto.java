@@ -11,6 +11,8 @@ import javax.validation.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import bo.com.tesla.administracion.entity.SegPrivilegioEntity;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PersonaDto implements Serializable{
 
@@ -66,10 +68,13 @@ public class PersonaDto implements Serializable{
 	public String nombreEntidad;
 	public String nombreRecaudadora;
 	public String nombreSucursal;
+	public Long moduloId;
 	
 	
 	public List<Long> privilegiosKey=new ArrayList<>();
 	public List<RolTransferDto> rolTransferList=new ArrayList<>();
+	
+	public List<SegPrivilegioEntity> privilegioEntities =new ArrayList<>();
 	
 	
 	
