@@ -5,6 +5,7 @@ import bo.com.tesla.recaudaciones.dao.IDeudaClienteRDao;
 import bo.com.tesla.recaudaciones.dto.ClienteDto;
 import bo.com.tesla.recaudaciones.dto.DeudaClienteDto;
 import bo.com.tesla.recaudaciones.dto.ServicioDeudaDto;
+import bo.com.tesla.useful.config.BusinesException;
 import bo.com.tesla.useful.config.Technicalexception;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,7 +30,12 @@ public class DeudaClienteRService implements IDeudaClienteRService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ServicioDeudaDto> getDeudasByCliente(Long entidadId, String codigoCliente) {
+    public List<ServicioDeudaDto> getDeudasByCliente(Long entidadId, String codigoCliente) throws BusinesException {
+        //Controlar que el cargado de deudas no tenga 2 codigos de cliente con diferente dato
+        List<ClienteDto> clienteDtoList = iDeudaClienteRDao.findCodigoClienteByEntidad(entidadId, codigoCliente);
+        if(clienteDtoList.size() > 1) {
+            throw new BusinesException("El código de cliente '" + codigoCliente + "' se encuentra repetido con datos diferentes del cliente, resultante del cargado de deudas, comuníquese con su Administrador.");
+        }
         try {
             List<ServicioDeudaDto> servicioDeudaDtos = iDeudaClienteRDao.groupByDeudasClientes(entidadId, codigoCliente);
             if (servicioDeudaDtos.isEmpty()) {
