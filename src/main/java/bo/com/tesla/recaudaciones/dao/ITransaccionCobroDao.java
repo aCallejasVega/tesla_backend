@@ -36,8 +36,7 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 			+ " left join SegUsuarioEntity u on u.usuarioId=tc.usuarioCreacion "
 			+ " left join PersonaEntity p on p.personaId=u.personaId.personaId "
 			+ " Where "					
-			+ " hd.estado in :estado "
-			
+			+ " hd.estado in :estado "			
 			+ " and (CAST(e.entidadId as string ) in :entidadId and r.recaudadorId = :recaudadorId )  "
 			+ " and (  date(tc.fechaCreacion) BETWEEN   date(:fechaInicio) and date(:fechaFin) "
 			+ "         or tc.fechaCreacion is null) "

@@ -60,7 +60,9 @@ public class DeudasClienteRecaudacionDto {
 		if(estado.equals("ACTIVO")) {
 			this.estado="POR PAGAR";	
 		}else if(estado.equals("COBRADO")) {
-			this.estado="COBRADAS";
+			this.estado="COBRADO";
+		}else if(estado.equals("ANULADO")) {
+			this.estado="ANULADO";
 		}
 	
 		

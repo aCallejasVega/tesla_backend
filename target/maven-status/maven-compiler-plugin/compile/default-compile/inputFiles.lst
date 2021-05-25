@@ -19,6 +19,7 @@ C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesl
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\recaudaciones\dao\IRecaudadorDao.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\dao\IEntidadRecaudadorDao.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\facturaciones\computarizada\services\DominioFacturaService.java
+C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\entity\SegModuloEntity.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\facturaciones\computarizada\controllers\DosificacionController.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\entidades\services\IEntidadService.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\facturaciones\computarizada\services\IOperacionService.java
@@ -28,6 +29,7 @@ C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesl
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\dao\IRecaudadorComisionDao.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\recaudaciones\services\DeudaClienteRService.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\security\services\SegUsuarioService.java
+C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\security\dao\ISegPrivilegioRolesDao.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\entidades\batch\JobCompletionNotificationListener.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\services\IEntidadRecaudadorService.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\recaudaciones\dao\ITransaccionCobroDao.java

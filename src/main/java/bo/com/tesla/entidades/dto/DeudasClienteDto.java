@@ -122,6 +122,8 @@ public class DeudasClienteDto {
 			this.estado="POR PAGAR";	
 		}else if(estado.equals("COBRADO")) {
 			this.estado="COBRADOS";
+		}else if(estado.equals("ANULADO")) {
+			this.estado="ANULADO";
 		}
 	
 		
