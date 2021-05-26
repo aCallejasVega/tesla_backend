@@ -287,20 +287,8 @@ public class DosificacionController {
             response.put("message", "Ocurrió un problema (notificaciones/alertas) en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
             response.put("code", log.getLogSistemaId() + "");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        } /*catch (BusinesException e) {
-            LogSistemaEntity log=new LogSistemaEntity();
-            log.setModulo("FACTURAS");
-            log.setController("api/facturas/filters");
-            log.setMensaje(e.getMessage());
-            log.setUsuarioCreacion(usuario.getUsuarioId());
-            log.setFechaCreacion(new Date());
-            this.logSistemaService.save(log);
-            this.logger.error("This is cause", e.getMessage());
-            response.put("status", false);
-            response.put("message", e.getMessage());
-            response.put("code", log.getLogSistemaId()+"");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }*/
+        }
     }
+
 
 }

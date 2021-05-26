@@ -7,6 +7,8 @@ public class DosificacionDto {
     public Long dosificacionId;
     public String codigoActividadEconomica;
     public String actividadEconomica;
+    public String codigoActividadEconomicaSecundaria;
+    public String actividadEconomicaSecundaria;
     public Boolean porTerceros;
     public String numeroAutorizacion;
     public Date fechaLimiteEmision;

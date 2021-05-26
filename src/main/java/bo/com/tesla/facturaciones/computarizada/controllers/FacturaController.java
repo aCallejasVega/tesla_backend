@@ -98,7 +98,7 @@ public class FacturaController {
         }
     }
 
-    @PostMapping(path = {"/entidades/{entidadId}/filters/{page}", "/filters/{page}" }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = { "/entidades/{entidadId}/filters/{page}", "/filters/{page}" }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> postListFacturaFilter(@RequestBody FacturaDto facturaDto,
                                                           @PathVariable(name = "entidadId", required = false) Optional<Long> entidadId,
                                                           @PathVariable int page,
@@ -158,16 +158,69 @@ public class FacturaController {
         }
     }
 
+    @GetMapping("/entidades/reportes/{facturaId}")
+    public ResponseEntity<?> getReportFactura(@PathVariable Long facturaId,
+                                              Authentication authentication)  {
+
+        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
+        Map<String, Object> response = new HashMap<>();
+        try {
+            EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
+            if(entidad == null) {
+                throw new BusinesException("El usuario debe pertenecer a una Entidad.");
+            }
+            ResponseDto responseDto = facturacionComputarizadaService.getFacturaReport(entidad.getEntidadId(), facturaId);
+
+            byte[] facturaByteArray = Base64.getDecoder().decode(responseDto.report);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentLength(facturaByteArray.length);
+            headers.setContentType(MediaType.parseMediaType("application/pdf" ));
+            headers.set("Content-Disposition", "inline; filename=report.pdf" );
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+            return new ResponseEntity<>(facturaByteArray, headers, HttpStatus.OK);
+
+        } catch (Technicalexception e) {
+            LogSistemaEntity log = new LogSistemaEntity();
+            log.setModulo("FACTURAS");
+            log.setController("api/facturas/entidades/reportes/" + facturaId);
+            log.setCausa(e.getCause() + "");
+            log.setMensaje(e.getMessage() + "");
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            logSistemaService.save(log);
+            this.logger.error("This is error", e.getMessage());
+            this.logger.error("This is cause", e.getCause());
+            response.put("status", false);
+            response.put("result", null);
+            response.put("message", "Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+            response.put("code", log.getLogSistemaId() + "");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        } catch (BusinesException e) {
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("FACTURAS");
+            log.setController("api/facturas/entidades/reportes/\" + facturaId");
+            log.setMensaje(e.getMessage());
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            this.logSistemaService.save(log);
+            this.logger.error("This is cause", e.getMessage());
+            response.put("status", false);
+            response.put("message", e.getMessage());
+            response.put("code", log.getLogSistemaId()+"");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/entidades/{entidadId}/reportes/{facturaId}")
-    public ResponseEntity<?> getReportFactura(@PathVariable Long entidadId,
+    public ResponseEntity<?> getReportFacturaByEntidad(@PathVariable Long entidadId,
                                               @PathVariable Long facturaId,
                                               Authentication authentication)  {
 
         SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         Map<String, Object> response = new HashMap<>();
         try {
-
             ResponseDto responseDto = facturacionComputarizadaService.getFacturaReport(entidadId, facturaId);
+
             byte[] facturaByteArray = Base64.getDecoder().decode(responseDto.report);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentLength(facturaByteArray.length);
@@ -180,7 +233,7 @@ public class FacturaController {
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("FACTURAS");
             log.setModulo("FACTURAS");
-            log.setController("api/facturas/filters");
+            log.setController("api/facturas/entidades/"+ entidadId);
             log.setCausa(e.getCause() + "");
             log.setMensaje(e.getMessage() + "");
             log.setUsuarioCreacion(usuario.getUsuarioId());
@@ -269,11 +322,5 @@ public class FacturaController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
-
-
-
-
-
-
 
 }
