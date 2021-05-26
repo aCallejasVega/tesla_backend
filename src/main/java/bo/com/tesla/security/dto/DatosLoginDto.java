@@ -5,5 +5,6 @@ public class DatosLoginDto {
 	public String correo;
 	public String nombreEntidad;
 	public String path;
+	public String modulo;
 
 }
