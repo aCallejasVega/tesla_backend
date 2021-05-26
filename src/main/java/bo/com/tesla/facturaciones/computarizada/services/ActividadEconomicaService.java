@@ -13,22 +13,7 @@ public class ActividadEconomicaService implements IActividadEconomicaService {
 
     @Autowired
     private ConexionService conexionService;
-/*
-    @Override
-    public ResponseDto getLstFilter(Long entidadId, String codigoActividadEconomica) {
-        try {
-            String url = "";
-            if(codigoActividadEconomica != null)
-                url = this.hostComputarizada + "/api/actividadeseconomicas/" + codigoActividadEconomica;
-            else
-                url = this.hostComputarizada + "/api/actividadeseconomicas";
 
-            return conexionService.getResponseMethodGet(entidadId, url);
-        } catch (Exception e) {
-            throw new Technicalexception(e.getMessage(),e.getCause());
-        }
-    }
-*/
     @Override
     public ResponseDto getByCodigo(Long entidadId, String codigoActividadEconomica) {
         try {
