@@ -211,6 +211,7 @@ public class FacturaController {
         }
     }
 
+
     @GetMapping("/entidades/{entidadId}/reportes/{facturaId}")
     public ResponseEntity<?> getReportFacturaByEntidad(@PathVariable Long entidadId,
                                               @PathVariable Long facturaId,
@@ -322,5 +323,55 @@ public class FacturaController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("/{facturaId}")
+    public ResponseEntity<?> getFactura(@PathVariable Long facturaId,
+                                        Authentication authentication)  {
+
+        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
+        Map<String, Object> response = new HashMap<>();
+        try {
+            EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
+            if(entidad == null) {
+                throw new BusinesException("El usuario debe pertenecer a una Entidad.");
+            }
+            ResponseDto responseDto = facturacionComputarizadaService.getFacturaDto(entidad.getEntidadId(), facturaId);
+            response.put("status", responseDto.status);
+            response.put("message", responseDto.message);
+            response.put("result", responseDto.result);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Technicalexception e) {
+            LogSistemaEntity log = new LogSistemaEntity();
+            log.setModulo("FACTURAS");
+            log.setController("GET: api/facturas/" + facturaId);
+            log.setCausa(e.getCause() + "");
+            log.setMensaje(e.getMessage() + "");
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            logSistemaService.save(log);
+            this.logger.error("This is error", e.getMessage());
+            this.logger.error("This is cause", e.getCause());
+            response.put("status", false);
+            response.put("result", null);
+            response.put("message", "Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+            response.put("code", log.getLogSistemaId() + "");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        } catch (BusinesException e) {
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("FACTURAS");
+            log.setController("api/facturas/entidades/reportes/" + facturaId);
+            log.setMensaje(e.getMessage());
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            this.logSistemaService.save(log);
+            this.logger.error("This is cause", e.getMessage());
+            response.put("status", false);
+            response.put("message", e.getMessage());
+            response.put("code", log.getLogSistemaId()+"");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
 
 }

@@ -201,8 +201,21 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
         }
     }
 
+    @Override
+    public ResponseDto getFacturaDto(Long entidadId, Long facturaId) {
+        try {
+            String url = this.host + "/api/facturas/" + facturaId;
+            ResponseDto responseDto = conexionService.getResponseMethodGet(entidadId, url);
 
+            TypeReference<FacturaDto> mapType = new TypeReference<FacturaDto>() {};
+            ObjectMapper mapper = new ObjectMapper();
+            FacturaDto facturaDto = mapper.convertValue(responseDto.result, mapType);
+            responseDto.result = facturaDto;
 
-
+            return responseDto;
+        } catch (Exception e) {
+            throw new Technicalexception(e.getMessage(),e.getCause());
+        }
+    }
 
 }

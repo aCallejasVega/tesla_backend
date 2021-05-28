@@ -16,5 +16,6 @@ public interface IFacturaComputarizadaService {
     ResponseDto postFacturaLstFilter(Long entidadId, int page, FacturaDto facturaDto);
     ResponseDto getFacturaReport(Long entidadId, Long facturaId);
     ResponseDto getLibroVentasReport(Long entidadId, FacturaDto facturaDto);
+    ResponseDto getFacturaDto(Long entidadId, Long facturaId);
 
 }

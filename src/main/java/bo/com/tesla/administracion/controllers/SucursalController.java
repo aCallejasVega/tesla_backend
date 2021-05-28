@@ -265,7 +265,6 @@ public class SucursalController {
         	RecaudadorEntity recaudador=	this.recaudadorService.findRecaudadorByUserId(usuario.getUsuarioId());        	
         	List<SucursalEntity> sucursalRecaudadoraList=this.iSucursalService.findByRecaudadoraId(recaudador.getRecaudadorId());
             
-        	System.out.println("-------------------- "+ sucursalRecaudadoraList.size());
             if(!sucursalRecaudadoraList.isEmpty()) {
                 response.put("status", true);
                 response.put("message", "El listado fue encontrado.");
