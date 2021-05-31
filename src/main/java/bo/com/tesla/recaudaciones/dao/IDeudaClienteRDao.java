@@ -76,8 +76,8 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
     Long deleteByDeudaClienteIdIn(List<Long> deudaClienteIdLst);
 
     @Modifying
-    @Query(value = "INSERT INTO tesla.deudas_clientes (archivo_id, nro_registro, codigo_cliente, nombre_cliente, nro_documento, direccion, nit, telefono, servicio, tipo_servicio, periodo, tipo, concepto, cantidad, monto_unitario, sub_total, dato_extras, tipo_comprobante, periodo_cabecera, es_postpago) " +
-            "select h.archivo_id, h.nro_registro, h.codigo_cliente, h.nombre_cliente, h.nro_documento, h.direccion, h.nit, h.telefono, h.servicio, h.tipo_servicio, h.periodo, h.tipo, h.concepto, h.cantidad, h.monto_unitario, h.sub_total, h.dato_extra, h.tipo_comprobante, h.periodo_cabecera, h.es_postpago " +
+    @Query(value = "INSERT INTO tesla.deudas_clientes (archivo_id, nro_registro, codigo_cliente, nombre_cliente, nro_documento, direccion, nit, telefono, servicio, tipo_servicio, periodo, tipo, concepto, cantidad, monto_unitario, sub_total, dato_extras, tipo_comprobante, periodo_cabecera, es_postpago, codigo_actividad_economica, correo_cliente) " +
+            "select h.archivo_id, h.nro_registro, h.codigo_cliente, h.nombre_cliente, h.nro_documento, h.direccion, h.nit, h.telefono, h.servicio, h.tipo_servicio, h.periodo, h.tipo, h.concepto, h.cantidad, h.monto_unitario, h.sub_total, h.dato_extra, h.tipo_comprobante, h.periodo_cabecera, h.es_postpago, h.codigo_actividad_economica, h.correo_cliente " +
             "from tesla.historicos_deudas h " +
             "inner join tesla.cobros_clientes c on h.historico_deuda_id = c.historico_deuda_id " +
             "inner join tesla.transacciones_cobros t on t.transaccion_cobro_id = c.transaccion_cobro_id " +
@@ -85,8 +85,8 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
     Integer recoverDeudasByFacturas(@Param("facturaIdLst") List<Long> facturaIdLst);
 
     @Modifying
-    @Query(value = "INSERT INTO tesla.deudas_clientes (archivo_id, nro_registro, codigo_cliente, nombre_cliente, nro_documento, direccion, nit, telefono, servicio, tipo_servicio, periodo, tipo, concepto, cantidad, monto_unitario, sub_total, dato_extras, tipo_comprobante, periodo_cabecera, es_postpago) " +
-            "select h.archivo_id, h.nro_registro, h.codigo_cliente, h.nombre_cliente, h.nro_documento, h.direccion, h.nit, h.telefono, h.servicio, h.tipo_servicio, h.periodo, h.tipo, h.concepto, h.cantidad, h.monto_unitario, h.sub_total, h.dato_extra, h.tipo_comprobante, h.periodo_cabecera, h.es_postpago " +
+    @Query(value = "INSERT INTO tesla.deudas_clientes (archivo_id, nro_registro, codigo_cliente, nombre_cliente, nro_documento, direccion, nit, telefono, servicio, tipo_servicio, periodo, tipo, concepto, cantidad, monto_unitario, sub_total, dato_extras, tipo_comprobante, periodo_cabecera, es_postpago, codigo_actividad_economica, correo_cliente) " +
+            "select h.archivo_id, h.nro_registro, h.codigo_cliente, h.nombre_cliente, h.nro_documento, h.direccion, h.nit, h.telefono, h.servicio, h.tipo_servicio, h.periodo, h.tipo, h.concepto, h.cantidad, h.monto_unitario, h.sub_total, h.dato_extra, h.tipo_comprobante, h.periodo_cabecera, h.es_postpago, h.codigo_actividad_economica, h.correo_cliente " +
             "from tesla.historicos_deudas h " +
             "inner join tesla.cobros_clientes c on h.historico_deuda_id = c.historico_deuda_id " +
             "inner join tesla.transacciones_cobros t on t.transaccion_cobro_id = c.transaccion_cobro_id " +
