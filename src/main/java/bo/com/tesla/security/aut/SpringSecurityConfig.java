@@ -40,13 +40,19 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		http.headers().frameOptions().disable()
+		
+		http.authorizeRequests()
+	      .antMatchers("/**")
+	      .permitAll();
+		
+		/*http.headers().frameOptions().disable()
 		//.authorizeRequests()
 		//.antMatchers(HttpMethod.GET,"/api/ReportEntidad/findDeudasByArchivoIdAndEstado/{archivoId}/{recaudadorId}/{export}/{estado}").permitAll()
 		//.anyRequest().authenticated()
+		
 		.and()
 		.csrf().disable()		
-		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);*/
 	}
 	
 	

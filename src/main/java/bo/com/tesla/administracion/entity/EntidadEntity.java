@@ -117,8 +117,10 @@ public class EntidadEntity implements Serializable {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadId")
     private List<PTransaccionPagoEntity> pTransaccionPagoEntityList;
+    @JsonIgnore
+    @OneToMany(mappedBy = "entidadId")
+    private List<ServicioWebEntidadEntity> servicioWebEntidadEntityList;
     
-
     public EntidadEntity() {
     }
 
@@ -411,6 +413,16 @@ public class EntidadEntity implements Serializable {
 
 	public void setpTransaccionPagoEntityList(List<PTransaccionPagoEntity> pTransaccionPagoEntityList) {
 		this.pTransaccionPagoEntityList = pTransaccionPagoEntityList;
+	}
+	
+	
+
+	public List<ServicioWebEntidadEntity> getServicioWebEntidadEntityList() {
+		return servicioWebEntidadEntityList;
+	}
+
+	public void setServicioWebEntidadEntityList(List<ServicioWebEntidadEntity> servicioWebEntidadEntityList) {
+		this.servicioWebEntidadEntityList = servicioWebEntidadEntityList;
 	}
 
 	@Override

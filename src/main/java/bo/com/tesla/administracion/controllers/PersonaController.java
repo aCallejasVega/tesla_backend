@@ -113,8 +113,7 @@ public class PersonaController {
 				break;
 			case "ADM_RECAUDACION":
 				recaudador = this.recaudadorService.findRecaudadorByUserId(usuario.getUsuarioId());
-				recaudadorId = recaudador.getRecaudadorId();
-				System.out.println("-------------- recaudador Id : "+recaudadorId);
+				recaudadorId = recaudador.getRecaudadorId();				
 				personaDtoList = this.personaService.findPersonasByRecaudadorGrid(personaDto.parametro, recaudadorId,
 						personaDto.page - 1, 10);
 				break;
@@ -388,7 +387,8 @@ public class PersonaController {
 	}
 
 	@PostMapping("/generarCredenciales/{personaId}")
-	public ResponseEntity<?> generarCredenciales(@PathVariable("personaId") Long personaId,
+	public ResponseEntity<?> generarCredenciales(
+			@PathVariable("personaId") Long personaId,
 			Authentication authentication) {
 		Map<String, Object> response = new HashMap<>();
 		SegUsuarioEntity usuarioSession = new SegUsuarioEntity();
@@ -413,9 +413,7 @@ public class PersonaController {
 			log.setMensaje(e.getMessage() + "");
 			log.setUsuarioCreacion(usuarioSession.getUsuarioId());
 			log.setFechaCreacion(new Date());
-			log = this.logSistemaService.save(log);
-			this.logger.error("This is error", e.getMessage());
-			this.logger.error("This is cause", e.getCause());
+			log = this.logSistemaService.save(log);			
 			response.put("status", false);
 			response.put("result", null);
 			response.put("message", " Código de  Error : " + log.getLogSistemaId()

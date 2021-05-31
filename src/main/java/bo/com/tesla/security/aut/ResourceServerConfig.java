@@ -1,5 +1,8 @@
 package bo.com.tesla.security.aut;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -24,8 +27,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
+		http.authorizeRequests()
+	      .antMatchers("/**")
+	      .permitAll();
 		
-		http.headers().disable()
+		/*http.headers().disable()
 		.authorizeRequests()		
 		.antMatchers("/", "/resources/**","/resources/public/**","/resources/templates/**","/resources/templates/css/**","/static/js/**","/static/css/**","/public/css/**")
         .permitAll()
@@ -35,7 +41,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         .antMatchers(HttpMethod.POST,"/home").permitAll()
         
 		.anyRequest().authenticated()
-		.and().cors().configurationSource(corsConfigurationSource());
+		.and().cors().configurationSource(corsConfigurationSource());*/
 	}
 	
 	@Bean
@@ -47,7 +53,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		config.addAllowedOrigin("*");
 		config.addAllowedHeader("*");
 		config.addAllowedMethod("*");
-	
+		config.setAllowedOrigins(Arrays.asList("*"));
+		config.setAllowedMethods(Arrays.asList("*"));
+		config.setAllowedHeaders(Collections.singletonList("*"));
 			
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", config);

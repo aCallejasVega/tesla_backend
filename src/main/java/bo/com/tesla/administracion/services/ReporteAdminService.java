@@ -29,7 +29,7 @@ public class ReporteAdminService implements IReporteAdminService {
 			Date fechaFin, 
 			String entidadId,
 			String recaudadorId, 
-			String estado,
+			List<String> estado,
 			int page,
 			int size
 			) {
@@ -46,7 +46,7 @@ public class ReporteAdminService implements IReporteAdminService {
 			Date fechaFin, 
 			String entidadId,
 			String recaudadorId, 
-			String estado) {
+			List<String> estado) {
 	
 		return this.transaccionCobrosDao.findDeudasByParameterForReportAdmin(fechaInicio, fechaFin, entidadId, recaudadorId, estado);
 	}

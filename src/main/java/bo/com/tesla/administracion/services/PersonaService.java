@@ -32,6 +32,7 @@ import bo.com.tesla.useful.config.BusinesException;
 import bo.com.tesla.useful.config.Technicalexception;
 import bo.com.tesla.useful.constant.PlantillaEmail;
 import bo.com.tesla.useful.cross.SendEmail;
+import bo.com.tesla.useful.cross.Util;
 
 import java.util.Calendar;
 
@@ -67,6 +68,9 @@ public class PersonaService implements IPersonaService {
 
 	@Value("${tesla.mail.correoEnvio}")
 	private String correoEnvio;
+	
+	@Value("${tesla.url.tesla}")
+	private String urlTesla;
 
 	@Override
 	public Page<PersonaDto> findPersonasByRecaudadorGrid(String parametro, Long recaudadorId, int page, int size) {
@@ -293,7 +297,7 @@ public class PersonaService implements IPersonaService {
 			Random r = new Random();
 			int valorDado = r.nextInt(98) + 1;
 			Integer minutos = calendario.get(Calendar.MINUTE);
-			String nombreUsuario = persona.getNombres().substring(0, 1) + persona.getPaterno().replace(" ","") + minutos + ""
+			String nombreUsuario = Util.cleanString(persona.getNombres().substring(0, 1))  +Util.cleanString( persona.getPaterno().replace(" ",""))  + minutos + ""
 					+ valorDado;
 
 			if (this.usuarioService.findByPersonaIdAndEstado(personaId).isPresent()) {
@@ -327,7 +331,7 @@ public class PersonaService implements IPersonaService {
 						+ empleado.getSucursalId().getRecaudador().getNombre() + " son:";
 			}
 			String plantillaCorreo = PlantillaEmail.plantillaCreacionUsuario(nombreCompleto, nombreUsuario,
-					nombreUsuario, mensaje);
+					nombreUsuario, mensaje,urlTesla);
 			this.sendEmail.sendHTML(correoEnvio, persona.getCorreoElectronico(), "Generación de credenciales TESLA.",
 					plantillaCorreo);
 			return usuario;

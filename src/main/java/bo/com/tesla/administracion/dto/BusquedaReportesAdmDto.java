@@ -1,6 +1,8 @@
 package bo.com.tesla.administracion.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class BusquedaReportesAdmDto {
 	public String entidadId;
@@ -13,7 +15,7 @@ public class BusquedaReportesAdmDto {
 	public Long archivoId;
 	public Date fechaCreacion;
 	public int paginacion;
-	
+	public List<String> estadoArray=new ArrayList<>();
 	
 	
 	public BusquedaReportesAdmDto() {

@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -36,8 +37,6 @@ import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
-
-
 
 public class Util {
 	public static String mensajeRow(String mensaje) {
@@ -100,7 +99,6 @@ public class Util {
 		return "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.";
 	}
 
-	
 	public static Long fileDataValidatePagos(String path) throws BusinesException {
 		Long rowInt = 0L;
 		try {
@@ -139,6 +137,7 @@ public class Util {
 		return rowInt;
 
 	}
+
 	public static Long fileDataValidate(String path) throws BusinesException {
 		Long rowInt = 0L;
 		try {
@@ -183,9 +182,9 @@ public class Util {
 			return new SimpleDateFormat("dd/MM/yyyy").parse(fecha);
 		} catch (Exception e) {
 			throw new Technicalexception(e.getMessage(), e.getCause());
-		
+
 		}
-		
+
 	}
 
 	public static Date formatDate(Date date) {
@@ -195,7 +194,7 @@ public class Util {
 			return todayWithZeroTime;
 		} catch (Exception e) {
 			throw new Technicalexception(e.getMessage(), e.getCause());
-			
+
 		}
 	}
 
@@ -205,7 +204,7 @@ public class Util {
 			return formatter.format(date);
 		} catch (Exception e) {
 			throw new Technicalexception(e.getMessage(), e.getCause());
-		
+
 		}
 	}
 
@@ -214,13 +213,13 @@ public class Util {
 		String filePath = "";
 		try {
 			switch (format) {
-			case "pdf": //formato en pdf
+			case "pdf": // formato en pdf
 				byte[] pdf = JasperExportManager.exportReportToPdf(jasperPrint);
 				return pdf;
 
 			case "msword":
 
-				filePath = filesReport +"/temp/"+ UUID.randomUUID().toString() + ".docx";
+				filePath = filesReport + "/temp/" + UUID.randomUUID().toString() + ".docx";
 				JRDocxExporter exporterdoc = new JRDocxExporter();
 				exporterdoc.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
 				exporterdoc.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, filePath);
@@ -229,10 +228,10 @@ public class Util {
 				byte[] docx = Files.readAllBytes(Paths.get(filePath));
 				return docx;
 
-			case "msexcel": //formato en excel
-				filePath = filesReport +"/temp/"+ UUID.randomUUID().toString() + ".xlsx";
+			case "msexcel": // formato en excel
+				filePath = filesReport + "/temp/" + UUID.randomUUID().toString() + ".xlsx";
 				JRXlsxExporter exporterXls = new JRXlsxExporter();
-				
+
 				exporterXls.setExporterInput(new SimpleExporterInput(jasperPrint));
 				File outputFileXls = new File(filePath);
 				exporterXls.setExporterOutput(new SimpleOutputStreamExporterOutput(outputFileXls));
@@ -242,19 +241,18 @@ public class Util {
 				configuration.setIgnoreGraphics(false);
 				configuration.setCellHidden(false);
 				configuration.setForcePageBreaks(false);
-				
+
 				exporterXls.setConfiguration(configuration);
 				exporterXls.exportReport();
 				byte[] xls = Files.readAllBytes(Paths.get(filePath));
 				return xls;
 
-			
 			case "octet-stream": // formato en rtf
-				
-				filePath = filesReport +"/temp/"+ UUID.randomUUID().toString() + ".rtf";
+
+				filePath = filesReport + "/temp/" + UUID.randomUUID().toString() + ".rtf";
 				JRRtfExporter rtfExporter = new JRRtfExporter();
 				rtfExporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-				rtfExporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, filePath);		
+				rtfExporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, filePath);
 				rtfExporter.exportReport();
 				byte[] rtf = Files.readAllBytes(Paths.get(filePath));
 				return rtf;
@@ -266,38 +264,42 @@ public class Util {
 		return null;
 
 	}
-	
-	
 
 	public static String translate(String reqStr) {
 		StringBuffer result = new StringBuffer();
-		Locale locale =  new Locale("es", "BOL");
+		Locale locale = new Locale("es", "BOL");
 		Currency crncy = Currency.getInstance(locale);
 		String inputArr[] = StringUtils.split(new BigDecimal(reqStr).abs().toPlainString(), ".");
 		RuleBasedNumberFormat rule = new RuleBasedNumberFormat(locale, RuleBasedNumberFormat.SPELLOUT);
 		int i = 0;
-		boolean flac=true;
+		boolean flac = true;
 		for (String input : inputArr) {
 			CurrencyAmount crncyAmt = new CurrencyAmount(new BigDecimal(input), crncy);
 			if (i++ == 0) {
 				result.append(rule.format(crncyAmt));
 			} else {
-				flac=false;
-				result=result.append("  "+input+"/100") ;
+				flac = false;
+				result = result.append("  " + input + "/100");
 			}
 		}
-		if(flac) {
-			result=result.append("  00/100") ;
+		if (flac) {
+			result = result.append("  00/100");
 		}
 
-		return result.toString().toUpperCase()+" Bs.";
+		return result.toString().toUpperCase() + " Bs.";
 	}
 
-	public static String imgToText(String path){
-		
+	public static String imgToText(String path) {
+
 		String base64 = UtilBase64Image.encoder(path);
-        String img64 = base64 != null ? "data:image/png;base64," + base64 : null;
-        return img64;
+		String img64 = base64 != null ? "data:image/png;base64," + base64 : null;
+		return img64;
+	}
+
+	public static String cleanString(String texto) {
+		texto = Normalizer.normalize(texto, Normalizer.Form.NFD);
+		texto = texto.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+		return texto;
 	}
 
 }

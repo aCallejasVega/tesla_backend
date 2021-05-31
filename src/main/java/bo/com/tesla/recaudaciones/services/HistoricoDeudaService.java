@@ -104,6 +104,7 @@ public class HistoricoDeudaService implements IHistoricoDeudaService {
 		return iHistoricoDeudaDao.findDeudasCobrasForFactura(transaccionCobroIds);
 	}
 
+	@Override
 	public ByteArrayInputStream load(Long archivoId) {
 		return writeDataToCsv(archivoId);
 	}

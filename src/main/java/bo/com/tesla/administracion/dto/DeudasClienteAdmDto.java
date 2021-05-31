@@ -60,20 +60,30 @@ public class DeudasClienteAdmDto {
 		if(estado.equals("ACTIVO")) {
 			this.estado="POR PAGAR";	
 		}else if(estado.equals("COBRADO")) {
-			this.estado="COBRADAS";
+			
+			this.estado="COBRADAS";	
+			this.nombreCliente=nombreClientePago;
+			this.fechaCreacion=fechaCreacion;
+			this.total=total;	
+			this.nombreRecaudadora=nombreRecaudadora;
+			this.comision=comision;
+			this.cajero=cajero;
+			this.nombreComercial=nombreComercial;
+			
 		}else if(estado.equals("ANULADO")) {
 			this.estado="ANULADO";
+			this.nombreCliente=nombreClientePago;
+			this.fechaCreacion=fechaCreacion;
+			this.total=total;	
+			this.nombreRecaudadora=nombreRecaudadora;
+			this.comision=comision;
+			this.cajero=cajero;
+			this.nombreComercial=nombreComercial;
 		}
 	
-	
 		
-		this.nombreCliente=nombreClientePago;
-		this.fechaCreacion=fechaCreacion;
-		this.total=total;	
-		this.nombreRecaudadora=nombreRecaudadora;
-		this.comision=comision;
-		this.cajero=cajero;
-		this.nombreComercial=nombreComercial;
+		
+		
 		
 	}
 	

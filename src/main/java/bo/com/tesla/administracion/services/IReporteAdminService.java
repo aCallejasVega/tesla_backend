@@ -19,7 +19,7 @@ public interface IReporteAdminService {
 			Date fechaFin, 
 			String entidadId,
 			String recaudadorId, 
-			String estado,
+			List<String> estado,
 			int page,
 			int size
 			);
@@ -29,7 +29,7 @@ public interface IReporteAdminService {
 			 Date fechaFin,
 			 String entidadId,
 			 String recaudadorId,
-			 String estado			
+			 List<String> estado			
 			);
 
 }

@@ -1,9 +1,11 @@
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\entity\PPagoClienteEntity.java
+C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\recaudaciones\dto\TransaccionesCobroApiDto.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\dto\RolTransferDto.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\security\services\LogSistemaService.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\entity\TransaccionCobroEntity.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\pagos\dao\IPHistoricoBeneficiariosDao.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\recaudaciones\services\IAccionService.java
+C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\recaudaciones\services\IWebServiceEntidadesService.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\dto\SucursalEntidadAdmDto.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\entity\EntidadRecaudadorEntity.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\recaudaciones\dao\ICobroClienteDao.java
@@ -22,6 +24,7 @@ C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesl
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\entity\SegModuloEntity.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\facturaciones\computarizada\controllers\DosificacionController.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\entidades\services\IEntidadService.java
+C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\facturaciones\computarizada\services\ActividadEconomicaService.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\facturaciones\computarizada\services\IOperacionService.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\dto\EntidadRecaudadorAdmDto.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\dto\BusquedaReportesAdmDto.java
@@ -94,6 +97,7 @@ C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesl
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\entidades\dao\IArchivoDao.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\recaudaciones\services\TransaccionCobroService.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\entity\PBeneficiariosEntity.java
+C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\facturaciones\computarizada\services\IActividadEconomicaService.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\recaudaciones\dto\EstadoTablasDto.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\entity\EmpleadoEntity.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\entidades\dto\BusquedaReportesDto.java
@@ -114,6 +118,7 @@ C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesl
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\entity\ArchivoEntity.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\entity\DosificacionEntity.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\useful\constant\PlantillaEmail.java
+C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\facturaciones\computarizada\controllers\ActividadEconomicaController.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\dao\IEntidadComisionesDao.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\entity\RecaudadorEntity.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\entity\PHistoricoBeneficiariosEntity.java
@@ -192,6 +197,7 @@ C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesl
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\recaudaciones\dto\DeudasClienteRecaudacionDto.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\entidades\services\DeudaClienteService.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\recaudaciones\controllers\CobroClienteController.java
+C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\useful\constant\Entidad.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\security\aut\AuthorizationServerConfig.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\recaudaciones\services\ReporteRecaudacionService.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\dto\RecaudadorAdmDto.java
@@ -210,6 +216,7 @@ C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesl
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\entity\PTransaccionPagoEntity.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\dao\IEmpleadoDao.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\entidades\controller\DeudaClienteController.java
+C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\entity\ServicioWebEntidadEntity.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\pagos\controllers\RecaudadoraPagosController.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\errors\CustomRestExceptionHandler.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\security\dto\Credencial.java
@@ -241,6 +248,7 @@ C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesl
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\recaudaciones\dto\EntidadDto.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\recaudaciones\dto\DeudasCobradasFacturaDto.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\entity\CobroClienteEntity.java
+C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\facturaciones\computarizada\dto\ActividadEconomicaDto.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\security\services\ISegUsuarioRolService.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\recaudaciones\services\HistoricoDeudaService.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\entity\SegEstadoEntity.java
@@ -252,6 +260,7 @@ C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesl
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\facturaciones\computarizada\dto\CodigoControlDto.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\pagos\controllers\ReportesPagoController.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\entidades\controller\ReportEntidadController.java
+C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\recaudaciones\services\WebServiceEntidadesService.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\security\controller\SegRolController.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\pagos\controllers\ServicioProductoController.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\recaudaciones\services\CobroClienteService.java

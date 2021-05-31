@@ -213,6 +213,9 @@ public class MenuController {
 			} else if (recaudador != null) {
 				datos.nombreEntidad = recaudador.getNombre();
 				datos.modulo="MENÚ RECAUDADOR";
+			}else {
+				datos.nombreEntidad = "EXACTA";
+				datos.modulo="ADMINISTRACION";
 			}
 
 			response.put("data", datos);

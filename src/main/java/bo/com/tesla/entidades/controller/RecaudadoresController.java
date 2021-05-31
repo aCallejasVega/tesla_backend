@@ -45,7 +45,7 @@ public class RecaudadoresController {
 			
 			usuario = this.segUsuarioService.findByLogin(authentication.getName());
 			EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
-
+			
 			List<RecaudadorEntity> recaudadorList = this.recaudadoraService.findRecaudadoresByEntidadId(entidad.getEntidadId());
 			if (recaudadorList.isEmpty()) {
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);

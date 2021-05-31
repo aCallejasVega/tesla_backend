@@ -118,20 +118,27 @@ public class DeudasClienteDto {
 		this.servicio=servicio;
 		this.tipoServicio=tipoServicio;
 		this.periodo=periodo;
-		if(estado.equals("ACTIVO")) {
-			this.estado="POR PAGAR";	
-		}else if(estado.equals("COBRADO")) {
-			this.estado="COBRADOS";
-		}else if(estado.equals("ANULADO")) {
-			this.estado="ANULADO";
-		}
-	
-		
 		this.nombreCliente=nombreClientePago;
 		this.fechaCreacion=fechaCreacion;
 		this.total=total;	
 		this.nombreRecaudadora=nombreRecaudadora;
 		this.comision=comision;
+		
+		if(estado.equals("ACTIVO")) {
+			this.estado="POR PAGAR";
+			this.fechaCreacion=null;
+			this.total=null;	
+			this.nombreRecaudadora=null;
+			this.comision=null;
+			
+		}else if(estado.equals("COBRADO")) {
+			this.estado="COBRADOS";
+		}else if(estado.equals("ANULADO")) {
+			this.estado="ANULADO";
+			
+		}
+	
+		
 		
 	}
 	

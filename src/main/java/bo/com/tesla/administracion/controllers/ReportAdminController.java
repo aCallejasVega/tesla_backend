@@ -78,7 +78,7 @@ public class ReportAdminController {
 			
 			Page<DeudasClienteAdmDto> deudasClienteDtoList = this.reporteAdminService.findDeudasByParameter(
 					busquedaReportesDto.fechaInicio, busquedaReportesDto.fechaFin, busquedaReportesDto.entidadId,
-					busquedaReportesDto.recaudadorId, busquedaReportesDto.estado, busquedaReportesDto.paginacion - 1,
+					busquedaReportesDto.recaudadorId, busquedaReportesDto.estadoArray, busquedaReportesDto.paginacion - 1,
 					10);
 
 			if (deudasClienteDtoList.isEmpty()) {
@@ -159,7 +159,7 @@ public class ReportAdminController {
 
 			List<DeudasClienteAdmDto> deudasClienteDtoList = this.reporteAdminService.findDeudasByParameterForReport(
 					busquedaReportesDto.fechaInicio, busquedaReportesDto.fechaFin, busquedaReportesDto.entidadId,
-					busquedaReportesDto.recaudadorId, busquedaReportesDto.estado);
+					busquedaReportesDto.recaudadorId, busquedaReportesDto.estadoArray);
 
 			if (deudasClienteDtoList.isEmpty()) {
 				return new ResponseEntity<Map<String, Object>>(HttpStatus.NO_CONTENT);

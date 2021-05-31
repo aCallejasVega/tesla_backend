@@ -1,5 +1,6 @@
 package bo.com.tesla.recaudaciones.dao;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import bo.com.tesla.administracion.dto.DeudasClienteAdmDto;
 import bo.com.tesla.administracion.entity.TransaccionCobroEntity;
 import bo.com.tesla.entidades.dto.DeudasClienteDto;
 import bo.com.tesla.recaudaciones.dto.DeudasClienteRecaudacionDto;
+import bo.com.tesla.recaudaciones.dto.TransaccionesCobroApiDto;
 
 
 @Repository
@@ -188,7 +190,7 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 			+ " Where "			
 			+ " COALESCE(CAST(e.entidadId as string ),'') like :entidadId "
 			+ " and COALESCE(CAST(r.recaudadorId as string ),'') like :recaudadorId "			
-			+ " and hd.estado like :estado"
+			+ " and hd.estado in :estado"
 			+ " and (  date(tc.fechaCreacion) BETWEEN   date(:fechaInicio) and date(:fechaFin) "
 			+ "         or tc.fechaCreacion is null) "
 			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.tipoServicio,hd.servicio,hd.periodo,hd.nombreCliente,hd.estado, "
@@ -200,7 +202,7 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 			@Param("fechaFin") Date fechaFin,
 			@Param("entidadId") String entidadId,
 			@Param("recaudadorId") String recaudadorId,
-			@Param("estado") String estado,
+			@Param("estado") List<String> estado,
 			Pageable pageable
 			);
 	
@@ -222,7 +224,7 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 			+ " Where "			
 			+ " COALESCE(CAST(e.entidadId as string ),'') like :entidadId "
 			+ " and COALESCE(CAST(r.recaudadorId as string ),'') like :recaudadorId "		
-			+ " and hd.estado like :estado "
+			+ " and hd.estado in :estado "
 			+ " and (  date(tc.fechaCreacion) BETWEEN   date(:fechaInicio) and date(:fechaFin) "
 			+ "         or tc.fechaCreacion is null) "
 			+ " GROUP BY hd.archivoId,hd.codigoCliente,hd.tipoServicio,hd.servicio,hd.periodo,hd.nombreCliente,hd.estado, "
@@ -234,7 +236,7 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 			@Param("fechaFin") Date fechaFin,
 			@Param("entidadId") String entidadId,
 			@Param("recaudadorId") String recaudadorId,
-			@Param("estado") String estado			
+			@Param("estado") List<String> estado			
 			);
 
 	
@@ -277,6 +279,40 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 	List<TransaccionCobroEntity> findByFacturaIdAndEstado(Long facturaId, String estado);
 
 
-
+	
+	@Query(	"Select new bo.com.tesla.recaudaciones.dto.TransaccionesCobroApiDto( "
+			+ " tc.tipoServicio, "
+			+ " tc.servicio, "
+			+ " tc.periodo, "
+			+ " tc.codigoCliente,"
+			+ "	tc.totalDeuda, "
+			+ " tc.nombreClienteArchivo, "
+			+ " tc.nroDocumentoClienteArchivo,"
+			+ "	r.nombre, "
+			+ " s.nombre, "
+			+ " tc.fechaCreacion ) "			
+					+ " from  TransaccionCobroEntity tc "					
+					+ " left join RecaudadorEntity r on r.recaudadorId=tc.recaudador.recaudadorId "	
+					+ " left join SegUsuarioEntity u on u.usuarioId=tc.usuarioCreacion "
+					+ " left join PersonaEntity p on p.personaId=u.personaId.personaId "
+					+ " left join EmpleadoEntity e on e.personaId.personaId=p.personaId "
+					+ " left join SucursalEntity s on s.sucursalId=e.sucursalId.sucursalId "					
+					+ " Where "
+					+ " tc.archivoId = :archivoId "
+					+ " and tc.codigoCliente= :codigoCliente "
+					+ " and tc.servicio= :servicio "
+					+ " and tc.tipoServicio = :tipoServicio "
+					+ " and tc.periodo= :periodo "
+					+ " and tc.estado ='COBRADO' "
+			
+			)
+	public TransaccionesCobroApiDto  getTransaccionCobroForEntidad(			
+			@Param("archivoId") Long archivoId,
+			@Param("codigoCliente") String codigoCliente,
+			@Param("servicio") String servicio,
+			@Param("tipoServicio") String tipoServicio,
+			@Param("periodo") String periodo
+			
+			);
 
 }

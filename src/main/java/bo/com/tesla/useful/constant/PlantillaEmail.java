@@ -2,7 +2,7 @@ package bo.com.tesla.useful.constant;
 
 public class PlantillaEmail {
 	
-	public static String plantillaCreacionUsuario(String nombreUsuario,String usuario,String password, String mensaje ) {
+	public static String plantillaCreacionUsuario(String nombreUsuario,String usuario,String password, String mensaje,String urlTesla ) {
 		String bodyHtml="<!DOCTYPE html\r\n"
     			+ "    PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\r\n"
     			+ "\r\n"
@@ -36,7 +36,7 @@ public class PlantillaEmail {
     			+ "                            <hr />\r\n"
     			+ "                            <div\r\n"
     			+ "                                style=\"font-family:Roboto-Regular,Helvetica,Arial,sans-serif;font-size:14px;color:rgba(0,0,0,0.87);line-height:20px;padding-top:20px;text-align:left\">\r\n"
-    			+ "                               Se han generado sus credenciales y se activó el acceso a la aplicación <a href=\"http://exacta.com.bo:8081/login\">TESLA</a>.\r\n"
+    			+ "                               Se han generado sus credenciales y se activó el acceso a la aplicación <a href='"+urlTesla+"'>TESLA</a>.\r\n"
     			+ "                                Con tu cuenta asignada, puedes acceder a la aplicación.\r\n"
     			+ "                            </div>\r\n"
     			+ "\r\n"
