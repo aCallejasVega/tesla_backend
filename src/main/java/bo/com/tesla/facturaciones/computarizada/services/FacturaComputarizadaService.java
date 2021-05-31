@@ -1,11 +1,12 @@
 package bo.com.tesla.facturaciones.computarizada.services;
 
 import bo.com.tesla.administracion.entity.CobroClienteEntity;
-import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.administracion.entity.SucursalEntidadEntity;
 
 import bo.com.tesla.administracion.entity.TransaccionCobroEntity;
 import bo.com.tesla.facturaciones.computarizada.dto.*;
+import bo.com.tesla.recaudaciones.dao.IDominioDao;
+import bo.com.tesla.recaudaciones.dao.ITransaccionCobroDao;
 import bo.com.tesla.recaudaciones.services.ITransaccionCobroService;
 import bo.com.tesla.useful.config.Technicalexception;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -18,6 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +33,12 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
 
     @Autowired
     private ITransaccionCobroService transaccionCobroService;
+    
+    @Autowired
+    private ITransaccionCobroDao transaccionCobroDao;
+
+    @Autowired
+    private IDominioDao dominioDao;
 
     @Override
     public ResponseDto postCodigoControl(CodigoControlDto codigoControlDto, Long entidadId)  {
@@ -170,14 +178,20 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
     }
 
     @Override
-    public ResponseDto postFacturaLstFilter(Long entidadId, int page, FacturaDto facturaDto) {
-        String url = this.host + "/api/facturas/filters";
+    public ResponseDto postFacturaLstFilter(Long entidadId, int page, FacturaDto facturaDto, Long recaudadoraId) {
+        try {
+            List<Long> facturaIdLst = findFacturasByEntidadAndRecaudador(entidadId, recaudadoraId);
+            facturaDto.facturaIdLst = facturaIdLst;
+            String url = this.host + "/api/facturas/filters/pages";
 
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(url).
-                queryParam("page", page - 1 ).
-                queryParam("size", 10);
+            UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(url).
+                    queryParam("page", page - 1).
+                    queryParam("size", 10);
 
-        return conexionService.getResponseMethodPostParameter(entidadId, facturaDto, uriComponentsBuilder);
+            return conexionService.getResponseMethodPostParameter(entidadId, facturaDto, uriComponentsBuilder);
+        } catch (Exception e) {
+            throw new Technicalexception(e.getMessage(), e.getCause());
+        }
     }
 
     @Override
@@ -216,6 +230,15 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
         } catch (Exception e) {
             throw new Technicalexception(e.getMessage(),e.getCause());
         }
+    }
+
+    @Override
+    public List<Long> findFacturasByEntidadAndRecaudador(Long entidadId, Long recaudadorId) {
+        Optional<Long> modFactCompuOptional = dominioDao.getDominioIdByDominioAndAbreviatura("modalidad_facturacion_id", "FC");
+        if(!modFactCompuOptional.isPresent()) {
+            throw new Technicalexception("No existe el dominio='modalidad_facturacion_id, abreviatura='FC' para la facturación computarizada");
+        }
+        return transaccionCobroService.findFacturasByModalidadAndEntidadAndRecaudador(modFactCompuOptional.get(), entidadId, recaudadorId);
     }
 
 }

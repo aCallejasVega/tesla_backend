@@ -34,6 +34,8 @@ public class FacturaDto {
     public String codigoActividadEconomicaSecundaria;
     public String actividadEconomicaSecundaria;
 
+    public List<Long> facturaIdLst;
+
     public FacturaDto() {
     }
 }

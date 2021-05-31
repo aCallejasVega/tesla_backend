@@ -2,11 +2,13 @@ package bo.com.tesla.facturaciones.computarizada.controllers;
 
 import bo.com.tesla.administracion.entity.EntidadEntity;
 import bo.com.tesla.administracion.entity.LogSistemaEntity;
+import bo.com.tesla.administracion.entity.RecaudadorEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.entidades.services.IEntidadService;
 import bo.com.tesla.facturaciones.computarizada.dto.*;
 import bo.com.tesla.facturaciones.computarizada.services.IAnulacionFacturaService;
 import bo.com.tesla.facturaciones.computarizada.services.IFacturaComputarizadaService;
+import bo.com.tesla.recaudaciones.services.IRecaudadoraService;
 import bo.com.tesla.recaudaciones.services.ITransaccionCobroService;
 import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegUsuarioService;
@@ -47,6 +49,9 @@ public class FacturaController {
 
     @Autowired
     private IAnulacionFacturaService anulacionFacturaService;
+
+    @Autowired
+    private IRecaudadoraService recaudadoraService;
 
     @PostMapping("/codigoscontroles")
     public ResponseEntity<?> getCodigoControl(@RequestBody CodigoControlDto codigoControlDto,
@@ -113,9 +118,13 @@ public class FacturaController {
                 if(entidad == null) {
                     throw new BusinesException("El usuario debe pertenecer a una Entidad.");
                 }
-                responseDto = facturacionComputarizadaService.postFacturaLstFilter(entidad.getEntidadId(), page, facturaDto);
+                responseDto = facturacionComputarizadaService.postFacturaLstFilter(entidad.getEntidadId(), page, facturaDto, null);
             } else {
-                responseDto = facturacionComputarizadaService.postFacturaLstFilter(entidadId.get(), page, facturaDto);
+                RecaudadorEntity recaudadorEntity = recaudadoraService.findRecaudadorByUserId(usuario.getUsuarioId());
+                if(recaudadorEntity == null) {
+                    throw new BusinesException("El usuario debe pertenecer a una Recaudadora.");
+                }
+                responseDto = facturacionComputarizadaService.postFacturaLstFilter(entidadId.get(), page, facturaDto, recaudadorEntity.getRecaudadorId());
             }
             if(responseDto != null) {
 

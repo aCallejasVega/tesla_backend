@@ -3,6 +3,7 @@ package bo.com.tesla.recaudaciones.dao;
 import java.util.Date;
 import java.util.List;
 
+import bo.com.tesla.administracion.entity.RecaudadorEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -276,6 +277,15 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 
 	List<TransaccionCobroEntity> findByFacturaIdAndEstado(Long facturaId, String estado);
 
+	@Query("SELECT distinct t.facturaId " +
+			"FROM TransaccionCobroEntity t " +
+			"WHERE t.modalidadFacturacion.dominioId = :modalidadFacturacionId " +
+			"AND t.entidadId.entidadId = :entidadId " +
+			"AND (:recaudadorId is null OR (t.recaudador.recaudadorId = :recaudadorId)) " +
+			"ORDER BY t.facturaId")
+	List<Long> findFacturasByModalidadAndEntidadAndRecaudador(@Param("modalidadFacturacionId") Long modalidadFacturacionId,
+															  @Param("entidadId") Long entidadId,
+															  @Param("recaudadorId") Long recaudadorId);
 
 
 

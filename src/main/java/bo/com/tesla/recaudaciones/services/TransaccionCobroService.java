@@ -177,5 +177,14 @@ public class TransaccionCobroService implements ITransaccionCobroService {
 		return null;
 	}
 
+	@Override
+	public List<Long> findFacturasByModalidadAndEntidadAndRecaudador(Long modalidadFacturaId,
+                                                                     Long entidadId,
+                                                                     Long recaudadorId) {
+        return iTransaccionCobroDao.findFacturasByModalidadAndEntidadAndRecaudador(modalidadFacturaId,
+                entidadId,
+                recaudadorId
+        );
+    }
 
 }
