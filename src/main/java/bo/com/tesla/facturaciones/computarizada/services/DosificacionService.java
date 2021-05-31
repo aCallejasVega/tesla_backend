@@ -45,12 +45,7 @@ public class DosificacionService implements IDosificacionService {
 
 
             ResponseDto responseDto = conexionService.getResponseMethodGet(entidadId,url);
-/*
-            TypeReference<List<DosificacionDto>> mapType = new TypeReference<List<DosificacionDto>>() {};
-            ObjectMapper mapper = new ObjectMapper();
-            List<DosificacionDto> dosificacionDtoList = mapper.convertValue(responseDto.result, mapType);
-            responseDto.result = dosificacionDtoList;
-*/
+
             return responseDto;
         } catch (Exception e) {
             throw new Technicalexception(e.getMessage(),e.getCause());

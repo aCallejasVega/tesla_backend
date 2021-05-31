@@ -2,11 +2,13 @@ package bo.com.tesla.facturaciones.computarizada.controllers;
 
 import bo.com.tesla.administracion.entity.EntidadEntity;
 import bo.com.tesla.administracion.entity.LogSistemaEntity;
+import bo.com.tesla.administracion.entity.RecaudadorEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.entidades.services.IEntidadService;
 import bo.com.tesla.facturaciones.computarizada.dto.*;
 import bo.com.tesla.facturaciones.computarizada.services.IAnulacionFacturaService;
 import bo.com.tesla.facturaciones.computarizada.services.IFacturaComputarizadaService;
+import bo.com.tesla.recaudaciones.services.IRecaudadoraService;
 import bo.com.tesla.recaudaciones.services.ITransaccionCobroService;
 import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegUsuarioService;
@@ -47,6 +49,9 @@ public class FacturaController {
 
     @Autowired
     private IAnulacionFacturaService anulacionFacturaService;
+
+    @Autowired
+    private IRecaudadoraService recaudadoraService;
 
     @PostMapping("/codigoscontroles")
     public ResponseEntity<?> getCodigoControl(@RequestBody CodigoControlDto codigoControlDto,
@@ -113,9 +118,13 @@ public class FacturaController {
                 if(entidad == null) {
                     throw new BusinesException("El usuario debe pertenecer a una Entidad.");
                 }
-                responseDto = facturacionComputarizadaService.postFacturaLstFilter(entidad.getEntidadId(), page, facturaDto);
+                responseDto = facturacionComputarizadaService.postFacturaLstFilter(entidad.getEntidadId(), page, facturaDto, null);
             } else {
-                responseDto = facturacionComputarizadaService.postFacturaLstFilter(entidadId.get(), page, facturaDto);
+                RecaudadorEntity recaudadorEntity = recaudadoraService.findRecaudadorByUserId(usuario.getUsuarioId());
+                if(recaudadorEntity == null) {
+                    throw new BusinesException("El usuario debe pertenecer a una Recaudadora.");
+                }
+                responseDto = facturacionComputarizadaService.postFacturaLstFilter(entidadId.get(), page, facturaDto, recaudadorEntity.getRecaudadorId());
             }
             if(responseDto != null) {
 
@@ -183,18 +192,16 @@ public class FacturaController {
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("FACTURAS");
             log.setController("api/facturas/entidades/reportes/" + facturaId);
-            log.setCausa(e.getCause() + "");
+            log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
             log.setMensaje(e.getMessage() + "");
             log.setUsuarioCreacion(usuario.getUsuarioId());
             log.setFechaCreacion(new Date());
             logSistemaService.save(log);
             this.logger.error("This is error", e.getMessage());
-            this.logger.error("This is cause", e.getCause());
-            response.put("status", false);
-            response.put("result", null);
-            response.put("message", "Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
-            response.put("code", log.getLogSistemaId() + "");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            this.logger.error("This is cause", e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
+
+            return new ResponseEntity<>("Error " + log.getLogSistemaId() + ": Ocurrio un error en el servidor, por favor intente la operacion mas tarde o consulte con su administrador." , HttpStatus.INTERNAL_SERVER_ERROR);
+
         } catch (BusinesException e) {
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("FACTURAS");
@@ -204,12 +211,12 @@ public class FacturaController {
             log.setFechaCreacion(new Date());
             this.logSistemaService.save(log);
             this.logger.error("This is cause", e.getMessage());
-            response.put("status", false);
-            response.put("message", e.getMessage());
-            response.put("code", log.getLogSistemaId()+"");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+
+            return new ResponseEntity<>("Error " + log.getLogSistemaId() + ": " + e.getMessage() , HttpStatus.INTERNAL_SERVER_ERROR);
+
         }
     }
+
 
     @GetMapping("/entidades/{entidadId}/reportes/{facturaId}")
     public ResponseEntity<?> getReportFacturaByEntidad(@PathVariable Long entidadId,
@@ -234,18 +241,16 @@ public class FacturaController {
             log.setModulo("FACTURAS");
             log.setModulo("FACTURAS");
             log.setController("api/facturas/entidades/"+ entidadId);
-            log.setCausa(e.getCause() + "");
+            log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
             log.setMensaje(e.getMessage() + "");
             log.setUsuarioCreacion(usuario.getUsuarioId());
             log.setFechaCreacion(new Date());
             logSistemaService.save(log);
             this.logger.error("This is error", e.getMessage());
-            this.logger.error("This is cause", e.getCause());
-            response.put("status", false);
-            response.put("result", null);
-            response.put("message", "Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
-            response.put("code", log.getLogSistemaId() + "");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            this.logger.error("This is cause", e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
+
+            return new ResponseEntity<>("Error " + log.getLogSistemaId() + ": Ocurrio un error en el servidor, por favor intente la operacion mas tarde o consulte con su administrador." , HttpStatus.INTERNAL_SERVER_ERROR);
+
         }
     }
 
@@ -291,7 +296,7 @@ public class FacturaController {
         try {
             EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
             if(entidad == null) {
-                throw new Technicalexception("El usuario debe pertenecer a una Entidad.");
+                throw new BusinesException("El usuario debe pertenecer a una Entidad.");
             }
 
             ResponseDto responseDto = facturacionComputarizadaService.getLibroVentasReport(entidad.getEntidadId(), facturaDto);
@@ -305,9 +310,56 @@ public class FacturaController {
             return new ResponseEntity<>(facturaByteArray, headers, HttpStatus.OK);
 
         } catch (Technicalexception e) {
+
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("FACTURAS");
             log.setController("api/facturas/librosventas");
+            log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
+            log.setMensaje(e.getMessage() + "");
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            logSistemaService.save(log);
+            this.logger.error("This is error", e.getMessage());
+            this.logger.error("This is cause", e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
+
+            return new ResponseEntity<>("Error " + log.getLogSistemaId() + ": Ocurrio un error en el servidor, por favor intente la operacion mas tarde o consulte con su administrador." , HttpStatus.INTERNAL_SERVER_ERROR);
+
+        } catch (BusinesException e) {
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("FACTURAS");
+            log.setController("api/facturas/entidades/reportes/\" + facturaId");
+            log.setMensaje(e.getMessage());
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            this.logSistemaService.save(log);
+            this.logger.error("This is cause", e.getMessage());
+
+            return new ResponseEntity<>("Error " + log.getLogSistemaId() + ": " + e.getMessage() , HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
+    }
+
+    @GetMapping("/{facturaId}")
+    public ResponseEntity<?> getFactura(@PathVariable Long facturaId,
+                                        Authentication authentication)  {
+
+        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
+        Map<String, Object> response = new HashMap<>();
+        try {
+            EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
+            if(entidad == null) {
+                throw new BusinesException("El usuario debe pertenecer a una Entidad.");
+            }
+            ResponseDto responseDto = facturacionComputarizadaService.getFacturaDto(entidad.getEntidadId(), facturaId);
+            response.put("status", responseDto.status);
+            response.put("message", responseDto.message);
+            response.put("result", responseDto.result);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Technicalexception e) {
+            LogSistemaEntity log = new LogSistemaEntity();
+            log.setModulo("FACTURAS");
+            log.setController("GET: api/facturas/" + facturaId);
             log.setCausa(e.getCause() + "");
             log.setMensaje(e.getMessage() + "");
             log.setUsuarioCreacion(usuario.getUsuarioId());
@@ -320,7 +372,21 @@ public class FacturaController {
             response.put("message", "Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
             response.put("code", log.getLogSistemaId() + "");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        } catch (BusinesException e) {
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("FACTURAS");
+            log.setController("api/facturas/entidades/reportes/" + facturaId);
+            log.setMensaje(e.getMessage());
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            this.logSistemaService.save(log);
+            this.logger.error("This is cause", e.getMessage());
+            response.put("status", false);
+            response.put("message", e.getMessage());
+            response.put("code", log.getLogSistemaId()+"");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
+
 
 }

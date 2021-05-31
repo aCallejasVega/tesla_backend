@@ -63,7 +63,6 @@ public class CobroClienteController {
     public ResponseEntity<?> postCobrarDeudas(@RequestBody ClienteDto clienteDto,
                                               @PathVariable Long metodoPagoId,
                                               Authentication authentication)  throws Exception {
-        System.out.println("****************postCobrarDeudas*******************");
         Map<String, Object> response = new HashMap<>();
         if(clienteDto == null || clienteDto.nombreCliente == null || clienteDto.nroDocumento == null || clienteDto.codigoCliente == null) {
             response.put("status", false);

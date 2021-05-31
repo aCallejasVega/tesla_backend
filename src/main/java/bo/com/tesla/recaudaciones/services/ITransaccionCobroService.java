@@ -43,4 +43,7 @@ public interface ITransaccionCobroService {
 
 	List<String> getCodigosActividadUnicos(List<TransaccionCobroEntity> transaccionCobroEntityList);
 
+	List<Long> findFacturasByModalidadAndEntidadAndRecaudador(Long modalidadFacturaId,
+															  Long entidadId,
+															  Long recaudadorId);
 }

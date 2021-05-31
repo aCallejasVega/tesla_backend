@@ -13,8 +13,10 @@ import java.util.List;
 public interface IFacturaComputarizadaService {
     ResponseDto postCodigoControl(CodigoControlDto codigoControlDto, Long entidadId);
     ResponseDto postFacturas(SucursalEntidadEntity sucursalEntidadEntity, List<TransaccionCobroEntity> transaccionCobroEntityList, Boolean comprobanteEnUno, BigDecimal montoTotal);
-    ResponseDto postFacturaLstFilter(Long entidadId, int page, FacturaDto facturaDto);
+    ResponseDto postFacturaLstFilter(Long entidadId, int page, FacturaDto facturaDto, Long recaudadoraId);
     ResponseDto getFacturaReport(Long entidadId, Long facturaId);
     ResponseDto getLibroVentasReport(Long entidadId, FacturaDto facturaDto);
+    ResponseDto getFacturaDto(Long entidadId, Long facturaId);
+    List<Long> findFacturasByEntidadAndRecaudador(Long entidadId, Long recaudadorId);
 
 }
