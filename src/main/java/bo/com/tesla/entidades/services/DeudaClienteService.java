@@ -45,6 +45,12 @@ public class DeudaClienteService implements IDeudaClienteService {
 		this.deudaClienteDao.deletByArchivoId(archivoId);
 
 	}
+	
+	@Override
+	public void updateHitoricoDeudas(Long archivoId) {
+		this.deudaClienteDao.updateHitoricoDeudas(archivoId);
+
+	}
 
 	@Transactional(readOnly = true)
 	@Override

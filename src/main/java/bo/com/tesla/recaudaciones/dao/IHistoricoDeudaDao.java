@@ -83,7 +83,7 @@ public interface IHistoricoDeudaDao extends JpaRepository<HistoricoDeudaEntity, 
 	
 	@Query(" Select new bo.com.tesla.recaudaciones.dto.EstadoTablasDto( e.segEstadoEntityPK.estadoId,   "
 			+ " CASE e.segEstadoEntityPK.estadoId "
-            + " WHEN 'ACTIVO' THEN 'POR PAGAR' "
+            + " WHEN 'ACTIVO' THEN 'POR COBRAR' "
             + " WHEN 'COBRADO' THEN 'COBRADOS' "            
             + " WHEN 'ANULADO' THEN 'ANULADOS' "
             + " END) "

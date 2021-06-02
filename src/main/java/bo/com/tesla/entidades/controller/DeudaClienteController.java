@@ -187,11 +187,14 @@ public class DeudaClienteController {
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
 		try {
+			long time=System.currentTimeMillis();
+			logger.info("------------------procesando archivo----------------------");
 			usuario = this.segUsuarioService.findByLogin(authentication.getName());
 			archivo = this.archivoService.findById(archivoId);
 			ArchivoEntity archivoPrevious = this.archivoService.findByEstado("ACTIVO",
 					archivo.getEntidadId().getEntidadId());
 
+			
 			JobParameters jobParameters = new JobParametersBuilder().addString("pathToFile", archivo.getPath())
 					.addLong("archivoId", archivo.getArchivoId()).addLong("time", System.currentTimeMillis())
 					.toJobParameters();
@@ -229,17 +232,23 @@ public class DeudaClienteController {
 			archivo.setFechaModificacion(new Date());
 			archivo.setUsuarioModificacion(usuario.getUsuarioId());
 			archivo.setTransaccion("PROCESAR");
-			archivo = this.archivoService.save(archivo);
-
+			
 			if (archivoPrevious != null) {
-				this.deudaClienteService.deletByArchivoId(archivoPrevious.getArchivoId());
+				//this.deudaClienteService.deletByArchivoId(archivoPrevious.getArchivoId());
 
 				archivoPrevious.setFechaModificacion(new Date());
 				archivoPrevious.setUsuarioModificacion(usuario.getUsuarioId());
 				archivoPrevious.setTransaccion("DESACTIVAR");
 				this.archivoService.save(archivoPrevious);
 				this.deudaClienteService.deletByArchivoId(archivoPrevious.getArchivoId());
+				this.deudaClienteService.updateHitoricoDeudas(archivoPrevious.getArchivoId());
 			}
+			
+			
+			archivo = this.archivoService.save(archivo);
+
+			
+			logger.info("------------------fin procesando archivo---------------------- "+ (time-System.currentTimeMillis()));
 
 			response.put("mensaje", "El archivo fue procesado con éxito ");
 			response.put("archivo", archivo);

@@ -34,7 +34,7 @@ import bo.com.tesla.useful.config.Technicalexception;
 import bo.com.tesla.useful.cross.Util;
 
 @RestController
-@RequestMapping("api/ReportEntidad")
+@RequestMapping("api/ReportLaRazon")
 public class ReportLaRazonController {
 	private Logger logger = LoggerFactory.getLogger(ReportLaRazonController.class);
 	
@@ -119,7 +119,7 @@ public class ReportLaRazonController {
 
 	}*/
 	
-	@GetMapping("/downloaArchivo")
+	@PostMapping("/downloaArchivo")
 	public ResponseEntity<?> downloaArchivo(@RequestBody BusquedaReportesDto busquedaReportesDto, Authentication authentication) {
 		SegUsuarioEntity usuario = new SegUsuarioEntity();
 		Map<String, Object> response = new HashMap<>();
@@ -133,6 +133,7 @@ public class ReportLaRazonController {
 			
 			usuario = this.segUsuarioService.findByLogin(authentication.getName());
 			EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
+			busquedaReportesDto.entidadId=entidad.getEntidadId();
 			final InputStreamResource resource = new InputStreamResource(this.reporteEntidadesService.load(busquedaReportesDto));
 
 			return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "archivo.csv")

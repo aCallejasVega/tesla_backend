@@ -1,5 +1,6 @@
 package bo.com.tesla.useful.cross;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,9 +13,11 @@ import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.Normalizer;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Scanner;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -138,30 +141,36 @@ public class Util {
 
 	}
 
-	public static Long fileDataValidate(String path) throws BusinesException {
+	public static Long fileDataValidate(String path) throws BusinesException, IOException {
 		Long rowInt = 0L;
+		BufferedReader br = null;
 		try {
+
 			if (!path.contains(".csv")) {
 				throw new BusinesException(
 						"El archivo debe tener la extensión ‘csv’, por favor verifique la extensión del archivo y vuelva a cargarlo.");
 			}
-			CSVReader reader = new CSVReader(new FileReader(path), '|');
-			List<String[]> allRows = reader.readAll();
 
-			for (String[] rowString : allRows) {
-				rowInt++;
+			br = new BufferedReader(new FileReader(path));
+			String line = br.readLine();
 
-				if (rowString.length <= 1) {
+			while (null != line) {
+				String[] fields = line.split("\\|",-1);
+				rowInt++;				
+				if (fields.length <= 1) {
 					throw new BusinesException("Se encontró un registro en blanco en la línea " + rowInt
 							+ ", por favor verifique el archivo y vulva a cargarlo.");
 
 				}
-				if (rowString.length != 21) {
+				if (fields.length != 21) {
 
 					throw new BusinesException(
-							"Falta columna(s) en la línea " + rowInt + " verifique el archivo y vuelva a cargarlo.");
+							"Falta o sobra columna(s) en la línea " + rowInt + " verifique el archivo y vuelva a cargarlo.");
 				}
+
+				line = br.readLine();
 			}
+
 			if (rowInt == 0) {
 
 				throw new BusinesException(
@@ -172,6 +181,10 @@ public class Util {
 			throw new Technicalexception(e.getMessage(), e.getCause());
 		} catch (IOException e) {
 			throw new Technicalexception(e.getMessage(), e.getCause());
+		} finally {
+			if (null != br) {
+				br.close();
+			}
 		}
 		return rowInt;
 

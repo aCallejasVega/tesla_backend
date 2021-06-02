@@ -58,7 +58,7 @@ public class DeudasClienteRecaudacionDto {
 		this.tipoServicio=tipoServicio;
 		this.periodo=periodo;
 		if(estado.equals("ACTIVO")) {
-			this.estado="POR PAGAR";	
+			this.estado="POR COBRAR";	
 		}else if(estado.equals("COBRADO")) {
 			this.estado="COBRADO";
 		}else if(estado.equals("ANULADO")) {

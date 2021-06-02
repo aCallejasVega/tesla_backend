@@ -10,6 +10,8 @@ public interface IDeudaClienteService {
 	
 	public void deletByArchivoId(Long archivoId);
 	
+	public void updateHitoricoDeudas(Long archivoId);
+	
 	public Page<DeudasClienteDto> findDeudasClientesByArchivoId(Long archivoId,String paramBusqueda,int page,int size);
 	
 	public String  saveCustomerDebt(DeudasClienteRestDto deuda,SegUsuarioEntity usuario) throws Exception;

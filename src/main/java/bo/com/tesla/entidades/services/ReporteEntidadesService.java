@@ -99,6 +99,7 @@ public class ReporteEntidadesService implements IReporteEntidadesService {
 		try (final ByteArrayOutputStream stream = new ByteArrayOutputStream();
 				final CSVPrinter printer = new CSVPrinter(new PrintWriter(stream),
 						CSVFormat.DEFAULT.withHeader(HEADERS))) {
+			
 			List<DeudasClienteDto> deudasList = 
 					this.transaccionCobrosDao.findDeudasByParameterForReportEntidades(
 							busquedaReportesDto.fechaInicio, 
@@ -127,6 +128,7 @@ public class ReporteEntidadesService implements IReporteEntidadesService {
 			printer.flush();
 			return new ByteArrayInputStream(stream.toByteArray());
 		} catch (final IOException e) {
+			e.printStackTrace();
 			throw new RuntimeException("Csv writing error: " + e.getMessage());
 		}
 	}
