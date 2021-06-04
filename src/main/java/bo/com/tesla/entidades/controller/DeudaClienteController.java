@@ -9,6 +9,9 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import bo.com.tesla.recaudaciones.dto.CampoBusquedaClienteEnum;
+import bo.com.tesla.recaudaciones.dto.EntidadDto;
+import bo.com.tesla.recaudaciones.services.IDeudaClienteRService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;
@@ -82,7 +85,10 @@ public class DeudaClienteController {
 	
 	@Autowired
 	private ILogSistemaService logSistemaService;
-	
+
+	@Autowired
+	private IDeudaClienteRService deudaClienteRService;
+
 	@Value("${tesla.path.files-debts}")
 	private String filesBets;
 
@@ -425,6 +431,35 @@ public class DeudaClienteController {
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
 
+	}
+
+	@GetMapping("/camposdeudas")
+	public ResponseEntity<?> getCamposBusquedaDeudas(Authentication authentication) {
+		Map<String, Object> response = new HashMap<>();
+		SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
+		try {
+			List<String> campos = deudaClienteRService.findCamposBusquedasClientes();
+			response.put("status", true);
+			response.put("result", campos);
+			response.put("message", "Se encontraron campos de búsqueda de deudas de clientes.");
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		} catch (Technicalexception e) {
+			LogSistemaEntity log = new LogSistemaEntity();
+			log.setModulo("DEUDAS");
+			log.setController("GET api/deudaCliente/camposdeudas");
+			log.setCausa(e.getCause() != null ? e.getCause().getCause() + "" : e.getCause() + "");
+			log.setMensaje(e.getMessage() + "");
+			log.setUsuarioCreacion(usuario.getUsuarioId());
+			log.setFechaCreacion(new Date());
+			logSistemaService.save(log);
+			this.logger.error("This is error", e.getMessage());
+			this.logger.error("This is cause", e.getCause() != null ? e.getCause().getCause() + "" : e.getCause() + "");
+			response.put("status", false);
+			response.put("result", null);
+			response.put("message", "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			response.put("code", log.getLogSistemaId() + "");
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+		}
 	}
 	 
 	 

@@ -101,4 +101,45 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
             "and d.codigoCliente = :codigoCliente")
     List<ClienteDto> findCodigoClienteByEntidad(@Param("entidadId") Long entidadId, @Param("codigoCliente") String codigoCliente);
 
+    @Query(value = "select distinct new bo.com.tesla.recaudaciones.dto.ClienteDto(" +
+            "d.codigoCliente, d.nombreCliente, d.nroDocumento)" +
+            "from DeudaClienteEntity d " +
+            "where d.archivoId.entidadId.entidadId = :entidadId " +
+            "and d.archivoId.estado = 'ACTIVO' " +
+            "and upper(d.codigoCliente) = upper(:codigoCliente) ")
+    List<ClienteDto> findByEntidadAndCodigoCliente(@Param("entidadId") Long entidadId, @Param("codigoCliente") String codigoCliente);
+
+    @Query(value = "select distinct new bo.com.tesla.recaudaciones.dto.ClienteDto(" +
+            "d.codigoCliente, d.nombreCliente, d.nroDocumento)" +
+            "from DeudaClienteEntity d " +
+            "where d.archivoId.entidadId.entidadId = :entidadId " +
+            "and d.archivoId.estado = 'ACTIVO' " +
+            "and upper(d.nombreCliente) like upper(concat('%', :nombreCliente, '%')) ")
+    List<ClienteDto> findByEntidadAndNombreCliente(@Param("entidadId") Long entidadId, @Param("nombreCliente") String nombreCliente);
+
+    @Query(value = "select distinct new bo.com.tesla.recaudaciones.dto.ClienteDto(" +
+            "d.codigoCliente, d.nombreCliente, d.nroDocumento)" +
+            "from DeudaClienteEntity d " +
+            "where d.archivoId.entidadId.entidadId = :entidadId " +
+            "and d.archivoId.estado = 'ACTIVO' " +
+            "and upper(d.nroDocumento) = upper(:nroDocumento) ")
+    List<ClienteDto> findByEntidadAndNroDocumento(@Param("entidadId") Long entidadId, @Param("nroDocumento") String nroDocumento);
+
+    @Query(value = "select distinct new bo.com.tesla.recaudaciones.dto.ClienteDto(" +
+            "d.codigoCliente, d.nombreCliente, d.nroDocumento)" +
+            "from DeudaClienteEntity d " +
+            "where d.archivoId.entidadId.entidadId = :entidadId " +
+            "and d.archivoId.estado = 'ACTIVO' " +
+            "and upper(d.nit) = upper(:nit) ")
+    List<ClienteDto> findByEntidadAndNit(@Param("entidadId") Long entidadId, @Param("nit") String nit);
+
+    @Query(value = "select distinct new bo.com.tesla.recaudaciones.dto.ClienteDto(" +
+            "d.codigoCliente, d.nombreCliente, d.nroDocumento)" +
+            "from DeudaClienteEntity d " +
+            "where d.archivoId.entidadId.entidadId = :entidadId " +
+            "and d.archivoId.estado = 'ACTIVO' " +
+            "and upper(d.telefono) = upper(:telefono) ")
+    List<ClienteDto> findByEntidadAndTelefono(@Param("entidadId") Long entidadId, @Param("telefono") String telefono);
+
+
 }

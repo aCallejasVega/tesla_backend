@@ -1,6 +1,7 @@
 package bo.com.tesla.recaudaciones.services;
 
 import bo.com.tesla.administracion.entity.DeudaClienteEntity;
+import bo.com.tesla.recaudaciones.dto.CampoBusquedaClienteEnum;
 import bo.com.tesla.recaudaciones.dto.ClienteDto;
 import bo.com.tesla.recaudaciones.dto.DeudaClienteDto;
 import bo.com.tesla.recaudaciones.dto.ServicioDeudaDto;
@@ -23,4 +24,6 @@ public interface IDeudaClienteRService {
     Integer recoverDeudasByFactura(Long facturaIdLst);
     List<String> getCodigosActividadUnicos(List<DeudaClienteEntity> deudaClienteEntityList);
     List<Boolean> getTipoComprobanteUnicos(List<DeudaClienteEntity> deudaClienteEntityList);
+    List<ClienteDto> getByEntidadAndDatoCliente(Long entidadId, String campoBusqueda, String datoCliente);
+    List<String> findCamposBusquedasClientes();
 }
