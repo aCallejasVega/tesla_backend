@@ -330,6 +330,66 @@ public class EntidadController {
         }
     }
 
+    @GetMapping("/{entidadId}/busquedas/{campoBusqueda}/clientes/{datoCliente}")
+    public ResponseEntity<?> getAllClientesByEntidadIdAndCampos(@PathVariable Long entidadId,
+                                                       @PathVariable String campoBusqueda,
+                                                       @PathVariable String datoCliente,
+                                                       Authentication authentication) {
+        Map<String, Object> response = new HashMap<>();
+
+        if (entidadId <= 0 || entidadId == null) {
+            response.put("status", false);
+            response.put("message", "La entidad es obligatoria.");
+            response.put("result", null);
+            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+        }
+
+        if (campoBusqueda == null || campoBusqueda.length() == 0) {
+            response.put("status", false);
+            response.put("message", "El campo de búsqueda es obligatorio.");
+            response.put("result", null);
+            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+        }
+
+        if (datoCliente == null || datoCliente.length() == 0) {
+            response.put("status", false);
+            response.put("message", "El dato del cliente es obligatorio");
+            response.put("result", null);
+            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+        }
+
+        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
+        try {
+            List<ClienteDto> clienteDtos = iDeudaClienteRService.getByEntidadAndDatoCliente(entidadId, campoBusqueda, datoCliente);
+            if (clienteDtos.isEmpty()) {
+                response.put("status", false);
+                response.put("result", null);
+                response.put("message", "No hay cliente(s) asociados a los parámetros de búsqueda");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+            response.put("status", true);
+            response.put("result", clienteDtos);
+            response.put("message", "Cliente(s) encontrado(s)");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Technicalexception e) {
+            LogSistemaEntity log = new LogSistemaEntity();
+            log.setModulo("RECAUDACIONES.ENTIDADES");
+            log.setController("api/entidades/" + entidadId + "/clientes/" + datoCliente);
+            log.setCausa(e.getCause() != null ? e.getCause().getCause() + "" : e.getCause() + "");
+            log.setMensaje(e.getMessage() + "");
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            logSistemaService.save(log);
+            this.logger.error("This is error", e.getMessage());
+            this.logger.error("This is cause", e.getCause() != null ? e.getCause().getCause() + "" : e.getCause() + "");
+            response.put("status", false);
+            response.put("result", null);
+            response.put("message", "Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+            response.put("code", log.getLogSistemaId() + "");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/{entidadId}/clientes/{codigoCliente}/deudas")
     public ResponseEntity<?> getDeudasByCliente(@PathVariable Long entidadId,
                                                 @PathVariable String codigoCliente,
@@ -551,4 +611,6 @@ public class EntidadController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
+
+
 }

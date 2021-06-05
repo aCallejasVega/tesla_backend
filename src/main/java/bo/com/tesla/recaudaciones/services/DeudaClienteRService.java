@@ -2,6 +2,7 @@ package bo.com.tesla.recaudaciones.services;
 
 import bo.com.tesla.administracion.entity.DeudaClienteEntity;
 import bo.com.tesla.recaudaciones.dao.IDeudaClienteRDao;
+import bo.com.tesla.recaudaciones.dto.CampoBusquedaClienteEnum;
 import bo.com.tesla.recaudaciones.dto.ClienteDto;
 import bo.com.tesla.recaudaciones.dto.DeudaClienteDto;
 import bo.com.tesla.recaudaciones.dto.ServicioDeudaDto;
@@ -118,4 +119,41 @@ public class DeudaClienteRService implements IDeudaClienteRService {
                 .collect(Collectors.toList());
         return tipoComprobantes.stream().distinct().collect(Collectors.toList());
     }
+
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<ClienteDto> getByEntidadAndDatoCliente(Long entidadId, String campoBusqueda, String datoCliente) {
+        List<ClienteDto> clienteDtoList = new ArrayList<>();
+        CampoBusquedaClienteEnum codCliente = CampoBusquedaClienteEnum.CODIGO_CLIENTE;
+        CampoBusquedaClienteEnum nomCliente = CampoBusquedaClienteEnum.NOMBRE_CLIENTE;
+        CampoBusquedaClienteEnum nroDocumento = CampoBusquedaClienteEnum.NRO_DOCUMENTO;
+        //CampoBusquedaClienteEnum nit = CampoBusquedaClienteEnum.NIT;
+        CampoBusquedaClienteEnum telefono = CampoBusquedaClienteEnum.TELEFONO;
+
+        if(codCliente.getAlias().equals(campoBusqueda)) {
+            clienteDtoList = iDeudaClienteRDao.findByEntidadAndCodigoCliente(entidadId, datoCliente);
+        } else if(nomCliente.getAlias().equals(campoBusqueda)) {
+            clienteDtoList = iDeudaClienteRDao.findByEntidadAndNombreCliente(entidadId, datoCliente);
+        } else if(nroDocumento.getAlias().equals(campoBusqueda)) {
+            clienteDtoList = iDeudaClienteRDao.findByEntidadAndNroDocumento(entidadId, datoCliente);
+        /*} else if(nit.getAlias().equals(campoBusqueda)) {
+            clienteDtoList = iDeudaClienteRDao.findByEntidadAndNit(entidadId, datoCliente);*/
+        } else if(telefono.getAlias().equals(campoBusqueda)) {
+            clienteDtoList = iDeudaClienteRDao.findByEntidadAndTelefono(entidadId, datoCliente);
+        }
+
+        return clienteDtoList;
+    }
+
+    @Override
+    public List<String> findCamposBusquedasClientes() {
+        List<String> lista = new ArrayList<>();
+        CampoBusquedaClienteEnum[] campos = CampoBusquedaClienteEnum.values();
+        for(CampoBusquedaClienteEnum c : campos) {
+            lista.add(c.getAlias());
+        }
+        return lista;
+    }
+
 }
