@@ -86,7 +86,7 @@ public class ReportRecaudacionController {
 							busquedaReportesDto.estadoArray, busquedaReportesDto.paginacion - 1, 10);
 
 			if (deudasClienteDtoList.isEmpty()) {
-				System.out.println("No tiene contenido");
+				
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
 			}
 			response.put("data", deudasClienteDtoList);
