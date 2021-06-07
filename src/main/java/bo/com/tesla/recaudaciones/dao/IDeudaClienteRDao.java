@@ -141,5 +141,4 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
             "and upper(d.telefono) = upper(:telefono) ")
     List<ClienteDto> findByEntidadAndTelefono(@Param("entidadId") Long entidadId, @Param("telefono") String telefono);
 
-
 }
