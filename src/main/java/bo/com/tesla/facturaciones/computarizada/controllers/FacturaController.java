@@ -107,7 +107,7 @@ public class FacturaController {
 
     @PostMapping(path = { "/entidades/{entidadId}/filters/{page}", "/filters/{page}" }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> postListFacturaFilter(@RequestBody FacturaDto facturaDto,
-                                                          @PathVariable(name = "entidadId", required = false) Optional<Long> entidadId,
+                                                          @PathVariable Optional<Long> entidadId,
                                                           @PathVariable int page,
                                                           Authentication authentication)  {
 
