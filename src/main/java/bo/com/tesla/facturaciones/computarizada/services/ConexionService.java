@@ -116,26 +116,30 @@ public class ConexionService implements IConexionService {
 
     @Override
     public <T> ResponseDto getResponseMethodPostParameter(Long entidadId, T body, UriComponentsBuilder uriComponentsBuilder) {
-        HttpHeaders headers = getHeaderToken(entidadId);
+        try {
+            HttpHeaders headers = getHeaderToken(entidadId);
 
-        HttpEntity<T> request = new HttpEntity<T>(body, headers);
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<ResponseDto> response = restTemplate.exchange(
-                uriComponentsBuilder.toUriString(),
-                HttpMethod.POST,
-                request,
-                ResponseDto.class
-        );
+            HttpEntity<T> request = new HttpEntity<T>(body, headers);
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<ResponseDto> response = restTemplate.exchange(
+                    uriComponentsBuilder.toUriString(),
+                    HttpMethod.POST,
+                    request,
+                    ResponseDto.class
+            );
 
-        if(response.getStatusCode() == HttpStatus.NO_CONTENT) {
+            if(response.getStatusCode() == HttpStatus.NO_CONTENT) {
+                return response.getBody();
+            }
+
+            if(response.getStatusCode() != HttpStatus.OK) {
+                throw new Technicalexception(response.getBody().message);
+            }
+
             return response.getBody();
+        } catch (Exception e) {
+            throw new Technicalexception(e.getMessage(), e.getCause());
         }
-
-        if(response.getStatusCode() != HttpStatus.OK) {
-            throw new Technicalexception(response.getBody().message);
-        }
-
-        return response.getBody();
     }
 
     @Override
