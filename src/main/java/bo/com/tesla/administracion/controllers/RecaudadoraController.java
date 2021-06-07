@@ -62,6 +62,7 @@ public class RecaudadoraController {
             response.put("result", recaudadorAdmDto);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.RECAUDADOR");
             log.setController("POST: api/recaudadores");
@@ -94,6 +95,7 @@ public class RecaudadoraController {
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.RECAUDADOR");
             log.setController("PUT: api/recaudadores/" + recaudadorId + "/" + transaccion);
@@ -126,6 +128,7 @@ public class RecaudadoraController {
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.RECAUDADOR");
             log.setController("PUT: api/recaudadores/listas/" + transaccion);
@@ -164,6 +167,7 @@ public class RecaudadoraController {
             }
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.RECAUDADOR");
             log.setController("GET: api/recaudadores/" + recaudadorId);
@@ -200,6 +204,7 @@ public class RecaudadoraController {
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.RECAUDADOR");
             log.setController("GET: api/recaudadores");
@@ -239,6 +244,7 @@ public class RecaudadoraController {
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.RECAUDADOR");
             log.setController("GET: api/recaudadores");
@@ -279,6 +285,7 @@ public class RecaudadoraController {
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.RECAUDADOR");
             log.setController("GET: api/recaudadores");

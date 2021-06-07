@@ -61,6 +61,7 @@ public class DominioController {
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.DOMINIOS");
             log.setController("api/dominios/" + dominio);
@@ -101,6 +102,7 @@ public class DominioController {
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.DOMINIOS");
             log.setController("api/dominios/agrupadores/" + agrupadorId);

@@ -52,6 +52,7 @@ public class RecaudadorComisionController {
             response.put("result", recaudadorComisionAdmDto);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.RECAUDADORCOMISION");
             log.setController("POST: api/entidades");
@@ -90,6 +91,7 @@ public class RecaudadorComisionController {
             }
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.RECAUDADORCOMISION");
             log.setController("GET: api/comisionesrecaudadores/" + recaudadorComisionId);
@@ -127,6 +129,7 @@ public class RecaudadorComisionController {
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.RECAUDADORCOMISION");
             log.setController("GET: api/comisiones");

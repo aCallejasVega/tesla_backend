@@ -88,6 +88,7 @@ public class SucursalController {
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.SUCURSAL");
             log.setController("PUT: api/sucursales/" + sucursalId + "/" + transaccion);
@@ -120,6 +121,7 @@ public class SucursalController {
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.SUCURSAL");
             log.setController("PUT: api/sucursales/listas/" + transaccion);
@@ -158,6 +160,7 @@ public class SucursalController {
             }
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.SUCURSAL");
             log.setController("GET: api/sucursales/" + sucursalId);
@@ -194,6 +197,7 @@ public class SucursalController {
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.SUCURSAL");
             log.setController("GET: api/sucursales");
@@ -238,6 +242,7 @@ public class SucursalController {
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.SUCURSAL");
             log.setController("GET: api/sucursales/recaudadores/" + recaudadorId);

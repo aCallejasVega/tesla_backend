@@ -56,6 +56,7 @@ public class SucursalEntidadController {
 			response.put("result", sucursalEntidadAdmDto);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Technicalexception e) {
+			e.printStackTrace();
 			LogSistemaEntity log=new LogSistemaEntity();
 			log.setModulo("ADMINISTRACION.SUCURSALENTIDAD");
 			log.setController("api/adm/sucursalesentidades");
@@ -100,6 +101,7 @@ public class SucursalEntidadController {
 			response.put("result", true);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Technicalexception e) {
+			e.printStackTrace();
 			LogSistemaEntity log=new LogSistemaEntity();
 			log.setModulo("ADMINISTRACION.SUCURSALENTIDAD");
 			log.setController("api/sucursalesentidades/" + sucursalEntidadId + "/" + transaccion);
@@ -131,6 +133,7 @@ public class SucursalEntidadController {
 			response.put("result", true);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Technicalexception e) {
+			e.printStackTrace();
 			LogSistemaEntity log=new LogSistemaEntity();
 			log.setModulo("ADMINISTRACION.SUCURSALENTIDAD");
 			log.setController("api/sucursalesentidades/listas/"+ transaccion);
@@ -169,6 +172,7 @@ public class SucursalEntidadController {
 			}
 
 		} catch (Technicalexception e) {
+			e.printStackTrace();
 			LogSistemaEntity log=new LogSistemaEntity();
 			log.setModulo("ADMINISTRACION.SUCURSALENDTIDAD");
 			log.setController("api/sucursalesentidades/" + sucursalEntidadId);
@@ -205,6 +209,7 @@ public class SucursalEntidadController {
 				return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
 			}
 		} catch (Technicalexception e) {
+			e.printStackTrace();
 			LogSistemaEntity log=new LogSistemaEntity();
 			log.setModulo("ADMINISTRACION.SUCURSALENTIDAD");
 			log.setController("api/sucursalentidades");
@@ -242,6 +247,7 @@ public class SucursalEntidadController {
 				return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
 			}
 		} catch (Technicalexception e) {
+			e.printStackTrace();
 			LogSistemaEntity log=new LogSistemaEntity();
 			log.setModulo("ADMINISTRACION.SUCURSALENTIDAD");
 			log.setController("api/sucursalentidades");
@@ -290,6 +296,7 @@ public class SucursalEntidadController {
 				return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
 			}
 		} catch (Technicalexception e) {
+			e.printStackTrace();
 			LogSistemaEntity log=new LogSistemaEntity();
 			log.setModulo("ADMINISTRACION.SUCURSALENTIDAD");
 			log.setController("api/sucursalentidades");
@@ -306,6 +313,7 @@ public class SucursalEntidadController {
 			response.put("code", log.getLogSistemaId()+"");
 			return  new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		} catch (BusinesException e) {
+			e.printStackTrace();
 			LogSistemaEntity log=new LogSistemaEntity();
 			log.setModulo("FACTURAS");
 			log.setController("api/facturas/filters");
@@ -344,6 +352,7 @@ public class SucursalEntidadController {
 				return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			LogSistemaEntity log=new LogSistemaEntity();
 			log.setModulo("ADMINISTRACION.SUCURSALENTIDAD");
 			log.setController("api/sucursalentidades");
@@ -381,6 +390,7 @@ public class SucursalEntidadController {
 			response.put("result", sucursalEntidadAdmDtoOptional.get());
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
+			e.printStackTrace();
 			LogSistemaEntity log=new LogSistemaEntity();
 			log.setModulo("ADMINISTRACION.SUCURSALENTIDAD");
 			log.setController("api/sucursalentidades/emisionesfacturas");
@@ -416,6 +426,7 @@ public class SucursalEntidadController {
 			response.put("result", true);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
+			e.printStackTrace();
 			LogSistemaEntity log=new LogSistemaEntity();
 			log.setModulo("ADMINISTRACION.SUCURSALENTIDAD");
 			log.setController("api/sucursalentidades/credenciales");
@@ -450,6 +461,7 @@ public class SucursalEntidadController {
 			response.put("result", credencialFacturacionDtoOptional.get());
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
+			e.printStackTrace();
 			LogSistemaEntity log=new LogSistemaEntity();
 			log.setModulo("ADMINISTRACION.SUCURSALENTIDAD");
 			log.setController("api/sucursalentidades/credenciales/" + sucursalEntidadId);

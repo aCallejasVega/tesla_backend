@@ -72,6 +72,7 @@ public class FacturaController {
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("FACTURAS");
             log.setController("api/facturas/codigoscontroles");
@@ -88,6 +89,7 @@ public class FacturaController {
             response.put("code", log.getLogSistemaId() + "");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         } catch (BusinesException e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("FACTURAS");
             log.setController("api/facturas/codigoscontroles");
@@ -136,6 +138,7 @@ public class FacturaController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("FACTURAS");
             log.setController("api/facturas/filters");
@@ -152,6 +155,7 @@ public class FacturaController {
             response.put("code", log.getLogSistemaId() + "");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         } catch (BusinesException e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("FACTURAS");
             log.setController("api/facturas/filters");
@@ -189,6 +193,7 @@ public class FacturaController {
             return new ResponseEntity<>(facturaByteArray, headers, HttpStatus.OK);
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("FACTURAS");
             log.setController("api/facturas/entidades/reportes/" + facturaId);
@@ -203,6 +208,7 @@ public class FacturaController {
             return new ResponseEntity<>("Error " + log.getLogSistemaId() + ": Ocurrio un error en el servidor, por favor intente la operacion mas tarde o consulte con su administrador." , HttpStatus.INTERNAL_SERVER_ERROR);
 
         } catch (BusinesException e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("FACTURAS");
             log.setController("api/facturas/entidades/reportes/\" + facturaId");
@@ -237,6 +243,7 @@ public class FacturaController {
             return new ResponseEntity<>(facturaByteArray, headers, HttpStatus.OK);
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("FACTURAS");
             log.setModulo("FACTURAS");
@@ -268,6 +275,7 @@ public class FacturaController {
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("ANULACION FACTURA");
             log.setController("api/anulaciones/listas");
@@ -310,7 +318,7 @@ public class FacturaController {
             return new ResponseEntity<>(facturaByteArray, headers, HttpStatus.OK);
 
         } catch (Technicalexception e) {
-
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("FACTURAS");
             log.setController("api/facturas/librosventas");
@@ -325,6 +333,7 @@ public class FacturaController {
             return new ResponseEntity<>("Error " + log.getLogSistemaId() + ": Ocurrio un error en el servidor, por favor intente la operacion mas tarde o consulte con su administrador." , HttpStatus.INTERNAL_SERVER_ERROR);
 
         } catch (BusinesException e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("FACTURAS");
             log.setController("api/facturas/entidades/reportes/\" + facturaId");
@@ -357,6 +366,7 @@ public class FacturaController {
 
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("FACTURAS");
             log.setController("GET: api/facturas/" + facturaId);
@@ -373,6 +383,7 @@ public class FacturaController {
             response.put("code", log.getLogSistemaId() + "");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         } catch (BusinesException e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("FACTURAS");
             log.setController("api/facturas/entidades/reportes/" + facturaId);

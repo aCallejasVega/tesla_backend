@@ -44,58 +44,7 @@ public class ActividadEconomicaController {
 
     @Autowired
     private IEntidadService entidadService;
-/*
-    @GetMapping(path={"/{codigoActividadEconomica}",""}, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<?> getActividadesEconomicasFilter(@PathVariable Optional<String> codigoActividadEconomica,
-                                                            Authentication authentication) {
 
-        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
-        Map<String, Object> response = new HashMap<>();
-        try {
-            EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
-            if(entidad == null) {
-                throw new BusinesException("El usuario debe pertenecer a una Entidad.");
-            }
-            String codigo = codigoActividadEconomica.isPresent() ? codigoActividadEconomica.get() : null;
-            ResponseDto responseDto = actividadEconomicaService.getLstFilter(entidad.getEntidadId(), codigo);
-
-            response.put("status", responseDto.status);
-            response.put("message", responseDto.message);
-            response.put("result", responseDto.result);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-
-        } catch (Technicalexception e) {
-            LogSistemaEntity log = new LogSistemaEntity();
-            log.setModulo("ACTIVIDADECONOMICA");
-            log.setController("api/actividadeseconomicas/filter/" + codigoActividadEconomica);
-            log.setCausa(e.getCause() + "");
-            log.setMensaje(e.getMessage() + "");
-            log.setUsuarioCreacion(usuario.getUsuarioId());
-            log.setFechaCreacion(new Date());
-            logSistemaService.save(log);
-            this.logger.error("This is error", e.getMessage());
-            this.logger.error("This is cause", e.getCause());
-            response.put("status", false);
-            response.put("result", null);
-            response.put("message", "Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
-            response.put("code", log.getLogSistemaId() + "");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        } catch (BusinesException e) {
-            LogSistemaEntity log=new LogSistemaEntity();
-            log.setModulo("ACTIVIDADECONOMICA");
-            log.setController("api/actividadeseconomicas/" + codigoActividadEconomica);
-            log.setMensaje(e.getMessage());
-            log.setUsuarioCreacion(usuario.getUsuarioId());
-            log.setFechaCreacion(new Date());
-            this.logSistemaService.save(log);
-            this.logger.error("This is cause", e.getMessage());
-            response.put("status", false);
-            response.put("message", e.getMessage());
-            response.put("code", log.getLogSistemaId()+"");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
-    }
-*/
     @GetMapping("/{codigoActividadEconomica}")
     public ResponseEntity<?> getActividadesEconomicasByCodigo(@PathVariable String codigoActividadEconomica,
                                                             Authentication authentication) {
@@ -115,6 +64,7 @@ public class ActividadEconomicaController {
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("ACTIVIDADECONOMICA");
             log.setController("api/actividadeseconomicas/filter/" + codigoActividadEconomica);
@@ -131,6 +81,7 @@ public class ActividadEconomicaController {
             response.put("code", log.getLogSistemaId() + "");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         } catch (BusinesException e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ACTIVIDADECONOMICA");
             log.setController("api/actividadeseconomicas/" + codigoActividadEconomica);
@@ -170,6 +121,7 @@ public class ActividadEconomicaController {
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("ACTIVIDADECONOMICA");
             log.setController("api/actividadeseconomicas");
@@ -186,6 +138,7 @@ public class ActividadEconomicaController {
             response.put("code", log.getLogSistemaId() + "");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         } catch (BusinesException e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ACTIVIDADECONOMICA");
             log.setController("api/actividadeseconomicas");

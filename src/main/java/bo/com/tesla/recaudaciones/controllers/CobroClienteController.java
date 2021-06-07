@@ -91,6 +91,7 @@ public class CobroClienteController {
             return new ResponseEntity<>(facturaByteArray, headers, HttpStatus.OK);
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("RECAUDACION.COBROS");
             log.setController("POST: api/cobros/" + metodoPagoId);

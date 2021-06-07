@@ -59,6 +59,7 @@ public class DominioFacturaController {
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("DOSIFICACION");
             log.setController("api/dosificaciones");
@@ -75,6 +76,7 @@ public class DominioFacturaController {
             response.put("code", log.getLogSistemaId() + "");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         } catch (BusinesException e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("FACTURAS");
             log.setController("api/facturas/filters");

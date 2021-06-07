@@ -51,6 +51,7 @@ public class EntidadComisionController {
             response.put("result", entidadComisionAdmDto);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.ENTIDADCOMISION");
             log.setController("POST: api/comisionesentidades");
@@ -89,6 +90,7 @@ public class EntidadComisionController {
             }
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.ENTIDADCOMISION");
             log.setController("GET: api/comisionesentidades/" + entidadComisionId);
@@ -126,6 +128,7 @@ public class EntidadComisionController {
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.ENTIDADCOMISION");
             log.setController("GET: api/comisionesentidades");

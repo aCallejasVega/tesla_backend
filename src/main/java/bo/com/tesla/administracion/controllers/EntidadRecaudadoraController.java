@@ -47,6 +47,7 @@ public class EntidadRecaudadoraController {
             response.put("result", true);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.RECAUDADOR");
             log.setController("POST: api/recaudadores");
@@ -79,6 +80,7 @@ public class EntidadRecaudadoraController {
             response.put("result", true);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.RECAUDADOR");
             log.setController("POST: api/recaudadores");

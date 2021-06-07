@@ -69,6 +69,7 @@ public class EntidadController {
             response.put("result", entidadAdmDto);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.ENTIDAD");
             log.setController("POST: api/entidades");
@@ -101,6 +102,7 @@ public class EntidadController {
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.ENTIDAD");
             log.setController("PUT: api/entidades/" + entidadId + "/" + transaccion);
@@ -133,6 +135,7 @@ public class EntidadController {
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.ENTIDAD");
             log.setController("PUT: api/entidades/listas/" + transaccion);
@@ -171,6 +174,7 @@ public class EntidadController {
             }
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.ENTIDAD");
             log.setController("GET: api/entidades/" + entidadId);
@@ -207,6 +211,7 @@ public class EntidadController {
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("ADMINISTRACION.ENTIDAD");
             log.setController("GET: api/entidades");
@@ -312,6 +317,7 @@ public class EntidadController {
             response.put("message", "Cliente(s) encontrado(s)");
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("RECAUDACIONES.ENTIDADES");
             log.setController("api/entidades/" + entidadId + "/clientes/" + datoCliente);
@@ -372,6 +378,7 @@ public class EntidadController {
             response.put("message", "Cliente(s) encontrado(s)");
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("RECAUDACIONES.ENTIDADES");
             log.setController("api/entidades/" + entidadId + "/clientes/" + datoCliente);
@@ -423,6 +430,7 @@ public class EntidadController {
             response.put("message", "Deudas encontradas para cliente: " + codigoCliente);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("RECAUDACIONES.ENTIDADES");
             log.setController("api/entidades/" + entidadId + "/clientes/" + codigoCliente + "/deudas");
@@ -439,6 +447,7 @@ public class EntidadController {
             response.put("code", log.getLogSistemaId() + "");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         } catch (BusinesException e) {
+            e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("FACTURAS");
             log.setController("api/facturas/filters");
@@ -475,6 +484,7 @@ public class EntidadController {
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("RECAUDACIONES.ENTIDADES");
             log.setController("api/entidades/tipos");
@@ -514,6 +524,7 @@ public class EntidadController {
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("RECAUDACIONES.ENTIDADES");
             log.setController("api/entidades/tipos");
@@ -558,6 +569,7 @@ public class EntidadController {
             response.put("message", "Se encontraron Entidades por Tipo");
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("RECAUDACIONES.ENTIDADES");
             log.setController("api/entidades/tipos/" + tipoEntidadId);
@@ -594,6 +606,7 @@ public class EntidadController {
             response.put("message", "Se encontraron Entidades.");
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Technicalexception e) {
+            e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("RECAUDACIONES.ENTIDADES");
             log.setController("api/entidades");
