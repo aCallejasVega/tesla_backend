@@ -181,6 +181,7 @@ public class SegRolController {
 			
 		}
 		catch (BusinesException e) {
+			e.printStackTrace();
 			LogSistemaEntity log = new LogSistemaEntity();
 			log.setModulo("SEGROL");
 			log.setController("api/savePrivilegio/");
@@ -191,8 +192,7 @@ public class SegRolController {
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());
 			log=logSistemaService.save(log);
-			this.logger.error("This is error", e.getMessage());
-			this.logger.error("This is cause", e.getCause());
+		
 			response.put("status", false);
 			response.put("result", null);
 			response.put("message", e.getMessage());
@@ -202,6 +202,7 @@ public class SegRolController {
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		}
 		catch (Technicalexception e) {
+			e.printStackTrace();
 			LogSistemaEntity log = new LogSistemaEntity();
 			log.setModulo("SEGROL");
 			log.setController("api/savePrivilegio/");
@@ -212,8 +213,7 @@ public class SegRolController {
 			log.setUsuarioCreacion(usuario.getUsuarioId());
 			log.setFechaCreacion(new Date());
 			log=logSistemaService.save(log);
-			this.logger.error("This is error", e.getMessage());
-			this.logger.error("This is cause", e.getCause());
+		
 			response.put("status", false);
 			response.put("result", null);
 		

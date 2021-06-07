@@ -65,6 +65,7 @@ public class SegUsuarioRolService implements ISegUsuarioRolService {
 			}
 
 			for (Long privilegioId : personaDto.privilegiosKey) {
+			
 				
 				rol = this.rolDao.findRolByPrivilegioIdAndModuloId(privilegioId, personaDto.moduloId).get();
 
@@ -104,6 +105,7 @@ public class SegUsuarioRolService implements ISegUsuarioRolService {
 					
 					rol = this.rolDao.findRolByPrivilegioIdAndModuloId(privilegio.getPrivilegiosId(), personaDto.moduloId)
 							.get();
+					
 					SegUsuarioRolEntity usuarioRolOptional = this.usuarioRolDao
 							.findByRolIdAndUsuarioId(usuario.getUsuarioId(), rol.getRolId()).get();
 
