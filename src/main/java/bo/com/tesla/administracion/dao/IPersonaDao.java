@@ -29,6 +29,7 @@ public interface IPersonaDao extends JpaRepository<PersonaEntity, Long> {
 			+ "				u.login,"
 			+ "				u.estado,"
 			+ "				u.usuarioId,"
+			+ "				u.bloqueado,"
 			+ "				s.sucursalId, "
 			+ "				s.nombre ) "
 			+ " from PersonaEntity p "
@@ -46,9 +47,12 @@ public interface IPersonaDao extends JpaRepository<PersonaEntity, Long> {
 			+ "			or upper(p.paterno) like upper(concat('%', :parametro,'%')) "
 			+ "			or upper(p.materno) like upper(concat('%', :parametro,'%')) "
 			+ " 		) "
+			
+			+ "     and COALESCE(CAST(ep.sucursalId.sucursalId as string ),'') like  :sucursalId "
 			+ " Order by p.fechaModificacion desc ")
 	public Page<PersonaDto>  findPersonasByRecaudadorGrid(
-			@Param("parametro") String parametro,			
+			@Param("parametro") String parametro,
+			@Param("sucursalId") String sucursalId,
 			@Param("recaudadorId") Long recaudadorId,
 			Pageable pageable);
 	
@@ -67,6 +71,7 @@ public interface IPersonaDao extends JpaRepository<PersonaEntity, Long> {
 			+ "				p.fechaModificacion,"
 			+ "				u.login,"
 			+ "				u.estado,"
+			+ "				u.bloqueado,"
 			+ "				u.usuarioId) "
 			+ " from PersonaEntity p "
 			+ " 	left join DominioEntity c on c.dominioId=p.ciudadId.dominioId "
@@ -108,6 +113,7 @@ public interface IPersonaDao extends JpaRepository<PersonaEntity, Long> {
 			+ "				u.login,"
 			+ "				u.estado,"
 			+ "				u.usuarioId,"
+			+ "				u.bloqueado,"
 			+ "				em.empleadoId,"
 			+ "				p.admin ) "
 			+ " from PersonaEntity p "

@@ -13,7 +13,7 @@ public interface IPersonaService {
 	
 	public Optional<PersonaEntity> findById(Long personaId);
 	
-	public Page<PersonaDto> findPersonasByRecaudadorGrid(String parametro, Long recaudadorId,int page,int size);
+	public Page<PersonaDto> findPersonasByRecaudadorGrid(String parametro,Long sucursalId, Long recaudadorId,int page,int size);
 	public Page<PersonaDto> findPersonasByEntidadesGrid(String parametro,Long entidadId,int page,int size);
 	
 	public Page<PersonaDto> findPersonasByAdminGrid(String parametro,int page,int size);

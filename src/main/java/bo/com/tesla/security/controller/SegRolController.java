@@ -422,7 +422,7 @@ public class SegRolController {
 				usuario=this.segRolService.findUsuarioAdminByRecaudacionId(recaudador.getRecaudadorId()).get(0);
 			}
 			
-		
+			
 			
 			rolTransfer = this.privilegioService.findPrivilegiosByUsuarioIdForTransfer(usuario.getUsuarioId());
 			if (rolTransfer.isEmpty()) {

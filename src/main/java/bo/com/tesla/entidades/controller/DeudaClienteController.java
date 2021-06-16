@@ -194,7 +194,7 @@ public class DeudaClienteController {
 		}
 		try {
 			long time=System.currentTimeMillis();
-			logger.info("------------------procesando archivo----------------------");
+		
 			usuario = this.segUsuarioService.findByLogin(authentication.getName());
 			archivo = this.archivoService.findById(archivoId);
 			ArchivoEntity archivoPrevious = this.archivoService.findByEstado("ACTIVO",
@@ -254,7 +254,7 @@ public class DeudaClienteController {
 			archivo = this.archivoService.save(archivo);
 
 			
-			logger.info("------------------fin procesando archivo---------------------- "+ (time-System.currentTimeMillis()));
+			
 
 			response.put("mensaje", "El archivo fue procesado con éxito ");
 			response.put("archivo", archivo);
@@ -371,7 +371,7 @@ public class DeudaClienteController {
 	}
 	
 	
-	 @CrossOrigin(origins = "*", allowedHeaders = "*")
+	@CrossOrigin(origins = "*", allowedHeaders = "*")
 	@PostMapping(path ="/saveCustomerDebt", produces = MediaType.APPLICATION_JSON_UTF8_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> saveCustomerDebt(@Valid @RequestBody DeudasClienteRestDto deuda, BindingResult result,Authentication authentication) {
 		Map<String, Object> response = new HashMap<>();

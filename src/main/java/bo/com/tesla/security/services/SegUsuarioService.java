@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 //import bo.com.tesla.administracion.dao.ISegUsuarioDao;
 import bo.com.tesla.administracion.entity.SegRolEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
+import bo.com.tesla.administracion.services.IPersonaService;
 import bo.com.tesla.security.dao.ISegRolDao;
 import bo.com.tesla.security.dao.ISegUsuarioDao;
 import bo.com.tesla.security.dto.CambiarPasswordDto;
@@ -40,6 +41,8 @@ public class SegUsuarioService implements ISegUsuarioService,UserDetailsService 
 	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
+	@Autowired
+	private IPersonaService personaService;
 	
 	
 	@Override
@@ -49,10 +52,10 @@ public class SegUsuarioService implements ISegUsuarioService,UserDetailsService 
 	
 	
 	@Override
-	public UserDetails loadUserByUsername(String login)  {
-		try {
+	public UserDetails loadUserByUsername(String login)throws UsernameNotFoundException  {
+		
 			List<GrantedAuthority> authorities = new ArrayList<>();
-			SegUsuarioEntity usuarios = this.segUsuarioDao.findByLogin(login);
+			SegUsuarioEntity usuarios = this.segUsuarioDao.findByLoginAuthentication(login);
 			if (usuarios == null) {	
 				logger.error("Error en el login: no existe el usuario " + login + " en el sistema");
 				throw new UsernameNotFoundException("Error en el Login: no existe el usuario");
@@ -66,13 +69,8 @@ public class SegUsuarioService implements ISegUsuarioService,UserDetailsService 
 			
 			return new User(usuarios.getLogin(), usuarios.getPassword(), usuarios.getEstado().equals("ACTIVO") ? true : false,
 					true, true, true, authorities);
-		} catch ( UsernameNotFoundException e ) {
-			e.printStackTrace();
-		}
-		catch ( Exception e ) {
-			e.printStackTrace();
-		}
-		return null;
+		
+		
 		
 		
 	}
@@ -97,6 +95,7 @@ public class SegUsuarioService implements ISegUsuarioService,UserDetailsService 
 	
 
 	@Override
+	@Transactional
 	public void  cambiarPassword(CambiarPasswordDto passwords, SegUsuarioEntity usuario) throws BusinesException {
 		
 		BCryptPasswordEncoder bCrypt = new BCryptPasswordEncoder();
@@ -121,5 +120,25 @@ public class SegUsuarioService implements ISegUsuarioService,UserDetailsService 
 		}
 	}
 	
+	@Override
+	@Transactional
+	public void  toUnlock(String login, SegUsuarioEntity usuarioSession) {		
+		
+		try {
+			SegUsuarioEntity usuario = this.segUsuarioDao.findByLogin(login);
+			usuario.setBloqueado(false);
+			if(usuario.getIntentos()!=null && usuario.getIntentos()>0) {
+				usuario.setIntentos(0);
+			}
+			this.segUsuarioDao.save(usuario);
+			this.personaService.generarCredenciales(usuario.getPersonaId().getPersonaId(), usuarioSession);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
 
 }

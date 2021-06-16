@@ -114,7 +114,7 @@ public class PersonaController {
 			case "ADM_RECAUDACION":
 				recaudador = this.recaudadorService.findRecaudadorByUserId(usuario.getUsuarioId());
 				recaudadorId = recaudador.getRecaudadorId();				
-				personaDtoList = this.personaService.findPersonasByRecaudadorGrid(personaDto.parametro, recaudadorId,
+				personaDtoList = this.personaService.findPersonasByRecaudadorGrid(personaDto.parametro,personaDto.sucursalId, recaudadorId,
 						personaDto.page - 1, 10);
 				break;
 			}
@@ -426,6 +426,66 @@ public class PersonaController {
 			LogSistemaEntity log = new LogSistemaEntity();
 			log.setModulo("PERSONAS");
 			log.setController("api/personas/generarCredenciales/" + personaId);
+			if (e.getCause() != null) {
+				log.setCausa(e.getCause() + "");
+			}
+			log.setMensaje(e.getMessage() + "");
+			log.setUsuarioCreacion(usuarioSession.getUsuarioId());
+			log.setFechaCreacion(new Date());
+			log = this.logSistemaService.save(log);
+
+			response.put("status", false);
+			response.put("result", null);
+			response.put("message", " Código de  Error : " + log.getLogSistemaId()
+					+ " \n Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+
+			response.put("code", log.getLogSistemaId() + "");
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+		}
+
+	}
+	
+	@PostMapping("/toUnlock/{personaId}")
+	public ResponseEntity<?> toUnlock(@PathVariable("personaId") Long personaId,Authentication authentication) {
+		Map<String, Object> response = new HashMap<>();
+		SegUsuarioEntity usuarioSession = new SegUsuarioEntity();
+		try {
+			usuarioSession = this.segUsuarioService.findByLogin(authentication.getName());
+			SegUsuarioEntity usuario = this.segUsuarioService.findByPersonaIdAndEstado(personaId).get();
+			
+			this.personaService.generarCredenciales(usuario.getPersonaId().getPersonaId(), usuarioSession);
+			
+			response.put("status", true);
+			//response.put("data", usuario);
+			response.put("message",
+					"Sus credenciales fueron enviadas al correo electrónico registrado.");
+			return new ResponseEntity<>(response, HttpStatus.OK);
+
+		} catch (Technicalexception e) {
+
+			e.printStackTrace();
+			LogSistemaEntity log = new LogSistemaEntity();
+			log.setModulo("PERSONAS");
+			log.setController("api/toUnlock/" + personaId);
+			if (e.getCause() != null) {
+				log.setCausa(e.getCause() + "");
+			}
+			log.setMensaje(e.getMessage() + "");
+			log.setUsuarioCreacion(usuarioSession.getUsuarioId());
+			log.setFechaCreacion(new Date());
+			log = this.logSistemaService.save(log);			
+			response.put("status", false);
+			response.put("result", null);
+			response.put("message", " Código de  Error : " + log.getLogSistemaId()
+					+ " \n Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			LogSistemaEntity log = new LogSistemaEntity();
+			log.setModulo("PERSONAS");
+			log.setController("api/toUnlock/" + personaId);
 			if (e.getCause() != null) {
 				log.setCausa(e.getCause() + "");
 			}

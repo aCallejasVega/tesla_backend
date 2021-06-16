@@ -69,6 +69,7 @@ public class PersonaDto implements Serializable{
 	public String nombreRecaudadora;
 	public String nombreSucursal;
 	public Long moduloId;
+	public Boolean bloqueado;
 	
 	
 	public List<Long> privilegiosKey=new ArrayList<>();
@@ -103,10 +104,11 @@ public class PersonaDto implements Serializable{
 			String login,
 			String estadoUsuario,
 			Long usuarioId,
+			Boolean bloqueado,
 			Long sucursalId,
 			String nombreSucursal
 			) {
-	
+		System.out.println("PersonaDto >>> 1");
 		this.personaId = personaId;
 		if(materno!=null) {
 			this.nombreCompleto = nombres+" "+paterno+" "+materno;	
@@ -131,6 +133,7 @@ public class PersonaDto implements Serializable{
 		this.usuarioId=usuarioId;
 		this.sucursalId=sucursalId;
 		this.nombreSucursal=nombreSucursal;
+		this.bloqueado=bloqueado;
 		
 	}
 	
@@ -151,10 +154,11 @@ public class PersonaDto implements Serializable{
 			Date fechaModificacion,
 			String login,
 			String estadoUsuario,
+			Boolean bloqueado,
 			Long usuarioId
 			
 			) {
-	
+		System.out.println("PersonaDto >>> 2");
 		this.personaId = personaId;
 		if(materno!=null) {
 			this.nombreCompleto = nombres+" "+paterno+" "+materno;	
@@ -177,10 +181,15 @@ public class PersonaDto implements Serializable{
 		this.login=login;
 		this.estadoUsuario=estadoUsuario;
 		this.usuarioId=usuarioId;
+		this.bloqueado=bloqueado;
 		
 		
 	}
 	
+	
+	/*
+	 * findPersonasByAdminGrid
+	 * */
 	public PersonaDto(
 			Long personaId, 
 			String nombres, 
@@ -199,10 +208,11 @@ public class PersonaDto implements Serializable{
 			String login,
 			String estadoUsuario,
 			Long usuarioId,
+			Boolean bloqueado,
 			Long empleadoId,
 			Boolean admin
 			) {
-	
+		System.out.println("PersonaDto >>> 3");
 		this.personaId = personaId;
 		if(materno!=null) {
 			this.nombreCompleto = nombres+" "+paterno+" "+materno;	
@@ -228,6 +238,8 @@ public class PersonaDto implements Serializable{
 		this.usuarioId=usuarioId;
 		this.empleadoId=empleadoId;
 		this.esAdmin=admin;
+		this.bloqueado=bloqueado;
+		System.out.println(this.bloqueado);
 	}
 	
 	

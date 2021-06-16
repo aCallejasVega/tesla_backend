@@ -21,6 +21,15 @@ public interface ISegUsuarioDao extends JpaRepository<SegUsuarioEntity, Long> {
 			+ " and u.login= :login ")
 	public SegUsuarioEntity findByLogin(@Param("login") String login);
 	
+	@Query("Select u  "
+			+ " from SegUsuarioEntity u "
+			+ " inner join PersonaEntity p on p.personaId=u.personaId.personaId "			
+			+ " where u.estado ='ACTIVO' "
+			+ " and p.estado='ACTIVO' "
+			+ " and u.login= :login "
+			+ " and u.bloqueado = false")
+	public SegUsuarioEntity findByLoginAuthentication(@Param("login") String login);
+	
 	@Query(" Select u  "
 			+ " from SegUsuarioEntity u "
 			+ " where "

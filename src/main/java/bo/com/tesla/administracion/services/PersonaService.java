@@ -73,9 +73,15 @@ public class PersonaService implements IPersonaService {
 	private String urlTesla;
 
 	@Override
-	public Page<PersonaDto> findPersonasByRecaudadorGrid(String parametro, Long recaudadorId, int page, int size) {
+	public Page<PersonaDto> findPersonasByRecaudadorGrid(String parametro,Long sucursalId, Long recaudadorId, int page, int size) {
 		Pageable paging = PageRequest.of(page, size);
-		return this.personaDao.findPersonasByRecaudadorGrid(parametro, recaudadorId, paging);
+		String sucursal="%";
+		if(sucursalId.equals(0L) || sucursalId==null ) {
+			sucursal="%";
+		}else {
+			sucursal=sucursalId+"";
+		}
+		return this.personaDao.findPersonasByRecaudadorGrid(parametro,sucursal, recaudadorId, paging);
 	}
 
 	@Override
@@ -313,6 +319,8 @@ public class PersonaService implements IPersonaService {
 			usuario.setPassword(this.passwordEncoder.encode(nombreUsuario));
 			usuario.setPersonaId(persona);
 			usuario.setEstado("ACTIVO");
+			usuario.setBloqueado(false);
+			usuario.setIntentos(0);
 			usuario = this.usuarioService.save(usuario);
 
 			if (persona.getMaterno() != null) {

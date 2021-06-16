@@ -266,8 +266,11 @@ public class SucursalController {
     	SegUsuarioEntity usuario=new SegUsuarioEntity();
         Map<String, Object> response = new HashMap<>();
         try {
-        	 usuario = this.segUsuarioService.findByLogin(authentication.getName());
-        	RecaudadorEntity recaudador=	this.recaudadorService.findRecaudadorByUserId(usuario.getUsuarioId());        	
+        	usuario = this.segUsuarioService.findByLogin(authentication.getName());
+        	System.out.println(usuario.getUsuarioId());
+        	System.out.println(usuario.getLogin());
+        	RecaudadorEntity recaudador=	this.recaudadorService.findRecaudadorByUserId(usuario.getUsuarioId()); 
+        
         	List<SucursalEntity> sucursalRecaudadoraList=this.iSucursalService.findByRecaudadoraId(recaudador.getRecaudadorId());
             
             if(!sucursalRecaudadoraList.isEmpty()) {

@@ -60,6 +60,10 @@ public class SegUsuarioEntity implements Serializable {
     @Basic(optional = false)
     @Column(nullable = false, length = 10)
     private String estado;
+    @Column(name = "intentos")
+    private Integer intentos;
+    @Column(name = "bloqueado")
+    private Boolean bloqueado;
     @JsonIgnore
     @OneToMany(mappedBy = "usuarioId")
     private List<SegUsuarioRolEntity> segUsuarioRolEntityList;
@@ -168,7 +172,25 @@ public class SegUsuarioEntity implements Serializable {
         this.personaId = personaId;
     }
 
+    
+    
    
+	public Integer getIntentos() {
+		return intentos;
+	}
+
+	public void setIntentos(Integer intentos) {
+		this.intentos = intentos;
+	}
+
+	public Boolean getBloqueado() {
+		return bloqueado;
+	}
+
+	public void setBloqueado(Boolean bloqueado) {
+		this.bloqueado = bloqueado;
+	}
+
 	@Override
     public int hashCode() {
         int hash = 0;

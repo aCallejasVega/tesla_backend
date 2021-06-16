@@ -1,6 +1,7 @@
 package bo.com.tesla.facturaciones.computarizada.dto;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class FacturaDto {
     public String codigoActividadEconomicaSecundaria;
     public String actividadEconomicaSecundaria;
 
-    public List<Long> facturaIdLst;
+    public List<Long> facturaIdLst=new ArrayList<>();
 
     public FacturaDto() {
     }
