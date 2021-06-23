@@ -23,6 +23,7 @@ public class AuthenticationSuccessErrorHandler implements AuthenticationEventPub
 	@Override
 	public void publishAuthenticationSuccess(Authentication authentication) {
 		try {
+			this.logger.info("USUARIO SE AUTENTICO CORECTAMENTE : "+authentication.getName());
 			SegUsuarioEntity usuario=this.usuarioService.findByLogin(authentication.getName());
 			if(usuario.getIntentos()!=null && usuario.getIntentos()>0) 
 			{
@@ -39,6 +40,7 @@ public class AuthenticationSuccessErrorHandler implements AuthenticationEventPub
 	public void publishAuthenticationFailure(AuthenticationException exception, Authentication authentication) {	
 		
 		try {
+			this.logger.error("USUARIO SE AUTENTICO INCORECTAMENTE : "+authentication.getName());
 			SegUsuarioEntity usuario=this.usuarioService.findByLogin(authentication.getName());
 			if(usuario.getIntentos() == null) {
 				usuario.setIntentos(0);

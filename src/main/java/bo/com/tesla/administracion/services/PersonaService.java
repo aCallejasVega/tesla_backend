@@ -295,53 +295,71 @@ public class PersonaService implements IPersonaService {
 		try {
 			PersonaEntity persona = new PersonaEntity();
 			SegUsuarioEntity usuario = new SegUsuarioEntity();
-			Calendar calendario = new GregorianCalendar();
+			
 
 			persona = this.personaDao.findById(personaId).get();
 		
 			String nombreCompleto = "";
 			Random r = new Random();
-			int valorDado = r.nextInt(98) + 1;
-			Integer minutos = calendario.get(Calendar.MINUTE);
-			String nombreUsuario = Util.cleanString(persona.getNombres().substring(0, 1))  +Util.cleanString( persona.getPaterno().replace(" ",""))  + minutos + ""
-					+ valorDado;
-
-			if (this.usuarioService.findByPersonaIdAndEstado(personaId).isPresent()) {
-				usuario = this.usuarioService.findByPersonaIdAndEstado(personaId).get();
-				usuario.setFechaModificacion(new Date());
-				usuario.setUsuarioModificacion(usuarioSession.getUsuarioId());
-
-			} else {
-				usuario.setFechaCreacion(new Date());
-				usuario.setUsuarioCreacion(usuarioSession.getUsuarioId());
-			}
-			usuario.setLogin(nombreUsuario);
-			usuario.setPassword(this.passwordEncoder.encode(nombreUsuario));
-			usuario.setPersonaId(persona);
-			usuario.setEstado("ACTIVO");
-			usuario.setBloqueado(false);
-			usuario.setIntentos(0);
-			usuario = this.usuarioService.save(usuario);
-
+			int valorDado = r.nextInt(999) + 1;
+			
+			String nombreUsuario = Util.cleanString(persona.getNombres().substring(0, 1)).toLowerCase()  
+					+ Util.cleanString( persona.getPaterno().substring(0,1)).toUpperCase()
+					+ Util.cleanString( persona.getPaterno().replace(" ","").substring(1,persona.getPaterno().length()))  
+					+ ""+ valorDado;
+			
+			
+			
 			if (persona.getMaterno() != null) {
 				nombreCompleto = persona.getPaterno() + " " + persona.getMaterno() + " " + persona.getNombres();
 			} else {
 				nombreCompleto = persona.getPaterno() + " " + persona.getNombres();
 			}
-
 			EmpleadoEntity empleado = this.empleadoDao.findEmpleadosByPersonaId(personaId).get();
 			String mensaje = "";
-			if (empleado.getEntidadId() != null) {
-				mensaje = "Sus credenciales para la administración de la Empresa " + empleado.getEntidadId().getNombre()
-						+ " son:";
+			if (this.usuarioService.findByPersonaIdAndEstado(personaId).isPresent()) {
+				usuario = this.usuarioService.findByPersonaIdAndEstado(personaId).get();
+				usuario.setFechaModificacion(new Date());
+				usuario.setUsuarioModificacion(usuarioSession.getUsuarioId());
+				usuario.setPassword(this.passwordEncoder.encode(usuario.getLogin()));
+				usuario.setEstado("ACTIVO");
+				usuario.setBloqueado(false);
+				usuario.setIntentos(0);
+				if (empleado.getEntidadId() != null) {
+					mensaje = "Sus credenciales para la administración de la Empresa " + empleado.getEntidadId().getNombre()
+							+ " fueron recuperadas :";
+				} else {
+					mensaje = "Sus credenciales para la administración de la Empresa Recaudadora  "
+							+ empleado.getSucursalId().getRecaudador().getNombre() + " fueron recuperadas :";
+				}
+				String plantillaCorreo = PlantillaEmail.plantillaCreacionUsuario(nombreCompleto, usuario.getLogin(),
+						usuario.getLogin(), mensaje,urlTesla);
+				this.sendEmail.sendHTML(correoEnvio, persona.getCorreoElectronico(), "Recuperacion de credenciales TESLA.",
+						plantillaCorreo);
+
 			} else {
-				mensaje = "Sus credenciales para la administración de la Empresa Recaudadora  "
-						+ empleado.getSucursalId().getRecaudador().getNombre() + " son:";
+				usuario.setFechaCreacion(new Date());
+				usuario.setUsuarioCreacion(usuarioSession.getUsuarioId());
+				usuario.setLogin(nombreUsuario);
+				usuario.setPassword(this.passwordEncoder.encode(nombreUsuario));
+				usuario.setPersonaId(persona);
+				usuario.setEstado("ACTIVO");
+				usuario.setBloqueado(false);
+				usuario.setIntentos(0);				
+				if (empleado.getEntidadId() != null) {
+					mensaje = "Sus credenciales para la administración de la Empresa " + empleado.getEntidadId().getNombre()
+							+ " son:";
+				} else {
+					mensaje = "Sus credenciales para la administración de la Empresa Recaudadora  "
+							+ empleado.getSucursalId().getRecaudador().getNombre() + " son:";
+				}
+				String plantillaCorreo = PlantillaEmail.plantillaCreacionUsuario(nombreCompleto, nombreUsuario,
+						nombreUsuario, mensaje,urlTesla);
+				this.sendEmail.sendHTML(correoEnvio, persona.getCorreoElectronico(), "Generación de credenciales TESLA.",
+						plantillaCorreo);
+				
 			}
-			String plantillaCorreo = PlantillaEmail.plantillaCreacionUsuario(nombreCompleto, nombreUsuario,
-					nombreUsuario, mensaje,urlTesla);
-			this.sendEmail.sendHTML(correoEnvio, persona.getCorreoElectronico(), "Generación de credenciales TESLA.",
-					plantillaCorreo);
+			usuario = this.usuarioService.save(usuario);
 			return usuario;
 		} catch (Exception e) {
 			e.printStackTrace();

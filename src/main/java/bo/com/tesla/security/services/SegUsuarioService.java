@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -19,6 +20,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import bo.com.tesla.administracion.dao.IEmpleadoDao;
+import bo.com.tesla.administracion.entity.EmpleadoEntity;
+import bo.com.tesla.administracion.entity.PersonaEntity;
 //import bo.com.tesla.administracion.dao.ISegRolDao;
 //import bo.com.tesla.administracion.dao.ISegUsuarioDao;
 import bo.com.tesla.administracion.entity.SegRolEntity;
@@ -29,6 +33,8 @@ import bo.com.tesla.security.dao.ISegUsuarioDao;
 import bo.com.tesla.security.dto.CambiarPasswordDto;
 import bo.com.tesla.useful.config.BusinesException;
 import bo.com.tesla.useful.config.Technicalexception;
+import bo.com.tesla.useful.constant.PlantillaEmail;
+import bo.com.tesla.useful.cross.SendEmail;
 
 @Service
 public class SegUsuarioService implements ISegUsuarioService,UserDetailsService {
@@ -44,6 +50,17 @@ public class SegUsuarioService implements ISegUsuarioService,UserDetailsService 
 	@Autowired
 	private IPersonaService personaService;
 	
+	@Autowired
+	private IEmpleadoDao empleadoDao;
+	
+	@Autowired
+	private SendEmail sendEmail;
+	
+	@Value("${tesla.url.tesla}")
+	private String urlTesla;
+	
+	@Value("${tesla.mail.correoEnvio}")
+	private String correoEnvio;
 	
 	@Override
 	public SegUsuarioEntity save(SegUsuarioEntity entity) {		
@@ -60,6 +77,8 @@ public class SegUsuarioService implements ISegUsuarioService,UserDetailsService 
 				logger.error("Error en el login: no existe el usuario " + login + " en el sistema");
 				throw new UsernameNotFoundException("Error en el Login: no existe el usuario");
 			}
+			
+			
 			List<SegRolEntity> segRoles=segRolDao.findRolesByUsuarioLogin(login);
 			
 			if(!segRoles.isEmpty()) {			
@@ -111,10 +130,34 @@ public class SegUsuarioService implements ISegUsuarioService,UserDetailsService 
 		}
 		
 		try {
+			
 			usuario.setPassword(bCrypt.encode(passwords.passwordNew1));
 			usuario.setFechaModificacion(new Date());
-			usuario.setUsuarioModificacion(usuario.getUsuarioId());		
+			usuario.setUsuarioModificacion(usuario.getUsuarioId());				
 			this.segUsuarioDao.save(usuario);	
+			
+			PersonaEntity	persona = usuario.getPersonaId();
+			EmpleadoEntity empleado = this.empleadoDao.findEmpleadosByPersonaId(usuario.getPersonaId().getPersonaId()).get();
+			String mensaje = "";
+			String nombreCompleto = "";
+			if (persona.getMaterno() != null) {
+				nombreCompleto = persona.getPaterno() + " " + persona.getMaterno() + " " + persona.getNombres();
+			} else {
+				nombreCompleto = persona.getPaterno() + " " + persona.getNombres();
+			}
+			if (empleado.getEntidadId() != null) {
+				mensaje = "Sus credenciales para la administración de la Empresa " + empleado.getEntidadId().getNombre()
+						+ " son:";
+			} else {
+				mensaje = "Sus credenciales para la administración de la Empresa Recaudadora  "
+						+ empleado.getSucursalId().getRecaudador().getNombre() + " son:";
+			}
+			String plantillaCorreo = PlantillaEmail.plantillaModificacionPassord(nombreCompleto, usuario.getLogin(),
+				passwords.passwordNew1, mensaje,urlTesla);
+			this.sendEmail.sendHTML(correoEnvio, persona.getCorreoElectronico(), "Cambio de password TESLA.",
+					plantillaCorreo);
+			
+			
 		} catch (Exception e) {
 			throw new Technicalexception("Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.", e.getCause());
 		}

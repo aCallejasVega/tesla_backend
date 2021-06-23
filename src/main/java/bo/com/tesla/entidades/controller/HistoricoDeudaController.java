@@ -197,7 +197,7 @@ public class HistoricoDeudaController {
 
 		final InputStreamResource resource = new InputStreamResource(historicoDeudaService.load(archivoId));
 
-		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "archivo.csv")
+		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "archivo")
 				.contentType(MediaType.parseMediaType("text/csv")).body(resource);
 	}
 

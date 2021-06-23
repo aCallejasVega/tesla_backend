@@ -85,6 +85,7 @@ C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesl
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\facturaciones\computarizada\services\DosificacionService.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\useful\cross\HandlingFiles.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\entidades\dto\DeudasClienteRestDto.java
+C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\security\aut\SimpleAuthenticationFilter.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\dao\ITransaccionCobrosDao.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\useful\config\BusinesException.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\controllers\RecaudadorComisionController.java
@@ -171,6 +172,7 @@ C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesl
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\facturaciones\computarizada\controllers\MenuFacturacionController.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\facturaciones\computarizada\services\IDominioFacturaService.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\facturaciones\computarizada\dto\ResponseDto.java
+C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\security\aut\AuthenticationSuccessErrorHandler.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\controllers\PersonaController.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\services\IDominioService.java
 C:\Users\aCallejas\Desktop\PROYECTO\TESLA\tesla_bakend\src\main\java\bo\com\tesla\administracion\entity\PServicioProductoEntity.java

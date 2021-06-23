@@ -6,7 +6,7 @@
 package bo.com.tesla.administracion.entity;
 
 import java.io.Serializable;
-
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
@@ -72,6 +72,8 @@ public class ArchivoEntity implements Serializable {
     
     @Column(name = "nro_registros")
     private Long nroRegistros;
+    @Column(name = "tiempo_proceso")
+    private Float tiempoProceso;
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "archivoId")
     private List<CobroClienteEntity> cobroClienteEntityList;
@@ -194,8 +196,18 @@ public class ArchivoEntity implements Serializable {
     public void setEstado(String estado) {
         this.estado = estado;
     }
+    
+    
 
-    public List<CobroClienteEntity> getCobroClienteEntityList() {
+    public Float getTiempoProceso() {
+		return tiempoProceso;
+	}
+
+	public void setTiempoProceso(Float tiempoProceso) {
+		this.tiempoProceso = tiempoProceso;
+	}
+
+	public List<CobroClienteEntity> getCobroClienteEntityList() {
         return cobroClienteEntityList;
     }
 

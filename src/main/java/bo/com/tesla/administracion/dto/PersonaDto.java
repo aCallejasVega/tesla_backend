@@ -108,7 +108,7 @@ public class PersonaDto implements Serializable{
 			Long sucursalId,
 			String nombreSucursal
 			) {
-		System.out.println("PersonaDto >>> 1");
+	
 		this.personaId = personaId;
 		if(materno!=null) {
 			this.nombreCompleto = nombres+" "+paterno+" "+materno;	
@@ -158,7 +158,7 @@ public class PersonaDto implements Serializable{
 			Long usuarioId
 			
 			) {
-		System.out.println("PersonaDto >>> 2");
+
 		this.personaId = personaId;
 		if(materno!=null) {
 			this.nombreCompleto = nombres+" "+paterno+" "+materno;	
@@ -211,8 +211,9 @@ public class PersonaDto implements Serializable{
 			Boolean bloqueado,
 			Long empleadoId,
 			Boolean admin
+		
 			) {
-		System.out.println("PersonaDto >>> 3");
+	
 		this.personaId = personaId;
 		if(materno!=null) {
 			this.nombreCompleto = nombres+" "+paterno+" "+materno;	
@@ -239,7 +240,7 @@ public class PersonaDto implements Serializable{
 		this.empleadoId=empleadoId;
 		this.esAdmin=admin;
 		this.bloqueado=bloqueado;
-		System.out.println(this.bloqueado);
+	
 	}
 	
 	

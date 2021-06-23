@@ -113,17 +113,23 @@ public class DeudaClienteService implements IDeudaClienteService {
 			archivo = this.archivoDao.save(archivo);
 		}
 
-		for (ConceptoDto concepto : deuda.conceptoLisit) {
+		for (ConceptoDto concepto : deuda.conceptoList) {
 			deudaCliente = new DeudaClienteEntity();
-			deudaCliente.setNroRegistro(1);
+			deudaCliente.setNroRegistro(0);
 			deudaCliente.setArchivoId(archivo);
-
 			deudaCliente.setCodigoCliente(deuda.codigoCliente);
 			deudaCliente.setNombreCliente(deuda.nombreCliente);
 			deudaCliente.setNroDocumento(deuda.nroDocumento);
 			deudaCliente.setDireccion(deuda.direccion);
 			deudaCliente.setTelefono(deuda.telefono);
-			deudaCliente.setEsPostpago(true);
+			deudaCliente.setCorreoCliente(deuda.correoCliente);
+			deudaCliente.setPeriodoCabecera(deuda.periodoCabecera);
+			if(deuda.esPostpago==null) {
+				deudaCliente.setEsPostpago(true);	
+			}else {
+				deudaCliente.setEsPostpago(deuda.esPostpago);
+			}
+			
 			deudaCliente.setNit(deuda.nit);
 			deudaCliente.setPeriodo(deuda.periodo);
 			deudaCliente.setTipoServicio(deuda.tipoServicio);

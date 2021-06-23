@@ -7,7 +7,9 @@ import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -25,23 +27,30 @@ public class DeudasClienteRestDto implements Serializable{
 	private static final long serialVersionUID = 1L;
 	public Long archivoId;
 	public String servicio;
+	@Size(min = 1, max = 300, message= "debe contener de 1 a 300 caracteres")
 	@NotEmpty(message = "no puede estar vacio")
 	public String tipoServicio;
+	@Size(min = 10, max = 10, message= " debe esta en el formato dd/mm/yyyy")
 	@NotEmpty(message = "no puede estar vacio")
 	public String periodo;
+	@Size(min = 1, max = 15, message= "debe contener de 1 a 15 caracteres")
 	@NotEmpty(message = "no puede estar vacio")
 	public String codigoCliente;
+	@Size(min = 1, max = 15, message= "debe contener de 1 a 15 caracteres")
 	@NotEmpty(message = "no puede estar vacio")
 	public String nit;
 	public String direccion;	
 	public String nroDocumento;
 	public String telefono;
+	@Size(min = 1, max = 200, message= "debe contener de 1 a 200 caracteres")
 	@NotEmpty(message = "no puede estar vacio")
 	public String nombreCliente;	
 	public String key;
 	//@Digits(integer=17, fraction=2)
 	public BigDecimal total;
 	public Boolean esPostpago;
+	@Size(min = 1, max = 10, message= "debe contener de 1 a 10 caracteres")
+	@NotEmpty(message = "no puede estar vacio")
 	public String codigoActividadEconomica;
 	public String cajero;
 	@JsonFormat( pattern = "dd/MM/yyyy",timezone="America/La_Paz")
@@ -55,11 +64,13 @@ public class DeudasClienteRestDto implements Serializable{
 	public BigDecimal subTotal;
 	public Character tipo;
 	public Boolean tipoComprobante;
+	@Email(message = "no tiene el formato de correo electronico")
 	public String correoCliente;
+	public String periodoCabecera;
 	
 	
 	@NotEmpty(message = "no puede estar vacio")
-	public List<ConceptoDto> conceptoLisit;
+	public List<ConceptoDto> conceptoList;
 
 	public DeudasClienteRestDto() {
 
@@ -187,13 +198,19 @@ public class DeudasClienteRestDto implements Serializable{
 		this.fechaCreacion = fechaCreacion;
 	}
 
-	public List<ConceptoDto> getConceptoLisit() {
-		return conceptoLisit;
+	
+
+	public List<ConceptoDto> getConceptoList() {
+		return conceptoList;
 	}
 
-	public void setConceptoLisit(List<ConceptoDto> conceptoLisit) {
-		this.conceptoLisit = conceptoLisit;
+
+
+	public void setConceptoList(List<ConceptoDto> conceptoList) {
+		this.conceptoList = conceptoList;
 	}
+
+
 
 	public String getEstado() {
 		return estado;

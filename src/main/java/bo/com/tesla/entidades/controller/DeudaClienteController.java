@@ -9,9 +9,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import bo.com.tesla.recaudaciones.dto.CampoBusquedaClienteEnum;
-import bo.com.tesla.recaudaciones.dto.EntidadDto;
-import bo.com.tesla.recaudaciones.services.IDeudaClienteRService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;
@@ -27,7 +24,6 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,20 +41,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import bo.com.tesla.administracion.entity.ArchivoEntity;
-import bo.com.tesla.administracion.entity.DeudaClienteEntity;
 import bo.com.tesla.administracion.entity.EntidadEntity;
 import bo.com.tesla.administracion.entity.LogSistemaEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
-import bo.com.tesla.entidades.dto.ConceptoDto;
 import bo.com.tesla.entidades.dto.DeudasClienteDto;
 import bo.com.tesla.entidades.dto.DeudasClienteRestDto;
 import bo.com.tesla.entidades.services.IArchivoService;
 import bo.com.tesla.entidades.services.IDeudaClienteService;
 import bo.com.tesla.entidades.services.IEntidadService;
-import bo.com.tesla.pagos.dto.PBeneficiarioReporteDto;
+import bo.com.tesla.recaudaciones.services.IDeudaClienteRService;
 import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegUsuarioService;
-import bo.com.tesla.security.services.LogSistemaService;
 import bo.com.tesla.useful.config.BusinesException;
 import bo.com.tesla.useful.config.Technicalexception;
 import bo.com.tesla.useful.cross.HandlingFiles;
@@ -109,7 +102,7 @@ public class DeudaClienteController {
 		String path = null;
 		SegUsuarioEntity usuario =new SegUsuarioEntity();
 		try {
-		
+			logger.info("UPLOAD ARCHIVO : ");
 			usuario = this.segUsuarioService.findByLogin(authentication.getName());
 			EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
 			path = HandlingFiles.saveFileToDisc(file, entidad.getNombre(), filesBets);
@@ -193,8 +186,8 @@ public class DeudaClienteController {
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
 		try {
-			long time=System.currentTimeMillis();
-		
+			long timeInicio=System.currentTimeMillis();
+			logger.info("PROCESANDO DATOS DE  ARCHIVO : ");
 			usuario = this.segUsuarioService.findByLogin(authentication.getName());
 			archivo = this.archivoService.findById(archivoId);
 			ArchivoEntity archivoPrevious = this.archivoService.findByEstado("ACTIVO",
@@ -235,9 +228,7 @@ public class DeudaClienteController {
 			}
 
 			
-			archivo.setFechaModificacion(new Date());
-			archivo.setUsuarioModificacion(usuario.getUsuarioId());
-			archivo.setTransaccion("PROCESAR");
+			
 			
 			if (archivoPrevious != null) {
 				//this.deudaClienteService.deletByArchivoId(archivoPrevious.getArchivoId());
@@ -249,13 +240,16 @@ public class DeudaClienteController {
 				this.deudaClienteService.deletByArchivoId(archivoPrevious.getArchivoId());
 				this.deudaClienteService.updateHitoricoDeudas(archivoPrevious.getArchivoId());
 			}
-			
+			archivo.setFechaModificacion(new Date());
+			archivo.setUsuarioModificacion(usuario.getUsuarioId());
+			long timeFin=System.currentTimeMillis();			
+			logger.info("FIN PROCESO DATOS DE  ARCHIVO : "+((timeFin-timeInicio)/1000));
+			Float tiempoProceso=(float) ((timeFin-timeInicio)/1000);
+			archivo.setTiempoProceso(tiempoProceso);
+			archivo.setTransaccion("PROCESAR");
 			
 			archivo = this.archivoService.save(archivo);
-
 			
-			
-
 			response.put("mensaje", "El archivo fue procesado con éxito ");
 			response.put("archivo", archivo);
 			response.put("estado", true);
