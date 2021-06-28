@@ -18,6 +18,8 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
@@ -33,9 +35,11 @@ public class SegPrivilegioRoleTransicionEntity implements Serializable {
     @Basic(optional = false)
     @Column(name = "priv_rol_transcicion_id", nullable = false)
     private Long privRolTranscicionId;
+    @JsonIgnore
     @JoinColumn(name = "privilegio_rol_id", referencedColumnName = "privilegio_rol_id")
     @ManyToOne
     private SegPrivilegioRolEntity privilegioRolId;
+    @JsonIgnore
     @JoinColumns({
         @JoinColumn(name = "tabla_id", referencedColumnName = "tabla_id")
         , @JoinColumn(name = "estado_inicial_id", referencedColumnName = "estado_inicial")

@@ -22,6 +22,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
@@ -52,12 +54,15 @@ public class DetalleComprobanteCobroEntity implements Serializable {
     @Basic(optional = false)
     @Column(nullable = false, length = 255)
     private String estado;
+    @JsonIgnore
     @JoinColumn(name = "cobro_cliente_id", referencedColumnName = "cobro_cliente_id", nullable = false)
     @ManyToOne(optional = false)
     private CobroClienteEntity cobroClienteId;
+    @JsonIgnore
     @JoinColumn(name = "comprobante_cobro_id", referencedColumnName = "comprobante_cobro_id", nullable = false)
     @ManyToOne(optional = false)
     private ComprobanteCobroEntity comprobanteCobroId;
+    @JsonIgnore
     @JoinColumn(name = "transaccion_cobro_id", referencedColumnName = "transaccion_cobro_id", nullable = false)
     @ManyToOne(optional = false)
     private TransaccionCobroEntity transaccionCobroId;

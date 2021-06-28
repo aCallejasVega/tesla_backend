@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
@@ -89,19 +91,22 @@ public class CobroClienteEntity implements Serializable {
     private boolean esPostpago;
     @Column(name = "monto_modificado")
     private Boolean montoModificado;
+    @JsonIgnore
     @JoinColumn(name = "archivo_id", referencedColumnName = "archivo_id", nullable = false)
     @ManyToOne(optional = false)
     private ArchivoEntity archivoId;
+    
     @Column(name = "fecha_modificacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModificacion;
+   
     @Column(name = "usuario_modificacion")
     private Long usuarioModificacion;
-
+    @JsonIgnore
     @JoinColumn(name = "transaccion_cobro_id", referencedColumnName = "transaccion_cobro_id")
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = TransaccionCobroEntity.class)
     private TransaccionCobroEntity transaccionCobro;
-
+    @JsonIgnore
     @JoinColumn(name = "historico_deuda_id", referencedColumnName = "historico_deuda_id")
     @ManyToOne
     private HistoricoDeudaEntity historicoDeuda;

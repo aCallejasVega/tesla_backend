@@ -280,6 +280,7 @@ public class CobroClienteService implements ICobroClienteService {
 
             return responseDto.report;
         } catch (Exception e) {
+        	e.printStackTrace();
             throw new Technicalexception(e.getMessage(), e.getCause());
         }
     }

@@ -25,6 +25,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
@@ -40,11 +42,11 @@ public class EntidadRecaudadorEntity implements Serializable {
     @Basic(optional = false)
     @Column(name = "entidad_recaudador_id", nullable = false)
     private Long entidadRecaudadorId;
-
+    @JsonIgnore
     @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id")
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = EntidadEntity.class)
     private EntidadEntity entidad;
-
+    @JsonIgnore
     @JoinColumn(name = "recaudador_id", referencedColumnName = "recaudador_id")
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = RecaudadorEntity.class)
     private RecaudadorEntity recaudador;

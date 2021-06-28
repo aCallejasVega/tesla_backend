@@ -79,6 +79,7 @@ public class RecaudadorEntity implements Serializable {
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "recaudador")
 	private List<RecaudadorComisionEntity> recaudadorComisionEntityLst;
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "recaudador")
 	private List<SucursalEntity> sucursalEntityList;
 

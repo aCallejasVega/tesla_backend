@@ -228,11 +228,8 @@ public class DeudaClienteController {
 			}
 
 			
-			
-			
 			if (archivoPrevious != null) {
 				//this.deudaClienteService.deletByArchivoId(archivoPrevious.getArchivoId());
-
 				archivoPrevious.setFechaModificacion(new Date());
 				archivoPrevious.setUsuarioModificacion(usuario.getUsuarioId());
 				archivoPrevious.setTransaccion("DESACTIVAR");

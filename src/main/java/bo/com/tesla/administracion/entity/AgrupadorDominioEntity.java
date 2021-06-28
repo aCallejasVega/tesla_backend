@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author Carmin
@@ -39,9 +41,11 @@ public class AgrupadorDominioEntity implements Serializable {
     @Basic(optional = false)
     @Column(nullable = false, length = 15)
     private String estado;
+    @JsonIgnore
     @JoinColumn(name = "dominio_id", referencedColumnName = "dominio_id", nullable = false)
     @ManyToOne(optional = false)
     private DominioEntity dominio;
+    @JsonIgnore
     @JoinColumn(name = "agrupador_dominio_id", referencedColumnName = "dominio_id", nullable = false, insertable = false, updatable = false)
     @OneToOne(optional = false)
     private DominioEntity dominioAgrupador;

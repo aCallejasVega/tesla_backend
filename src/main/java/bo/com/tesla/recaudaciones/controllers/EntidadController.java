@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -36,8 +37,9 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("api/entidades")
 public class EntidadController {
-    private Logger logger = LoggerFactory.getLogger(EntidadController.class);
-
+    private Logger logger = LoggerFactory.getLogger(EntidadController.class); 
+    
+    
     @Autowired
     private IDeudaClienteRService iDeudaClienteRService;
 
@@ -397,7 +399,8 @@ public class EntidadController {
         }
     }
 
-    @GetMapping("/{entidadId}/clientes/{codigoCliente}/deudas")
+    @Secured("ROLE_MCARC")
+    @GetMapping("/{entidadId}/clientes/{codigoCliente}/deudas")   
     public ResponseEntity<?> getDeudasByCliente(@PathVariable Long entidadId,
                                                 @PathVariable String codigoCliente,
                                                 Authentication authentication) {

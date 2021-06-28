@@ -23,6 +23,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
@@ -90,7 +92,7 @@ public class PHistoricoBeneficiariosEntity implements Serializable {
     @Basic(optional = false)
     @Column(nullable = false, length = 15)
     private String estado;
-  
+    @JsonIgnore
     @JoinColumn(name = "archivo_id", referencedColumnName = "archivo_id", nullable = false)
     @ManyToOne(optional = false)
     private ArchivoEntity archivoId;

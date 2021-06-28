@@ -21,6 +21,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author Carmin
@@ -60,6 +62,7 @@ public class RecaudadorComisionEntity implements Serializable {
     @JoinColumn(name = "tipo_comision_id", referencedColumnName = "dominio_id", nullable = false)
     @ManyToOne(optional = false)
     private DominioEntity tipoComision;
+    @JsonIgnore
     @JoinColumn(name = "recaudador_id", referencedColumnName = "recaudador_id", nullable = false)
     @ManyToOne(optional = false)
     private RecaudadorEntity recaudador;

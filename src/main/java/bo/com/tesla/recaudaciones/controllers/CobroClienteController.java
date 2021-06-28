@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,7 +60,8 @@ public class CobroClienteController {
 	private String filesReport;
 
 
-    @PostMapping("/{metodoPagoId}")
+	@Secured("ROLE_MCARC")
+	@PostMapping("/{metodoPagoId}")
     public ResponseEntity<?> postCobrarDeudas(@RequestBody ClienteDto clienteDto,
                                               @PathVariable Long metodoPagoId,
                                               Authentication authentication)  throws Exception {

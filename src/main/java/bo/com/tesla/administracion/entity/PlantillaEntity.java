@@ -22,6 +22,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
@@ -61,6 +63,7 @@ public class PlantillaEntity implements Serializable {
     @Basic(optional = false)
     @Column(nullable = false, length = 15)
     private String estado;
+    @JsonIgnore
     @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id", nullable = false)
     @ManyToOne(optional = false)
     private EntidadEntity entidadId;

@@ -17,6 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
@@ -33,9 +35,11 @@ public class SegEstadoEntity implements Serializable {
     private String descripcion;
     @Column(length = 15)
     private String estado;
+    @JsonIgnore
     @JoinColumn(name = "tabla_id", referencedColumnName = "tabla_id", nullable = false, insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private SegTablaEntity segTablaEntity;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "segEstadoEntity")
     private List<SegTransicionEntity> segTransicionEntityList;
 

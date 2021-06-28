@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author aCallejas
@@ -76,17 +78,18 @@ public class TransaccionCobroEntity implements Serializable {
     private String nombreClienteArchivo;
     @Column(name = "nro_documento_cliente_archivo", length = 15)
     private String nroDocumentoClienteArchivo;
-
+    @JsonIgnore
     @OneToMany(mappedBy = "transaccionCobro", fetch= FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<CobroClienteEntity> cobroClienteEntityList;
-
+    @JsonIgnore
     @JoinColumn(name = "archivo_id", referencedColumnName = "archivo_id", nullable = false)
     @ManyToOne(optional = false)
     private ArchivoEntity archivoId;
+    @JsonIgnore
     @JoinColumn(name = "entidad_id", referencedColumnName = "entidad_id", nullable = false)
     @ManyToOne(optional = false)
     private EntidadEntity entidadId;
-
+    @JsonIgnore
     @JoinColumn(name = "recaudador_id", referencedColumnName = "recaudador_id", nullable = false)
     @ManyToOne(optional = false)
     private RecaudadorEntity recaudador;
@@ -101,20 +104,22 @@ public class TransaccionCobroEntity implements Serializable {
     @ManyToOne(optional = false)
     private RecaudadorComisionEntity recaudadorComision;
     *****************************************************/
+    @JsonIgnore
     @JoinColumn(name = "entidad_comision_id", referencedColumnName = "entidad_comision_id")
     @ManyToOne
     private EntidadComisionEntity entidadComision;
+    @JsonIgnore
     @JoinColumn(name = "recaudador_comision_id", referencedColumnName = "recaudador_comision_id")
     @ManyToOne
     private RecaudadorComisionEntity recaudadorComision;
-
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "transaccionCobroId")
     private List<DetalleComprobanteCobroEntity> detalleComprobanteCobroEntityList;
-
+    @JsonIgnore
     @JoinColumn(name = "metodo_cobro_id", referencedColumnName = "dominio_id", nullable = false)
     @ManyToOne(optional = false)
     private DominioEntity metodoCobro;
-
+    @JsonIgnore
     @JoinColumn(name = "modalidad_facturacion_id", referencedColumnName = "dominio_id")
     @ManyToOne
     private DominioEntity modalidadFacturacion;
