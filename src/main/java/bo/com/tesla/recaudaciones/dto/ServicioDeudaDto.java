@@ -17,6 +17,7 @@ public class ServicioDeudaDto {
     public String servicio;
     public String periodo;
     public BigDecimal subTotal;
+    @JsonIgnore
     public String plantilla;
     public Boolean editable;
     public Boolean editando;

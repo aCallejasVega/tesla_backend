@@ -38,6 +38,11 @@ public class RecaudadoraService implements IRecaudadoraService {
 	
 		return this.recaudadorDao.findAllRecaudadora();
 	}
+
+	@Override
+	public boolean verificarRecaudadorEnEntidad(Long usuarioRecaudadorId) {
+		return recaudadorDao.verifificarRecaudadorEnEntidad(usuarioRecaudadorId);
+	}
 	
 
 }
