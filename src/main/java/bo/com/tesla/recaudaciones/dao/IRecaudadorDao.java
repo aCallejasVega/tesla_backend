@@ -73,10 +73,6 @@ public interface IRecaudadorDao extends JpaRepository <RecaudadorEntity, Long> {
             + " and u.usuarioId=:usuarioId")
     Optional<RecaudadorEntity> findRecaudadorByUserId(@Param("usuarioId") Long usuarioId);
     
-    
-    
-    
-    
     @Query("Select r from RecaudadorEntity r where r.recaudadorId= :recaudadorId and r.estado='ACTIVO'")
 	public RecaudadorEntity findByRecaudadorId(@Param("recaudadorId") Long recaudadorId);
 
@@ -94,11 +90,22 @@ public interface IRecaudadorDao extends JpaRepository <RecaudadorEntity, Long> {
 			+ " from RecaudadorEntity r "
 			+ " Where r.estado='ACTIVO'")
 	public List<RecaudadorEntity> findAllRecaudadora();
-	
-	
-	
-	 @Query(" Select r "
+
+	@Query(" Select r "
 	 		+ " from RecaudadorEntity r "
 	 		+ " where r.estado='ACTIVO' ")
-	  public  List<RecaudadorEntity> findAll();
+	public  List<RecaudadorEntity> findAll();
+
+	@Query(value = "select case when (count(u) > 0) then true else false end "
+			+ " from SegUsuarioEntity u "
+			+ " inner join PersonaEntity  p on p.personaId = u.personaId.personaId "
+			+ " inner join EmpleadoEntity e on e.personaId.personaId = p.personaId "
+			+ " inner join EntidadRecaudadorEntity er on e.sucursalId.recaudador.recaudadorId = er.recaudador.recaudadorId "
+			+ " where u.estado = 'ACTIVO' "
+			+ " and e.sucursalId.estado = 'ACTIVO' "
+			+ " and e.sucursalId.recaudador.estado = 'ACTIVO'"
+			+ " and p.estado = 'ACTIVO' "
+			+ " and u.usuarioId=:usuarioId "
+			+ " and er.estado = 'ACTIVO'")
+	boolean verifificarRecaudadorEnEntidad (@Param("usuarioId") Long usuarioId);
 }

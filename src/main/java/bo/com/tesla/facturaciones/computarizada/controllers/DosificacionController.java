@@ -4,7 +4,6 @@ import bo.com.tesla.administracion.entity.EntidadEntity;
 import bo.com.tesla.administracion.entity.LogSistemaEntity;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.entidades.services.IEntidadService;
-import bo.com.tesla.facturaciones.computarizada.dto.CodigoControlDto;
 import bo.com.tesla.facturaciones.computarizada.dto.DosificacionDto;
 import bo.com.tesla.facturaciones.computarizada.dto.ResponseDto;
 import bo.com.tesla.facturaciones.computarizada.services.IDosificacionService;
@@ -17,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +43,7 @@ public class DosificacionController {
     @Autowired
     private IEntidadService entidadService;
 
+    @Secured( "ROLE_MCED" )
     @PostMapping("")
     public ResponseEntity<?> postDosificacion(@RequestBody DosificacionDto dosificacionDto,
                                               Authentication authentication)  {
@@ -95,6 +96,7 @@ public class DosificacionController {
         }
     }
 
+    @Secured( "ROLE_MCED" )
     @GetMapping("")
     public ResponseEntity<?> getDosificacionesLst(Authentication authentication)  {
 
@@ -149,6 +151,7 @@ public class DosificacionController {
         }
     }
 
+    @Secured( "ROLE_MCED" )
     @GetMapping("/{dosificacionId}")
     public ResponseEntity<?> getDosificacionById(@PathVariable Long dosificacionId,
                                                   Authentication authentication)  {
@@ -201,6 +204,7 @@ public class DosificacionController {
         }
     }
 
+    @Secured( "ROLE_MCED" )
     @PutMapping("/{dosificacionId}/transacciones/{transaccion}")
     public ResponseEntity<?> putTransaccion(@PathVariable Long dosificacionId,
                                                @PathVariable String transaccion,
@@ -253,6 +257,7 @@ public class DosificacionController {
         }
     }
 
+    //Por el momento no debe considerar @Secured
     @GetMapping("/alertas")
     public ResponseEntity<?> getDosificacionesLstAlertas(Authentication authentication)  {
 

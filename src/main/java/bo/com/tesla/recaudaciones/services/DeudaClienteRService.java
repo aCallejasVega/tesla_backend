@@ -127,8 +127,8 @@ public class DeudaClienteRService implements IDeudaClienteRService {
         List<ClienteDto> clienteDtoList = new ArrayList<>();
         CampoBusquedaClienteEnum codCliente = CampoBusquedaClienteEnum.CODIGO_CLIENTE;
         CampoBusquedaClienteEnum nomCliente = CampoBusquedaClienteEnum.NOMBRE_CLIENTE;
-        CampoBusquedaClienteEnum nroDocumento = CampoBusquedaClienteEnum.NRO_DOCUMENTO;
-        //CampoBusquedaClienteEnum nit = CampoBusquedaClienteEnum.NIT;
+        CampoBusquedaClienteEnum nroDocumento = CampoBusquedaClienteEnum.CARNET_IDENTIDAD;
+        CampoBusquedaClienteEnum nit = CampoBusquedaClienteEnum.NIT;
         CampoBusquedaClienteEnum telefono = CampoBusquedaClienteEnum.TELEFONO;
 
         if(codCliente.getAlias().equals(campoBusqueda)) {
@@ -137,8 +137,8 @@ public class DeudaClienteRService implements IDeudaClienteRService {
             clienteDtoList = iDeudaClienteRDao.findByEntidadAndNombreCliente(entidadId, datoCliente);
         } else if(nroDocumento.getAlias().equals(campoBusqueda)) {
             clienteDtoList = iDeudaClienteRDao.findByEntidadAndNroDocumento(entidadId, datoCliente);
-        /*} else if(nit.getAlias().equals(campoBusqueda)) {
-            clienteDtoList = iDeudaClienteRDao.findByEntidadAndNit(entidadId, datoCliente);*/
+        } else if(nit.getAlias().equals(campoBusqueda)) {
+            clienteDtoList = iDeudaClienteRDao.findByEntidadAndNit(entidadId, datoCliente);
         } else if(telefono.getAlias().equals(campoBusqueda)) {
             clienteDtoList = iDeudaClienteRDao.findByEntidadAndTelefono(entidadId, datoCliente);
         }

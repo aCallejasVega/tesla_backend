@@ -13,5 +13,6 @@ public interface IRecaudadoraService {
 	public List<RecaudadorEntity> findRecaudadoresByEntidadId(Long entidadId);
 	
 	public List<RecaudadorEntity> findAllRecaudadora();
+	boolean verificarRecaudadorEnEntidad(Long usuarioRecaudadorId);
 
 }

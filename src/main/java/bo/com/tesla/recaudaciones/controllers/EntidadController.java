@@ -12,6 +12,7 @@ import bo.com.tesla.recaudaciones.dto.EntidadDto;
 import bo.com.tesla.recaudaciones.dto.ServicioDeudaDto;
 import bo.com.tesla.recaudaciones.services.IDeudaClienteRService;
 import bo.com.tesla.recaudaciones.services.IEntidadRService;
+import bo.com.tesla.recaudaciones.services.IRecaudadoraService;
 import bo.com.tesla.security.services.ILogSistemaService;
 import bo.com.tesla.security.services.ISegUsuarioService;
 import bo.com.tesla.useful.config.BusinesException;
@@ -19,20 +20,16 @@ import bo.com.tesla.useful.config.Technicalexception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/entidades")
@@ -53,7 +50,7 @@ public class EntidadController {
     private ISegUsuarioService segUsuarioService;
 
     @Autowired
-    private IEntidadService entidadService;
+    private IRecaudadoraService recaudadoraService;
 
     /*********************ABM ENTIDADES**************************/
     @PostMapping("")
@@ -163,7 +160,7 @@ public class EntidadController {
         Map<String, Object> response = new HashMap<>();
         try {
             EntidadAdmDto entidadAdmDto = iEntidadRService.getEntidadById(entidadId);
-            if (entidadAdmDto != null) {
+            if  (entidadAdmDto != null) {
                 response.put("status", true);
                 response.put("message", "El registro fue encontrado.");
                 response.put("result", entidadAdmDto);
@@ -284,7 +281,8 @@ public class EntidadController {
     }
 
     /*********************CARGADO CLIENTES POR ENTIDAD**************************/
-
+    //Obsoleto
+    @Secured("ROLE_MCARC")
     @GetMapping("/{entidadId}/clientes/{datoCliente}")
     public ResponseEntity<?> getAllClientesByEntidadId(@PathVariable Long entidadId,
                                                        @PathVariable String datoCliente,
@@ -338,12 +336,34 @@ public class EntidadController {
         }
     }
 
+    @Secured("ROLE_MCARC")
     @GetMapping("/{entidadId}/busquedas/{campoBusqueda}/clientes/{datoCliente}")
     public ResponseEntity<?> getAllClientesByEntidadIdAndCampos(@PathVariable Long entidadId,
                                                        @PathVariable String campoBusqueda,
                                                        @PathVariable String datoCliente,
                                                        Authentication authentication) {
+
         Map<String, Object> response = new HashMap<>();
+        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
+        if(!recaudadoraService.verificarRecaudadorEnEntidad(usuario.getUsuarioId())) {
+            try {
+                throw new BusinesException("No tiene los suficientes privilegios para mostrar la información");
+            } catch (BusinesException e) {
+                e.printStackTrace();
+                LogSistemaEntity log=new LogSistemaEntity();
+                log.setModulo("RECAUDACIONES.ENTIDADES");
+                log.setController("api/entidades/" + entidadId + "/clientes/" + datoCliente);
+                log.setMensaje(e.getMessage());
+                log.setUsuarioCreacion(usuario.getUsuarioId());
+                log.setFechaCreacion(new Date());
+                this.logSistemaService.save(log);
+                this.logger.error("This is cause", e.getMessage());
+                response.put("status", false);
+                response.put("message", e.getMessage());
+                response.put("code", log.getLogSistemaId()+"");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+        }
 
         if (entidadId <= 0 || entidadId == null) {
             response.put("status", false);
@@ -366,7 +386,6 @@ public class EntidadController {
             return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
         }
 
-        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         try {
             List<ClienteDto> clienteDtos = iDeudaClienteRService.getByEntidadAndDatoCliente(entidadId, campoBusqueda, datoCliente);
             if (clienteDtos.isEmpty()) {
@@ -400,14 +419,15 @@ public class EntidadController {
     }
 
     @Secured("ROLE_MCARC")
-    @GetMapping("/{entidadId}/clientes/{codigoCliente}/deudas")   
+    @GetMapping("/{entidadId}/clientes/{codigoCliente}/deudas")
     public ResponseEntity<?> getDeudasByCliente(@PathVariable Long entidadId,
                                                 @PathVariable String codigoCliente,
-                                                Authentication authentication) {
-    	
-    	
-    	
+                                                Authentication authentication) throws BusinesException {
+        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         Map<String, Object> response = new HashMap<>();
+        if(!recaudadoraService.verificarRecaudadorEnEntidad(usuario.getUsuarioId())) {
+            throw new BusinesException("No tiene los suficientes privilegios para mostrar la información");
+        }
 
         if (entidadId <= 0 || entidadId == null) {
             response.put("status", "false");
@@ -422,7 +442,7 @@ public class EntidadController {
             response.put("result", null);
             return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
         }
-        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
+
         try {
             List<ServicioDeudaDto> servicioDeudaDtos = iDeudaClienteRService.getDeudasByCliente(entidadId, codigoCliente);
             if (servicioDeudaDtos.isEmpty()) {
@@ -455,8 +475,8 @@ public class EntidadController {
         } catch (BusinesException e) {
             e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
-            log.setModulo("FACTURAS");
-            log.setController("api/facturas/filters");
+            log.setModulo("RECAUDACIONES.ENTIDADES");
+            log.setController("api/entidades/" + entidadId + "/clientes/" + codigoCliente + "/deudas");
             log.setMensaje(e.getMessage());
             log.setUsuarioCreacion(usuario.getUsuarioId());
             log.setFechaCreacion(new Date());
@@ -471,6 +491,7 @@ public class EntidadController {
 
     /*********************CARGADO ENTIDADES**************************/
 
+    @Secured( {"ROLE_MCARC", "ROLE_MCRA", "ROLE_MCRRA", "ROLE_MCARF" } )
     @GetMapping("/tipos")
     public ResponseEntity<?> getEntidadesByTipo(Authentication authentication) {
         Map<String, Object> response = new HashMap<>();
@@ -550,6 +571,7 @@ public class EntidadController {
         }
     }
 
+    @Secured( {"ROLE_MCARC", "ROLE_MCRA", "ROLE_MCRRA", "ROLE_MCARF" } )
     @GetMapping("/tipos/{tipoEntidadId}")
     public ResponseEntity<?> getEntidadesByTipoEntidad(@PathVariable Long tipoEntidadId, Authentication authentication) {
         Map<String, Object> response = new HashMap<>();
@@ -595,6 +617,7 @@ public class EntidadController {
         }
     }
 
+    @Secured( {"ROLE_MCARC", "ROLE_MCRA", "ROLE_MCRRA", "ROLE_MCARF" } )
     @GetMapping("/recaudadores")
     public ResponseEntity<?> getEntidadesByRecaudadora(Authentication authentication) {
         Map<String, Object> response = new HashMap<>();

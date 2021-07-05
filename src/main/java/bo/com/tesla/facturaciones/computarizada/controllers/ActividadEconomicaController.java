@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,6 +46,7 @@ public class ActividadEconomicaController {
     @Autowired
     private IEntidadService entidadService;
 
+    @Secured( "ROLE_MCED" )
     @GetMapping("/{codigoActividadEconomica}")
     public ResponseEntity<?> getActividadesEconomicasByCodigo(@PathVariable String codigoActividadEconomica,
                                                             Authentication authentication) {
@@ -97,6 +99,7 @@ public class ActividadEconomicaController {
         }
     }
 
+    @Secured( { "ROLE_MCARF", "ROLE_MCRA", "ROLE_MCRRA",   "ROLE_MCLV", "ROLE_MCERF" } )
     @GetMapping(path = {"", "/entidades/{entidadId}" }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> getActividadesEconomicas(@PathVariable Optional<Long> entidadId,
             Authentication authentication) {

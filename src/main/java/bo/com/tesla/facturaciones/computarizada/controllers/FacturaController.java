@@ -21,6 +21,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,8 +54,9 @@ public class FacturaController {
     @Autowired
     private IRecaudadoraService recaudadoraService;
 
+    @Secured( "ROLE_MCEVCC" )
     @PostMapping("/codigoscontroles")
-    public ResponseEntity<?> getCodigoControl(@RequestBody CodigoControlDto codigoControlDto,
+    public ResponseEntity<?> postCodigoControl(@RequestBody CodigoControlDto codigoControlDto,
                                               Authentication authentication)  {
 
         SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
@@ -105,6 +107,7 @@ public class FacturaController {
         }
     }
 
+    @Secured( { "ROLE_MCARF", "ROLE_MCRA", "ROLE_MCRRA",   "ROLE_MCLV", "ROLE_MCERF" } )
     @PostMapping(path = { "/entidades/{entidadId}/filters/{page}", "/filters/{page}" }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> postListFacturaFilter(@RequestBody FacturaDto facturaDto,
                                                           @PathVariable Optional<Long> entidadId,
@@ -171,6 +174,8 @@ public class FacturaController {
         }
     }
 
+
+    @Secured( { "ROLE_MCERF" } )
     @GetMapping("/entidades/reportes/{facturaId}")
     public ResponseEntity<?> getReportFactura(@PathVariable Long facturaId,
                                               Authentication authentication)  {
@@ -223,7 +228,7 @@ public class FacturaController {
         }
     }
 
-
+    @Secured( { "ROLE_MCARC", "ROLE_MCARF", "ROLE_MCRRA" } )
     @GetMapping("/entidades/{entidadId}/reportes/{facturaId}")
     public ResponseEntity<?> getReportFacturaByEntidad(@PathVariable Long entidadId,
                                               @PathVariable Long facturaId,
@@ -261,6 +266,7 @@ public class FacturaController {
         }
     }
 
+    @Secured( { "ROLE_MCRA", "ROLE_MCRRA" } )
     @PostMapping("/entidades/{entidadId}/anulaciones/listas")
     public ResponseEntity<?> postListFacturaAnulacion(@PathVariable Long entidadId,
                                                       @RequestBody AnulacionFacturaLstDto anulacionFacturaLstDto,
@@ -295,6 +301,7 @@ public class FacturaController {
     }
 
 
+    @Secured( "ROLE_MCLV"  )
     @PostMapping("/librosventas")
     public ResponseEntity<?> postLibroVentasReport(@RequestBody FacturaDto facturaDto,
                                                    Authentication authentication)  {
@@ -348,6 +355,7 @@ public class FacturaController {
         }
     }
 
+    @Secured( { "ROLE_MCRRA", "ROLE_MCARF", "ROLE_MCRA",   "ROLE_MCLV", "ROLE_MCERF" } )
     @GetMapping("/{facturaId}")
     public ResponseEntity<?> getFactura(@PathVariable Long facturaId,
                                         Authentication authentication)  {
