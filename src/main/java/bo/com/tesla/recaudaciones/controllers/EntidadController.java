@@ -404,6 +404,9 @@ public class EntidadController {
     public ResponseEntity<?> getDeudasByCliente(@PathVariable Long entidadId,
                                                 @PathVariable String codigoCliente,
                                                 Authentication authentication) {
+    	
+    	
+    	
         Map<String, Object> response = new HashMap<>();
 
         if (entidadId <= 0 || entidadId == null) {

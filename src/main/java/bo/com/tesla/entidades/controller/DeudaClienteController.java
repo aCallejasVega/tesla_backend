@@ -28,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -92,7 +93,7 @@ public class DeudaClienteController {
 	@Qualifier("deudaClienteJob")
 	Job job;
 
-	
+	@Secured("ROLE_MCAECA")
 	@PostMapping(path = "/upload")
 	public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, Authentication authentication) 
 			 {
@@ -176,6 +177,7 @@ public class DeudaClienteController {
 		}
 	}
 
+	@Secured("ROLE_MCAECA")
 	@PostMapping(path = "/processFile/{archivoId}")
 	public ResponseEntity<?> processFile(@PathVariable("archivoId") Long archivoId, Authentication authentication)  {
 		Map<String, Object> response = new HashMap<>();
@@ -202,7 +204,7 @@ public class DeudaClienteController {
 				this.deudaClienteService.deletByArchivoId(archivo.getArchivoId());
 				List<Throwable> throwList = execution.getAllFailureExceptions();
 				for (Throwable throwable : throwList) {
-					
+					throwable.printStackTrace();
 					LogSistemaEntity log=new LogSistemaEntity();
 					log.setModulo("ENTIDADES");
 					log.setController("api/deudaCliente/processFile/"+archivoId);
@@ -214,10 +216,6 @@ public class DeudaClienteController {
 					
 					archivo.setTransaccion("FALLAR");
 					this.archivoService.save(archivo);
-					
-					this.logger.error("This is error", throwable.getMessage());
-					this.logger.error("This is cause", throwable.getCause());
-					
 					response.put("mensaje", Util.mensajeRow(throwable.getMessage() + "") + "");
 					response.put("detalle", Util.causeRow(throwable.getCause() + "") + "");
 					response.put("codigo", log.getLogSistemaId());
@@ -227,7 +225,7 @@ public class DeudaClienteController {
 				}
 			}
 
-			
+					
 			if (archivoPrevious != null) {
 				//this.deudaClienteService.deletByArchivoId(archivoPrevious.getArchivoId());
 				archivoPrevious.setFechaModificacion(new Date());
@@ -235,6 +233,7 @@ public class DeudaClienteController {
 				archivoPrevious.setTransaccion("DESACTIVAR");
 				this.archivoService.save(archivoPrevious);
 				this.deudaClienteService.deletByArchivoId(archivoPrevious.getArchivoId());
+				this.deudaClienteService.updateDeudasCargadasEndPoint(archivo.getArchivoId(),archivoPrevious.getArchivoId());
 				this.deudaClienteService.updateHitoricoDeudas(archivoPrevious.getArchivoId());
 			}
 			archivo.setFechaModificacion(new Date());
@@ -270,10 +269,11 @@ public class DeudaClienteController {
 			this.deudaClienteService.deletByArchivoId(archivoId);
 			
 			
-			response.put("mensaje",
-					"Errro:" + log.getLogSistemaId()+"\n Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			response.put("mensaje", "Error :" +log.getLogSistemaId()); 
+			response.put("detalle",
+					" Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
 			response.put("estado", false);
-			response.put("causa", "O");
+			
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 
 		} catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException
@@ -296,15 +296,40 @@ public class DeudaClienteController {
 			
 			this.deudaClienteService.deletByArchivoId(archivoId);
 	
-			response.put("mensaje",
-					"Error: "+log.getLogSistemaId()+"\n Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			response.put("mensaje", "Error :" +log.getLogSistemaId()); 
+			response.put("detalle",
+					" Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
 			response.put("estado", false);
-			response.put("causa", "O");
+			
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 
+		}catch (Exception e) {
+			e.printStackTrace();
+			LogSistemaEntity log=new LogSistemaEntity();
+			log.setModulo("ENTIDADES");
+			log.setController("api/deudaCliente/processFile/"+archivoId);
+			if(e.getCause()!=null) {
+				log.setCausa(e.getCause().getMessage());
+			}
+			log.setMensaje(e.getMessage());
+			log.setUsuarioCreacion(usuario.getUsuarioId());
+			log.setFechaCreacion(new Date());			
+			log=this.logSistemaService.save(log);
+			
+			archivo.setTransaccion("FALLAR");
+			this.archivoService.save(archivo);			
+			this.deudaClienteService.deletByArchivoId(archivoId);
+			
+			response.put("mensaje", "Error :" +log.getLogSistemaId()); 
+			response.put("detalle",
+					" Ocurrió un error en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+			response.put("estado", false);
+			
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
 	}
 
+	@Secured("ROLE_MCAECA")
 	@GetMapping(path = { "/findDeudasClientesByArchivoId/{archivoId}/{paginacion}",
 			"/findDeudasClientesByArchivoId/{archivoId}/{paginacion}/{paramBusqueda}", }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> findDeudasClientesByArchivoId(@PathVariable("archivoId") Long archivoId,
@@ -361,12 +386,16 @@ public class DeudaClienteController {
 
 	}
 	
-	
+	@Secured("ROLE_MCAECA")
 	@CrossOrigin(origins = "*", allowedHeaders = "*")
 	@PostMapping(path ="/saveCustomerDebt", produces = MediaType.APPLICATION_JSON_UTF8_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> saveCustomerDebt(@Valid @RequestBody DeudasClienteRestDto deuda, BindingResult result,Authentication authentication) {
 		Map<String, Object> response = new HashMap<>();
 		SegUsuarioEntity usuario=new SegUsuarioEntity();
+		
+		
+		
+		
 		if(result.hasErrors()) {
 
 			List<String> errors = result.getFieldErrors()
@@ -424,6 +453,7 @@ public class DeudaClienteController {
 
 	}
 
+	
 	@GetMapping("/camposdeudas")
 	public ResponseEntity<?> getCamposBusquedaDeudas(Authentication authentication) {
 		Map<String, Object> response = new HashMap<>();

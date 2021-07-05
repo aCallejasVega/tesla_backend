@@ -18,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -161,6 +162,7 @@ public class ReportEntidadController {
 
 	}
 
+	@Secured("ROLE_MCAERG")
 	@PostMapping(path = "/findDeudasByParameter")
 	public ResponseEntity<?> findDeudasByParameter(@RequestBody BusquedaReportesDto busquedaReportesDto,
 			Authentication authentication) {
@@ -229,7 +231,7 @@ public class ReportEntidadController {
 		}
 
 	}
-
+	@Secured("ROLE_MCAERG")
 	@PostMapping(path = "/findDeudasByParameterForReport")
 	public ResponseEntity<?> findDeudasByParameterForReport(@RequestBody BusquedaReportesDto busquedaReportesDto,
 			Authentication authentication) {
@@ -334,6 +336,7 @@ public class ReportEntidadController {
 
 	}
 
+	@Secured({"ROLE_MCAERG","ROLE_MCAERA"})
 	@GetMapping(path = { "/findArchivos/{paginacion}",
 			"/findArchivos/{paginacion}/{fechaInicio}/{fechaFin}/{estado}" }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> findArchivos(
@@ -412,6 +415,7 @@ public class ReportEntidadController {
 
 	}
 
+	@Secured("ROLE_MCAERA")
 	@GetMapping(path = "/findDeudasByArchivoIdAndEstado/{archivoId}/{export}")
 	public ResponseEntity<?> findDeudasByArchivoIdAndEstado(@PathVariable("archivoId") Long archivoId,
 			@PathVariable("export") String export, Authentication authentication) {

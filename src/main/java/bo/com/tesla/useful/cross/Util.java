@@ -57,7 +57,7 @@ public class Util {
 			if (newMenasje.contains("input=[]")) {
 				newMenasje = newMenasje + ". El archivo contiene registros en blanco, estos no son permitidos. ";
 			}
-			return newMenasje.replace("Parsing error at line", "Se encontró un error en el archivo la línea es ")
+			return newMenasje.replace("Parsing error at line", "Se encontró un error en el archivo, verifique la línea ")
 					.replace("in input=", ". el registro es el siguiente:\n ");
 		}
 		return newMenasje;
@@ -159,7 +159,7 @@ public class Util {
 				rowInt++;				
 				if (fields.length <= 1) {
 					throw new BusinesException("Se encontró un registro en blanco en la línea " + rowInt
-							+ ", por favor verifique el archivo y vulva a cargarlo.");
+							+ ", por favor verifique el archivo y vuelva a cargarlo.");
 
 				}
 				if (fields.length != 21) {

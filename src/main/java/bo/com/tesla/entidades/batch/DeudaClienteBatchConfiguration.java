@@ -60,7 +60,7 @@ public class DeudaClienteBatchConfiguration {
 				.delimited()
 				.delimiter("|")				
 				.names(new String[] { "nroRegistro", "codigoCliente", "nombreCliente", "nroDocumento", "direccion",
-						"telefono", "nit", "servicio", "tipoServicio", "periodo", "tipo", "concepto", "montoUnitario",
+						"telefono", "nit", "tipoServicio", "servicio", "periodo", "tipo", "concepto", "montoUnitario",
 						"cantidad","subTotal", "datoExtras", "tipoComprobante", "periodoCabecera","esPostpago","codigoActividadEconomica","correoCliente" })
 				.fieldSetMapper(new BeanWrapperFieldSetMapper<DeudaClienteEntity>() {
 					{
@@ -78,8 +78,8 @@ public class DeudaClienteBatchConfiguration {
 		return new JdbcBatchItemWriterBuilder<DeudaClienteEntity>()
 				.itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
 				.sql("INSERT INTO tesla.deudas_clientes"
-						+ "(archivo_id, nro_registro, codigo_cliente, nombre_cliente, nro_documento, direccion, nit, telefono, servicio, tipo_servicio, periodo, tipo, concepto, cantidad, monto_unitario, sub_total, dato_extras, tipo_comprobante,  periodo_cabecera,es_postpago,codigo_actividad_economica,correo_cliente) "
-						+ "VALUES('"+archivoId+"', :nroRegistro, :codigoCliente, :nombreCliente, :nroDocumento, :direccion, :nit, :telefono, :servicio, :tipoServicio, :periodo, :tipo, :concepto, :cantidad, :montoUnitario, :subTotal, :datoExtras, :tipoComprobante,:periodoCabecera,:esPostpago,:codigoActividadEconomica,:correoCliente);"
+						+ "(archivo_id, nro_registro, codigo_cliente, nombre_cliente, nro_documento, direccion, nit, telefono,tipo_servicio,servicio , periodo, tipo, concepto, cantidad, monto_unitario, sub_total, dato_extras, tipo_comprobante,  periodo_cabecera,es_postpago,codigo_actividad_economica,correo_cliente) "
+						+ "VALUES('"+archivoId+"', :nroRegistro, :codigoCliente, :nombreCliente, :nroDocumento, :direccion, :nit, :telefono,:tipoServicio ,:servicio , :periodo, :tipo, :concepto, :cantidad, :montoUnitario, :subTotal, :datoExtras, :tipoComprobante,:periodoCabecera,:esPostpago,:codigoActividadEconomica,:correoCliente);"
 						+ "")
 				
 				.dataSource(dataSource)

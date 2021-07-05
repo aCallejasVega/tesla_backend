@@ -35,6 +35,12 @@ public interface IDeudaClienteDao extends JpaRepository<DeudaClienteEntity, Long
 			+ " WHERE archivo_id= :archivoId and estado ='ACTIVO' ",nativeQuery = true)
 	public void updateHitoricoDeudas(@Param("archivoId") Long archivoId);
 	
+	@Transactional
+	@Modifying
+	@Query(value =" UPDATE tesla.deudas_clientes  "
+			+ " SET  archivo_id= :archivoId "
+			+ " WHERE nro_registro=0 and archivo_id= :archivoPreviusId",nativeQuery = true)
+	public void updateDeudasCargadasEndPoint(@Param("archivoId") Long archivoId,@Param("archivoPreviusId") Long archivoPreviusId);
 	
 	@Query("SELECT new bo.com.tesla.entidades.dto.DeudasClienteDto(d.archivoId.archivoId,d.servicio, d.tipoServicio, d.periodo, d.codigoCliente,sum(d.subTotal)) "
 			+ " FROM DeudaClienteEntity d "

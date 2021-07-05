@@ -12,6 +12,8 @@ public interface IDeudaClienteService {
 	
 	public void updateHitoricoDeudas(Long archivoId);
 	
+	public void updateDeudasCargadasEndPoint(Long archivoId,Long archivoPreviusId);
+	
 	public Page<DeudasClienteDto> findDeudasClientesByArchivoId(Long archivoId,String paramBusqueda,int page,int size);
 	
 	public String  saveCustomerDebt(DeudasClienteRestDto deuda,SegUsuarioEntity usuario) throws Exception;

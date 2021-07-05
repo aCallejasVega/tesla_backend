@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.format.annotation.NumberFormat;
@@ -129,6 +130,8 @@ public class DeudaClienteEntity implements Serializable {
 	private String correoCliente;
 
 
+	@Transient
+	private Boolean esPorServicioWeb=false;
 
 	public DeudaClienteEntity() {
 	}
@@ -196,14 +199,19 @@ public class DeudaClienteEntity implements Serializable {
 	}
 
 	public void setNroRegistro(Integer nroRegistro) throws BusinesException {
-		if (/*nroRegistro.toString().isBlank() ||*/ nroRegistro.toString().isEmpty()) {
-			this.nroRegistro = null;
-			throw new BusinesException(
-					"El campo Nro Registro no puede ser nulo");
-			//throw new Exception("El campo Nro Registro no puede ser nulo");
-		} else {
-			this.nroRegistro = nroRegistro;
+		if(this.esPorServicioWeb) {
+			this.nroRegistro = 0;
+		}else {
+			if (nroRegistro==null || nroRegistro<=0) {
+				this.nroRegistro = null;
+				throw new BusinesException(
+						"El campo Nro Registro no puede ser nulo");
+				//throw new Exception("El campo Nro Registro no puede ser nulo");
+			} else {
+				this.nroRegistro = nroRegistro;
+			}	
 		}
+		
 
 	}
 
@@ -454,6 +462,18 @@ public class DeudaClienteEntity implements Serializable {
 	public void setCorreoCliente(String correoCliente) {
 		this.correoCliente = correoCliente;
 	}
+
+	public Boolean getEsPorServicioWeb() {
+		return esPorServicioWeb;
+	}
+
+	public void setEsPorServicioWeb(Boolean esPorServicioWeb) {
+		this.esPorServicioWeb = esPorServicioWeb;
+	}
+	
+	
+	
+	
 	
 	
 	

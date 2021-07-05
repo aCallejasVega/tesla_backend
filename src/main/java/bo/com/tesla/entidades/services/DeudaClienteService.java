@@ -51,6 +51,14 @@ public class DeudaClienteService implements IDeudaClienteService {
 		this.deudaClienteDao.updateHitoricoDeudas(archivoId);
 
 	}
+	
+	@Override
+	public void updateDeudasCargadasEndPoint(Long archivoId,Long archivoPreviusId) {
+		this.deudaClienteDao.updateDeudasCargadasEndPoint(archivoId,archivoPreviusId);
+
+	}
+	
+	
 
 	@Transactional(readOnly = true)
 	@Override
@@ -115,6 +123,7 @@ public class DeudaClienteService implements IDeudaClienteService {
 
 		for (ConceptoDto concepto : deuda.conceptoList) {
 			deudaCliente = new DeudaClienteEntity();
+			deudaCliente.setEsPorServicioWeb(true);
 			deudaCliente.setNroRegistro(0);
 			deudaCliente.setArchivoId(archivo);
 			deudaCliente.setCodigoCliente(deuda.codigoCliente);
