@@ -160,7 +160,7 @@ public class EntidadController {
         Map<String, Object> response = new HashMap<>();
         try {
             EntidadAdmDto entidadAdmDto = iEntidadRService.getEntidadById(entidadId);
-            if (entidadAdmDto != null) {
+            if  (entidadAdmDto != null) {
                 response.put("status", true);
                 response.put("message", "El registro fue encontrado.");
                 response.put("result", entidadAdmDto);
@@ -491,6 +491,7 @@ public class EntidadController {
 
     /*********************CARGADO ENTIDADES**************************/
 
+    @Secured( {"ROLE_MCARC", "ROLE_MCRA", "ROLE_MCRRA", "ROLE_MCARF" } )
     @GetMapping("/tipos")
     public ResponseEntity<?> getEntidadesByTipo(Authentication authentication) {
         Map<String, Object> response = new HashMap<>();
@@ -570,6 +571,7 @@ public class EntidadController {
         }
     }
 
+    @Secured( {"ROLE_MCARC", "ROLE_MCRA", "ROLE_MCRRA", "ROLE_MCARF" } )
     @GetMapping("/tipos/{tipoEntidadId}")
     public ResponseEntity<?> getEntidadesByTipoEntidad(@PathVariable Long tipoEntidadId, Authentication authentication) {
         Map<String, Object> response = new HashMap<>();
@@ -615,6 +617,7 @@ public class EntidadController {
         }
     }
 
+    @Secured( {"ROLE_MCARC", "ROLE_MCRA", "ROLE_MCRRA", "ROLE_MCARF" } )
     @GetMapping("/recaudadores")
     public ResponseEntity<?> getEntidadesByRecaudadora(Authentication authentication) {
         Map<String, Object> response = new HashMap<>();
