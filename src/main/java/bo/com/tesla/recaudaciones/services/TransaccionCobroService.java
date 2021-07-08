@@ -109,10 +109,10 @@ public class TransaccionCobroService implements ITransaccionCobroService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Technicalexception.class)
-    public Boolean anularTransaccion(Long entidadId,
-                                     AnulacionFacturaLstDto anulacionFacturaLstDto,
-                                     Long modalidadFacturacionId,
-                                     SegUsuarioEntity usuarioEntity) {
+    public Boolean anularTransaccionConRecuperacionDeudas(Long entidadId,
+                                                          AnulacionFacturaLstDto anulacionFacturaLstDto,
+                                                          Long modalidadFacturacionId,
+                                                          SegUsuarioEntity usuarioEntity) {
         try {
             //Anular Transacciones
             Integer countupdate = iTransaccionCobroDao.updateLstTransaccionByFacturas(anulacionFacturaLstDto.facturaIdLst, modalidadFacturacionId, "ANULAR", usuarioEntity.getUsuarioId());
@@ -126,6 +126,7 @@ public class TransaccionCobroService implements ITransaccionCobroService {
                 throw new Technicalexception("La Anulación ha producido un inconveniente");
             }
 
+            //Actualizar estado de históricos
             Integer countHistoricos = historicoDeudaService.updateHistoricoDeudaLstByFacturas(anulacionFacturaLstDto.facturaIdLst, "ANULADO");
             if(countHistoricos == 0) {
                 throw new Technicalexception("No se ha logrado actualizar el estado de los registros históricos de deudas");
@@ -136,6 +137,47 @@ public class TransaccionCobroService implements ITransaccionCobroService {
             if(countRecovery < 1) {
                 throw new Technicalexception("No se ha recuperado ninguna deuda");
             }
+
+            /***********************************************************************/
+            //Anulación de Facturas
+            ResponseDto responseDto = anulacionFacturaService.postAnulacionLst(entidadId, anulacionFacturaLstDto);
+            if(!responseDto.status) {
+                throw new Technicalexception(responseDto.message);
+            }
+            /***********************************************************************/
+
+            return true;
+        } catch (Exception e) {
+            throw new Technicalexception(e.getMessage(), e.getCause());
+        }
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Technicalexception.class)
+    public Boolean anularTransaccionPorCargadoErroneo(Long entidadId,
+                                                      AnulacionFacturaLstDto anulacionFacturaLstDto,
+                                                      Long modalidadFacturacionId,
+                                                      SegUsuarioEntity usuarioEntity) {
+        try {
+            //Anular Transacciones
+            Integer countupdate = iTransaccionCobroDao.updateLstTransaccionByFacturas(anulacionFacturaLstDto.facturaIdLst, modalidadFacturacionId, "ANULAR", usuarioEntity.getUsuarioId());
+            if (countupdate == 0) {
+                throw new Technicalexception("La Anulación ha producido un inconveniente o se ha producido un nuevo cargado de archivo");
+            }
+
+            //Anular Cobros
+            Integer countUpdateCobros = iCobroClienteDao.updateLstTransaccionByFacturas(anulacionFacturaLstDto.facturaIdLst, "ANULAR", usuarioEntity.getUsuarioId());
+            if (countUpdateCobros == 0) {
+                throw new Technicalexception("La Anulación ha producido un inconveniente");
+            }
+
+            //Actualizar estado de históricos
+            Integer countHistoricos = historicoDeudaService.updateHistoricoDeudaLstByFacturas(anulacionFacturaLstDto.facturaIdLst, "ERRONEO");
+            if(countHistoricos == 0) {
+                throw new Technicalexception("No se ha logrado actualizar el estado de los registros históricos de deudas");
+            }
+
+            //No recupera deudas
 
             /***********************************************************************/
             //Anulación de Facturas

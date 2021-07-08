@@ -6,7 +6,10 @@ import bo.com.tesla.facturaciones.computarizada.dto.ResponseDto;
 
 public interface IAnulacionFacturaService {
     ResponseDto postAnulacionLst(Long entidadId, AnulacionFacturaLstDto anulacionFacturaLstDto);
-    Boolean anularTransaccion(Long entidadId,
-                              AnulacionFacturaLstDto anulacionFacturaLstDto,
-                              SegUsuarioEntity usuarioEntity);
+    Boolean anularTransaccionConRecuperacionDeudas(Long entidadId,
+                                                   AnulacionFacturaLstDto anulacionFacturaLstDto,
+                                                   SegUsuarioEntity usuarioEntity);
+    Boolean anularTransaccionConCargadoErroneo(Long entidadId,
+                                               AnulacionFacturaLstDto anulacionFacturaLstDto,
+                                               SegUsuarioEntity usuarioEntity);
 }

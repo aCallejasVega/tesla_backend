@@ -40,14 +40,28 @@ public class AnulacionFacturaService implements IAnulacionFacturaService {
     }
 
     @Override
-    public Boolean anularTransaccion(Long entidadId,
-                                     AnulacionFacturaLstDto anulacionFacturaLstDto,
-                                     SegUsuarioEntity usuarioEntity) {
+    public Boolean anularTransaccionConRecuperacionDeudas(Long entidadId,
+                                                          AnulacionFacturaLstDto anulacionFacturaLstDto,
+                                                          SegUsuarioEntity usuarioEntity) {
         Optional<Long> modFactCompuOptional = dominioDao.getDominioIdByDominioAndAbreviatura("modalidad_facturacion_id", "FC");
         if(!modFactCompuOptional.isPresent()) {
             throw new Technicalexception("No existe el dominio='modalidad_facturacion_id, abreviatura='FC' para la facturación computarizada");
         }
-        return transaccionCobroService.anularTransaccion(entidadId,
+        return transaccionCobroService.anularTransaccionConRecuperacionDeudas(entidadId,
+                anulacionFacturaLstDto,
+                modFactCompuOptional.get(),
+                usuarioEntity);
+    }
+
+    @Override
+    public Boolean anularTransaccionConCargadoErroneo(Long entidadId,
+                                                          AnulacionFacturaLstDto anulacionFacturaLstDto,
+                                                          SegUsuarioEntity usuarioEntity) {
+        Optional<Long> modFactCompuOptional = dominioDao.getDominioIdByDominioAndAbreviatura("modalidad_facturacion_id", "FC");
+        if(!modFactCompuOptional.isPresent()) {
+            throw new Technicalexception("No existe el dominio='modalidad_facturacion_id, abreviatura='FC' para la facturación computarizada");
+        }
+        return transaccionCobroService.anularTransaccionPorCargadoErroneo(entidadId,
                 anulacionFacturaLstDto,
                 modFactCompuOptional.get(),
                 usuarioEntity);

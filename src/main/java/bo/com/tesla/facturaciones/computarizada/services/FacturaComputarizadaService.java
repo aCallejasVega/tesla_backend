@@ -185,7 +185,7 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
             String url = this.host + "/api/facturas/filters/pages";
 
             UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(url).
-                    queryParam("page", page).
+                    queryParam("page", page - 1).
                     queryParam("size", 10);
 
             return conexionService.getResponseMethodPostParameter(entidadId, facturaDto, uriComponentsBuilder);
