@@ -16,7 +16,9 @@ public interface ISegRolDao extends JpaRepository<SegRolEntity, Long> {
 
 	@Query("Select ur.rolId " 
 			+ " from SegUsuarioRolEntity ur "
-			+ " where ur.usuarioId.login=:login AND ur.usuarioId.estado='ACTIVO' " 
+			+ " where ur.usuarioId.login=:login "
+			+ " AND ur.usuarioId.estado='ACTIVO' "
+			+ " AND ur.estado = 'ACTIVO' "
 			+ " and ur.rolId.estado='ACTIVO' ")
 	public List<SegRolEntity> findRolesByUsuarioLogin(@Param("login") String login);
 	
