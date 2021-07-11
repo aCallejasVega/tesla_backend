@@ -270,6 +270,16 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 												@Param("transaccion") String transaccion,
 												@Param("usuarioModificacionId") Long usuarioModificacionId);
 
+	@Query(value = "SELECT count(t) " +
+			"FROM TransaccionCobroEntity t " +
+			"WHERE t.facturaId in :facturaIdLst " +
+			"AND t.modalidadFacturacion.dominioId = :modalidadFacturacionId " +
+			"AND (SELECT a.estado " +
+				"FROM ArchivoEntity a " +
+				"WHERE a.archivoId = t.archivoId.archivoId) != 'ACTIVO'")
+	Integer countArchivosNoActivosPorListaFacturas(@Param("facturaIdLst") List<Long> facturaIdLst,
+										   @Param("modalidadFacturacionId") Long modalidadFacturacionId);
+
 	@Modifying
 	@Query("UPDATE TransaccionCobroEntity t " +
 			"SET t.facturaId = :facturaId, t.transaccion = 'COBRAR' " +

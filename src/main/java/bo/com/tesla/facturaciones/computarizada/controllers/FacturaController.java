@@ -313,16 +313,19 @@ public class FacturaController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         } catch (BusinesException e) {
             e.printStackTrace();
-            LogSistemaEntity log = new LogSistemaEntity();
+            LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("FACTURAS");
-            log.setController("api/anulaciones/listas/erroneos");
+            log.setController("api/anulaciones/listas");
+            log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
             log.setMensaje(e.getMessage());
             log.setUsuarioCreacion(usuario.getUsuarioId());
             log.setFechaCreacion(new Date());
             this.logSistemaService.save(log);
             this.logger.error("This is cause", e.getMessage());
-
-            return new ResponseEntity<>("Error " + log.getLogSistemaId() + ": " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            response.put("status", false);
+            response.put("message", e.getMessage());
+            response.put("code", log.getLogSistemaId()+"");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -358,7 +361,7 @@ public class FacturaController {
             e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("ANULACION FACTURA");
-            log.setController("api/anulaciones/listas");
+            log.setController("api/anulaciones/listas/erroneos");
             log.setCausa(e.getCause() + "");
             log.setMensaje(e.getMessage() + "");
             log.setUsuarioCreacion(usuario.getUsuarioId());
@@ -373,16 +376,19 @@ public class FacturaController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }  catch (BusinesException e) {
             e.printStackTrace();
-            LogSistemaEntity log = new LogSistemaEntity();
+            LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("FACTURAS");
-            log.setController("api/anulaciones/listas/erroneos");
+            log.setController("api/anulaciones/listas");
+            log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
             log.setMensaje(e.getMessage());
             log.setUsuarioCreacion(usuario.getUsuarioId());
             log.setFechaCreacion(new Date());
             this.logSistemaService.save(log);
             this.logger.error("This is cause", e.getMessage());
-
-            return new ResponseEntity<>("Error " + log.getLogSistemaId() + ": " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            response.put("status", false);
+            response.put("message", e.getMessage());
+            response.put("code", log.getLogSistemaId()+"");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 

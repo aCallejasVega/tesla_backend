@@ -5,6 +5,7 @@ import bo.com.tesla.facturaciones.computarizada.dto.AnulacionFacturaLstDto;
 import bo.com.tesla.facturaciones.computarizada.dto.ResponseDto;
 import bo.com.tesla.recaudaciones.dao.IDominioDao;
 import bo.com.tesla.recaudaciones.services.ITransaccionCobroService;
+import bo.com.tesla.useful.config.BusinesException;
 import bo.com.tesla.useful.config.Technicalexception;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +43,7 @@ public class AnulacionFacturaService implements IAnulacionFacturaService {
     @Override
     public Boolean anularTransaccionConRecuperacionDeudas(Long entidadId,
                                                           AnulacionFacturaLstDto anulacionFacturaLstDto,
-                                                          SegUsuarioEntity usuarioEntity) {
+                                                          SegUsuarioEntity usuarioEntity) throws BusinesException {
         Optional<Long> modFactCompuOptional = dominioDao.getDominioIdByDominioAndAbreviatura("modalidad_facturacion_id", "FC");
         if(!modFactCompuOptional.isPresent()) {
             throw new Technicalexception("No existe el dominio='modalidad_facturacion_id, abreviatura='FC' para la facturación computarizada");
@@ -56,7 +57,7 @@ public class AnulacionFacturaService implements IAnulacionFacturaService {
     @Override
     public Boolean anularTransaccionConCargadoErroneo(Long entidadId,
                                                           AnulacionFacturaLstDto anulacionFacturaLstDto,
-                                                          SegUsuarioEntity usuarioEntity) {
+                                                          SegUsuarioEntity usuarioEntity) throws BusinesException {
         Optional<Long> modFactCompuOptional = dominioDao.getDominioIdByDominioAndAbreviatura("modalidad_facturacion_id", "FC");
         if(!modFactCompuOptional.isPresent()) {
             throw new Technicalexception("No existe el dominio='modalidad_facturacion_id, abreviatura='FC' para la facturación computarizada");

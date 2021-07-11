@@ -13,6 +13,7 @@ import bo.com.tesla.recaudaciones.dao.ICobroClienteDao;
 import bo.com.tesla.recaudaciones.dao.IHistoricoDeudaDao;
 import bo.com.tesla.recaudaciones.dao.ITransaccionCobroDao;
 import bo.com.tesla.recaudaciones.dto.ServicioDeudaDto;
+import bo.com.tesla.useful.config.BusinesException;
 import bo.com.tesla.useful.config.Technicalexception;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -112,18 +113,25 @@ public class TransaccionCobroService implements ITransaccionCobroService {
     public Boolean anularTransaccionConRecuperacionDeudas(Long entidadId,
                                                           AnulacionFacturaLstDto anulacionFacturaLstDto,
                                                           Long modalidadFacturacionId,
-                                                          SegUsuarioEntity usuarioEntity) {
+                                                          SegUsuarioEntity usuarioEntity) throws BusinesException {
+
+        //Verificar si en la selección de facturas existen archivos que ya no esten activos
+        Integer countArchivosNoActivos = iTransaccionCobroDao.countArchivosNoActivosPorListaFacturas(anulacionFacturaLstDto.facturaIdLst, modalidadFacturacionId);
+        if(countArchivosNoActivos > 0) {
+            throw new BusinesException("El archivo del cargado de la deuda ya no es el actual. Comuníquese con el administrador.");
+        }
+
         try {
             //Anular Transacciones
             Integer countupdate = iTransaccionCobroDao.updateLstTransaccionByFacturas(anulacionFacturaLstDto.facturaIdLst, modalidadFacturacionId, "ANULAR", usuarioEntity.getUsuarioId());
             if (countupdate == 0) {
-                throw new Technicalexception("La Anulación ha producido un inconveniente o se ha producido un nuevo cargado de archivo");
+                throw new Technicalexception("No se ha logrado actualizar a ANULADO las transacciones.");
             }
 
             //Anular Cobros
             Integer countUpdateCobros = iCobroClienteDao.updateLstTransaccionByFacturas(anulacionFacturaLstDto.facturaIdLst, "ANULAR", usuarioEntity.getUsuarioId());
             if (countUpdateCobros == 0) {
-                throw new Technicalexception("La Anulación ha producido un inconveniente");
+                throw new Technicalexception("No se ha logrado actualizar a ANULADO los CobrosClientes.");
             }
 
             //Actualizar estado de históricos
@@ -157,18 +165,24 @@ public class TransaccionCobroService implements ITransaccionCobroService {
     public Boolean anularTransaccionPorCargadoErroneo(Long entidadId,
                                                       AnulacionFacturaLstDto anulacionFacturaLstDto,
                                                       Long modalidadFacturacionId,
-                                                      SegUsuarioEntity usuarioEntity) {
+                                                      SegUsuarioEntity usuarioEntity) throws BusinesException {
+        //Verificar si en la selección de facturas existen archivos que ya no esten activos
+        Integer countArchivosNoActivos = iTransaccionCobroDao.countArchivosNoActivosPorListaFacturas(anulacionFacturaLstDto.facturaIdLst, modalidadFacturacionId);
+        if(countArchivosNoActivos > 0) {
+            throw new BusinesException("El archivo del cargado de la deuda ya no es el actual. Comuníquese con el administrador.");
+        }
+
         try {
             //Anular Transacciones
             Integer countupdate = iTransaccionCobroDao.updateLstTransaccionByFacturas(anulacionFacturaLstDto.facturaIdLst, modalidadFacturacionId, "ANULAR", usuarioEntity.getUsuarioId());
             if (countupdate == 0) {
-                throw new Technicalexception("La Anulación ha producido un inconveniente o se ha producido un nuevo cargado de archivo");
+                throw new Technicalexception("No se ha logrado actualizar a ANULADO las transacciones.");
             }
 
             //Anular Cobros
             Integer countUpdateCobros = iCobroClienteDao.updateLstTransaccionByFacturas(anulacionFacturaLstDto.facturaIdLst, "ANULAR", usuarioEntity.getUsuarioId());
             if (countUpdateCobros == 0) {
-                throw new Technicalexception("La Anulación ha producido un inconveniente");
+                throw new Technicalexception("No se ha logrado actualizar a ANULADO los CobrosClientes.");
             }
 
             //Actualizar estado de históricos
