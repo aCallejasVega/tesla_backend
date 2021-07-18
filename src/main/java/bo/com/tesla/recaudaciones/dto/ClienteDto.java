@@ -1,6 +1,7 @@
 package bo.com.tesla.recaudaciones.dto;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -15,6 +16,10 @@ public class ClienteDto {
     @NotBlank(message = "El monto total cobrado debe ser enviado")
     public BigDecimal montoTotalCobrado;
     public List<ServicioDeudaDto> servicioDeudaDtoList;
+    @NotNull(message = "El Método de Cobro es obligatorio.")
+    public Long metodoCobroId;
+    @NotNull(message = "La Dimensión de reimpresión es obligatoria.")
+    public Long dimensionId;
 
     public ClienteDto() {
     }

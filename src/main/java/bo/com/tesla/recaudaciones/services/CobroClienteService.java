@@ -134,7 +134,7 @@ public class CobroClienteService implements ICobroClienteService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Technicalexception.class)
     public String postCobrarDeudas(ClienteDto clienteDto,
                                     Long usuarioId,
-                                    Long metodoCobroId) {
+                                    Long dimensionId) {
         List<TransaccionCobroEntity> transaccionesCobroList=new ArrayList<>();
         try{
             //Obtencion Datos Entidad
@@ -173,9 +173,9 @@ public class CobroClienteService implements ICobroClienteService {
             *************************************************/
 
             //Verificar el dominio metodoCobro
-            Optional<DominioEntity> metodoCobroOptional = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(metodoCobroId, "metodo_cobro_id", "ACTIVO");
+            Optional<DominioEntity> metodoCobroOptional = iDominioDao.getDominioEntityByDominioIdAndDominioAndEstado(clienteDto.metodoCobroId, "metodo_cobro_id", "ACTIVO");
             if(!metodoCobroOptional.isPresent()) {
-                throw new Technicalexception("No existe el dominio='metodo_cobro_id' para dominioId=" + metodoCobroId );
+                throw new Technicalexception("No existe el dominio='metodo_cobro_id' para dominioId=" + clienteDto.metodoCobroId );
             }
 
             //Para emision de comprobante
@@ -241,7 +241,7 @@ public class CobroClienteService implements ICobroClienteService {
                 //Recorrer cada deuda asociada a la agrupacion
                 for(DeudaClienteEntity deudaClienteEntity : deudaClienteEntityList) {
                     //Cargando Cobro
-                    CobroClienteEntity cobroClienteEntity = loadCobroClienteEntity(deudaClienteEntity, servicioDeudaDto.deudaClienteDtos, usuarioId, metodoCobroId, transaccionCobroEntity);
+                    CobroClienteEntity cobroClienteEntity = loadCobroClienteEntity(deudaClienteEntity, servicioDeudaDto.deudaClienteDtos, usuarioId, clienteDto.metodoCobroId, transaccionCobroEntity);
                     cobroClienteEntityList.add(cobroClienteEntity);
 
                 }
@@ -274,7 +274,8 @@ public class CobroClienteService implements ICobroClienteService {
                     sucursalEntidadEntityOptional.get(),
                     transaccionesCobroList,
                     comprobanteEnUno,
-                    clienteDto.montoTotalCobrado);
+                    clienteDto.montoTotalCobrado,
+                    clienteDto.dimensionId);
 
             //*****************************************************************************************
 
@@ -289,7 +290,8 @@ public class CobroClienteService implements ICobroClienteService {
                                       SucursalEntidadEntity sucursalEntidadEntity,
                                       List<TransaccionCobroEntity> transaccionCobroEntityList,
                                       boolean comprobanteEnUno,
-                                      BigDecimal montoTotalCobrado) {
+                                      BigDecimal montoTotalCobrado,
+                                      Long dimensionId) {
 
         //Controlar la parametrización de las Modalidades de Facturacion
         Optional<Long> modFactCompuOptional = iDominioDao.getDominioIdByDominioAndAbreviatura("modalidad_facturacion_id", "FC");
@@ -312,7 +314,7 @@ public class CobroClienteService implements ICobroClienteService {
 
         //Facturación computarizada
         if(entidadEntity.getModalidadFacturacion().getDominioId() == modFactCompuOptional.get()) {
-            ResponseDto responseDto = facturacionComputarizadaService.postFacturas(sucursalEntidadEntity, transaccionCobroEntityList, comprobanteEnUno, montoTotalCobrado);
+            ResponseDto responseDto = facturacionComputarizadaService.postFacturas(sucursalEntidadEntity, transaccionCobroEntityList, comprobanteEnUno, montoTotalCobrado, dimensionId);
             if (!responseDto.status) {
                 throw new Technicalexception(responseDto.message);
             }

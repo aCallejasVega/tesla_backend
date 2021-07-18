@@ -5,4 +5,5 @@ import bo.com.tesla.facturaciones.computarizada.dto.ResponseDto;
 
 public interface IDominioFacturaService {
     ResponseDto getDominiosLst(Long entidadId, String dominio);
+    ResponseDto getDimensionesFacturas(Long entidadId);
 }

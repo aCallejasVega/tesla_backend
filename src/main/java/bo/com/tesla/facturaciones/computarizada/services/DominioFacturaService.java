@@ -28,4 +28,15 @@ public class DominioFacturaService implements IDominioFacturaService{
         }
     }
 
+    @Override
+    public ResponseDto getDimensionesFacturas(Long entidadId) {
+        try {
+            String url = this.hostComputarizada + "/api/dominios/facturas/dimensiones";
+
+            return conexionService.getResponseMethodGet(entidadId, url);
+        } catch (Exception e) {
+            throw new Technicalexception(e.getMessage(),e.getCause());
+        }
+    }
+
 }
