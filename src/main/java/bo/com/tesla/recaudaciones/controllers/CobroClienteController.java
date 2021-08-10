@@ -38,6 +38,8 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("api/cobros")
 public class CobroClienteController {
@@ -62,7 +64,7 @@ public class CobroClienteController {
 
 	@Secured("ROLE_MCARC")
 	@PostMapping("")
-    public ResponseEntity<?> postCobrarDeudas(@RequestBody ClienteDto clienteDto,
+    public ResponseEntity<?> postCobrarDeudas(@Valid @RequestBody ClienteDto clienteDto,
                                               Authentication authentication)  throws Exception {
         Map<String, Object> response = new HashMap<>();
         if(clienteDto == null || clienteDto.nombreCliente == null || clienteDto.nroDocumento == null || clienteDto.codigoCliente == null) {

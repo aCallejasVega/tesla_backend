@@ -266,7 +266,7 @@ public class ReportEntidadController {
 				busquedaReportesDto.fechaFin = Util.stringToDate("01/01/2100");
 			}
 
-			parameters.put("tituloEntidad", entidad.getNombreComercial().toUpperCase());
+			parameters.put("tituloEntidad", entidad.getNombre().toUpperCase());
 			parameters.put("tituloReporte", "INFORMACIÓN DE DEUDAS GENERALES");
 			parameters.put("logoTesla", filesReport + "/img/teslapng.png");
 			if (busquedaReportesDto.export.equals("msexcel")) {

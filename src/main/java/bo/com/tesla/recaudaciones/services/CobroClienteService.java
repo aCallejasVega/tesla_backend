@@ -138,19 +138,19 @@ public class CobroClienteService implements ICobroClienteService {
         List<TransaccionCobroEntity> transaccionesCobroList=new ArrayList<>();
         try{
             //Obtencion Datos Entidad
-            Optional<EntidadEntity> entidadEntityOptional = iEntidadRDao.findByEntidadIdAndEstado(clienteDto.servicioDeudaDtoList.get(0).entidadId, "ACTIVO");
+            Optional<EntidadEntity> entidadEntityOptional = iEntidadRDao.findByEntidadIdAndEstado(clienteDto.entidadId, "ACTIVO");
             if(!entidadEntityOptional.isPresent()) {
                 throw new Technicalexception("No existe Entidad, por tanto no hay configuracion de comprobanteEnUno");
             }
 
             //Encontrar Sucursal que emite Factura
-            Optional<SucursalEntidadEntity> sucursalEntidadEntityOptional  = sucursalEntidadDao.findByEmiteFacturaTesla(clienteDto.servicioDeudaDtoList.get(0).entidadId);
+            Optional<SucursalEntidadEntity> sucursalEntidadEntityOptional  = sucursalEntidadDao.findByEmiteFacturaTesla(clienteDto.entidadId);
             if(!sucursalEntidadEntityOptional.isPresent()) {
                 throw new Technicalexception("No se encuentra registrada la sucursal que emitirá la(s) factura(s).");
             }
 
             //Obtencion de Archivo
-            ArchivoEntity archivoEntity = iArchivoDao.findByEstado("ACTIVO", clienteDto.servicioDeudaDtoList.get(0).entidadId);
+            ArchivoEntity archivoEntity = iArchivoDao.findByEstado("ACTIVO", clienteDto.entidadId);
             if(archivoEntity == null) {
                 throw new Technicalexception("No existe un archivo activo o no se encontra el archivoId" + entidadEntityOptional.get().getEntidadId());
             }
@@ -184,13 +184,14 @@ public class CobroClienteService implements ICobroClienteService {
             //Recorrer las agrupaciones
             for(ServicioDeudaDto servicioDeudaDto : clienteDto.servicioDeudaDtoList){
                 //Recuperar Deudas Completas por agrupacion
-                List<DeudaClienteEntity> deudaClienteEntityList = iDeudaClienteRService.getAllDeudasByCliente(servicioDeudaDto.entidadId,
+                List<DeudaClienteEntity> deudaClienteEntityList = iDeudaClienteRService.getAllDeudasByCliente(clienteDto.entidadId,
                         servicioDeudaDto.tipoServicio,
                         servicioDeudaDto.servicio,
                         servicioDeudaDto.periodo,
-                        servicioDeudaDto.codigoCliente);
+                        clienteDto.codigoCliente);
                 if(deudaClienteEntityList.isEmpty()) {
-                    throw new Technicalexception("No se ha encontrado el Listado de Todas las Deudas del cliente: " + servicioDeudaDto.codigoCliente);
+                    throw new Technicalexception("No se ha encontrado el Listado de Todas las Deudas del cliente: " + clienteDto.codigoCliente);
+
                 }
 
 
@@ -202,7 +203,7 @@ public class CobroClienteService implements ICobroClienteService {
                             ", TipoServicio=" + servicioDeudaDto.tipoServicio +
                             ", Servicio= " + servicioDeudaDto.servicio +
                             ", Periodo=" + servicioDeudaDto.periodo +
-                            ", Codigo   Cliente=" + servicioDeudaDto.codigoCliente);
+                            ", Codigo   Cliente=" + clienteDto.codigoCliente);
                 }
                 if(tipoComprobanteLst.contains(false)) {
                     throw new Technicalexception("Se ha detectado un tipo de comprobante Recibo en alguna de las deudas.");
@@ -217,7 +218,7 @@ public class CobroClienteService implements ICobroClienteService {
                             ", TipoServicio=" + servicioDeudaDto.tipoServicio +
                             ", Servicio= " + servicioDeudaDto.servicio +
                             ", Periodo=" + servicioDeudaDto.periodo +
-                            ", CodigoCliente=" + servicioDeudaDto.codigoCliente);
+                            ", CodigoCliente=" + clienteDto.codigoCliente);
                 }
 
                 /*************************************************
@@ -245,7 +246,10 @@ public class CobroClienteService implements ICobroClienteService {
                     cobroClienteEntityList.add(cobroClienteEntity);
 
                 }
-                //Registrar transaccion  por agrupacion
+                //Registrar transaccion  por agrupacion y complementar
+                transaccionCobroEntity.setCodigoCliente(deudaClienteEntityList.get(0).getCodigoCliente());
+                transaccionCobroEntity.setNombreClienteArchivo(deudaClienteEntityList.get(0).getNombreCliente());
+                transaccionCobroEntity.setNroDocumentoClienteArchivo(deudaClienteEntityList.get(0).getNroDocumento());
                 transaccionCobroEntity.setCobroClienteEntityList(cobroClienteEntityList);
                 transaccionCobroEntity = iTransaccionCobroService.saveTransaccionCobro(transaccionCobroEntity);
 

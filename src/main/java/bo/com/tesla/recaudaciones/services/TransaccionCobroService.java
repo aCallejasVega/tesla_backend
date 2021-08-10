@@ -76,13 +76,10 @@ public class TransaccionCobroService implements ITransaccionCobroService {
         transaccionCobroEntity.setEntidadId(entidadEntity);
         transaccionCobroEntity.setTransaccion("CREAR");
         transaccionCobroEntity.setArchivoId(archivoEntity);
-        transaccionCobroEntity.setCodigoCliente(servicioDeudaDto.codigoCliente);
         transaccionCobroEntity.setNombreClientePago(nombreCientePago);
         transaccionCobroEntity.setTotalDeuda(servicioDeudaDto.subTotal);
         transaccionCobroEntity.setNroDocumentoClientePago(nroDocumentoClientePago);
         transaccionCobroEntity.setRecaudador(recaudadorEntity);
-        transaccionCobroEntity.setNombreClienteArchivo(servicioDeudaDto.nombreCliente);
-        transaccionCobroEntity.setNroDocumentoClienteArchivo(servicioDeudaDto.nroDocumento);
         transaccionCobroEntity.setEntidadComision(entidadComisionEntity);
         transaccionCobroEntity.setRecaudadorComision(recaudadorComisionEntity);
         transaccionCobroEntity.setMetodoCobro(metodoCobro);
@@ -174,13 +171,13 @@ public class TransaccionCobroService implements ITransaccionCobroService {
 
         try {
             //Anular Transacciones
-            Integer countupdate = iTransaccionCobroDao.updateLstTransaccionByFacturas(anulacionFacturaLstDto.facturaIdLst, modalidadFacturacionId, "ANULAR", usuarioEntity.getUsuarioId());
+            Integer countupdate = iTransaccionCobroDao.updateLstTransaccionByFacturas(anulacionFacturaLstDto.facturaIdLst, modalidadFacturacionId, "ANULAR ERRONEO", usuarioEntity.getUsuarioId());
             if (countupdate == 0) {
                 throw new Technicalexception("No se ha logrado actualizar a ANULADO las transacciones.");
             }
 
             //Anular Cobros
-            Integer countUpdateCobros = iCobroClienteDao.updateLstTransaccionByFacturas(anulacionFacturaLstDto.facturaIdLst, "ANULAR", usuarioEntity.getUsuarioId());
+            Integer countUpdateCobros = iCobroClienteDao.updateLstTransaccionByFacturas(anulacionFacturaLstDto.facturaIdLst, "ANULAR ERRONEO", usuarioEntity.getUsuarioId());
             if (countUpdateCobros == 0) {
                 throw new Technicalexception("No se ha logrado actualizar a ANULADO los CobrosClientes.");
             }

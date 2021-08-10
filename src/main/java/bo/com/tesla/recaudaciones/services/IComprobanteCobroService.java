@@ -12,10 +12,10 @@ public interface IComprobanteCobroService {
 
     public ComprobanteCobroEntity saveComprobanteCobro(ComprobanteCobroEntity comprobanteCobroEntity);
     public List<ComprobanteCobroEntity> saveAllComprobanteCobro(List<ComprobanteCobroEntity> comprobanteCobroEntities);
-    public ComprobanteCobroEntity loadComprobanteCobro(ServicioDeudaDto servicioDeudaDto,
+    /*public ComprobanteCobroEntity loadComprobanteCobro(ServicioDeudaDto servicioDeudaDto,
                                                        Long usuarioId,
                                                        BigDecimal montoTotal,
                                                        String nombreCliente,
-                                                       String nroDocumento);
+                                                       String nroDocumento);*/
 
 }

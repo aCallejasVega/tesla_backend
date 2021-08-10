@@ -27,7 +27,7 @@ public interface IDeudaClienteRDao extends JpaRepository<DeudaClienteEntity, Lon
 
 
     @Query("select new bo.com.tesla.recaudaciones.dto.ServicioDeudaDto( "
-            + " d.archivoId.entidadId.entidadId, d.tipoServicio, d.servicio, d.periodo, sum(d.subTotal)) "
+            + " d.tipoServicio, d.servicio, d.periodo, sum(d.subTotal)) "
             + " from DeudaClienteEntity d "
             + " where d.archivoId.entidadId.entidadId = :entidadId "
             + " and d.archivoId.entidadId.estado = 'ACTIVO' "
