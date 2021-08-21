@@ -22,6 +22,7 @@ import java.util.Optional;
 @Repository
 public interface IHistoricoDeudaDao extends JpaRepository<HistoricoDeudaEntity, Long> {
 
+	
 	Optional<HistoricoDeudaEntity> findByDeudaClienteId(Long deudaClienteId);
 
 	@Modifying

@@ -210,6 +210,17 @@ public class Util {
 
 		}
 	}
+	
+	public static String formatDateLaRazon(Date date) {
+		try {
+			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			return formatter.format(date);
+			
+		} catch (Exception e) {
+			throw new Technicalexception(e.getMessage(), e.getCause());
+
+		}
+	}
 
 	public static String dateToStringFormat(Date date) {
 		try {

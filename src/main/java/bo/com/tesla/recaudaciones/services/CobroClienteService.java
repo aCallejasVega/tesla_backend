@@ -13,6 +13,9 @@ import bo.com.tesla.recaudaciones.dto.ClienteDto;
 import bo.com.tesla.recaudaciones.dto.DeudaClienteDto;
 import bo.com.tesla.recaudaciones.dto.ServicioDeudaDto;
 import bo.com.tesla.useful.config.Technicalexception;
+import bo.com.tesla.useful.constant.Entidad;
+import bo.com.tesla.useful.cross.Util;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -21,7 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -68,6 +73,9 @@ public class CobroClienteService implements ICobroClienteService {
 
     @Autowired
     private ISucursalEntidadDao sucursalEntidadDao;
+    
+    @Autowired
+    private IEndPointEntidadService endPointEntidadService;
 
     @Override
     public List<CobroClienteEntity> saveAllCobrosClientes(List<CobroClienteEntity> cobroClienteEntities) {
@@ -80,7 +88,8 @@ public class CobroClienteService implements ICobroClienteService {
                                                      Long usuarioId,
                                                      Long metodoPagoId,
                                                      TransaccionCobroEntity transaccionCobroEntity) {
-
+    	
+    	
         Optional<HistoricoDeudaEntity> historicoDeudaEntityOptional = iHistoricoDeudaDao.findByDeudaClienteId(deudaClienteEntity.getDeudaClienteId());
         if(!historicoDeudaEntityOptional.isPresent()) {
             throw new Technicalexception("No existe el registro historico de deudaClienteId=" + deudaClienteEntity.getDeudaClienteId());
@@ -277,6 +286,19 @@ public class CobroClienteService implements ICobroClienteService {
                     clienteDto.montoTotalCobrado);
 
             //*****************************************************************************************
+            
+            Map<String, String> body = new HashMap<>();
+            switch(entidadEntityOptional.get().getEntidadId().toString())
+    		{
+    		   case Entidad.LA_RAZON :
+    			  
+    			   body.put("id_aviso",  clienteDto.servicioDeudaDtoList.get(0).codigoCliente);
+    			   body.put("fecha", Util.formatDateLaRazon(new Date()));
+    			   this.endPointEntidadService.endPointLaRazon(entidadEntityOptional.get().getEntidadId(), body);
+    		      break;
+    		}
+            
+            
 
             return responseDto.report;
         } catch (Exception e) {

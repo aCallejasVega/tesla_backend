@@ -121,6 +121,10 @@ public class EntidadEntity implements Serializable {
     @OneToMany(mappedBy = "entidadId")
     private List<ServicioWebEntidadEntity> servicioWebEntidadEntityList;
     
+    @JsonIgnore
+    @OneToMany(mappedBy = "entidadId")
+    private List<EndPointEntidadEntity> endPointEntidadEntityList;
+    
     public EntidadEntity() {
     }
 
@@ -423,6 +427,16 @@ public class EntidadEntity implements Serializable {
 
 	public void setServicioWebEntidadEntityList(List<ServicioWebEntidadEntity> servicioWebEntidadEntityList) {
 		this.servicioWebEntidadEntityList = servicioWebEntidadEntityList;
+	}
+	
+	
+
+	public List<EndPointEntidadEntity> getEndPointEntidadEntityList() {
+		return endPointEntidadEntityList;
+	}
+
+	public void setEndPointEntidadEntityList(List<EndPointEntidadEntity> endPointEntidadEntityList) {
+		this.endPointEntidadEntityList = endPointEntidadEntityList;
 	}
 
 	@Override
