@@ -52,7 +52,7 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
 
     }
 
-    private List<FacturaDto> loadFacturasPorTransaccion(List<TransaccionCobroEntity> transaccionCobroEntityList) {
+    private List<FacturaDto> loadFacturasPorTransaccion(List<TransaccionCobroEntity> transaccionCobroEntityList, Long dimensionId) {
         //Cargar Facturas
         List<FacturaDto> facturaDtoList = new ArrayList<>();
         for(TransaccionCobroEntity transaccionCobroEntity : transaccionCobroEntityList) {
@@ -67,7 +67,7 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
             transaccionIdLst.add(transaccionCobroEntity.getTransaccionCobroId());
             facturaDto.transaccionIdLst = transaccionIdLst;
             facturaDto.codigoActividadEconomica = transaccionCobroEntity.getCodigoActividadEconomica();
-
+            facturaDto.dimensionId = dimensionId;
             //Cargar DetalleFacturas
             facturaDto.detalleFacturaDtoList = loadDetallesFacturas(transaccionCobroEntity);
 
@@ -77,7 +77,7 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
         return facturaDtoList;
     }
 
-    private List<FacturaDto> loadFacturaGlobalXActividad(List<TransaccionCobroEntity> transaccionCobroEntityList) {
+    private List<FacturaDto> loadFacturaGlobalXActividad(List<TransaccionCobroEntity> transaccionCobroEntityList, Long dimensionId) {
 
         List<String> codActEcoListUnique = transaccionCobroService.getCodigosActividadUnicos(transaccionCobroEntityList);
 
@@ -94,13 +94,13 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
                     .map(TransaccionCobroEntity::getTotalDeuda)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            List<FacturaDto> facturaDtoLstPorCodActEco = loadFacturaGlobal(transaccionesPorCodActEconomicaLst, montoTotPorActEco);
+            List<FacturaDto> facturaDtoLstPorCodActEco = loadFacturaGlobal(transaccionesPorCodActEconomicaLst, montoTotPorActEco, dimensionId);
             facturaDtoList.addAll(facturaDtoLstPorCodActEco);
         }
         return facturaDtoList;
     }
 
-    private List<FacturaDto> loadFacturaGlobal(List<TransaccionCobroEntity> transaccionCobroEntityList, BigDecimal montoTotalCobrado) {
+    private List<FacturaDto> loadFacturaGlobal(List<TransaccionCobroEntity> transaccionCobroEntityList, BigDecimal montoTotalCobrado, Long dimensionId) {
 
         FacturaDto facturaDto = new FacturaDto();
         facturaDto.montoTotal = montoTotalCobrado;
@@ -119,7 +119,7 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
         }
         facturaDto.detalleFacturaDtoList = detalleFacturaDtoList;
         facturaDto.transaccionIdLst = transaccionIdList;
-
+        facturaDto.dimensionId = dimensionId;
         //Cargar Unica Factura
         List<FacturaDto> facturaDtoList = new ArrayList<>();
         facturaDtoList.add(facturaDto);
@@ -151,13 +151,13 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
     }
 
     @Override
-    public ResponseDto postFacturas(SucursalEntidadEntity sucursalEntidadEntity, List<TransaccionCobroEntity> transaccionCobroEntityList, Boolean comprobanteEnUno, BigDecimal montoTotal) {
+    public ResponseDto postFacturas(SucursalEntidadEntity sucursalEntidadEntity, List<TransaccionCobroEntity> transaccionCobroEntityList, Boolean comprobanteEnUno, BigDecimal montoTotal, Long dimensionId) {
         try {
 
             FacturasLstDto facturasLstDto = new FacturasLstDto();
 
             //Cargar Facturas
-            List<FacturaDto> facturaDtoList = comprobanteEnUno ? loadFacturaGlobalXActividad(transaccionCobroEntityList) : loadFacturasPorTransaccion(transaccionCobroEntityList);
+            List<FacturaDto> facturaDtoList = comprobanteEnUno ? loadFacturaGlobalXActividad(transaccionCobroEntityList, dimensionId) : loadFacturasPorTransaccion(transaccionCobroEntityList, dimensionId);
             facturasLstDto.facturaDtoList = facturaDtoList;
             facturasLstDto.montoTotalCobrado = montoTotal;
 
@@ -185,7 +185,7 @@ public class FacturaComputarizadaService implements IFacturaComputarizadaService
             String url = this.host + "/api/facturas/filters/pages";
 
             UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(url).
-                    queryParam("page", page).
+                    queryParam("page", page - 1).
                     queryParam("size", 10);
 
             return conexionService.getResponseMethodPostParameter(entidadId, facturaDto, uriComponentsBuilder);

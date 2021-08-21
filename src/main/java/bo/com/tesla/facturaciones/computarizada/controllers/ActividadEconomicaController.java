@@ -69,7 +69,7 @@ public class ActividadEconomicaController {
             e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("ACTIVIDADECONOMICA");
-            log.setController("api/actividadeseconomicas/filter/" + codigoActividadEconomica);
+            log.setController("api/actividadeseconomicas/" + codigoActividadEconomica);
             log.setCausa(e.getCause() + "");
             log.setMensaje(e.getMessage() + "");
             log.setUsuarioCreacion(usuario.getUsuarioId());
@@ -127,7 +127,7 @@ public class ActividadEconomicaController {
             e.printStackTrace();
             LogSistemaEntity log = new LogSistemaEntity();
             log.setModulo("ACTIVIDADECONOMICA");
-            log.setController("api/actividadeseconomicas");
+            log.setController("api/actividadeseconomicas/entidades");
             log.setCausa(e.getCause() + "");
             log.setMensaje(e.getMessage() + "");
             log.setUsuarioCreacion(usuario.getUsuarioId());
@@ -144,7 +144,7 @@ public class ActividadEconomicaController {
             e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("ACTIVIDADECONOMICA");
-            log.setController("api/actividadeseconomicas");
+            log.setController("api/actividadeseconomicas/entidades");
             log.setMensaje(e.getMessage());
             log.setUsuarioCreacion(usuario.getUsuarioId());
             log.setFechaCreacion(new Date());

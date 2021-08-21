@@ -45,7 +45,7 @@ public class DeudaClienteRService implements IDeudaClienteRService {
             Long key = 0L;
             for (ServicioDeudaDto servicioDeuda : servicioDeudaDtos) {
                 servicioDeuda.key = key;
-                List<DeudaClienteDto> deudaClienteDtosDeudas = iDeudaClienteRDao.findByEntidadByServiciosDeudas(servicioDeuda.entidadId,
+                List<DeudaClienteDto> deudaClienteDtosDeudas = iDeudaClienteRDao.findByEntidadByServiciosDeudas(entidadId,
                         servicioDeuda.tipoServicio,
                         servicioDeuda.servicio,
                         servicioDeuda.periodo,
@@ -55,9 +55,6 @@ public class DeudaClienteRService implements IDeudaClienteRService {
                     throw new Technicalexception("No existen DEUDAS para EntidadId=" + entidadId + " y CodigoCliente=" + codigoCliente);
                 }
                 servicioDeuda.deudaClienteDtos = deudaClienteDtosDeudas;
-                servicioDeuda.nombreCliente = deudaClienteDtosDeudas.get(0).nombreCliente;
-                servicioDeuda.codigoCliente = deudaClienteDtosDeudas.get(0).codigoCliente;
-                servicioDeuda.nroDocumento = deudaClienteDtosDeudas.get(0).nroDocumento;
                 //Para la edición verificar
                 Boolean esEditable = deudaClienteDtosDeudas.stream().anyMatch(d -> !d.esPostpago && d.subTotal.compareTo(BigDecimal.ZERO) == 0);
                 servicioDeuda.editable = esEditable;

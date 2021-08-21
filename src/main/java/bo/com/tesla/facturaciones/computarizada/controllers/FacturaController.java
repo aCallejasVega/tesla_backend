@@ -266,16 +266,30 @@ public class FacturaController {
         }
     }
 
-    @Secured( { "ROLE_MCRA", "ROLE_MCRRA" } )
-    @PostMapping("/entidades/{entidadId}/anulaciones/listas")
-    public ResponseEntity<?> postListFacturaAnulacion(@PathVariable Long entidadId,
+    @Secured( { "ROLE_MCRA", "ROLE_MCRRA",   "ROLE_MCEAF" } )
+    @PostMapping(path = { "/entidades/{entidadId}/anulaciones/listas" , "/anulaciones/listas" }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<?> postListFacturaAnulacion(@PathVariable Optional<Long> entidadId,
                                                       @RequestBody AnulacionFacturaLstDto anulacionFacturaLstDto,
-                                                        Authentication authentication)  {
+                                                      Authentication authentication)  {
 
         SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
         Map<String, Object> response = new HashMap<>();
         try {
-            Boolean respuesta  = anulacionFacturaService.anularTransaccion(entidadId, anulacionFacturaLstDto, usuario);
+            Boolean respuesta = false;
+            if(!entidadId.isPresent()) {
+                EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
+                if(entidad == null) {
+                    throw new BusinesException("El usuario debe pertenecer a una Entidad.");
+                }
+                respuesta  = anulacionFacturaService.anularTransaccionConRecuperacionDeudas(entidad.getEntidadId(), anulacionFacturaLstDto, usuario);
+            } else {
+                RecaudadorEntity recaudadorEntity = recaudadoraService.findRecaudadorByUserId(usuario.getUsuarioId());
+                if(recaudadorEntity == null) {
+                    throw new BusinesException("El usuario debe pertenecer a una Recaudadora.");
+                }
+                respuesta  = anulacionFacturaService.anularTransaccionConRecuperacionDeudas(entidadId.get(), anulacionFacturaLstDto, usuario);
+            }
+
             response.put("message", "Se ha realizado la Anulación de la factura.");
             response.put("result", respuesta);
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -296,6 +310,84 @@ public class FacturaController {
             response.put("result", null);
             response.put("message", "Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
             response.put("code", log.getLogSistemaId() + "");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        } catch (BusinesException e) {
+            e.printStackTrace();
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("FACTURAS");
+            log.setController("api/anulaciones/listas");
+            log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
+            log.setMensaje(e.getMessage());
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            this.logSistemaService.save(log);
+            this.logger.error("This is cause", e.getMessage());
+            response.put("status", false);
+            response.put("message", e.getMessage());
+            response.put("code", log.getLogSistemaId()+"");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @Secured( "ROLE_MCEAF" )
+    @PostMapping(path = { "/anulaciones/listas/erroneos", "/entidades/{entidadId}/anulaciones/listas/erroneos" }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<?> postListFacturaAnulacionCargadoErroneo(@PathVariable Optional<Long> entidadId,
+                                                                    @RequestBody AnulacionFacturaLstDto anulacionFacturaLstDto,
+                                                                    Authentication authentication)  {
+
+        SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Boolean respuesta = false;
+            if(!entidadId.isPresent()) {
+                EntidadEntity entidad = this.entidadService.findEntidadByUserId(usuario.getUsuarioId());
+                if(entidad == null) {
+                    throw new BusinesException("El usuario debe pertenecer a una Entidad.");
+                }
+                respuesta  = anulacionFacturaService.anularTransaccionConCargadoErroneo(entidad.getEntidadId(), anulacionFacturaLstDto, usuario);
+            } else {
+                RecaudadorEntity recaudadorEntity = recaudadoraService.findRecaudadorByUserId(usuario.getUsuarioId());
+                if(recaudadorEntity == null) {
+                    throw new BusinesException("El usuario debe pertenecer a una Recaudadora.");
+                }
+                respuesta  = anulacionFacturaService.anularTransaccionConCargadoErroneo(entidadId.get(), anulacionFacturaLstDto, usuario);
+            }
+
+            response.put("message", "Se ha realizado la Anulación de la factura.");
+            response.put("result", respuesta);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (Technicalexception e) {
+            e.printStackTrace();
+            LogSistemaEntity log = new LogSistemaEntity();
+            log.setModulo("ANULACION FACTURA");
+            log.setController("api/anulaciones/listas/erroneos");
+            log.setCausa(e.getCause() + "");
+            log.setMensaje(e.getMessage() + "");
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            logSistemaService.save(log);
+            this.logger.error("This is error", e.getMessage());
+            this.logger.error("This is cause", e.getCause());
+            response.put("status", false);
+            response.put("result", null);
+            response.put("message", "Ocurrió un problema en el servidor, por favor intente la operación más tarde o consulte con su administrador.");
+            response.put("code", log.getLogSistemaId() + "");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }  catch (BusinesException e) {
+            e.printStackTrace();
+            LogSistemaEntity log=new LogSistemaEntity();
+            log.setModulo("FACTURAS");
+            log.setController("api/anulaciones/listas");
+            log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
+            log.setMensaje(e.getMessage());
+            log.setUsuarioCreacion(usuario.getUsuarioId());
+            log.setFechaCreacion(new Date());
+            this.logSistemaService.save(log);
+            this.logger.error("This is cause", e.getMessage());
+            response.put("status", false);
+            response.put("message", e.getMessage());
+            response.put("code", log.getLogSistemaId()+"");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }

@@ -45,6 +45,7 @@ public class ComprobanteCobroService implements IComprobanteCobroService {
         return iComprobanteCobroDao.saveAll(comprobanteCobroEntities);
     }
 
+    /*
     @Override
     public ComprobanteCobroEntity loadComprobanteCobro(ServicioDeudaDto servicioDeudaDto,
                                                        Long usuarioId,
@@ -79,6 +80,6 @@ public class ComprobanteCobroService implements IComprobanteCobroService {
 
         return comprobanteCobroEntity;
     }
-
+*/
 
 }

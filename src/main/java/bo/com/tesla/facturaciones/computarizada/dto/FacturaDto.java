@@ -37,6 +37,8 @@ public class FacturaDto {
 
     public List<Long> facturaIdLst=new ArrayList<>();
 
+    public Long dimensionId;
+
     public FacturaDto() {
     }
 }

@@ -39,17 +39,13 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         LogSistemaEntity log=new LogSistemaEntity();
         log.setModulo("Validacion");
         log.setController("Validacion");
-        log.setCausa("");
+        log.setCausa("Validacion de api");
         log.setMensaje(errors.toString());
-        log.setUsuarioCreacion(0L);
+        log.setUsuarioCreacion(1L);
         log.setFechaCreacion(new Date());
         logSistemaService.save(log);
 
-
-
-        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, log.getLogSistemaId()+": "+ concatErrors , errors);
-        //ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage() , errors);
-
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, "Error: " + log.getLogSistemaId()+" - "+ concatErrors , errors);
 
         return handleExceptionInternal(ex, apiError, headers, apiError.getStatus(), request);
     }

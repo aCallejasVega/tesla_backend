@@ -136,10 +136,9 @@ public class DeudasClienteDto {
 		}else if(estado.equals("ANULADO")) {
 			this.estado="ANULADO";
 			
+		}else if(estado.equals("ERRONEO")) {
+			this.estado = "ERRONEO";
 		}
-	
-		
-		
 	}
 	
 	
@@ -184,12 +183,10 @@ public class DeudasClienteDto {
 		}else if(estado.equals("ANULADO")) {
 			this.estado="ANULADO";
 			
+		}else if(estado.equals("ERRONEO")) {
+			this.estado = "ERRONEO";
 		}
-			
-		
-		
-		
-		
+
 	}
 	
 

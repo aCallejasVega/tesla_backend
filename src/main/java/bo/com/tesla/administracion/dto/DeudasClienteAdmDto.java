@@ -79,6 +79,15 @@ public class DeudasClienteAdmDto {
 			this.comision=comision;
 			this.cajero=cajero;
 			this.nombreComercial=nombreComercial;
+		} else if(estado.equals("ERRONEO")) {
+			this.estado="ERRONEO";
+			this.nombreCliente=nombreClientePago;
+			this.fechaCreacion=fechaCreacion;
+			this.total=total;
+			this.nombreRecaudadora=nombreRecaudadora;
+			this.comision=comision;
+			this.cajero=cajero;
+			this.nombreComercial=nombreComercial;
 		}
 	
 		

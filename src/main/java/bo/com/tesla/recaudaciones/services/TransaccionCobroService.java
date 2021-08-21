@@ -13,6 +13,7 @@ import bo.com.tesla.recaudaciones.dao.ICobroClienteDao;
 import bo.com.tesla.recaudaciones.dao.IHistoricoDeudaDao;
 import bo.com.tesla.recaudaciones.dao.ITransaccionCobroDao;
 import bo.com.tesla.recaudaciones.dto.ServicioDeudaDto;
+import bo.com.tesla.useful.config.BusinesException;
 import bo.com.tesla.useful.config.Technicalexception;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -75,13 +76,10 @@ public class TransaccionCobroService implements ITransaccionCobroService {
         transaccionCobroEntity.setEntidadId(entidadEntity);
         transaccionCobroEntity.setTransaccion("CREAR");
         transaccionCobroEntity.setArchivoId(archivoEntity);
-        transaccionCobroEntity.setCodigoCliente(servicioDeudaDto.codigoCliente);
         transaccionCobroEntity.setNombreClientePago(nombreCientePago);
         transaccionCobroEntity.setTotalDeuda(servicioDeudaDto.subTotal);
         transaccionCobroEntity.setNroDocumentoClientePago(nroDocumentoClientePago);
         transaccionCobroEntity.setRecaudador(recaudadorEntity);
-        transaccionCobroEntity.setNombreClienteArchivo(servicioDeudaDto.nombreCliente);
-        transaccionCobroEntity.setNroDocumentoClienteArchivo(servicioDeudaDto.nroDocumento);
         transaccionCobroEntity.setEntidadComision(entidadComisionEntity);
         transaccionCobroEntity.setRecaudadorComision(recaudadorComisionEntity);
         transaccionCobroEntity.setMetodoCobro(metodoCobro);
@@ -109,23 +107,31 @@ public class TransaccionCobroService implements ITransaccionCobroService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Technicalexception.class)
-    public Boolean anularTransaccion(Long entidadId,
-                                     AnulacionFacturaLstDto anulacionFacturaLstDto,
-                                     Long modalidadFacturacionId,
-                                     SegUsuarioEntity usuarioEntity) {
+    public Boolean anularTransaccionConRecuperacionDeudas(Long entidadId,
+                                                          AnulacionFacturaLstDto anulacionFacturaLstDto,
+                                                          Long modalidadFacturacionId,
+                                                          SegUsuarioEntity usuarioEntity) throws BusinesException {
+
+        //Verificar si en la selección de facturas existen archivos que ya no esten activos
+        Integer countArchivosNoActivos = iTransaccionCobroDao.countArchivosNoActivosPorListaFacturas(anulacionFacturaLstDto.facturaIdLst, modalidadFacturacionId);
+        if(countArchivosNoActivos > 0) {
+            throw new BusinesException("El archivo del cargado de la deuda ya no es el actual. Comuníquese con el administrador.");
+        }
+
         try {
             //Anular Transacciones
             Integer countupdate = iTransaccionCobroDao.updateLstTransaccionByFacturas(anulacionFacturaLstDto.facturaIdLst, modalidadFacturacionId, "ANULAR", usuarioEntity.getUsuarioId());
             if (countupdate == 0) {
-                throw new Technicalexception("La Anulación ha producido un inconveniente o se ha producido un nuevo cargado de archivo");
+                throw new Technicalexception("No se ha logrado actualizar a ANULADO las transacciones.");
             }
 
             //Anular Cobros
             Integer countUpdateCobros = iCobroClienteDao.updateLstTransaccionByFacturas(anulacionFacturaLstDto.facturaIdLst, "ANULAR", usuarioEntity.getUsuarioId());
             if (countUpdateCobros == 0) {
-                throw new Technicalexception("La Anulación ha producido un inconveniente");
+                throw new Technicalexception("No se ha logrado actualizar a ANULADO los CobrosClientes.");
             }
 
+            //Actualizar estado de históricos
             Integer countHistoricos = historicoDeudaService.updateHistoricoDeudaLstByFacturas(anulacionFacturaLstDto.facturaIdLst, "ANULADO");
             if(countHistoricos == 0) {
                 throw new Technicalexception("No se ha logrado actualizar el estado de los registros históricos de deudas");
@@ -136,6 +142,53 @@ public class TransaccionCobroService implements ITransaccionCobroService {
             if(countRecovery < 1) {
                 throw new Technicalexception("No se ha recuperado ninguna deuda");
             }
+
+            /***********************************************************************/
+            //Anulación de Facturas
+            ResponseDto responseDto = anulacionFacturaService.postAnulacionLst(entidadId, anulacionFacturaLstDto);
+            if(!responseDto.status) {
+                throw new Technicalexception(responseDto.message);
+            }
+            /***********************************************************************/
+
+            return true;
+        } catch (Exception e) {
+            throw new Technicalexception(e.getMessage(), e.getCause());
+        }
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Technicalexception.class)
+    public Boolean anularTransaccionPorCargadoErroneo(Long entidadId,
+                                                      AnulacionFacturaLstDto anulacionFacturaLstDto,
+                                                      Long modalidadFacturacionId,
+                                                      SegUsuarioEntity usuarioEntity) throws BusinesException {
+        //Verificar si en la selección de facturas existen archivos que ya no esten activos
+        Integer countArchivosNoActivos = iTransaccionCobroDao.countArchivosNoActivosPorListaFacturas(anulacionFacturaLstDto.facturaIdLst, modalidadFacturacionId);
+        if(countArchivosNoActivos > 0) {
+            throw new BusinesException("El archivo del cargado de la deuda ya no es el actual. Comuníquese con el administrador.");
+        }
+
+        try {
+            //Anular Transacciones
+            Integer countupdate = iTransaccionCobroDao.updateLstTransaccionByFacturas(anulacionFacturaLstDto.facturaIdLst, modalidadFacturacionId, "ANULAR ERRONEO", usuarioEntity.getUsuarioId());
+            if (countupdate == 0) {
+                throw new Technicalexception("No se ha logrado actualizar a ANULADO las transacciones.");
+            }
+
+            //Anular Cobros
+            Integer countUpdateCobros = iCobroClienteDao.updateLstTransaccionByFacturas(anulacionFacturaLstDto.facturaIdLst, "ANULAR ERRONEO", usuarioEntity.getUsuarioId());
+            if (countUpdateCobros == 0) {
+                throw new Technicalexception("No se ha logrado actualizar a ANULADO los CobrosClientes.");
+            }
+
+            //Actualizar estado de históricos
+            Integer countHistoricos = historicoDeudaService.updateHistoricoDeudaLstByFacturas(anulacionFacturaLstDto.facturaIdLst, "ERRONEO");
+            if(countHistoricos == 0) {
+                throw new Technicalexception("No se ha logrado actualizar el estado de los registros históricos de deudas");
+            }
+
+            //No recupera deudas
 
             /***********************************************************************/
             //Anulación de Facturas

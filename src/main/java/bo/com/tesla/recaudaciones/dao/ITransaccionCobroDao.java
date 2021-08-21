@@ -90,7 +90,7 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 	
 	@Query("Select new bo.com.tesla.entidades.dto.DeudasClienteDto(hd.archivoId.archivoId, hd.codigoCliente,hd.servicio, "
 			+ " hd.tipoServicio,hd.periodo, hd.estado,hd.nombreCliente, "
-			+ "	tc.fechaCreacion,tc.totalDeuda,r.nombre,tc.comision) "			
+			+ "	tc.fechaCreacion,tc.totalDeuda,r.nombre,tc.comision) "
 			+ " from HistoricoDeudaEntity hd "
 			+ " left join TransaccionCobroEntity tc on ( tc.archivoId.archivoId=hd.archivoId.archivoId "
 			+ "											 and tc.codigoCliente=hd.codigoCliente "
@@ -269,6 +269,16 @@ public interface ITransaccionCobroDao extends JpaRepository<TransaccionCobroEnti
 												@Param("modalidadFacturacionId") Long modalidadFacturacionId,
 												@Param("transaccion") String transaccion,
 												@Param("usuarioModificacionId") Long usuarioModificacionId);
+
+	@Query(value = "SELECT count(t) " +
+			"FROM TransaccionCobroEntity t " +
+			"WHERE t.facturaId in :facturaIdLst " +
+			"AND t.modalidadFacturacion.dominioId = :modalidadFacturacionId " +
+			"AND (SELECT a.estado " +
+				"FROM ArchivoEntity a " +
+				"WHERE a.archivoId = t.archivoId.archivoId) != 'ACTIVO'")
+	Integer countArchivosNoActivosPorListaFacturas(@Param("facturaIdLst") List<Long> facturaIdLst,
+										   @Param("modalidadFacturacionId") Long modalidadFacturacionId);
 
 	@Modifying
 	@Query("UPDATE TransaccionCobroEntity t " +

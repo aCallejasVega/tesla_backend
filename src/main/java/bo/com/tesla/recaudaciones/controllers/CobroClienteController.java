@@ -38,6 +38,8 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("api/cobros")
 public class CobroClienteController {
@@ -61,9 +63,8 @@ public class CobroClienteController {
 
 
 	@Secured("ROLE_MCARC")
-	@PostMapping("/{metodoPagoId}")
-    public ResponseEntity<?> postCobrarDeudas(@RequestBody ClienteDto clienteDto,
-                                              @PathVariable Long metodoPagoId,
+	@PostMapping("")
+    public ResponseEntity<?> postCobrarDeudas(@Valid @RequestBody ClienteDto clienteDto,
                                               Authentication authentication)  throws Exception {
         Map<String, Object> response = new HashMap<>();
         if(clienteDto == null || clienteDto.nombreCliente == null || clienteDto.nroDocumento == null || clienteDto.codigoCliente == null) {
@@ -72,17 +73,10 @@ public class CobroClienteController {
             response.put("result", null);
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
-        if(metodoPagoId == null || metodoPagoId <= 0) {
-            response.put("status", false);
-            response.put("message", "Ocurrió un error en el servidor, por favor verifique parametros");
-            response.put("result", null);
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
-
         SegUsuarioEntity usuario = this.segUsuarioService.findByLogin(authentication.getName());
 
         try {
-            String facturaBase64 = iCobroClienteService.postCobrarDeudas(clienteDto, usuario.getUsuarioId(), metodoPagoId);
+            String facturaBase64 = iCobroClienteService.postCobrarDeudas(clienteDto, usuario.getUsuarioId(), /*metodoPagoId*/clienteDto.metodoCobroId);
 
             byte[] facturaByteArray = Base64.getDecoder().decode(facturaBase64);
             HttpHeaders headers = new HttpHeaders();
@@ -96,7 +90,7 @@ public class CobroClienteController {
             e.printStackTrace();
             LogSistemaEntity log=new LogSistemaEntity();
             log.setModulo("RECAUDACION.COBROS");
-            log.setController("POST: api/cobros/" + metodoPagoId);
+            log.setController("POST: api/cobros/" + /*metodoPagoId*/clienteDto.metodoCobroId);
             log.setCausa(e.getCause() != null ? e.getCause().getCause()+"" : e.getCause()+"");
             log.setMensaje(e.getMessage()+"");
             log.setUsuarioCreacion(usuario.getUsuarioId());

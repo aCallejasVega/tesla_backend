@@ -174,7 +174,7 @@ public class HistoricoDeudaController {
 
 		try {
 			estadosList = this.historicoDeudaService.findEstadoHistorico();
-			if (estadosList.isEmpty()) {
+				if (estadosList.isEmpty()) {
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
 			}
 			for (EstadoTablasDto estados : estadosList) {

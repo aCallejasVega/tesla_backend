@@ -63,6 +63,8 @@ public class DeudasClienteRecaudacionDto {
 			this.estado="COBRADO";
 		}else if(estado.equals("ANULADO")) {
 			this.estado="ANULADO";
+		}else if(estado.equals("ERRONEO")) {
+			this.estado="ERRONEO";
 		}
 	
 		

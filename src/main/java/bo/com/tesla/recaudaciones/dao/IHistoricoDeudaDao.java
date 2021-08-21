@@ -87,6 +87,7 @@ public interface IHistoricoDeudaDao extends JpaRepository<HistoricoDeudaEntity, 
             + " WHEN 'ACTIVO' THEN 'POR COBRAR' "
             + " WHEN 'COBRADO' THEN 'COBRADOS' "            
             + " WHEN 'ANULADO' THEN 'ANULADOS' "
+			+ " WHEN 'ERRONEO' THEN 'ERRONEO' "
             + " END) "
             + " from SegEstadoEntity e "
             + " where e.segEstadoEntityPK.tablaId='HISTORICOS_DEUDAS' ")

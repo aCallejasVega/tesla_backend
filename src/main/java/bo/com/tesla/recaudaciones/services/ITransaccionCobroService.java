@@ -14,6 +14,7 @@ import bo.com.tesla.administracion.entity.TransaccionCobroEntity;
 import bo.com.tesla.facturaciones.computarizada.dto.AnulacionFacturaLstDto;
 import bo.com.tesla.facturaciones.computarizada.dto.FacturaDto;
 import bo.com.tesla.recaudaciones.dto.ServicioDeudaDto;
+import bo.com.tesla.useful.config.BusinesException;
 
 public interface ITransaccionCobroService {
 
@@ -36,8 +37,15 @@ public interface ITransaccionCobroService {
 	public List<TransaccionCobroEntity> saveAllTransaccionesCobros(
 			List<TransaccionCobroEntity> transaccionCobroEntities);
 
-	Boolean anularTransaccion(Long entidadId, AnulacionFacturaLstDto anulacionFacturaLstDto, Long modalidadFacturacionId,
-			SegUsuarioEntity usuarioEntity);
+	Boolean anularTransaccionConRecuperacionDeudas(Long entidadId,
+												   AnulacionFacturaLstDto anulacionFacturaLstDto,
+												   Long modalidadFacturacionId,
+												   SegUsuarioEntity usuarioEntity) throws BusinesException;
+
+	Boolean anularTransaccionPorCargadoErroneo(Long entidadId,
+											   AnulacionFacturaLstDto anulacionFacturaLstDto,
+											   Long modalidadFacturacionId,
+											   SegUsuarioEntity usuarioEntity) throws BusinesException;
 
 	void updateFacturasTransaccion(List<FacturaDto> facturaDtoList);
 
