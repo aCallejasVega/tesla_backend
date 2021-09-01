@@ -34,6 +34,8 @@ public class ConexionService implements IConexionService {
     @Autowired
     private ISucursalEntidadDao sucursalEntidadDao;
 
+    @Autowired
+    private RestTemplateFacturacionComputarizada restTemplate;
 
     //Caso establecido que para TESLA solo se registrará una sucursal de entidad (CASA MATRIZ)
     @Override
@@ -70,8 +72,7 @@ public class ConexionService implements IConexionService {
             body.add("grant_type", "password");
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(body, headers);
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> response = restTemplate.exchange(
+            ResponseEntity<String> response = restTemplate.restTemplate().exchange(
                     url,
                     HttpMethod.POST,
                     request,
@@ -95,12 +96,11 @@ public class ConexionService implements IConexionService {
     }
 
     @Override
-    public <T> ResponseDto getResponseMethodPost(Long entidadId, T body, String url) {
+    public <T> ResponseDto getResponseMethodPost(Long entidadId, T body, String url) throws Exception {
         HttpHeaders headers = getHeaderToken(entidadId);
 
         HttpEntity<T> request = new HttpEntity<T>(body, headers);
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<ResponseDto> response = restTemplate.exchange(
+        ResponseEntity<ResponseDto> response = restTemplate.restTemplate().exchange(
                 url,
                 HttpMethod.POST,
                 request,
@@ -120,8 +120,7 @@ public class ConexionService implements IConexionService {
             HttpHeaders headers = getHeaderToken(entidadId);
 
             HttpEntity<T> request = new HttpEntity<T>(body, headers);
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<ResponseDto> response = restTemplate.exchange(
+            ResponseEntity<ResponseDto> response = restTemplate.restTemplate().exchange(
                     uriComponentsBuilder.toUriString(),
                     HttpMethod.POST,
                     request,
@@ -143,11 +142,10 @@ public class ConexionService implements IConexionService {
     }
 
     @Override
-    public ResponseDto getResponseMethodGet(Long entidadId, String url) {
+    public ResponseDto getResponseMethodGet(Long entidadId, String url) throws Exception {
         HttpHeaders headers = getHeaderToken(entidadId);
         HttpEntity<String> request = new HttpEntity<>(headers);
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<ResponseDto> response = restTemplate.exchange(
+        ResponseEntity<ResponseDto> response = restTemplate.restTemplate().exchange(
                 url,
                 HttpMethod.GET,
                 request,
@@ -161,11 +159,10 @@ public class ConexionService implements IConexionService {
     }
 
     @Override
-    public ResponseDto getResponseMethodGetParams(Long entidadId, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseDto getResponseMethodGetParams(Long entidadId, UriComponentsBuilder uriComponentsBuilder) throws Exception {
         HttpHeaders headers = getHeaderToken(entidadId);
         HttpEntity<String> request = new HttpEntity<>(headers);
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<ResponseDto> response = restTemplate.exchange(
+        ResponseEntity<ResponseDto> response = restTemplate.restTemplate().exchange(
                 uriComponentsBuilder.toUriString(),
                 HttpMethod.GET,
                 request,
@@ -179,12 +176,11 @@ public class ConexionService implements IConexionService {
     }
 
     @Override
-    public <T> ResponseDto getResponseMethodPut(Long entidadId, T body, String url) {
+    public <T> ResponseDto getResponseMethodPut(Long entidadId, T body, String url) throws Exception {
         HttpHeaders headers = getHeaderToken(entidadId);
 
         HttpEntity<T> request = new HttpEntity<T>(body, headers);
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<ResponseDto> response = restTemplate.exchange(
+        ResponseEntity<ResponseDto> response = restTemplate.restTemplate().exchange(
                 url,
                 HttpMethod.PUT,
                 request,
@@ -199,12 +195,11 @@ public class ConexionService implements IConexionService {
     }
 
     @Override
-    public <T> ResponseDto getResponseMethodPutParameter(Long entidadId, T body, UriComponentsBuilder uriComponentsBuilder) {
+    public <T> ResponseDto getResponseMethodPutParameter(Long entidadId, T body, UriComponentsBuilder uriComponentsBuilder) throws Exception {
         HttpHeaders headers = getHeaderToken(entidadId);
 
         HttpEntity<T> request = new HttpEntity<T>(body, headers);
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<ResponseDto> response = restTemplate.exchange(
+        ResponseEntity<ResponseDto> response = restTemplate.restTemplate().exchange(
                 uriComponentsBuilder.toUriString(),
                 HttpMethod.PUT,
                 request,

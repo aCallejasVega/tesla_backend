@@ -297,7 +297,7 @@ public class CobroClienteService implements ICobroClienteService {
     		{
     		   case Entidad.LA_RAZON :
     			  
-    			   body.put("id_aviso",  clienteDto.servicioDeudaDtoList.get(0).codigoCliente);
+    			   body.put("id_aviso",  clienteDto.codigoCliente);
     			   body.put("fecha", Util.formatDateLaRazon(new Date()));
     			   this.endPointEntidadService.endPointLaRazon(entidadEntityOptional.get().getEntidadId(), body);
     		      break;

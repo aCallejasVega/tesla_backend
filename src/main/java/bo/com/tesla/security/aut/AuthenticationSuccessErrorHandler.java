@@ -6,10 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import bo.com.tesla.administracion.controllers.DominioController;
 import bo.com.tesla.administracion.entity.SegUsuarioEntity;
 import bo.com.tesla.security.services.ISegUsuarioService;
 
